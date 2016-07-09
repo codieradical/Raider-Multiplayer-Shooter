@@ -22,11 +22,11 @@ public class CameraModeController : MonoBehaviour
         FirstPerson = 0,
         ThirdPerson = 1,
         Shoulder = 2,
-        TopDown = 3,
-        FlyCam = 4,
-        Static = 5,
-        Follow = 6,
-        SceneOverview = 7
+        FlyCam = 3,
+        Static = 4,
+        Follow = 5,
+        SceneOverview = 6,
+        FreeCam = 7
     }
 
     public CameraModes selectedCameraMode = CameraModes.ThirdPerson;
@@ -102,23 +102,20 @@ public class CameraModeController : MonoBehaviour
             case CameraModes.Shoulder:
                 gameObject.AddComponent<ShoulderCameraController>();
                 break;
+            case CameraModes.SceneOverview:
+                gameObject.AddComponent<SceneOverviewCameraController>();
+                break;
+            case CameraModes.FreeCam:
+                gameObject.AddComponent<FreeCameraController>();
+                break;
             case CameraModes.FlyCam:
                 gameObject.AddComponent<FlyCameraController>();
-                break;
-            case CameraModes.TopDown:
-                gameObject.AddComponent<TopDownCameraController>();
                 break;
             case CameraModes.Static:
                 gameObject.AddComponent<StaticCameraController>();
                 break;
             case CameraModes.Follow:
                 gameObject.AddComponent<FollowCameraController>();
-                break;
-            //case CameraModes.DogsLife:
-            //    gameObject.AddComponent<DogsLifeCameraController>();
-            //    break;
-            case CameraModes.SceneOverview:
-                gameObject.AddComponent<SceneOverviewCameraController>();
                 break;
         }
     }
