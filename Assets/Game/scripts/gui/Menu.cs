@@ -9,8 +9,8 @@ public class Menu : MonoBehaviour {
 
     public bool IsOpen
     {
-        get { return animator.GetBool("IsOpen"); }
-        set { animator.SetBool("IsOpen", value); }
+        get { return animator.GetBool("open"); }
+        set { animator.SetBool("open", value); }
     }
 
     public void Awake()
