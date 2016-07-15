@@ -59,7 +59,7 @@ public class FreeCameraController : ThirdPersonCameraController
     }
 
 
-    //I wanna override this but it has a different return type...
+    //I wanna override this but base has a different return type...
     Vector3 KeepCameraInsideWalls(Vector3 _movement)
     {
         Vector3 desiredCamPointPos = camPoint.transform.position + _movement;
