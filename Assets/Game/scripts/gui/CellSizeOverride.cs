@@ -2,10 +2,10 @@
 using UnityEngine.UI;
 using System.Collections;
 
-[AddComponentMenu("Layout/Preferred Size Override")]
+[AddComponentMenu("Layout/Cell Size Override")]
 [ExecuteInEditMode]
-[RequireComponent(typeof(LayoutElement))]
-public class PreferredSizeOverride : MonoBehaviour {
+[RequireComponent(typeof(GridLayoutGroup))]
+public class CellSizeOverride : MonoBehaviour {
 
     public GameObject providedGameObject;
     public float Percentage;
@@ -13,6 +13,8 @@ public class PreferredSizeOverride : MonoBehaviour {
     public enum OverrideTypes
     {
         None,
+        PercentageOfWidth,
+        PercentageOfHeight,
         PercentageOfParentWidth,
         PercentageOfParentHeight,
         PercentageOfObjectWidth,
@@ -27,12 +29,12 @@ public class PreferredSizeOverride : MonoBehaviour {
     void ApplyOverride()
     {
         RectTransform rt = GetComponent<RectTransform>();
-        LayoutElement layoutElement = GetComponent<LayoutElement>();
+        GridLayoutGroup gridLayout = GetComponent<GridLayoutGroup>();
         RectTransform parentRT = transform.parent.GetComponent<RectTransform>();
         RectTransform objRT = null;
         if(providedGameObject != null)
             objRT = providedGameObject.GetComponent<RectTransform>();
-        Vector2 newSize = new Vector2(layoutElement.preferredWidth, layoutElement.preferredHeight);
+        Vector2 newSize = new Vector2(gridLayout.cellSize.x, gridLayout.cellSize.y);
 
         switch(widthOverride)
         {
@@ -43,6 +45,12 @@ public class PreferredSizeOverride : MonoBehaviour {
                 break;
             case OverrideTypes.PercentageOfParentWidth:
                 newSize.x = parentRT.rect.size.x * Percentage;
+                break;
+            case OverrideTypes.PercentageOfHeight:
+                newSize.x = rt.rect.size.y * Percentage;
+                break;
+            case OverrideTypes.PercentageOfWidth:
+                newSize.x = rt.rect.size.x * Percentage;
                 break;
             case OverrideTypes.PercentageOfObjectHeight:
                 newSize.x = objRT.rect.size.y * Percentage;
@@ -64,6 +72,12 @@ public class PreferredSizeOverride : MonoBehaviour {
             case OverrideTypes.PercentageOfParentWidth:
                 newSize.y = parentRT.rect.size.x * Percentage;
                 break;
+            case OverrideTypes.PercentageOfHeight:
+                newSize.y = rt.rect.size.y * Percentage;
+                break;
+            case OverrideTypes.PercentageOfWidth:
+                newSize.y = rt.rect.size.x * Percentage;
+                break;
             case OverrideTypes.PercentageOfObjectHeight:
                 newSize.y = objRT.rect.size.y * Percentage;
                 break;
@@ -75,8 +89,13 @@ public class PreferredSizeOverride : MonoBehaviour {
                 break;
         }
 
-        layoutElement.preferredWidth = newSize.x;
-        layoutElement.preferredHeight = newSize.y;
+        //If the number is nagative, reverse it, since a cell can't be negative.
+        if (newSize.x < 0)
+            newSize.x *= -1;
+        if (newSize.y < 0)
+            newSize.y *= -1;
+
+        gridLayout.cellSize = newSize;
     }
 	
 	void Update () {

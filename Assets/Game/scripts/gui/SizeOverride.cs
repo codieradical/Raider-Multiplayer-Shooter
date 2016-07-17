@@ -16,7 +16,9 @@ public class SizeOverride : MonoBehaviour {
         PercentageOfParentWidth,
         PercentageOfParentHeight,
         PercentageOfObjectWidth,
-        PercentageOfObjectHeight
+        PercentageOfObjectHeight,
+        Width,
+        Height
     }
 
     public OverrideTypes widthOverride;
@@ -47,6 +49,9 @@ public class SizeOverride : MonoBehaviour {
             case OverrideTypes.PercentageOfObjectWidth:
                 newSize.x = objRT.sizeDelta.x * Percentage;
                 break;
+            case OverrideTypes.Height:
+                newSize.x = rt.rect.size.y;
+                break;
         }
         switch (heightOverride)
         {
@@ -63,6 +68,9 @@ public class SizeOverride : MonoBehaviour {
                 break;
             case OverrideTypes.PercentageOfObjectWidth:
                 newSize.y = objRT.sizeDelta.x * Percentage;
+                break;
+            case OverrideTypes.Width:
+                newSize.y = rt.rect.size.x;
                 break;
         }
 

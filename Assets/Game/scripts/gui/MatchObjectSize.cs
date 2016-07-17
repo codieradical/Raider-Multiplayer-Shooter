@@ -32,14 +32,14 @@ public class MatchObjectSize : MonoBehaviour {
         if (matchRect != null)
         {
             RectTransform currentRect = GetComponent<RectTransform>();
-            Vector2 updatedSize = currentRect.sizeDelta;
+            Vector2 updatedSize = currentRect.rect.size;
             if (matchWidth)
             {
-                updatedSize.x = matchRect.sizeDelta.x;
+                updatedSize.x = matchRect.rect.size.x;
             }
             if (matchHeight)
             {
-                updatedSize.y = matchRect.sizeDelta.y;
+                updatedSize.y = matchRect.rect.size.y;
             }
 
             currentRect.sizeDelta = updatedSize;
@@ -54,7 +54,7 @@ public class MatchObjectSize : MonoBehaviour {
 #if UNITY_EDITOR
     void OnRenderObject () {
         ResizeUI();
-        LayoutRebuilder.MarkLayoutForRebuild(GetComponent<RectTransform>());
+        //LayoutRebuilder.MarkLayoutForRebuild(GetComponent<RectTransform>());
     }
 #endif
 }
