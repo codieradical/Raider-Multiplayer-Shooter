@@ -4,26 +4,61 @@ using System.IO;
 
 class LocalSerializedSaveDataHandler : ISaveDataHandler
 {
-    public string dataPath = Application.persistentDataPath + "/saveData.dat";
+    [SerializeField]
+    public SaveDataStructure data { get; private set; }
 
-    public void SaveCharacter()
+    private BinaryFormatter bf = new BinaryFormatter();
+
+    public const string fileName = "/saveData.dat";
+    public readonly string dataPath = Application.persistentDataPath + fileName;
+
+    public LocalSerializedSaveDataHandler()
     {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Open(dataPath, FileMode.Open);
-
-        SaveDataStructure.Character character = new SaveDataStructure.Character();
-
-        bf.Serialize(file, character);
-        file.Close();
+        ReloadData();
     }
-    public void LoadCharacter()
+
+    public SaveDataStructure ReadData()
     {
-        if(File.Exists(dataPath))
+        if (File.Exists(dataPath))
         {
-            BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(dataPath, FileMode.Open);
-            SaveDataStructure.Character data = (SaveDataStructure.Character)bf.Deserialize(file);
+            SaveDataStructure _data = (SaveDataStructure)bf.Deserialize(file);
             file.Close();
+            return _data;
         }
+        else
+        {
+            SaveData(new SaveDataStructure());
+            return ReadData();
+        }
+    }
+
+    public void SaveData(SaveDataStructure _data)
+    {
+        FileStream file = File.Open(dataPath, FileMode.Open);
+        bf.Serialize(file, _data);
+        file.Close();
+
+        ReloadData();
+    }
+
+
+
+    public void ReloadData()
+    {
+        data = ReadData();
+    }
+
+
+
+    public void SaveCharacter(int slot, SaveDataStructure.Character character)
+    {
+        data.character1 = character;
+        SaveData(data);
+    }
+
+    public SaveDataStructure.Character LoadCharacter(int slot)
+    {
+        return data.character1;
     }
 }

@@ -2,7 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-class LocalNonSerializedSaveDataHandler : ISaveDataHandler
+public class MongoSaveDataHandler : ISaveDataHandler
 {
     public string dataPath = Application.persistentDataPath + "/saveData.txt";
 

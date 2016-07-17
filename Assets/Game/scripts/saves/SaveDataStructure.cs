@@ -4,6 +4,11 @@ using System.Collections;
 [System.Serializable]
 public class SaveDataStructure
 {
+    public Character character1;
+    public Character character2;
+    public Character character3;
+
+
     [System.Serializable]
     public class Character
     {

@@ -3,6 +3,9 @@ using System.Collections;
 
 public interface ISaveDataHandler
 {
-    void SaveCharacter();
-    void LoadCharacter();
+    SaveDataStructure ReadData();
+    void SaveCharacter(int slot, SaveDataStructure.Character character);
+    SaveDataStructure.Character LoadCharacter(int slot);
+    void SaveData(SaveDataStructure _data);
+    void ReloadData();
 }
