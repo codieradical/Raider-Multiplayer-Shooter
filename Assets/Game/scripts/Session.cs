@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Session : MonoBehaviour {
-    public ISaveDataHandler saveDataHandler;
-    public bool online = false;
-    public string username;
+public static class Session {
+    public static ISaveDataHandler saveDataHandler;
+    public static bool online = false;
 
-    public void Login(string _username)
+    public static void Login(string _username)
     {
-        username = _username;
+        InitializeSaveDataHandler();
+        saveDataHandler.SetUsername(_username);
     }
 
-    public void InitializeSaveDataHandler()
+    public static void InitializeSaveDataHandler()
     {
         if (online)
         {

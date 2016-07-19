@@ -11,4 +11,6 @@ class LocalNonSerializedSaveDataHandler : ISaveDataHandler
     public SaveDataStructure.Character LoadCharacter(int slot) { return null; }
     public void SaveData(SaveDataStructure _data) { }
     public void ReloadData() { }
+    public string GetUsername() { return null; }
+    public void SetUsername(string _username) { }
 }

@@ -4,6 +4,9 @@ using System.Collections;
 [System.Serializable]
 public class SaveDataStructure
 {
+    public string username;
+    public string password;
+
     public Character character1;
     public Character character2;
     public Character character3;

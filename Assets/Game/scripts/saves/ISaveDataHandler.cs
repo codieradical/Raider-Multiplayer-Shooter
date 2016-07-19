@@ -8,4 +8,6 @@ public interface ISaveDataHandler
     SaveDataStructure.Character LoadCharacter(int slot);
     void SaveData(SaveDataStructure _data);
     void ReloadData();
+    string GetUsername();
+    void SetUsername(string _username);
 }

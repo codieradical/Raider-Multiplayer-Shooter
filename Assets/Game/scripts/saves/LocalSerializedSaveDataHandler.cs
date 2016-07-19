@@ -61,4 +61,15 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
     {
         return data.character1;
     }
+
+    public string GetUsername()
+    {
+        return data.username;
+    }
+
+    public void SetUsername(string _username)
+    {
+        data.username = _username;
+        SaveData(data);
+    }
 }
