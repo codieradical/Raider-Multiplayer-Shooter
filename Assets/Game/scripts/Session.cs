@@ -4,6 +4,7 @@ using System.Collections;
 public static class Session {
     public static ISaveDataHandler saveDataHandler;
     public static bool online = false;
+    public static SaveDataStructure.Character character;
 
     public static void Login(string _username)
     {
@@ -11,15 +12,20 @@ public static class Session {
         saveDataHandler.SetUsername(_username);
     }
 
+    public static void SelectCharacter(int slot)
+    {
+        character = saveDataHandler.GetCharacter(slot);
+    }
+
     public static void InitializeSaveDataHandler()
     {
-        if (online)
-        {
-            saveDataHandler = new MongoSaveDataHandler();
-        }
-        else
-        {
+        //if (online)
+        //{
+        //    saveDataHandler = new MongoSaveDataHandler();
+        //}
+        //else
+        //{
             saveDataHandler = new LocalSerializedSaveDataHandler();
-        }
+        //}
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MenuManager : MonoBehaviour {
 
-    private Menu CurrentMenu;
+    public Menu CurrentMenu;
 
     public void Start()
     {

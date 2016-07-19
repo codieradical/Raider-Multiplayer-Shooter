@@ -35,7 +35,7 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
 
     public void SaveData(SaveDataStructure _data)
     {
-        FileStream file = File.Open(dataPath, FileMode.Open);
+        FileStream file = File.Open(dataPath, FileMode.OpenOrCreate);
         bf.Serialize(file, _data);
         file.Close();
 
@@ -53,13 +53,13 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
 
     public void SaveCharacter(int slot, SaveDataStructure.Character character)
     {
-        data.character1 = character;
+        data.characters[slot] = character;
         SaveData(data);
     }
 
-    public SaveDataStructure.Character LoadCharacter(int slot)
+    public SaveDataStructure.Character GetCharacter(int slot)
     {
-        return data.character1;
+        return data.characters[slot];
     }
 
     public string GetUsername()

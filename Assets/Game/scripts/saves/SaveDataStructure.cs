@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class SaveDataStructure
@@ -7,9 +8,7 @@ public class SaveDataStructure
     public string username;
     public string password;
 
-    public Character character1;
-    public Character character2;
-    public Character character3;
+    public List<Character> characters;
 
 
     [System.Serializable]
