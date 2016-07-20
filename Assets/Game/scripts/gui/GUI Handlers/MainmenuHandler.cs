@@ -14,6 +14,7 @@ public class MainmenuHandler : MonoBehaviour {
     public GameObject ChooseCharacterScreen;
     public GameObject CreateCharacterScreen;
     public GameObject MainMenuScreen;
+    public GameObject ColorPicker;
 
     [Header("Lobby")]
     public GameObject Lobby;
@@ -63,6 +64,7 @@ public class MainmenuHandler : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = ColorPicker;
         menuManager = GetComponent<MenuManager>();
         lobbyHandler = Lobby.GetComponent<LobbyHandler>();
     }

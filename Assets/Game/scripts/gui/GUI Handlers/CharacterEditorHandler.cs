@@ -11,11 +11,11 @@ public class CharacterEditorHandler : MonoBehaviour {
     [Header("Prefabs")]
     public Object selectedCharacterPrefab;
 
+    //Assigned by mainmenu handler.
+    public GameObject colorPicker;
+
     private RenderTexture selectedCharacterView;
     private GameObject selectedCharacterDisplayModel;
-    private Material selectedCharacterMaterial1;
-    private Material selectedCharacterMaterial2;
-    private Material selectedCharacterMaterial3;
     private Color primarycolor;
     private Color secondarycolor;
     private Color tertiarycolor;
@@ -41,77 +41,64 @@ public class CharacterEditorHandler : MonoBehaviour {
         modelTorso = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighTorsoGeo").gameObject;
         modelLimbs = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighLimbsGeo").gameObject;
         modelJoints = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighJointsGeo").gameObject;
-
-        selectedCharacterMaterial1 = new Material(modelTorso.GetComponent<Renderer>().material);
-        selectedCharacterMaterial2 = new Material(modelJoints.GetComponent<Renderer>().material);
-        selectedCharacterMaterial3 = new Material(modelLimbs.GetComponent<Renderer>().material);
-
-        modelTorso.GetComponent<Renderer>().material = selectedCharacterMaterial1;
-        modelJoints.GetComponent<Renderer>().material = selectedCharacterMaterial2;
-        modelLimbs.GetComponent<Renderer>().material = selectedCharacterMaterial3;
     }
 
-    public void UpdateColor(Text colorText, int index)
-    { }
-
-    public void UpdateColor1(Text colorText)
+    public void UpdateColor(Color color, int index)
     {
-        int hexColor;
-        string colorString = colorText.text.Replace("#", "");
-
-        if (colorString.Length != 6 || !int.TryParse(colorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat, out hexColor))
+        if (index == 1)
         {
-            return;
+            primarycolor = color;
+            modelTorso.GetComponent<Renderer>().material.SetColor(1, primarycolor);
         }
-
-        string extractedR = colorString.Remove(2, 4);
-        string extractedG = colorString.Remove(0, 2).Remove(2, 2);
-        string extractedB = colorString.Remove(0, 4);
-
-        int r = int.Parse("0" + extractedR, NumberStyles.HexNumber);
-        int g = int.Parse(extractedG, NumberStyles.HexNumber);
-        int b = int.Parse(extractedB, NumberStyles.HexNumber);
-
-        primarycolor = new Color(r, g, b);
-        selectedCharacterMaterial1.color = primarycolor;
-        modelTorso.GetComponent<Renderer>().material = selectedCharacterMaterial1;
-        modelTorso.GetComponent<Renderer>().material.color = primarycolor;
-        modelTorso.GetComponent<Renderer>().material.SetColor(1, primarycolor);
+        else if (index == 2)
+        {
+            secondarycolor = color;
+            modelJoints.GetComponent<Renderer>().material.SetColor(1, secondarycolor);
+        }
+        else if (index == 3)
+        {
+            tertiarycolor = color;
+            modelLimbs.GetComponent<Renderer>().material.SetColor(1, tertiarycolor);
+        }
+        else
+        {
+            Debug.Log("[GUI\\CharacterEditor] Invalid index provided for UpdateColor method.");
+        }
     }
 
-    public void UpdateColor2(Text colorText)
+    public void SetColor1(Color color)
     {
-        int hexColor;
-
-        if (colorText.text.Length != 7 || !int.TryParse(colorText.text.Replace("#", ""), out hexColor))
-        {
-            return;
-        }
-
-        int r = int.Parse(hexColor.ToString().Remove(3, 2), NumberStyles.HexNumber);
-        int g = int.Parse(hexColor.ToString().Remove(0, 2).Remove(3, 2), NumberStyles.HexNumber);
-        int b = int.Parse(hexColor.ToString().Remove(0, 4), NumberStyles.HexNumber);
-
-        secondarycolor = new Color(r, g, b);
-        selectedCharacterMaterial2.color = secondarycolor;
-        modelJoints.GetComponent<Renderer>().material = selectedCharacterMaterial2;
+        UpdateColor(color, 1);
     }
 
-    public void UpdateColor3(Text colorText)
+    public void SetColor2(Color color)
     {
-        int hexColor;
-
-        if (colorText.text.Length != 7 || !int.TryParse(colorText.text.Replace("#", ""), out hexColor))
-        {
-            return;
-        }
-
-        int r = int.Parse(hexColor.ToString().Remove(3, 2), NumberStyles.HexNumber);
-        int g = int.Parse(hexColor.ToString().Remove(0, 2).Remove(3, 2), NumberStyles.HexNumber);
-        int b = int.Parse(hexColor.ToString().Remove(0, 4), NumberStyles.HexNumber);
-
-        tertiarycolor = new Color(r, g, b);
-        selectedCharacterMaterial3.color = tertiarycolor;
-        modelLimbs.GetComponent<Renderer>().material = selectedCharacterMaterial3;
+        UpdateColor(color, 2);
     }
+
+    public void SetColor3(Color color)
+    {
+        UpdateColor(color, 3);
+    }
+
+    public void EditColor(int index)
+    {
+        if(index == 1)
+        {
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor1");
+        }
+        else if (index == 2)
+        {
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor2");
+        }
+        else if (index == 3)
+        {
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor3");
+        }
+        else
+        {
+            Debug.Log("[GUI\\CharacterEditor] Invalid index provided for EditColor method.");
+        }
+    }
+
 }
