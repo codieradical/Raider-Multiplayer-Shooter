@@ -16,13 +16,25 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     private RenderTexture selectedCharacterView;
     private GameObject selectedCharacterDisplayModel;
+
     private Color primarycolor;
     private Color secondarycolor;
     private Color tertiarycolor;
 
+    public Image primaryButton;
+    public Image secondaryButton;
+    public Image tertiaryButton;
+    public Text usernameLabel;
+
     private GameObject modelTorso;
     private GameObject modelLimbs;
     private GameObject modelJoints;
+
+    void Start()
+    {
+        if (primaryButton == null || secondaryButton == null || tertiaryButton == null || usernameLabel == null)
+            Debug.LogError("[GUI/CharacterEditorHandler] Missing a required game object.");
+    }
 
     public void NewCharacter()
     {
@@ -38,6 +50,8 @@ public class CharacterEditorHandler : MonoBehaviour {
         charactersParent.transform.FindChild("SelectedChar").FindChild("cam").GetComponent<Camera>().targetTexture = selectedCharacterView;
         transform.FindChild("Image").GetComponent<RawImage>().texture = selectedCharacterView;
 
+        usernameLabel.text = Session.saveDataHandler.GetUsername();
+
         modelTorso = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighTorsoGeo").gameObject;
         modelLimbs = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighLimbsGeo").gameObject;
         modelJoints = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighJointsGeo").gameObject;
@@ -48,17 +62,20 @@ public class CharacterEditorHandler : MonoBehaviour {
         if (index == 1)
         {
             primarycolor = color;
-            modelTorso.GetComponent<Renderer>().material.SetColor(1, primarycolor);
+            modelTorso.GetComponent<Renderer>().material.color = primarycolor;
+            primaryButton.color = primarycolor;
         }
         else if (index == 2)
         {
             secondarycolor = color;
-            modelJoints.GetComponent<Renderer>().material.SetColor(1, secondarycolor);
+            modelJoints.GetComponent<Renderer>().material.color = secondarycolor;
+            secondaryButton.color = secondarycolor;
         }
         else if (index == 3)
         {
             tertiarycolor = color;
-            modelLimbs.GetComponent<Renderer>().material.SetColor(1, tertiarycolor);
+            modelLimbs.GetComponent<Renderer>().material.color = tertiarycolor;
+            tertiaryButton.color = tertiarycolor;
         }
         else
         {
@@ -85,15 +102,15 @@ public class CharacterEditorHandler : MonoBehaviour {
     {
         if(index == 1)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor1");
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor1", primaryButton.color);
         }
         else if (index == 2)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor2");
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor2", secondaryButton.color);
         }
         else if (index == 3)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor3");
+            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor3", tertiaryButton.color);
         }
         else
         {

@@ -53,7 +53,7 @@ public class MainmenuHandler : MonoBehaviour {
     public void CreateCharacter()
     {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().NewCharacter();
-        menuManager.ShowMenu(GetComponent<Menu>());
+        menuManager.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
     }
 
     public void TestLoader()

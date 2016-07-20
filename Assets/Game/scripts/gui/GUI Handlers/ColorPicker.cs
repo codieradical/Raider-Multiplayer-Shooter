@@ -8,21 +8,63 @@ public class ColorPicker : MonoBehaviour {
     float s;
     float l;
 
+    Slider hSlider;
+    Slider sSlider;
+    Slider lSlider;
+
     public MonoBehaviour callbackScript;
     public string callbackMethod;
+
+    void Start()
+    {
+        hSlider = transform.FindChild("Background").FindChild("H").FindChild("HSlider").GetComponent<Slider>();
+        sSlider = transform.FindChild("Background").FindChild("S").FindChild("SSlider").GetComponent<Slider>();
+        lSlider = transform.FindChild("Background").FindChild("L").FindChild("LSlider").GetComponent<Slider>();
+    }
 
     public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod)
     {
         callbackScript = _callbackScript;
         callbackMethod = _callbackMethod;
         gameObject.SetActive(true);
+
+        //ResetSliders();
+    }
+
+    public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod, Color _currentColor)
+    {
+        callbackScript = _callbackScript;
+        callbackMethod = _callbackMethod;
+        gameObject.SetActive(true);
+
+        SetSliders(_currentColor);
+    }
+
+    void SetSliders(Color _color)
+    {
+        float _h;
+        float _s;
+        float _l;
+
+        Color.RGBToHSV(_color, out _h, out _s, out _l);
+
+        hSlider.value = _h;
+        sSlider.value = _s;
+        lSlider.value = _l;
+    }
+
+    void ResetSliders()
+    {
+        hSlider.value = 0;
+        sSlider.value = 1;
+        lSlider.value = 1;
     }
 
     public void UpdateSliders()
     {
-        h = transform.FindChild("Background").FindChild("H").FindChild("HSlider").GetComponent<Slider>().value;
-        s = transform.FindChild("Background").FindChild("S").FindChild("SSlider").GetComponent<Slider>().value;
-        l = transform.FindChild("Background").FindChild("L").FindChild("LSlider").GetComponent<Slider>().value;
+        h = hSlider.value;
+        s = sSlider.value;
+        l = lSlider.value;
 
         UpdatePreviews();
     }
