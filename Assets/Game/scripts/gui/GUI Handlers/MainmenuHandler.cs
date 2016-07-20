@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using System.Globalization;
 
 [RequireComponent(typeof(MenuManager))]
 public class MainmenuHandler : MonoBehaviour {
 
+    [SerializeField]
+    public CharacterEditorHandler editorHandler = new CharacterEditorHandler();
+
     [Header("Screens")]
     public GameObject LoginScreen;
     public GameObject ChooseCharacterScreen;
+    public GameObject CreateCharacterScreen;
     public GameObject MainMenuScreen;
 
+    [Header("Lobby")]
     public GameObject Lobby;
 
     private LobbyHandler lobbyHandler;
@@ -42,6 +47,12 @@ public class MainmenuHandler : MonoBehaviour {
         lobbyHandler.AddPlayer(playerNameplate);
 
         menuManager.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+    }
+
+    public void CreateCharacter()
+    {
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().NewCharacter();
+        menuManager.ShowMenu(GetComponent<Menu>());
     }
 
     public void TestLoader()
