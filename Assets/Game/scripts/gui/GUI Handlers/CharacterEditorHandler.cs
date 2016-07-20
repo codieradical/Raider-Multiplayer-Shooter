@@ -51,22 +51,32 @@ public class CharacterEditorHandler : MonoBehaviour {
         modelLimbs.GetComponent<Renderer>().material = selectedCharacterMaterial3;
     }
 
+    public void UpdateColor(Text colorText, int index)
+    { }
+
     public void UpdateColor1(Text colorText)
     {
         int hexColor;
+        string colorString = colorText.text.Replace("#", "");
 
-        if (colorText.text.Length != 7 || !int.TryParse(colorText.text.Replace("#", ""), out hexColor))
+        if (colorString.Length != 6 || !int.TryParse(colorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat, out hexColor))
         {
             return;
         }
 
-        int r = int.Parse(hexColor.ToString().Remove(3, 2), NumberStyles.HexNumber);
-        int g = int.Parse(hexColor.ToString().Remove(0, 2).Remove(3, 2), NumberStyles.HexNumber);
-        int b = int.Parse(hexColor.ToString().Remove(0, 4), NumberStyles.HexNumber);
+        string extractedR = colorString.Remove(2, 4);
+        string extractedG = colorString.Remove(0, 2).Remove(2, 2);
+        string extractedB = colorString.Remove(0, 4);
+
+        int r = int.Parse("0" + extractedR, NumberStyles.HexNumber);
+        int g = int.Parse(extractedG, NumberStyles.HexNumber);
+        int b = int.Parse(extractedB, NumberStyles.HexNumber);
 
         primarycolor = new Color(r, g, b);
         selectedCharacterMaterial1.color = primarycolor;
         modelTorso.GetComponent<Renderer>().material = selectedCharacterMaterial1;
+        modelTorso.GetComponent<Renderer>().material.color = primarycolor;
+        modelTorso.GetComponent<Renderer>().material.SetColor(1, primarycolor);
     }
 
     public void UpdateColor2(Text colorText)
