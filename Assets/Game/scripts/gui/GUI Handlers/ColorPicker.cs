@@ -8,18 +8,17 @@ public class ColorPicker : MonoBehaviour {
     float s;
     float l;
 
-    Slider hSlider;
-    Slider sSlider;
-    Slider lSlider;
+    public Slider hSlider;
+    public Slider sSlider;
+    public Slider lSlider;
 
     public MonoBehaviour callbackScript;
     public string callbackMethod;
 
     void Start()
     {
-        hSlider = transform.FindChild("Background").FindChild("H").FindChild("HSlider").GetComponent<Slider>();
-        sSlider = transform.FindChild("Background").FindChild("S").FindChild("SSlider").GetComponent<Slider>();
-        lSlider = transform.FindChild("Background").FindChild("L").FindChild("LSlider").GetComponent<Slider>();
+        if (hSlider == null || sSlider == null || lSlider == null)
+            Debug.LogError("[GUI\\C0olorPicker] missing a slider object.");
     }
 
     public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod)
