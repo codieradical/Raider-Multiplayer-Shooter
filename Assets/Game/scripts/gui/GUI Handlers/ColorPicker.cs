@@ -77,7 +77,7 @@ public class ColorPicker : MonoBehaviour {
     public void Done()
     {
         gameObject.SetActive(false);
-        callbackScript.StartCoroutine(callbackMethod, Color.HSVToRGB(h,s, l));
+        callbackScript.StartCoroutine(callbackMethod, Color.HSVToRGB(h,s,l));
     }
 
 }

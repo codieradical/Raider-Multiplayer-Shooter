@@ -5,21 +5,20 @@ using System.Globalization;
 
 public class CharacterEditorHandler : MonoBehaviour {
 
-    [Header("Characters")]
+    [Header("Objects")]
     public GameObject charactersParent;
+    [HideInInspector]    //Assigned by mainmenu handler.
+    public ColorPicker colorPicker;
+    public EmblemEditorHandler emblemEditor;
+    public EmblemHandler emblemPreview;
 
     [Header("Prefabs")]
     public Object selectedCharacterPrefab;
 
-    //Assigned by mainmenu handler.
-    public GameObject colorPicker;
-
     private RenderTexture selectedCharacterView;
     private GameObject selectedCharacterDisplayModel;
 
-    private Color primarycolor;
-    private Color secondarycolor;
-    private Color tertiarycolor;
+    public SaveDataStructure.Character character;
 
     public Image primaryButton;
     public Image secondaryButton;
@@ -32,12 +31,16 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     void Start()
     {
+        emblemEditor.characterEditorHandler = this;
+
         if (primaryButton == null || secondaryButton == null || tertiaryButton == null || usernameLabel == null)
             Debug.LogError("[GUI/CharacterEditorHandler] Missing a required game object.");
     }
 
     public void NewCharacter()
     {
+        character = new SaveDataStructure.Character();
+
         GameObject newCharacter = Instantiate(selectedCharacterPrefab) as GameObject;
         newCharacter.transform.SetParent(charactersParent.transform, false);
         newCharacter.name = "SelectedChar";
@@ -55,32 +58,42 @@ public class CharacterEditorHandler : MonoBehaviour {
         modelTorso = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighTorsoGeo").gameObject;
         modelLimbs = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighLimbsGeo").gameObject;
         modelJoints = selectedCharacterDisplayModel.transform.Find("Graphics").Find("Model").Find("BetaHighResMeshes").Find("Beta_HighJointsGeo").gameObject;
+
+        UpdatePreview();
+    }
+
+    public void UpdatePreview()
+    {
+        modelTorso.GetComponent<Renderer>().material.color = character.armourPrimaryColor;
+        primaryButton.color = character.armourPrimaryColor;
+        modelJoints.GetComponent<Renderer>().material.color = character.armourSecondaryColor;
+        secondaryButton.color = character.armourSecondaryColor;
+        modelLimbs.GetComponent<Renderer>().material.color = character.armourTertiaryColor;
+        tertiaryButton.color = character.armourTertiaryColor;
+
+        emblemPreview.UpdateEmblem(character);
     }
 
     public void UpdateColor(Color color, int index)
     {
         if (index == 1)
         {
-            primarycolor = color;
-            modelTorso.GetComponent<Renderer>().material.color = primarycolor;
-            primaryButton.color = primarycolor;
+            character.armourPrimaryColor = color;
         }
         else if (index == 2)
         {
-            secondarycolor = color;
-            modelJoints.GetComponent<Renderer>().material.color = secondarycolor;
-            secondaryButton.color = secondarycolor;
+            character.armourSecondaryColor = color;
         }
         else if (index == 3)
         {
-            tertiarycolor = color;
-            modelLimbs.GetComponent<Renderer>().material.color = tertiarycolor;
-            tertiaryButton.color = tertiarycolor;
+            character.armourTertiaryColor = color;
         }
         else
         {
             Debug.Log("[GUI\\CharacterEditor] Invalid index provided for UpdateColor method.");
         }
+
+        UpdatePreview();
     }
 
     public void SetColor1(Color color)
@@ -102,15 +115,15 @@ public class CharacterEditorHandler : MonoBehaviour {
     {
         if(index == 1)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor1", primaryButton.color);
+            colorPicker.OpenColorPicker(this, "SetColor1", primaryButton.color);
         }
         else if (index == 2)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor2", secondaryButton.color);
+            colorPicker.OpenColorPicker(this, "SetColor2", secondaryButton.color);
         }
         else if (index == 3)
         {
-            colorPicker.GetComponent<ColorPicker>().OpenColorPicker(this, "SetColor3", tertiaryButton.color);
+            colorPicker.OpenColorPicker(this, "SetColor3", tertiaryButton.color);
         }
         else
         {

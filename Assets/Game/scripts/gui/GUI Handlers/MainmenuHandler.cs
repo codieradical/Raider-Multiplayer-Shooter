@@ -14,12 +14,11 @@ public class MainmenuHandler : MonoBehaviour {
     public GameObject ChooseCharacterScreen;
     public GameObject CreateCharacterScreen;
     public GameObject MainMenuScreen;
-    public GameObject ColorPicker;
 
-    [Header("Lobby")]
-    public GameObject Lobby;
+    [Header("Common Components")]
+    public ColorPicker colorPicker;
+    public LobbyHandler lobbyHandler;
 
-    private LobbyHandler lobbyHandler;
     private MenuManager menuManager;
 
     public void Login(Text _textComponent)
@@ -64,9 +63,8 @@ public class MainmenuHandler : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = ColorPicker;
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = colorPicker;
         menuManager = GetComponent<MenuManager>();
-        lobbyHandler = Lobby.GetComponent<LobbyHandler>();
     }
 
     // Update is called once per frame

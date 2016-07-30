@@ -14,26 +14,54 @@ public class SaveDataStructure
     [System.Serializable]
     public class Character
     {
-        public Character() { }
-
-        public Character(Color _primaryColor, Color _secondaryColor, Color _tertiaryColor, int _emblemLayer1, int _emblemLayer2, int _emblemLayer3, int _level, int _exp)
+        /// <summary>
+        /// Instanciates and assigns some default colors.
+        /// </summary>
+        public Character()
         {
-            primaryColor = _primaryColor;
-            secondaryColor = _secondaryColor;
-            tertiaryColor = _tertiaryColor;
+            armourPrimaryColor = Color.cyan;
+            armourSecondaryColor = Color.black;
+            armourTertiaryColor = Color.cyan;
+            emblemLayer2Color = Color.white;
+            emblemLayer1Color = Color.gray;
+            emblemLayer0Color = Color.black;
+        }
+
+        public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp)
+        {
+            guild = _guild;
+            armourPrimaryColor = _armourPrimaryColor;
+            armourSecondaryColor = _armourSecondaryColor;
+            armourTertiaryColor = _armourTertiaryColor;
+            emblemLayer0Color = _emblemLayer0Color;
+            emblemLayer1Color = _emblemLayer1Color;
+            emblemLayer2Color = _emblemLayer2Color;
+            emblemLayer0 = _emblemLayer0;
             emblemLayer1 = _emblemLayer1;
             emblemLayer2 = _emblemLayer2;
-            emblemLayer3 = _emblemLayer3;
             level = _level;
             EXP = _exp;
         }
 
-        public Color primaryColor;
-        public Color secondaryColor;
-        public Color tertiaryColor;
+        public enum AvailableArmours
+        {
+            X,
+            Y
+        }
+
+        public string guild;
+        public Color armourPrimaryColor;
+        public Color armourSecondaryColor;
+        public Color armourTertiaryColor;
+        public Color emblemLayer2Color;
+        public Color emblemLayer1Color;
+        public Color emblemLayer0Color;
+        public AvailableArmours shoulderArmour;
+        public AvailableArmours helmetArmour;
+        public AvailableArmours chestArmour;
+        public int emblemLayer0;
         public int emblemLayer1;
-        public int emblemLayer2;
-        public int emblemLayer3;
+        public bool emblemLayer2;
         public int level;
         public int EXP;
     }
