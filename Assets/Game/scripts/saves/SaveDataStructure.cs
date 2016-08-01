@@ -49,6 +49,13 @@ public class SaveDataStructure
             Y
         }
 
+        public enum Race
+        {
+            X,
+            Y
+        }
+
+        public Race race;
         public string guild;
         public Color armourPrimaryColor;
         public Color armourSecondaryColor;

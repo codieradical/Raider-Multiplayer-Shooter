@@ -66,10 +66,4 @@ public class MainmenuHandler : MonoBehaviour {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = colorPicker;
         menuManager = GetComponent<MenuManager>();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
