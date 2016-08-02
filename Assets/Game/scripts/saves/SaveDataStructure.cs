@@ -14,7 +14,7 @@ public class SaveDataStructure
             g = color.g;
             b = color.b;
         }
-        public Color color { get { return new Color(r, g, b); } }
+        public Color color { get { return new Color(r, g, b); } set { r = value.r; g = value.g; b = value.b; } }
         float r;
         float g;
         float b;
@@ -40,9 +40,10 @@ public class SaveDataStructure
             emblemLayer1Color = new SerializableColor(Color.gray);
             emblemLayer0Color = new SerializableColor(Color.black);
             emblemLayer2 = true;
+            race = Race.X;
         }
 
-        public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp)
+        public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp, Race _race)
         {
             guild = _guild;
             armourPrimaryColor = new SerializableColor(_armourPrimaryColor);
@@ -55,7 +56,8 @@ public class SaveDataStructure
             emblemLayer1 = _emblemLayer1;
             emblemLayer2 = _emblemLayer2;
             level = _level;
-            EXP = _exp;
+            exp = _exp;
+            race = _race;
         }
 
         public enum AvailableArmours
@@ -66,8 +68,8 @@ public class SaveDataStructure
 
         public enum Race
         {
-            X,
-            Y
+            X = 0,
+            Y = 1
         }
 
         public Race race;
@@ -86,6 +88,6 @@ public class SaveDataStructure
         public int emblemLayer1;
         public bool emblemLayer2;
         public int level;
-        public int EXP;
+        public int exp;
     }
 }

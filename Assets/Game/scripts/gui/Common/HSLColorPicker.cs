@@ -118,8 +118,8 @@ public class HSLColorPicker : MonoBehaviour {
     void ResetValues()
     {
         hSlider.value = 0;
-        sSlider.value = 1;
-        lSlider.value = 1;
+        sSlider.value = 255;
+        lSlider.value = 255;
     }
 
     public void UpdateSliders()

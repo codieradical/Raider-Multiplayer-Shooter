@@ -13,7 +13,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
     public Object XPreviewPrefab;
     public Object YPreviewPrefab;
 
-    public int nextPreviewX = 0;
+    int nextPreviewX = 0;
 
     public enum PreviewType
     {
@@ -41,9 +41,15 @@ public class CharacterPreviewHandler : MonoBehaviour {
         switch (_race)
         {
             case SaveDataStructure.Character.Race.X:
-                return XPreviewPrefab;
+                if (_previewType == PreviewType.Full)
+                    return XPreviewPrefab;
+                else
+                    return XPlatePreviewPrefab;
             case SaveDataStructure.Character.Race.Y:
-                return YPreviewPrefab;
+                if (_previewType == PreviewType.Full)
+                    return YPreviewPrefab;
+                else
+                    return YPlatePreviewPrefab;
         }
         Debug.LogError("[GUI/CharacterPreviewHandler] Failed to get race prefab.");
         return XPreviewPrefab;
@@ -144,47 +150,25 @@ public class CharacterPreviewHandler : MonoBehaviour {
 
     public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
     {
-        PreviewID _pastID = GetPreviewID(_previewName);
-
-        if (_pastID == null)
-            Debug.LogError("[GUI/CharacterPreviewHandler] Preview missing ID script! " + _previewName);
-
-        if (_pastID.character.race != _character.race)
-        {
-            DestroyPreviewObject(_previewName);
-            NewPreview(_previewName, _character, _pastID.previewType);
-        }
-        else
-            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
-    }
-
-    public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character, out bool newPreview)
-    {
-        PreviewID _pastID = GetPreviewID(_previewName);
-
-        if (_pastID == null)
-            Debug.LogError("[GUI/CharacterPreviewHandler] Preview missing ID script! " + _previewName);
-
-        if (_pastID.character.race != _character.race)
-        {
-            newPreview = true;
-            DestroyPreviewObject(_previewName);
-            NewPreview(_previewName, _character, _pastID.previewType);
-        }
-        else
-        {
-            newPreview = false;
-            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
-        }
+        appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
     }
 
     void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
     {
+        //Find the graphics object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
         GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find("Graphics").gameObject;
         PlayerAppearenceController _appearenceController = _previewGraphics.GetComponent<PlayerAppearenceController>();
         _appearenceController.UpdatePlayerAppearence(update.previewName, update.character);
+
+        //Keep the PreviewID up to date.
+        GetPreviewID(update.previewName).appearenceCharacter = update.character;
     }
 
+    /// <summary>
+    /// Searches for a Preview GameObject bu string.
+    /// </summary>
+    /// <param name="_previewName">The preview name to search for.</param>
+    /// <returns></returns>
     public GameObject GetPreviewObject(string _previewName)
     {
         GameObject _previewObject = transform.Find(_previewName).gameObject;
@@ -193,6 +177,11 @@ public class CharacterPreviewHandler : MonoBehaviour {
         return _previewObject;
     }
 
+    /// <summary>
+    /// Searches for all Preview GameObjects with a name containing the provided string.
+    /// </summary>
+    /// <param name="_previewName">The string to search for.</param>
+    /// <returns></returns>
     public List<GameObject> GetPreviewObjects(string _previewName)
     {
         List<GameObject> matchingPreviews = new List<GameObject>();

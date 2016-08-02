@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Globalization;
+using System;
 
 public class CharacterEditorHandler : MonoBehaviour {
 
@@ -15,10 +16,15 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     public EmblemEditorHandler emblemEditor;
     public EmblemHandler emblemPreview;
-    public Image primaryColorButton;
-    public Image secondaryColorButton;
-    public Image tertiaryColorButton;
-    public Text usernameLabel;
+
+    public GameObject optionsParent;
+    private Dropdown raceDropdown;
+    private Image primaryColorButton;
+    private Image secondaryColorButton;
+    private Image tertiaryColorButton;
+    private Text usernameLabel;
+    private InputField guildInput;
+
     public GameObject characterPreviewImage;
 
     const string PREVIEW_CHARACTER_NAME = "EditingChar";
@@ -27,15 +33,30 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     public SaveDataStructure.Character editingCharacter;
 
+    [HideInInspector]
     public int characterSlot;
 
+    #region setup
 
     void Start()
     {
         emblemEditor.characterEditorHandler = this;
 
+        FindOptionFields();
+
         if (primaryColorButton == null || secondaryColorButton == null || tertiaryColorButton == null || usernameLabel == null)
             Debug.LogError("[GUI/CharacterEditorHandler] Missing a required game object.");
+    }
+
+    public void FindOptionFields()
+    {
+        //A better way to assign these would be nice.
+        primaryColorButton = optionsParent.transform.Find("color1").Find("Button").GetComponent<Image>();
+        secondaryColorButton = optionsParent.transform.Find("color2").Find("Button").GetComponent<Image>();
+        tertiaryColorButton = optionsParent.transform.Find("color3").Find("Button").GetComponent<Image>();
+        usernameLabel = optionsParent.transform.Find("username").Find("label").GetComponent<Text>();
+        guildInput = optionsParent.transform.Find("guild").Find("InputField").GetComponent<InputField>();
+        raceDropdown = optionsParent.transform.Find("race").Find("Dropdown").GetComponent<Dropdown>();
     }
 
     public void NewCharacter()
@@ -45,8 +66,7 @@ public class CharacterEditorHandler : MonoBehaviour {
 
         SetupPreviewImage(editingCharacter);
 
-        usernameLabel.text = Session.saveDataHandler.GetUsername();
-
+        ResetFieldValues();
         UpdatePreview();
     }
 
@@ -56,6 +76,9 @@ public class CharacterEditorHandler : MonoBehaviour {
         editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 
         SetupPreviewImage(editingCharacter);
+
+        ResetFieldValues();
+        UpdatePreview();
     }
 
     void SetupPreviewImage(SaveDataStructure.Character _editingCharacter)
@@ -72,23 +95,9 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterPreviewImage.GetComponent<RawImage>().texture = previewCharacterImage;
     }
 
-    void SetupPreviewImage()
-    {
-        Camera previewCamera = characterPreviewHandler.GetPreviewCamera(PREVIEW_CHARACTER_NAME);
-
-        previewCharacterImage = new RenderTexture(Screen.height, Screen.height, 24, RenderTextureFormat.ARGB32);
-        previewCharacterImage.Create();
-
-        previewCamera.targetTexture = previewCharacterImage;
-        characterPreviewImage.GetComponent<RawImage>().texture = previewCharacterImage;
-    }
-
     public void UpdatePreview()
     {
-        bool newPreview;
-        characterPreviewHandler.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter, out newPreview);
-        if (newPreview)
-            SetupPreviewImage();
+        characterPreviewHandler.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
 
         primaryColorButton.color = editingCharacter.armourPrimaryColor.color;
         secondaryColorButton.color = editingCharacter.armourSecondaryColor.color;
@@ -96,6 +105,41 @@ public class CharacterEditorHandler : MonoBehaviour {
 
         emblemPreview.UpdateEmblem(editingCharacter);
     }
+
+    #endregion
+
+    #region data
+
+    public void ResetFieldValues()
+    {
+        raceDropdown.options = new System.Collections.Generic.List<Dropdown.OptionData>();
+        foreach(SaveDataStructure.Character.Race race in Enum.GetValues(typeof(SaveDataStructure.Character.Race)))
+        {
+            raceDropdown.options.Add(new Dropdown.OptionData(race.ToString()));
+        }
+        raceDropdown.value = (int) editingCharacter.race;
+
+        usernameLabel.text = Session.saveDataHandler.GetUsername();
+        guildInput.text = editingCharacter.guild;
+    }
+
+    public void EditGuild(string _guild)
+    {
+        editingCharacter.guild = _guild;
+    }
+
+    public void EditRace(Int32 _raceValue)
+    {
+        editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
+
+        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+        SetupPreviewImage(editingCharacter);
+
+    }
+
+    #endregion
+
+    #region color stuff
 
     public void UpdateColor(Color color, int index)
     {
@@ -137,6 +181,8 @@ public class CharacterEditorHandler : MonoBehaviour {
         else
             Debug.Log("[GUI\\CharacterEditor] Invalid index provided for EditColor method.");
     }
+
+    #endregion
 
     public void Done()
     {
