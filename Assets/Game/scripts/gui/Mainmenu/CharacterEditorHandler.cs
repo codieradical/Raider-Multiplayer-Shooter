@@ -7,22 +7,28 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     [Header("Objects")]
     [HideInInspector]    //Assigned by mainmenu handler.
-    public ColorPicker colorPicker;
+    public HSLColorPicker colorPicker;
+    [HideInInspector]
+    public CharacterPreviewHandler characterPreviewHandler;
+    [HideInInspector]
+    public MainmenuHandler mainmenuHandler;
+
     public EmblemEditorHandler emblemEditor;
     public EmblemHandler emblemPreview;
-    public CharacterPreviewHandler characterPreviewHandler;
-
-    const string previewCharacterName = "SelectedChar";
-
-    private RenderTexture previewCharacterImage;
-
-    public SaveDataStructure.Character character;
-
-    public RawImage characterPreviewImage;
     public Image primaryColorButton;
     public Image secondaryColorButton;
     public Image tertiaryColorButton;
     public Text usernameLabel;
+    public GameObject characterPreviewImage;
+
+    const string PREVIEW_CHARACTER_NAME = "EditingChar";
+
+    private RenderTexture previewCharacterImage;
+
+    public SaveDataStructure.Character editingCharacter;
+
+    public int characterSlot;
+
 
     void Start()
     {
@@ -34,42 +40,71 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     public void NewCharacter()
     {
-        character = new SaveDataStructure.Character();
+        characterSlot = Session.saveDataHandler.characterCount;
+        editingCharacter = new SaveDataStructure.Character();
 
-        Camera previewCamera;
-
-        characterPreviewHandler.NewPreview("SelectedChar", character, out previewCamera);
-
-        previewCharacterImage = new RenderTexture(512, 515, 24, RenderTextureFormat.ARGB32);
-        previewCharacterImage.Create();
-
-        previewCamera.targetTexture = previewCharacterImage;
-        transform.FindChild("Image").GetComponent<RawImage>().texture = previewCharacterImage;
+        SetupPreviewImage(editingCharacter);
 
         usernameLabel.text = Session.saveDataHandler.GetUsername();
 
         UpdatePreview();
     }
 
+    public void EditCharacter(int _slot)
+    {
+        characterSlot = _slot;
+        editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
+
+        SetupPreviewImage(editingCharacter);
+    }
+
+    void SetupPreviewImage(SaveDataStructure.Character _editingCharacter)
+    {
+        Camera previewCamera;
+        CharacterPreviewDisplayHandler displayHandler = characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>();
+
+        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, _editingCharacter, CharacterPreviewHandler.PreviewType.Full, out previewCamera, displayHandler);
+
+        previewCharacterImage = new RenderTexture(Screen.height, Screen.height, 24, RenderTextureFormat.ARGB32);
+        previewCharacterImage.Create();
+
+        previewCamera.targetTexture = previewCharacterImage;
+        characterPreviewImage.GetComponent<RawImage>().texture = previewCharacterImage;
+    }
+
+    void SetupPreviewImage()
+    {
+        Camera previewCamera = characterPreviewHandler.GetPreviewCamera(PREVIEW_CHARACTER_NAME);
+
+        previewCharacterImage = new RenderTexture(Screen.height, Screen.height, 24, RenderTextureFormat.ARGB32);
+        previewCharacterImage.Create();
+
+        previewCamera.targetTexture = previewCharacterImage;
+        characterPreviewImage.GetComponent<RawImage>().texture = previewCharacterImage;
+    }
+
     public void UpdatePreview()
     {
-        characterPreviewHandler.PushPreviewUpdate("SelectedChar", character);
+        bool newPreview;
+        characterPreviewHandler.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter, out newPreview);
+        if (newPreview)
+            SetupPreviewImage();
 
-        primaryColorButton.color = character.armourPrimaryColor;
-        secondaryColorButton.color = character.armourSecondaryColor;
-        tertiaryColorButton.color = character.armourTertiaryColor;
+        primaryColorButton.color = editingCharacter.armourPrimaryColor.color;
+        secondaryColorButton.color = editingCharacter.armourSecondaryColor.color;
+        tertiaryColorButton.color = editingCharacter.armourTertiaryColor.color;
 
-        emblemPreview.UpdateEmblem(character);
+        emblemPreview.UpdateEmblem(editingCharacter);
     }
 
     public void UpdateColor(Color color, int index)
     {
         if (index == 1)
-            character.armourPrimaryColor = color;
+            editingCharacter.armourPrimaryColor = new SaveDataStructure.SerializableColor(color);
         else if (index == 2)
-            character.armourSecondaryColor = color;
+            editingCharacter.armourSecondaryColor = new SaveDataStructure.SerializableColor(color);
         else if (index == 3)
-            character.armourTertiaryColor = color;
+            editingCharacter.armourTertiaryColor = new SaveDataStructure.SerializableColor(color);
         else
             Debug.Log("[GUI\\CharacterEditor] Invalid index provided for UpdateColor method.");
 
@@ -103,4 +138,20 @@ public class CharacterEditorHandler : MonoBehaviour {
             Debug.Log("[GUI\\CharacterEditor] Invalid index provided for EditColor method.");
     }
 
+    public void Done()
+    {
+        if (characterSlot == Session.saveDataHandler.characterCount)
+            Session.saveDataHandler.NewCharacter(editingCharacter);
+        else
+            Session.saveDataHandler.SaveCharacter(characterSlot, editingCharacter);
+
+        //Delete the preview.
+        Destroy(characterPreviewHandler.GetPreviewObject(PREVIEW_CHARACTER_NAME));
+
+        //Update active screen.
+        mainmenuHandler.CloseCharacterEditor();
+
+        //Dispose of any unneeded values
+        editingCharacter = null;
+    }
 }

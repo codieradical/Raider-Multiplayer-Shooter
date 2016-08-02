@@ -3,18 +3,23 @@ using System.Collections;
 
 public class CharacterPreviewDisplayHandler : MonoBehaviour {
 
-    private GameObject previewCharacterGraphics;
+    public GameObject previewCharacterGraphics;
 
-	// Use this for initialization
-    // Model previews are instanced during runtime,
-    // the preview model generator needs to handle this.
-	void AssignPreviewModel(GameObject previewCharacter)
+    float lastMouseX = -1;
+
+    public void RotetePreview()
     {
-        previewCharacterGraphics = previewCharacter.transform.Find("Graphics").gameObject;
+        previewCharacterGraphics.transform.Rotate(Vector3.down * (Input.mousePosition.x - lastMouseX));
+        UpdateLastX();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    public void UpdateLastX()
+    {
+        lastMouseX = Input.mousePosition.x;
+    }
+
+    public void ZoomPreview()
+    {
+
+    }
 }

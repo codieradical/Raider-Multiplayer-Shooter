@@ -16,8 +16,9 @@ public class MainmenuHandler : MonoBehaviour {
     public GameObject MainMenuScreen;
 
     [Header("Common Components")]
-    public ColorPicker colorPicker;
+    public HSLColorPicker colorPicker;
     public LobbyHandler lobbyHandler;
+    public CharacterPreviewHandler characterPreviewHandler;
 
     private MenuManager menuManager;
 
@@ -32,17 +33,24 @@ public class MainmenuHandler : MonoBehaviour {
         }
 
         Session.Login(_username);
+        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+        menuManager.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+    }
+
+    public void CloseCharacterEditor()
+    {
+        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
         menuManager.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
     }
 
     public void ChooseCharacter(int characterIndex)
     {
-        //Session.SelectCharacter(characterIndex);
+        Session.SelectCharacter(characterIndex);
 
         LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
-        //playerNameplate.level = Session.character.level;
         playerNameplate.username = Session.saveDataHandler.GetUsername();
         playerNameplate.leader = true;
+        playerNameplate.character = Session.character;
 
         lobbyHandler.AddPlayer(playerNameplate);
 
@@ -55,6 +63,12 @@ public class MainmenuHandler : MonoBehaviour {
         menuManager.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
     }
 
+    public void EditCharacter(int slot)
+    {
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().EditCharacter(slot);
+        menuManager.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+    }
+
     public void TestLoader()
     {
         SceneManager.LoadScene("PlayerControllerTest");
@@ -64,6 +78,11 @@ public class MainmenuHandler : MonoBehaviour {
     void Start()
     {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = colorPicker;
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().characterPreviewHandler = characterPreviewHandler;
+        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().mainmenuHandler = this;
         menuManager = GetComponent<MenuManager>();
+
+        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().characterPreviewHandler = characterPreviewHandler;
+        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().mainmenuHandler = this;
     }
 }

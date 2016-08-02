@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Collections.Generic;
 
 class LocalSerializedSaveDataHandler : ISaveDataHandler
 {
@@ -50,6 +51,11 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
     }
 
 
+    public void NewCharacter(SaveDataStructure.Character character)
+    {
+        data.characters.Add(character);
+        SaveData(data);
+    }
 
     public void SaveCharacter(int slot, SaveDataStructure.Character character)
     {
@@ -71,5 +77,27 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
     {
         data.username = _username;
         SaveData(data);
+    }
+
+    public int characterCount
+    {
+        get
+        {
+            if (data.characters == null)
+                return 0;
+            else
+                return data.characters.Count;
+        }
+    }
+
+    public void DeleteCharacter(int slot)
+    {
+        data.characters.RemoveAt(slot);
+        SaveData(data);
+    }
+
+    public List<SaveDataStructure.Character> GetAllCharacters()
+    {
+        return data.characters;
     }
 }

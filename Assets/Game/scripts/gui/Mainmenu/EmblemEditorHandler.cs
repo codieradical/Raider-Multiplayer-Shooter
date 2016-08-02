@@ -27,19 +27,22 @@ public class EmblemEditorHandler : EmblemHandler {
 
 	void Start ()
     {
-        base.Start();
         gameObject.SetActive(false);
 
-        layer0color = characterEditorHandler.character.emblemLayer0Color;
-        layer1color = characterEditorHandler.character.emblemLayer1Color;
-        layer2color = characterEditorHandler.character.emblemLayer2Color;
+        layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.color;
+        layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.color;
+        layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.color;
 
         UpdatePreview();
 	}
 	
     public void OpenEditor()
     {
-        gameObject.SetActive(true);
+        //For some reason the object isn't activated until the second click, this is a temp fix.
+        while (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
     }
 
     public void CloseEditor()
@@ -71,13 +74,13 @@ public class EmblemEditorHandler : EmblemHandler {
     public void Done()
     {
         //update the emblem images
-        characterEditorHandler.character.emblemLayer0 = layer0value;
-        characterEditorHandler.character.emblemLayer1 = layer1value;
-        characterEditorHandler.character.emblemLayer2 = layer2value;
+        characterEditorHandler.editingCharacter.emblemLayer0 = layer0value;
+        characterEditorHandler.editingCharacter.emblemLayer1 = layer1value;
+        characterEditorHandler.editingCharacter.emblemLayer2 = layer2value;
         //update the emblem colors
-        characterEditorHandler.character.emblemLayer0Color = layer0color;
-        characterEditorHandler.character.emblemLayer1Color = layer1color;
-        characterEditorHandler.character.emblemLayer2Color = layer2color;
+        characterEditorHandler.editingCharacter.emblemLayer0Color = new SaveDataStructure.SerializableColor(layer0color);
+        characterEditorHandler.editingCharacter.emblemLayer1Color = new SaveDataStructure.SerializableColor(layer1color);
+        characterEditorHandler.editingCharacter.emblemLayer2Color = new SaveDataStructure.SerializableColor(layer2color);
         //update the preview
         characterEditorHandler.UpdatePreview();
 

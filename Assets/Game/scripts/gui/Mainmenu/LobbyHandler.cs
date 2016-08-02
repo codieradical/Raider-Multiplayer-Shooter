@@ -14,28 +14,21 @@ public class LobbyHandler : MonoBehaviour {
 
     public struct PlayerNameplate
     {
-        public PlayerNameplate(string _username, int _emblemLayer1, int _emblemLayer2, int _emblemLayer3, string _guild, int _level, bool _leader, bool _speaking, bool _canspeak)
+        public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, SaveDataStructure.Character _character)
         {
             username = _username;
-            emblemLayer1 = _emblemLayer1;
-            emblemLayer2 = _emblemLayer2;
-            emblemLayer3 = _emblemLayer3;
-            guild = _guild;
-            level = _level;
             leader = _leader;
             speaking = _speaking;
             canspeak = _canspeak;
+            character = _character;
         }
 
         public string username;
-        public int emblemLayer1;
-        public int emblemLayer2;
-        public int emblemLayer3;
-        public string guild;
-        public int level;
         public bool leader;
         public bool speaking;
         public bool canspeak;
+
+        public SaveDataStructure.Character character;
     }
 
     public void AddPlayer(PlayerNameplate player)
@@ -46,11 +39,18 @@ public class LobbyHandler : MonoBehaviour {
 
         newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = gameObject;
 
+        newPlayer.name = player.username;
+        newPlayer.transform.FindChild("emblem").GetComponent<EmblemHandler>().UpdateEmblem(player.character);
+
         newPlayer.transform.SetParent(gameObject.transform.FindChild("Players"), false);
         newPlayer.transform.FindChild("name").GetComponent<Text>().text = player.username;
-        newPlayer.transform.FindChild("guild").GetComponent<Text>().text = player.guild;
-        newPlayer.transform.FindChild("level").GetComponent<Text>().text = player.level.ToString();
+        newPlayer.transform.FindChild("guild").GetComponent<Text>().text = player.character.guild;
+        newPlayer.transform.FindChild("level").GetComponent<Text>().text = player.character.level.ToString();
         newPlayer.transform.FindChild("icons").FindChild("leader").gameObject.SetActive(player.leader);
+
+        //Color plateColor = player.character.armourPrimaryColor.color;
+        //plateColor.a = 0.5f;
+        //newPlayer.GetComponent<Image>().color = plateColor;
 
         UpdateSidebar();
     }

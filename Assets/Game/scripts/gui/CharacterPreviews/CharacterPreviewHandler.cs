@@ -4,8 +4,22 @@ using System.Collections.Generic;
 
 public class CharacterPreviewHandler : MonoBehaviour {
 
+    [Header("Plate Preview Prefabs")]
+    public Object XPlatePreviewPrefab;
+    public Object YPlatePreviewPrefab;
+
+
+    [Header("Preview Prefabs")]
     public Object XPreviewPrefab;
     public Object YPreviewPrefab;
+
+    public int nextPreviewX = 0;
+
+    public enum PreviewType
+    {
+        Full,
+        Plate
+    }
 
     //I needed a way to update preview appearence next frame, and I've been waiting for an excuse to use a Stack.
     private Stack<PreviewAppearenceUpdate> appearenceUpdates = new Stack<PreviewAppearenceUpdate>();
@@ -22,7 +36,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
         public SaveDataStructure.Character character;
     }
 
-    Object GetRacePreviewPrefab(SaveDataStructure.Character.Race _race)
+    Object GetRacePreviewPrefab(SaveDataStructure.Character.Race _race, PreviewType _previewType)
     {
         switch (_race)
         {
@@ -38,32 +52,40 @@ public class CharacterPreviewHandler : MonoBehaviour {
     /// <summary>
     /// Creates a new preview character.
     /// </summary>
-    /// <param name="_name"></param>
-    /// <param name="_character"></param>
-    public void NewPreview(string _name, SaveDataStructure.Character _character)
+    /// <param name="_previewName">The name of the preview character.</param>
+    /// <param name="_character">The character data associated with the preview.</param>
+    /// <param name="_previewType">The type of preview to generate.</param>
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType)
     {
-        Object _prefab = GetRacePreviewPrefab(_character.race);
+        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
 
         GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
         _newPreviewModel.transform.SetParent(transform, false);
-        _newPreviewModel.name = _name;
+        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
+        nextPreviewX += 250;
+        _newPreviewModel.name = _previewName;
 
-        PushPreviewUpdate(_name, _character);
+        PushPreviewUpdate(_previewName, _character);
     }
+
+    #region NewPreview Overloads
 
     /// <summary>
     /// Creates a new preview character and returns it's camera.
     /// Useful for render texture setup.
     /// </summary>
-    /// <param name="_previewName"></param>
-    /// <param name="_character"></param>
-    /// <param name="previewCamera"></param>
-    public void NewPreview(string _previewName, SaveDataStructure.Character _character, out Camera previewCamera)
+    /// <param name="_previewName">The name of the preview character.</param>
+    /// <param name="_character">The character data associated with the preview.</param>
+    /// <param name="_previewType">The type of preview to generate.</param>
+    /// <param name="previewCamera">The camera object attached to the preview prefab.</param>
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, out Camera previewCamera)
     {
-        Object _prefab = GetRacePreviewPrefab(_character.race);
+        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
 
         GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
         _newPreviewModel.transform.SetParent(transform, false);
+        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
+        nextPreviewX += 250;
         _newPreviewModel.name = _previewName;
 
         previewCamera = _newPreviewModel.transform.Find("cam").GetComponent<Camera>();
@@ -71,20 +93,89 @@ public class CharacterPreviewHandler : MonoBehaviour {
         PushPreviewUpdate(_previewName, _character);
     }
 
-    public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
+    /// <summary>
+    /// Creates a new preview character, returns it's camera and assigns to the Display Handler provided.
+    /// </summary>
+    /// <param name="_previewName">The name of the preview character.</param>
+    /// <param name="_character">The character data associated with the preview.</param>
+    /// <param name="_previewType">The type of preview to generate.</param>
+    /// <param name="previewCamera">The camera object attached to the preview prefab.</param>
+    /// <param name="_displayHandler">The display handler which shows this character.</param>
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, out Camera previewCamera, CharacterPreviewDisplayHandler _displayHandler)
     {
-        appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
+        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
+
+        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
+        _newPreviewModel.transform.SetParent(transform, false);
+        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
+        nextPreviewX += 250;
+        _newPreviewModel.name = _previewName;
+
+        previewCamera = _newPreviewModel.transform.Find("cam").GetComponent<Camera>();
+
+        PushPreviewUpdate(_previewName, _character);
+
+        _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
     }
 
-    public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character, bool changeRace)
+    /// <summary>
+    /// Creates a new preview character and assigns it to the DisplayHandler provided.
+    /// </summary>
+    /// <param name="_previewName">The name of the preview character.</param>
+    /// <param name="_character">The character data associated with the preview.</param>
+    /// <param name="_previewType">The type of preview to generate.</param>
+    /// <param name="_displayHandler">The display handler which shows this character.</param>
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, CharacterPreviewDisplayHandler _displayHandler)
     {
-        if (changeRace)
+        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
+
+        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
+        _newPreviewModel.transform.SetParent(transform, false);
+        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
+        nextPreviewX += 250;
+        _newPreviewModel.name = _previewName;
+
+        PushPreviewUpdate(_previewName, _character);
+
+        _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
+    }
+
+    #endregion
+
+    public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
+    {
+        PreviewID _pastID = GetPreviewID(_previewName);
+
+        if (_pastID == null)
+            Debug.LogError("[GUI/CharacterPreviewHandler] Preview missing ID script! " + _previewName);
+
+        if (_pastID.character.race != _character.race)
         {
             DestroyPreviewObject(_previewName);
-            NewPreview(_previewName, _character);
+            NewPreview(_previewName, _character, _pastID.previewType);
         }
         else
-            PushPreviewUpdate(_previewName, _character);
+            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
+    }
+
+    public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character, out bool newPreview)
+    {
+        PreviewID _pastID = GetPreviewID(_previewName);
+
+        if (_pastID == null)
+            Debug.LogError("[GUI/CharacterPreviewHandler] Preview missing ID script! " + _previewName);
+
+        if (_pastID.character.race != _character.race)
+        {
+            newPreview = true;
+            DestroyPreviewObject(_previewName);
+            NewPreview(_previewName, _character, _pastID.previewType);
+        }
+        else
+        {
+            newPreview = false;
+            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
+        }
     }
 
     void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
@@ -102,6 +193,17 @@ public class CharacterPreviewHandler : MonoBehaviour {
         return _previewObject;
     }
 
+    public List<GameObject> GetPreviewObjects(string _previewName)
+    {
+        List<GameObject> matchingPreviews = new List<GameObject>();
+        foreach(Transform child in transform)
+        {
+            if (child.name.Contains(_previewName))
+                matchingPreviews.Add(child.gameObject);
+        }
+        return matchingPreviews;
+    }
+
     public void DestroyPreviewObject(string _previewName)
     {
         Destroy(GetPreviewObject(_previewName));
@@ -110,6 +212,11 @@ public class CharacterPreviewHandler : MonoBehaviour {
     public Camera GetPreviewCamera(string _name)
     {
         return GetPreviewObject(_name).transform.Find("cam").GetComponent<Camera>();
+    }
+
+    public PreviewID GetPreviewID(string _previewName)
+    {
+        return GetPreviewObject(_previewName).GetComponent<PreviewID>();
     }
 
 	// Use this for initialization

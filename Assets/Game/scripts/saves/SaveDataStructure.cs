@@ -1,15 +1,29 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System;
 
-[System.Serializable]
+[Serializable]
 public class SaveDataStructure
 {
+    [Serializable]
+    public struct SerializableColor
+    {
+        public SerializableColor(Color color)
+        {
+            r = color.r;
+            g = color.g;
+            b = color.b;
+        }
+        public Color color { get { return new Color(r, g, b); } }
+        float r;
+        float g;
+        float b;
+    }
+
     public string username;
     public string password;
 
-    public List<Character> characters;
-
+    public List<Character> characters = new List<Character>();
 
     [System.Serializable]
     public class Character
@@ -19,23 +33,24 @@ public class SaveDataStructure
         /// </summary>
         public Character()
         {
-            armourPrimaryColor = Color.cyan;
-            armourSecondaryColor = Color.black;
-            armourTertiaryColor = Color.cyan;
-            emblemLayer2Color = Color.white;
-            emblemLayer1Color = Color.gray;
-            emblemLayer0Color = Color.black;
+            armourPrimaryColor = new SerializableColor(Color.cyan);
+            armourSecondaryColor = new SerializableColor(Color.black);
+            armourTertiaryColor = new SerializableColor(Color.cyan);
+            emblemLayer2Color = new SerializableColor(Color.white);
+            emblemLayer1Color = new SerializableColor(Color.gray);
+            emblemLayer0Color = new SerializableColor(Color.black);
+            emblemLayer2 = true;
         }
 
         public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp)
         {
             guild = _guild;
-            armourPrimaryColor = _armourPrimaryColor;
-            armourSecondaryColor = _armourSecondaryColor;
-            armourTertiaryColor = _armourTertiaryColor;
-            emblemLayer0Color = _emblemLayer0Color;
-            emblemLayer1Color = _emblemLayer1Color;
-            emblemLayer2Color = _emblemLayer2Color;
+            armourPrimaryColor = new SerializableColor(_armourPrimaryColor);
+            armourSecondaryColor = new SerializableColor(_armourSecondaryColor);
+            armourTertiaryColor = new SerializableColor(_armourTertiaryColor);
+            emblemLayer0Color = new SerializableColor(_emblemLayer0Color);
+            emblemLayer1Color = new SerializableColor(_emblemLayer1Color);
+            emblemLayer2Color = new SerializableColor(_emblemLayer2Color);
             emblemLayer0 = _emblemLayer0;
             emblemLayer1 = _emblemLayer1;
             emblemLayer2 = _emblemLayer2;
@@ -57,12 +72,13 @@ public class SaveDataStructure
 
         public Race race;
         public string guild;
-        public Color armourPrimaryColor;
-        public Color armourSecondaryColor;
-        public Color armourTertiaryColor;
-        public Color emblemLayer2Color;
-        public Color emblemLayer1Color;
-        public Color emblemLayer0Color;
+        public SerializableColor armourPrimaryColor;
+        public SerializableColor serializableArmourPrimaryColor;
+        public SerializableColor armourSecondaryColor;
+        public SerializableColor armourTertiaryColor;
+        public SerializableColor emblemLayer2Color;
+        public SerializableColor emblemLayer1Color;
+        public SerializableColor emblemLayer0Color;
         public AvailableArmours shoulderArmour;
         public AvailableArmours helmetArmour;
         public AvailableArmours chestArmour;

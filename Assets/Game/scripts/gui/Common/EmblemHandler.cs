@@ -16,7 +16,7 @@ public class EmblemHandler : MonoBehaviour {
     public Image layer1image;
     public Image layer2image;
 
-    public void Start()
+    public void Awake()
     {
         layer0sprites = Resources.LoadAll<Sprite>("gui/emblems/layer0");
         layer1sprites = Resources.LoadAll<Sprite>("gui/emblems/layer1");
@@ -25,9 +25,9 @@ public class EmblemHandler : MonoBehaviour {
 
     public void UpdateEmblem(SaveDataStructure.Character _character)
     {
-        layer0image.color = _character.emblemLayer0Color;
-        layer1image.color = _character.emblemLayer1Color;
-        layer2image.color = _character.emblemLayer2Color;
+        layer0image.color = _character.emblemLayer0Color.color;
+        layer1image.color = _character.emblemLayer1Color.color;
+        layer2image.color = _character.emblemLayer2Color.color;
 
         layer2image.gameObject.SetActive(_character.emblemLayer2);
 

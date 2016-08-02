@@ -32,9 +32,9 @@ public class PlayerAppearenceController : MonoBehaviour {
 
     public void UpdatePlayerAppearence(string _name, SaveDataStructure.Character _character)
     {
-        primaryRenderer.material.color = _character.armourPrimaryColor;
-        secondaryRenderer.material.color = _character.armourSecondaryColor;
-        tertiaryRenderer.material.color = _character.armourTertiaryColor;
+        primaryRenderer.material.color = _character.armourPrimaryColor.color;
+        secondaryRenderer.material.color = _character.armourSecondaryColor.color;
+        tertiaryRenderer.material.color = _character.armourTertiaryColor.color;
 
         emblem.UpdateEmblem(_character);
     }
