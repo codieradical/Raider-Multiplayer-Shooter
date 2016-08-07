@@ -48,9 +48,16 @@ public class LobbyHandler : MonoBehaviour {
         newPlayer.transform.FindChild("level").GetComponent<Text>().text = player.character.level.ToString();
         newPlayer.transform.FindChild("icons").FindChild("leader").gameObject.SetActive(player.leader);
 
-        //Color plateColor = player.character.armourPrimaryColor.color;
-        //plateColor.a = 0.5f;
-        //newPlayer.GetComponent<Image>().color = plateColor;
+        Color plateColor = player.character.armourPrimaryColor.color;
+
+        float _h, _s, _v;
+        Color.RGBToHSV(plateColor, out _h, out _s, out _v);
+
+        plateColor = Color.HSVToRGB(_h, _s, 0.3f);
+        //200 / 255 = 0.78431372549
+        plateColor.a = 0.78431372549f;
+
+        newPlayer.GetComponent<Image>().color = plateColor;
 
         UpdateSidebar();
     }
@@ -59,14 +66,4 @@ public class LobbyHandler : MonoBehaviour {
     {
         transform.FindChild("Sidebar").FindChild("Player Count").GetComponent<Text>().text = String.Format("{0}/{1}", players.Count.ToString(), maxPlayers);
     }
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

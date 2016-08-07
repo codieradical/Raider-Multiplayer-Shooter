@@ -134,7 +134,6 @@ public class CharacterEditorHandler : MonoBehaviour {
 
         characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
         SetupPreviewImage(editingCharacter);
-
     }
 
     #endregion

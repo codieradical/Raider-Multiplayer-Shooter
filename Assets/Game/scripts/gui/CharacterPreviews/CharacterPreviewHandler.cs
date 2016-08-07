@@ -122,6 +122,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
         PushPreviewUpdate(_previewName, _character);
 
         _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
+        _displayHandler.previewCamera = previewCamera.gameObject;
     }
 
     /// <summary>
@@ -144,6 +145,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
         PushPreviewUpdate(_previewName, _character);
 
         _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
+        _displayHandler.previewCamera = _newPreviewModel.transform.Find("cam").gameObject;
     }
 
     #endregion
