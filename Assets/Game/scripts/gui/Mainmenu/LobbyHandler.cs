@@ -54,8 +54,7 @@ public class LobbyHandler : MonoBehaviour {
         Color.RGBToHSV(plateColor, out _h, out _s, out _v);
 
         plateColor = Color.HSVToRGB(_h, _s, 0.3f);
-        //200 / 255 = 0.78431372549
-        plateColor.a = 0.78431372549f;
+        plateColor.a = 200 / 255;
 
         newPlayer.GetComponent<Image>().color = plateColor;
 
