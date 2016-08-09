@@ -90,6 +90,7 @@ public class GridSelectionSlider : MonoBehaviour {
         if (sender.gameObject.transform.parent != gridObject)
         {
             Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object based on a button off the grid!");
+            return;
         }
 
         _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
