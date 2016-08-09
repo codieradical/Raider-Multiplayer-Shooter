@@ -86,7 +86,12 @@ public class GridSelectionSlider : MonoBehaviour {
 	public void MoveSelection (Button sender) {
         RectTransform _selectedObjectRectTransform = sender.gameObject.GetComponent<RectTransform>();
         RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
-        
+
+        if (sender.gameObject.transform.parent != gridObject)
+        {
+            Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object based on a button off the grid!");
+        }
+
         _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
 	}
 
