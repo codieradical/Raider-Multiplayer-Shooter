@@ -11,6 +11,30 @@ public class GridSelectionSlider : MonoBehaviour {
     GameObject gridObject { get { return gridLayout.gameObject; } }
     List<GameObject> selectableObjects; //Objects within the GridLayoutGroup
     RectTransform rectTransform;
+    
+    public GameObject SelectedObject
+    {
+        get
+        {
+            foreach(GameObject selectableGameObject in selectableObjects)
+            {
+                RectTransform _selectedObjectRectTransform = selectableGameObject.GetComponent<RectTransform>();
+                RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
+
+                if (_gridObjectRectTransform.localPosition == -_selectedObjectRectTransform.localPosition)
+                    return selectableGameObject;
+            }
+            Debug.LogError("[GUI/GridSelectionSlider] No Game Object Selected on " + name + ".");
+            return null;
+        }
+        set
+        {
+            if (value.transform.parent == gridObject)
+                MoveSelection(value);
+            else
+                Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object off the grid!");
+        }
+    }
 
 	void Start () {
 
@@ -59,10 +83,18 @@ public class GridSelectionSlider : MonoBehaviour {
         }
 	}
 
-	void MoveSelection (Button sender) {
+	public void MoveSelection (Button sender) {
         RectTransform _selectedObjectRectTransform = sender.gameObject.GetComponent<RectTransform>();
         RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
         
         _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
 	}
+
+    void MoveSelection(GameObject selectedObject)
+    {
+        RectTransform _selectedObjectRectTransform = selectedObject.GetComponent<RectTransform>();
+        RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
+
+        _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
+    }
 }
