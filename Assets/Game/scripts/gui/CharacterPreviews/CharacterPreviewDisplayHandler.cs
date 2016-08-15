@@ -30,7 +30,7 @@ public class CharacterPreviewDisplayHandler : MonoBehaviour {
     [HideInInspector] //Assigned by CharacterPreviewHandler(?)
     public GameObject previewCharacterGraphics;
     [HideInInspector]
-    public GameObject previewCamera;
+    public Camera previewCamera;
 
     float lastMouseX = -1;
 

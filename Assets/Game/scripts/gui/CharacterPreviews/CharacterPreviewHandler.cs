@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class CharacterPreviewHandler : MonoBehaviour {
 
@@ -13,6 +14,10 @@ public class CharacterPreviewHandler : MonoBehaviour {
     public Object XPreviewPrefab;
     public Object YPreviewPrefab;
 
+    const string CAMERA_OBJECT_NAME = "cam";
+    const string GRAPHICS_OBJECT_NAME = "Graphics";
+
+    //Stores the position of the next preview. Increments as previews are created to keep them seperated.
     int nextPreviewX = 0;
 
     public enum PreviewType
@@ -55,97 +60,176 @@ public class CharacterPreviewHandler : MonoBehaviour {
         return XPreviewPrefab;
     }
 
-    /// <summary>
-    /// Creates a new preview character.
-    /// </summary>
-    /// <param name="_previewName">The name of the preview character.</param>
-    /// <param name="_character">The character data associated with the preview.</param>
-    /// <param name="_previewType">The type of preview to generate.</param>
-    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType)
-    {
-        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
-
-        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
-        _newPreviewModel.transform.SetParent(transform, false);
-        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
-        nextPreviewX += 250;
-        _newPreviewModel.name = _previewName;
-
-        PushPreviewUpdate(_previewName, _character);
-    }
-
     #region NewPreview Overloads
 
-    /// <summary>
-    /// Creates a new preview character and returns it's camera.
-    /// Useful for render texture setup.
-    /// </summary>
-    /// <param name="_previewName">The name of the preview character.</param>
-    /// <param name="_character">The character data associated with the preview.</param>
-    /// <param name="_previewType">The type of preview to generate.</param>
-    /// <param name="previewCamera">The camera object attached to the preview prefab.</param>
-    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, out Camera previewCamera)
+    void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, out GameObject _newPreviewModel, out GameObject _graphicsObject, out Camera _camera, out PreviewID _previewID)
     {
-        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
+        Object prefab = GetRacePreviewPrefab(_character.race, _previewType);
 
-        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
-        _newPreviewModel.transform.SetParent(transform, false);
-        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
+        GameObject newPreviewModel = Instantiate(prefab) as GameObject;
+        newPreviewModel.transform.SetParent(transform, false);
+        newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
         nextPreviewX += 250;
-        _newPreviewModel.name = _previewName;
+        newPreviewModel.name = _previewName;
 
-        previewCamera = _newPreviewModel.transform.Find("cam").GetComponent<Camera>();
-
-        PushPreviewUpdate(_previewName, _character);
-    }
-
-    /// <summary>
-    /// Creates a new preview character, returns it's camera and assigns to the Display Handler provided.
-    /// </summary>
-    /// <param name="_previewName">The name of the preview character.</param>
-    /// <param name="_character">The character data associated with the preview.</param>
-    /// <param name="_previewType">The type of preview to generate.</param>
-    /// <param name="previewCamera">The camera object attached to the preview prefab.</param>
-    /// <param name="_displayHandler">The display handler which shows this character.</param>
-    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, out Camera previewCamera, CharacterPreviewDisplayHandler _displayHandler)
-    {
-        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
-
-        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
-        _newPreviewModel.transform.SetParent(transform, false);
-        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
-        nextPreviewX += 250;
-        _newPreviewModel.name = _previewName;
-
-        previewCamera = _newPreviewModel.transform.Find("cam").GetComponent<Camera>();
+        _graphicsObject = newPreviewModel.transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
+        _camera = newPreviewModel.transform.Find(CAMERA_OBJECT_NAME).gameObject.GetComponent<Camera>();
+        _previewID = newPreviewModel.GetComponent<PreviewID>();
 
         PushPreviewUpdate(_previewName, _character);
 
-        _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
-        _displayHandler.previewCamera = previewCamera.gameObject;
+        _newPreviewModel = newPreviewModel;
     }
 
-    /// <summary>
-    /// Creates a new preview character and assigns it to the DisplayHandler provided.
-    /// </summary>
-    /// <param name="_previewName">The name of the preview character.</param>
-    /// <param name="_character">The character data associated with the preview.</param>
-    /// <param name="_previewType">The type of preview to generate.</param>
-    /// <param name="_displayHandler">The display handler which shows this character.</param>
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType)
+    {
+        GameObject _newPreviewModel, _graphicsObject;
+        Camera _camera;
+        PreviewID _previewID;
+
+        NewPreview(_previewName, _character, _previewType, out _newPreviewModel, out _graphicsObject, out _camera, out _previewID);
+
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _camera);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, int _slot)
+    {
+        GameObject _newPreviewModel, _graphicsObject;
+        Camera _camera;
+        PreviewID _previewID;
+
+        NewPreview(_previewName, _character, _previewType, out _newPreviewModel, out _graphicsObject, out _camera, out _previewID);
+
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _camera, _slot);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, string _player)
+    {
+        GameObject _newPreviewModel, _graphicsObject;
+        Camera _camera;
+        PreviewID _previewID;
+
+        NewPreview(_previewName, _character, _previewType, out _newPreviewModel, out _graphicsObject, out _camera, out _previewID);
+
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _camera, _player);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, int _slot, string _player)
+    {
+        GameObject _newPreviewModel, _graphicsObject;
+        Camera _camera;
+        PreviewID _previewID;
+
+        NewPreview(_previewName, _character, _previewType, out _newPreviewModel, out _graphicsObject, out _camera, out _previewID);
+
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _camera, _player, _slot);
+    }
+
     public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, CharacterPreviewDisplayHandler _displayHandler)
     {
-        Object _prefab = GetRacePreviewPrefab(_character.race, _previewType);
+        NewPreview(_previewName, _character, _previewType, _displayHandler.gameObject.GetComponent<RawImage>());
 
-        GameObject _newPreviewModel = Instantiate(_prefab) as GameObject;
-        _newPreviewModel.transform.SetParent(transform, false);
-        _newPreviewModel.transform.position += new Vector3(nextPreviewX, 0, 0);
-        nextPreviewX += 250;
-        _newPreviewModel.name = _previewName;
+        _displayHandler.previewCharacterGraphics = GetPreviewGraphics(_previewName);
+        _displayHandler.previewCamera = GetPreviewCamera(_previewName);
+    }
 
-        PushPreviewUpdate(_previewName, _character);
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, CharacterPreviewDisplayHandler _displayHandler, int _slot)
+    {
+        NewPreview(_previewName, _character, _previewType, _displayHandler.gameObject.GetComponent<RawImage>(), _slot);
 
-        _displayHandler.previewCharacterGraphics = _newPreviewModel.transform.Find("Graphics").gameObject;
-        _displayHandler.previewCamera = _newPreviewModel.transform.Find("cam").gameObject;
+        _displayHandler.previewCharacterGraphics = GetPreviewGraphics(_previewName);
+        _displayHandler.previewCamera = GetPreviewCamera(_previewName);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, CharacterPreviewDisplayHandler _displayHandler, int _slot, string _player)
+    {
+        NewPreview(_previewName, _character, _previewType, _displayHandler.gameObject.GetComponent<RawImage>(), _slot, _player);
+
+        _displayHandler.previewCharacterGraphics = GetPreviewGraphics(_previewName);
+        _displayHandler.previewCamera = GetPreviewCamera(_previewName);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, CharacterPreviewDisplayHandler _displayHandler, string _player)
+    {
+        NewPreview(_previewName, _character, _previewType, _displayHandler.gameObject.GetComponent<RawImage>(), _player);
+
+        _displayHandler.previewCharacterGraphics = GetPreviewGraphics(_previewName);
+        _displayHandler.previewCamera = GetPreviewCamera(_previewName);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, RawImage _rawImage)
+    {
+        NewPreview(_previewName, _character, _previewType);
+        SetupPreviewTexture(GetPreviewCamera(_previewName), _previewType, _rawImage);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, RawImage _rawImage, int _slot)
+    {
+        NewPreview(_previewName, _character, _previewType, _slot);
+        SetupPreviewTexture(GetPreviewCamera(_previewName), _previewType, _rawImage);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, RawImage _rawImage, int _slot, string _player)
+    {
+        NewPreview(_previewName, _character, _previewType, _slot, _player);
+        SetupPreviewTexture(GetPreviewCamera(_previewName), _previewType, _rawImage);
+    }
+
+    public void NewPreview(string _previewName, SaveDataStructure.Character _character, PreviewType _previewType, RawImage _rawImage, string _player)
+    {
+        NewPreview(_previewName, _character, _previewType, _player);
+        SetupPreviewTexture(GetPreviewCamera(_previewName), _previewType, _rawImage);
+    }
+
+    /// <summary>
+    /// Renders a preview camera to a new texture and displays that texture on the input _rawImage.
+    /// </summary>
+    /// <param name="_previewCamera">The preview camera to render on the texture.</param>
+    /// <param name="_previewType">The type of preview to render. This is important for creating an appropriately sized texture.</param>
+    /// <param name="_rawImage">The raw image to display the texture on.</param>
+    void SetupPreviewTexture(Camera _previewCamera, PreviewType _previewType, RawImage _rawImage)
+    {
+        RenderTexture previewCharacterTexture;
+
+        if (_previewType == PreviewType.Plate)
+            previewCharacterTexture = new RenderTexture(Screen.height / 3, Screen.height / 3, 24, RenderTextureFormat.ARGB32);
+        else if (_previewType == PreviewType.Full)
+            previewCharacterTexture = new RenderTexture(Screen.height / 3, Screen.height / 3, 24, RenderTextureFormat.ARGB32);
+        else
+        {
+            Debug.LogError("[GUI/CharacterPreviewHandler] Unrecognized PreviewType, creating a very large Preview Texture.");
+            previewCharacterTexture = new RenderTexture(Screen.height, Screen.width, 24, RenderTextureFormat.ARGB32);
+        }
+
+        previewCharacterTexture.Create();
+
+        _previewCamera.targetTexture = previewCharacterTexture;
+        _rawImage.texture = previewCharacterTexture;
+    }
+
+    void UpdatePreviewID(PreviewID _previewID, PreviewType _previewType, SaveDataStructure.Character _character, GameObject _graphicsObject, Camera _cameraObject)
+    {
+        _previewID.previewType = _previewType;
+        _previewID.appearenceCharacter = _character;
+        _previewID.graphicsObject = _graphicsObject;
+        _previewID.camera = _cameraObject;
+    }
+
+    void UpdatePreviewID(PreviewID _previewID, PreviewType _previewType, SaveDataStructure.Character _character, GameObject _graphicsObject, Camera _cameraObject, string _player)
+    {
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _cameraObject);
+        _previewID.player = _player;
+    }
+
+    void UpdatePreviewID(PreviewID _previewID, PreviewType _previewType, SaveDataStructure.Character _character, GameObject _graphicsObject, Camera _cameraObject, int _slot)
+    {
+        _previewID.slot = _slot;
+    }
+
+    void UpdatePreviewID(PreviewID _previewID, PreviewType _previewType, SaveDataStructure.Character _character, GameObject _graphicsObject, Camera _cameraObject, string _player, int _slot)
+    {
+        UpdatePreviewID(_previewID, _previewType, _character, _graphicsObject, _cameraObject, _player);
+        _previewID.slot = _slot;
     }
 
     #endregion
@@ -158,7 +242,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
     void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
     {
         //Find the graphics object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
-        GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find("Graphics").gameObject;
+        GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
         PlayerAppearenceController _appearenceController = _previewGraphics.GetComponent<PlayerAppearenceController>();
         _appearenceController.UpdatePlayerAppearence(update.previewName, update.character);
 
@@ -171,7 +255,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
     /// </summary>
     /// <param name="_previewName">The preview name to search for.</param>
     /// <returns></returns>
-    public GameObject GetPreviewObject(string _previewName)
+    GameObject GetPreviewObject(string _previewName)
     {
         GameObject _previewObject = transform.Find(_previewName).gameObject;
         if (_previewObject == null)
@@ -184,7 +268,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
     /// </summary>
     /// <param name="_previewName">The string to search for.</param>
     /// <returns></returns>
-    public List<GameObject> GetPreviewObjects(string _previewName)
+    List<GameObject> GetPreviewObjects(string _previewName)
     {
         List<GameObject> matchingPreviews = new List<GameObject>();
         foreach(Transform child in transform)
@@ -200,18 +284,31 @@ public class CharacterPreviewHandler : MonoBehaviour {
         Destroy(GetPreviewObject(_previewName));
     }
 
-    public Camera GetPreviewCamera(string _name)
+    public void DestroyPreviewObjects(string _previewName)
     {
-        return GetPreviewObject(_name).transform.Find("cam").GetComponent<Camera>();
+        foreach(GameObject preview in GetPreviewObjects(_previewName))
+        {
+            Destroy(preview);
+        }
     }
 
-    public PreviewID GetPreviewID(string _previewName)
+    public Camera GetPreviewCamera(string _name)
+    {
+        return GetPreviewID(_name).camera;
+    }
+
+    public GameObject GetPreviewGraphics(string _name)
+    {
+        return GetPreviewID(_name).graphicsObject;
+    }
+
+    PreviewID GetPreviewID(string _previewName)
     {
         return GetPreviewObject(_previewName).GetComponent<PreviewID>();
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 	
         if(XPreviewPrefab == null || YPreviewPrefab == null)
         {

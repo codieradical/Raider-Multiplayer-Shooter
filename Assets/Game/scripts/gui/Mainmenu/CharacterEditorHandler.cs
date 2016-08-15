@@ -26,8 +26,10 @@ public class CharacterEditorHandler : MonoBehaviour {
     private InputField guildInput;
 
     public GameObject characterPreviewImage;
+    RawImage characterPreviewRawImage;
 
     const string PREVIEW_CHARACTER_NAME = "EditingChar";
+    const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full;
 
     private RenderTexture previewCharacterImage;
 
@@ -40,6 +42,8 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     void Start()
     {
+        characterPreviewRawImage = characterPreviewImage.GetComponent<RawImage>();
+
         emblemEditor.characterEditorHandler = this;
 
         FindOptionFields();
@@ -64,7 +68,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = Session.saveDataHandler.characterCount;
         editingCharacter = new SaveDataStructure.Character();
 
-        SetupPreviewImage(editingCharacter);
+        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
 
         ResetFieldValues();
         UpdatePreview();
@@ -75,24 +79,10 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = _slot;
         editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 
-        SetupPreviewImage(editingCharacter);
+        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
 
         ResetFieldValues();
         UpdatePreview();
-    }
-
-    void SetupPreviewImage(SaveDataStructure.Character _editingCharacter)
-    {
-        Camera previewCamera;
-        CharacterPreviewDisplayHandler displayHandler = characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>();
-
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, _editingCharacter, CharacterPreviewHandler.PreviewType.Full, out previewCamera, displayHandler);
-
-        previewCharacterImage = new RenderTexture(Screen.height, Screen.height, 24, RenderTextureFormat.ARGB32);
-        previewCharacterImage.Create();
-
-        previewCamera.targetTexture = previewCharacterImage;
-        characterPreviewImage.GetComponent<RawImage>().texture = previewCharacterImage;
     }
 
     public void UpdatePreview()
@@ -133,7 +123,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
 
         characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
-        SetupPreviewImage(editingCharacter);
+        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
     }
 
     #endregion
@@ -191,7 +181,7 @@ public class CharacterEditorHandler : MonoBehaviour {
             Session.saveDataHandler.SaveCharacter(characterSlot, editingCharacter);
 
         //Delete the preview.
-        Destroy(characterPreviewHandler.GetPreviewObject(PREVIEW_CHARACTER_NAME));
+        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
 
         //Update active screen.
         mainmenuHandler.CloseCharacterEditor();

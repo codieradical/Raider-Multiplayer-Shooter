@@ -17,6 +17,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
     public GameObject plateContainer;
 
     public const string PREVIEW_CHARACTER_NAME = "plate";
+    const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full; 
 
     public void LoadCharacterPlates()
     {
@@ -26,10 +27,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
             Destroy(child.gameObject);
         }
 
-        foreach(GameObject preview in characterPreviewHandler.GetPreviewObjects(PREVIEW_CHARACTER_NAME))
-        {
-            Destroy(preview);
-        }
+        characterPreviewHandler.DestroyPreviewObjects(PREVIEW_CHARACTER_NAME);
 
         //Create new plates
         int slot = 0;
@@ -55,7 +53,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
         newPlate.transform.FindChild("Emblem").GetComponent<EmblemHandler>().UpdateEmblem(character);
 
         RawImage previewDisplay = newPlate.transform.FindChild("Image").GetComponent<RawImage>();
-        SetupPreviewImage(character, previewDisplay, slot);
+        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay, slot.ToString());
 
         Color plateColor = character.armourPrimaryColor.color;
         plateColor.a = 0.5f;
@@ -70,19 +68,6 @@ public class CharacterSelectionHandler : MonoBehaviour {
         newPlate.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(mainmenuHandler.CreateCharacter));
     }
 
-    void SetupPreviewImage(SaveDataStructure.Character _character, RawImage plateImage, int characterSlot)
-    {
-        Camera previewCamera;
-
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME + characterSlot.ToString(), _character, CharacterPreviewHandler.PreviewType.Plate, out previewCamera);
-
-        RenderTexture previewCharacterImage = new RenderTexture(Screen.height / 3, Screen.height / 3, 24, RenderTextureFormat.ARGB32);
-        previewCharacterImage.Create();
-
-        previewCamera.targetTexture = previewCharacterImage;
-        plateImage.GetComponent<RawImage>().texture = previewCharacterImage;
-    }
-
     public void ChooseCharacter(int slot)
     {
         Session.character = Session.saveDataHandler.GetCharacter(slot);
@@ -92,7 +77,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
     public void DeleteCharacter(int slot)
     {
         Session.saveDataHandler.DeleteCharacter(slot);
-        Destroy(characterPreviewHandler.GetPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString()));
+        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString());
         LoadCharacterPlates();
     }
 }
