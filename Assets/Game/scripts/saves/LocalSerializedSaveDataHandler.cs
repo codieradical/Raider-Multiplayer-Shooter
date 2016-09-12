@@ -43,8 +43,6 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
         ReloadData();
     }
 
-
-
     public void ReloadData()
     {
         data = ReadData();
