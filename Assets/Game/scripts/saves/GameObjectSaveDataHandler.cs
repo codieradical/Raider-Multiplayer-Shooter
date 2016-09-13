@@ -9,75 +9,78 @@ using System.Collections.Generic;
 /// 
 /// A plugin should be built to help with save data.
 /// </summary>
-public class GameObjectSaveDataHandler : ISaveDataHandler
+public class GameObjectSaveDataHandler : MonoBehaviour, ISaveDataHandler
 {
-    SaveDataStructure data;
+    public SaveDataStructure data;
+    public GameObject parentObject;
 
-    public int characterCount
+    void Start()
     {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public void DeleteCharacter(int slot)
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<SaveDataStructure.Character> GetAllCharacters()
-    {
-        throw new NotImplementedException();
-    }
-
-    public SaveDataStructure.Character GetCharacter(int slot)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetUsername()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void NewCharacter(SaveDataStructure.Character character)
-    {
-        throw new NotImplementedException();
+        parentObject = this.gameObject;
     }
 
     public SaveDataStructure ReadData()
     {
-        throw new NotImplementedException();
-    }
-
-    public void ReloadData()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SaveCharacter(int slot, SaveDataStructure.Character character)
-    {
-        throw new NotImplementedException();
+        return data;
     }
 
     public void SaveData(SaveDataStructure _data)
     {
-        throw new NotImplementedException();
+        //Game object data is non-persistant.
+    }
+
+    public void ReloadData()
+    {
+        //Game object data is non-persistant.
+    }
+
+    public void DeleteData()
+    {
+        data = null;
+    }
+
+    public void NewData()
+    {
+        data = new SaveDataStructure();
+    }
+
+    public void NewCharacter(SaveDataStructure.Character character)
+    {
+        data.characters.Add(character);
+    }
+
+    public void SaveCharacter(int slot, SaveDataStructure.Character character)
+    {
+        data.characters[slot] = character;
+    }
+
+    public SaveDataStructure.Character GetCharacter(int slot)
+    {
+        return data.characters[slot];
+    }
+
+    public List<SaveDataStructure.Character> GetAllCharacters()
+    {
+        return data.characters;
+    }
+
+    public string GetUsername()
+    {
+        return data.username;
     }
 
     public void SetUsername(string _username)
     {
-        throw new NotImplementedException();
+        data.username = _username;
     }
 
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public int characterCount
+    {
+        get { return data.characters.Count; }
+    }
+
+    public void DeleteCharacter(int slot)
+    {
+        data.characters.RemoveAt(slot);
+    }
 }

@@ -2,6 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 class LocalSerializedSaveDataHandler : ISaveDataHandler
 {
@@ -11,7 +12,14 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
     private BinaryFormatter bf = new BinaryFormatter();
 
     public const string fileName = "/saveData.dat";
+
+#if DEBUG
+    public readonly string dataPath = "C:/Users/P110094715/Excavator" + fileName;
+    //public readonly string dataPath = Application.dataPath.Replace("/Assets","") + "/savedata/" + fileName;
+#else
     public readonly string dataPath = Application.persistentDataPath + fileName;
+#endif
+
 
     public LocalSerializedSaveDataHandler()
     {
@@ -22,26 +30,63 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
     {
         if (File.Exists(dataPath))
         {
-            FileStream file = File.Open(dataPath, FileMode.Open);
-            SaveDataStructure _data = (SaveDataStructure)bf.Deserialize(file);
-            file.Close();
-            return _data;
+            try
+            {
+                FileStream file = File.Open(dataPath, FileMode.Open);
+                SaveDataStructure _data = (SaveDataStructure)bf.Deserialize(file);
+                file.Close();
+                return _data;
+            }
+            catch(SerializationException)
+            {
+                UserFeedback.LogError("Failed to deserialize saveData.");
+                UserFeedback.LogError("Savedata is corrupted. Creating new file.");
+                
+                //if newdata is failing, this will loop. This should never happen.
+                NewData();
+                return data;
+            }
         }
         else
         {
-            SaveData(new SaveDataStructure());
-            return ReadData();
+            NewData();
+            return data;
         }
     }
 
     public void SaveData(SaveDataStructure _data)
     {
-        FileStream file = File.Open(dataPath, FileMode.OpenOrCreate);
-        bf.Serialize(file, _data);
-        file.Close();
+        try
+        {
+            FileStream file = File.Open(dataPath, FileMode.OpenOrCreate);
+            bf.Serialize(file, _data);
+            file.Close();
+        }
+        catch (IOException)
+        {
+            //College sharing violations are hard to avoid so, this is necessary for now.
+            UserFeedback.LogError("IO Exception! This may be due to a sharing violation.");
+            throw new FileLoadException();
+        }
 
         ReloadData();
     }
+
+    public void DeleteData()
+    {
+        data = null;
+        File.Delete(dataPath);
+    }
+
+    public void NewData()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(dataPath));
+        File.Create(dataPath);
+        data = new SaveDataStructure();
+        SaveData(data);
+        ReloadData();
+    }
+
 
     public void ReloadData()
     {
