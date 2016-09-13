@@ -24,7 +24,7 @@ public class CharacterSelectionPlate : MonoBehaviour {
 
     public void EditCharacter()
     {
-        selectionHandler.mainmenuHandler.EditCharacter(slot);
+        MainmenuHandler.instance.EditCharacter(slot);
     }
 
     public void DeleteCharacter()

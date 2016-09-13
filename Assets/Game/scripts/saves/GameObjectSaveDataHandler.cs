@@ -11,13 +11,39 @@ using System.Collections.Generic;
 /// </summary>
 public class GameObjectSaveDataHandler : MonoBehaviour, ISaveDataHandler
 {
+    #region Singleton Setup
+
+    //I think I can refactor this,
+    //because MonoBehaviours can't be constructed,
+    //I've had to make a kinda fake constructor method.
+    //Maybe an instanciatable inheriting class would work.
+    public static GameObjectSaveDataHandler CreateGameObjectSaveDataHandler()
+    {
+        GameObject hostObject = new GameObject();
+        hostObject.AddComponent<GameObjectSaveDataHandler>();
+        return instance;
+    }
+
+    public static GameObjectSaveDataHandler instance;
+
+    public void Awake()
+    {
+        if (instance != null)
+            Debug.LogWarning("Multiple objects are holding save data. Ignoring additional.");
+        else
+            instance = this;
+        parentObject = gameObject;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
     public SaveDataStructure data;
     public GameObject parentObject;
-
-    void Start()
-    {
-        parentObject = this.gameObject;
-    }
 
     public SaveDataStructure ReadData()
     {

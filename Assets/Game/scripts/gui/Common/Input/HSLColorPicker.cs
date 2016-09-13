@@ -5,6 +5,26 @@ using System;
 
 public class HSLColorPicker : MonoBehaviour {
 
+    #region Singleton Setup
+    //Methods could possibly be refactored a little.
+
+    public static HSLColorPicker instance;
+
+    //constructor needs to be used, as this componenent is awoken by instance reference.
+    HSLColorPicker()
+    {
+        if (instance != null)
+            Debug.LogAssertion("It seems that multiple HSL Color Pickers are active, breaking the singleton instance.");
+        instance = this;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
     int h
     {
         get
@@ -90,7 +110,6 @@ public class HSLColorPicker : MonoBehaviour {
         callbackScript = _callbackScript;
         callbackMethod = _callbackMethod;
         gameObject.SetActive(true);
-
     }
 
     public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod, Color _currentColor)

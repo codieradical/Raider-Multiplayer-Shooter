@@ -16,10 +16,10 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
 #if DEBUG
     public readonly string dataPath =
 
-        "H:/" + fileName;
+        //"H:/" + fileName;
         //"C:/USBDrives/Kingston DataTraveler 2.0 1/Excavator" + fileName;
         //"C:/Users/P110094715/Excavator" + fileName;
-        //Application.dataPath.Replace("/Assets","") + "/savedata/" + fileName;
+        Application.dataPath.Replace("/Assets","") + "/savedata" + fileName;
 #else
     public readonly string dataPath = Application.persistentDataPath + fileName;
 #endif
@@ -84,8 +84,12 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
 
     public void NewData()
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(dataPath));
-        File.Create(dataPath);
+        if (File.Exists(dataPath))
+            File.Delete(dataPath);
+        else if (!Directory.Exists(Path.GetDirectoryName(dataPath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(dataPath));
+
+        File.Create(dataPath).Dispose();
         data = new SaveDataStructure();
         SaveData(data);
         ReloadData();

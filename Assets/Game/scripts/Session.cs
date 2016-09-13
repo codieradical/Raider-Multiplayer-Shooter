@@ -26,6 +26,7 @@ public static class Session {
         //else
         //{
             saveDataHandler = new LocalSerializedSaveDataHandler();
+            //saveDataHandler = GameObjectSaveDataHandler.CreateGameObjectSaveDataHandler();
         //}
     }
 }

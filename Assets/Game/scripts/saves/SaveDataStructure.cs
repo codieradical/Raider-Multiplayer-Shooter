@@ -41,6 +41,7 @@ public class SaveDataStructure
             emblemLayer0Color = new SerializableColor(Color.black);
             emblemLayer2 = true;
             race = Race.X;
+            guild = "";
         }
 
         public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp, Race _race)

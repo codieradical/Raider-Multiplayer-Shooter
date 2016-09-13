@@ -5,12 +5,6 @@ using System.Collections.Generic;
 
 public class CharacterSelectionHandler : MonoBehaviour {
 
-    //Assigned by MainMenu Handler.
-    [HideInInspector]
-    public CharacterPreviewHandler characterPreviewHandler;
-    [HideInInspector]
-    public MainmenuHandler mainmenuHandler;
-
     public Object characterPlatePrefab;
     public Object newPlatePrefab;
 
@@ -27,7 +21,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
             Destroy(child.gameObject);
         }
 
-        characterPreviewHandler.DestroyPreviewObjects(PREVIEW_CHARACTER_NAME);
+        CharacterPreviewHandler.instance.DestroyPreviewObjects(PREVIEW_CHARACTER_NAME);
 
         //Create new plates
         int slot = 0;
@@ -53,7 +47,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
         newPlate.transform.FindChild("Emblem").GetComponent<EmblemHandler>().UpdateEmblem(character);
 
         RawImage previewDisplay = newPlate.transform.FindChild("Image").GetComponent<RawImage>();
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay, slot.ToString());
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay, slot.ToString());
 
         Color plateColor = character.armourPrimaryColor.color;
         plateColor.a = 0.5f;
@@ -65,19 +59,19 @@ public class CharacterSelectionHandler : MonoBehaviour {
         GameObject newPlate = Instantiate(newPlatePrefab) as GameObject;
         newPlate.transform.SetParent(plateContainer.transform, false);
 
-        newPlate.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(mainmenuHandler.CreateCharacter));
+        newPlate.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(MainmenuHandler.instance.CreateCharacter));
     }
 
     public void ChooseCharacter(int slot)
     {
         Session.character = Session.saveDataHandler.GetCharacter(slot);
-        mainmenuHandler.ChooseCharacter(slot);
+        MainmenuHandler.instance.ChooseCharacter(slot);
     }
 
     public void DeleteCharacter(int slot)
     {
         Session.saveDataHandler.DeleteCharacter(slot);
-        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString());
+        CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString());
         LoadCharacterPlates();
     }
 }

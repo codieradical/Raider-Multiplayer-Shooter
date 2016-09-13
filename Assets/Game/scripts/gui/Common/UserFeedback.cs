@@ -4,35 +4,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
-//This is a prototype class and needs a lot of work.
-public static class UserFeedback //: MonoBehaviour
+public class UserFeedback : MonoBehaviour
 {
-    static Queue<string> messageLog = new Queue<string>();
-    private static int maxLogCount = 5;
+    #region Singleton Setup
+
+    public static UserFeedback instance;
+
+    public void Awake()
+    {
+        if (instance != null)
+            Debug.LogAssertion("It seems that multiple User Feedback Scripts are active, breaking the singleton instance.");
+        instance = this;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
+    private Queue<string> messageLog = new Queue<string>();
+    private const int MAX_LOG_COUNT = 5;
 
     public static void LogError(string message)
     {
         AddToLog(message);
     }
 
-    static void AddToLog(string line)
+    private static void AddToLog(string line)
     {
-        messageLog.Enqueue(line);
-        if(messageLog.Count > maxLogCount)
+        if (instance == null)
         {
-            messageLog.Dequeue();
+            Debug.LogError("User feedback instance is null.");
+            return;
+        }
+
+        instance.messageLog.Enqueue(line);
+        if(instance.messageLog.Count > MAX_LOG_COUNT)
+        {
+            instance.messageLog.Dequeue();
         }
     }
 
-    static void OnGUI()
+    void OnGUI()
     {
-        //This may be nulled on release.
-#if DEBUG
         for(int i = messageLog.Count; i <= 0; i--)
         {
             GUI.Label(new Rect(0, i * 20, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
         }
-#endif
     }
 }

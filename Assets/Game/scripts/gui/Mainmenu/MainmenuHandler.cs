@@ -6,6 +6,25 @@ using System.Globalization;
 [RequireComponent(typeof(MenuManager))]
 public class MainmenuHandler : MonoBehaviour {
 
+    #region Singleton Setup
+
+    public static MainmenuHandler instance;
+
+    public void Awake()
+    {
+        if (instance != null)
+            Debug.LogAssertion("It seems that multiple Main Menu Managers are active, breaking the singleton instance.");
+        instance = this;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
+
     [SerializeField]
     public CharacterEditorHandler editorHandler = new CharacterEditorHandler();
 
@@ -14,13 +33,6 @@ public class MainmenuHandler : MonoBehaviour {
     public GameObject ChooseCharacterScreen;
     public GameObject CreateCharacterScreen;
     public GameObject MainMenuScreen;
-
-    [Header("Common Components")]
-    public HSLColorPicker colorPicker;
-    public LobbyHandler lobbyHandler;
-    public CharacterPreviewHandler characterPreviewHandler;
-
-    private MenuManager menuManager;
 
     public void Login(Text _textComponent)
     {
@@ -34,13 +46,13 @@ public class MainmenuHandler : MonoBehaviour {
 
         Session.Login(_username);
         ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
-        menuManager.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+        MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
     }
 
     public void CloseCharacterEditor()
     {
         ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
-        menuManager.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+        MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
     }
 
     public void ChooseCharacter(int characterIndex)
@@ -52,37 +64,25 @@ public class MainmenuHandler : MonoBehaviour {
         playerNameplate.leader = true;
         playerNameplate.character = Session.character;
 
-        lobbyHandler.AddPlayer(playerNameplate);
+        LobbyHandler.AddPlayer(playerNameplate);
 
-        menuManager.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+        MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
     }
 
     public void CreateCharacter()
     {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().NewCharacter();
-        menuManager.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+        MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
     }
 
     public void EditCharacter(int slot)
     {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().EditCharacter(slot);
-        menuManager.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+        MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
     }
 
     public void TestLoader()
     {
         SceneManager.LoadScene("PlayerControllerTest");
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().colorPicker = colorPicker;
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().characterPreviewHandler = characterPreviewHandler;
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().mainmenuHandler = this;
-        menuManager = GetComponent<MenuManager>();
-
-        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().characterPreviewHandler = characterPreviewHandler;
-        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().mainmenuHandler = this;
     }
 }

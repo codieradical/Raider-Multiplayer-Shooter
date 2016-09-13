@@ -93,15 +93,15 @@ public class EmblemEditorHandler : EmblemHandler {
     {
         if (index == 1)
         {
-            characterEditorHandler.colorPicker.OpenColorPicker(this, "SetColor1", primaryButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor1", primaryButton.color);
         }
         else if (index == 2)
         {
-            characterEditorHandler.colorPicker.OpenColorPicker(this, "SetColor2", secondaryButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor2", secondaryButton.color);
         }
         else if (index == 3)
         {
-            characterEditorHandler.colorPicker.OpenColorPicker(this, "SetColor3", tertiaryButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor3", tertiaryButton.color);
         }
         else
         {

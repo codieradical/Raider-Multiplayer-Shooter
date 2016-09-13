@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Globalization;
 using System;
@@ -7,12 +7,6 @@ using System;
 public class CharacterEditorHandler : MonoBehaviour {
 
     [Header("Objects")]
-    [HideInInspector]    //Assigned by mainmenu handler.
-    public HSLColorPicker colorPicker;
-    [HideInInspector]
-    public CharacterPreviewHandler characterPreviewHandler;
-    [HideInInspector]
-    public MainmenuHandler mainmenuHandler;
 
     public EmblemEditorHandler emblemEditor;
     public EmblemHandler emblemPreview;
@@ -30,8 +24,6 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     const string PREVIEW_CHARACTER_NAME = "EditingChar";
     const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full;
-
-    private RenderTexture previewCharacterImage;
 
     public SaveDataStructure.Character editingCharacter;
 
@@ -68,7 +60,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = Session.saveDataHandler.characterCount;
         editingCharacter = new SaveDataStructure.Character();
 
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
 
         ResetFieldValues();
         UpdatePreview();
@@ -79,7 +71,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = _slot;
         editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
 
         ResetFieldValues();
         UpdatePreview();
@@ -87,7 +79,7 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     public void UpdatePreview()
     {
-        characterPreviewHandler.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
+        CharacterPreviewHandler.instance.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
 
         primaryColorButton.color = editingCharacter.armourPrimaryColor.color;
         secondaryColorButton.color = editingCharacter.armourSecondaryColor.color;
@@ -102,7 +94,7 @@ public class CharacterEditorHandler : MonoBehaviour {
 
     public void ResetFieldValues()
     {
-        raceDropdown.options = new System.Collections.Generic.List<Dropdown.OptionData>();
+        raceDropdown.options = new List<Dropdown.OptionData>();
         foreach(SaveDataStructure.Character.Race race in Enum.GetValues(typeof(SaveDataStructure.Character.Race)))
         {
             raceDropdown.options.Add(new Dropdown.OptionData(race.ToString()));
@@ -118,12 +110,12 @@ public class CharacterEditorHandler : MonoBehaviour {
         editingCharacter.guild = _guild;
     }
 
-    public void EditRace(Int32 _raceValue)
+    public void EditRace(int _raceValue)
     {
         editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
 
-        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
-        characterPreviewHandler.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
     }
 
     #endregion
@@ -162,11 +154,11 @@ public class CharacterEditorHandler : MonoBehaviour {
     public void EditColor(int index)
     {
         if(index == 1)
-            colorPicker.OpenColorPicker(this, "SetColor1", primaryColorButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor1", primaryColorButton.color);
         else if (index == 2)
-            colorPicker.OpenColorPicker(this, "SetColor2", secondaryColorButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor2", secondaryColorButton.color);
         else if (index == 3)
-            colorPicker.OpenColorPicker(this, "SetColor3", tertiaryColorButton.color);
+            HSLColorPicker.instance.OpenColorPicker(this, "SetColor3", tertiaryColorButton.color);
         else
             Debug.Log("[GUI\\CharacterEditor] Invalid index provided for EditColor method.");
     }
@@ -181,10 +173,10 @@ public class CharacterEditorHandler : MonoBehaviour {
             Session.saveDataHandler.SaveCharacter(characterSlot, editingCharacter);
 
         //Delete the preview.
-        characterPreviewHandler.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+        CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
 
         //Update active screen.
-        mainmenuHandler.CloseCharacterEditor();
+        MainmenuHandler.instance.CloseCharacterEditor();
 
         //Dispose of any unneeded values
         editingCharacter = null;

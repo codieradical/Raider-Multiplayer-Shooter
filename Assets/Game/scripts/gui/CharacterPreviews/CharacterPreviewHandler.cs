@@ -5,6 +5,24 @@ using UnityEngine.UI;
 
 public class CharacterPreviewHandler : MonoBehaviour {
 
+    #region Singleton Setup
+
+    public static CharacterPreviewHandler instance;
+
+    public void Awake()
+    {
+        if (instance != null)
+            Debug.LogAssertion("It seems that multiple Character Preview Handlers are active, breaking the singleton instance.");
+        instance = this;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
     [Header("Plate Preview Prefabs")]
     public Object XPlatePreviewPrefab;
     public Object YPlatePreviewPrefab;

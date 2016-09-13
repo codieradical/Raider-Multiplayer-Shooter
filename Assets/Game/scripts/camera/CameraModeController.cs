@@ -4,6 +4,24 @@ using System;
 
 public class CameraModeController : MonoBehaviour
 {
+    #region Singleton Setup
+
+    public static CameraModeController instance;
+
+    public void Awake()
+    {
+        if (instance != null)
+            Debug.LogAssertion("It seems that multiple Camera Mode Controllers are active, breaking the singleton instance.");
+        instance = this;
+    }
+
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    #endregion
+
     public GameObject camPoint;
 
     //how close the camera can be to directly overhead or underfoot.

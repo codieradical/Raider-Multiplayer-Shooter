@@ -4,6 +4,8 @@ using System;
 
 public class Enviroment : MonoBehaviour {
 
+    //Upon implementation, add singleton.
+
     PhysicsSettings physicsSettings;
 
     [Serializable]

@@ -7,9 +7,7 @@ public class AnimationController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
         attachedAnimator = GetComponent<Animator>();
-
 	}
 	
 	// Update is called once per frame
