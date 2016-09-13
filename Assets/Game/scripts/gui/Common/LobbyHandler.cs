@@ -29,8 +29,18 @@ public class LobbyHandler : MonoBehaviour
     private static int maxPlayers = 6;
 
     public static UnityEngine.Object nameplatePrefab;
+    /// <summary>
+    /// This prefab needs to be available on at least one lobby handler per scene.
+    /// </summary>
+    public UnityEngine.Object instanceNameplatePrefab;
 
     private static List<PlayerNameplate> players = new List<PlayerNameplate>();
+
+    void Start()
+    {
+        if (nameplatePrefab == null && instanceNameplatePrefab != null)
+            nameplatePrefab = instanceNameplatePrefab;
+    }
 
     public struct PlayerNameplate
     {
@@ -57,6 +67,13 @@ public class LobbyHandler : MonoBehaviour
 
         foreach (LobbyHandler instance in instances)
         {
+            if (nameplatePrefab == null)
+            {
+                Debug.Log("A lobby handler is missing a nameplate prefab.");
+                Debug.LogAssertion("Please add the prefab to any lobby in the scene.");
+                throw new MissingFieldException();
+            }
+
             GameObject newPlayer = Instantiate(nameplatePrefab) as GameObject;
 
             newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = instance.gameObject;
