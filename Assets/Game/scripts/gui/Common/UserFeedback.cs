@@ -6,9 +6,10 @@ using System.Text;
 
 
 //This is a prototype class and needs a lot of work.
-public static class UserFeedback
+public static class UserFeedback //: MonoBehaviour
 {
-    static string[] messageLog;
+    static Queue<string> messageLog = new Queue<string>();
+    private static int maxLogCount = 5;
 
     public static void LogError(string message)
     {
@@ -17,25 +18,20 @@ public static class UserFeedback
 
     static void AddToLog(string line)
     {
-        //Using the Array.Insert method would be much better,
-        //But either college .NET is outdated,
-        //or Unity doesn't like the method.
-        //So here's something worse.
-
-        for(int i = messageLog.Length - 1; i <= 0; i--)
+        messageLog.Enqueue(line);
+        if(messageLog.Count > maxLogCount)
         {
-            messageLog[i + 1] = messageLog[i];
+            messageLog.Dequeue();
         }
-        messageLog[0] = line;
     }
 
     static void OnGUI()
     {
         //This may be nulled on release.
 #if DEBUG
-        for(int i = messageLog.Length; i <= 0; i--)
+        for(int i = messageLog.Count; i <= 0; i--)
         {
-            GUI.Label(new Rect(0, i * 20, Screen.width, Screen.height / 2), messageLog[i]);
+            GUI.Label(new Rect(0, i * 20, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
         }
 #endif
     }
