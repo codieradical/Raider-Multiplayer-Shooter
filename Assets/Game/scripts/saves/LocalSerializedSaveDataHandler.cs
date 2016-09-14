@@ -15,11 +15,7 @@ class LocalSerializedSaveDataHandler : ISaveDataHandler
 
 #if DEBUG
     public readonly string dataPath =
-
-        //"H:/" + fileName;
-        //"C:/USBDrives/Kingston DataTraveler 2.0 1/Excavator" + fileName;
-        //"C:/Users/P110094715/Excavator" + fileName;
-        Application.dataPath.Replace("/Assets","") + "/savedata" + fileName;
+    Application.dataPath.Replace("/Assets","") + "/uploadData" + fileName;
 #else
     public readonly string dataPath = Application.persistentDataPath + fileName;
 #endif

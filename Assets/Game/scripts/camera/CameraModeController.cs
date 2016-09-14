@@ -7,6 +7,10 @@ public class CameraModeController : MonoBehaviour
     #region Singleton Setup
 
     public static CameraModeController instance;
+    public static CameraController controllerInstance
+    {
+        get{ return instance.GetComponent<CameraController>(); }
+    }
 
     public void Awake()
     {

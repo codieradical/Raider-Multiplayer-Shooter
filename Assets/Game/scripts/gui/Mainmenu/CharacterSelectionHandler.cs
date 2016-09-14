@@ -21,7 +21,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
             Destroy(child.gameObject);
         }
 
-        CharacterPreviewHandler.instance.DestroyPreviewObjects(PREVIEW_CHARACTER_NAME);
+        CharacterPreviewHandler.instance.DestroyPreviews();
 
         //Create new plates
         int slot = 0;
@@ -47,7 +47,7 @@ public class CharacterSelectionHandler : MonoBehaviour {
         newPlate.transform.FindChild("Emblem").GetComponent<EmblemHandler>().UpdateEmblem(character);
 
         RawImage previewDisplay = newPlate.transform.FindChild("Image").GetComponent<RawImage>();
-        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay, slot.ToString());
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay);
 
         Color plateColor = character.armourPrimaryColor.color;
         plateColor.a = 0.5f;

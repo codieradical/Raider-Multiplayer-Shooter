@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AnimationController : MonoBehaviour {
+public class PlayerAnimationController : MonoBehaviour {
 
     private Animator attachedAnimator;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         attachedAnimator = GetComponent<Animator>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
         //Only update the animator of the camera controller allows movement.
-        if (!GameObject.FindGameObjectWithTag("cameraPoint").GetComponent<CameraController>().preventMovement)
+        if (!CameraModeController.controllerInstance.preventMovement)
         {
             attachedAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
             attachedAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
@@ -38,7 +40,7 @@ public class AnimationController : MonoBehaviour {
         {
             StopAnimations();
         }
-	}
+    }
 
     void StopAnimations()
     {

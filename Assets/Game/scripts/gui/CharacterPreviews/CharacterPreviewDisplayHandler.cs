@@ -86,6 +86,5 @@ public class CharacterPreviewDisplayHandler : MonoBehaviour {
 
         else
             cameraDistance += _movement;
-
     }
 }
