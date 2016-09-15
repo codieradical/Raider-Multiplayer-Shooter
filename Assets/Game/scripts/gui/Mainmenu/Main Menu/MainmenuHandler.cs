@@ -81,9 +81,4 @@ public class MainmenuHandler : MonoBehaviour {
         CreateCharacterScreen.GetComponent<CharacterEditorHandler>().EditCharacter(slot);
         MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
     }
-
-    public void TestLoader()
-    {
-        SceneManager.LoadScene("PlayerControllerTest");
-    }
 }

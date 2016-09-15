@@ -27,7 +27,7 @@ public class PlayerAnimationController : MonoBehaviour {
             //    Invoke("StopJumping", 0.1f);
             //}
 
-            if (Input.GetButton("Run"))
+            if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
             {
                 attachedAnimator.SetBool("running", true);
             }

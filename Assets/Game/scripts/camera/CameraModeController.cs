@@ -29,7 +29,7 @@ public class CameraModeController : MonoBehaviour
     public GameObject camPoint;
 
     //how close the camera can be to directly overhead or underfoot.
-    public float xAxisBuffer = 10f;
+    public float xAxisBuffer = 27f;
 
     public FirstPersonCameraSettings firstPersonCamSettings;
     public ThirdPersonCameraSettings thirdPersonCamSettings;
