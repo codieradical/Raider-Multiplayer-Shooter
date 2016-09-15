@@ -1,37 +1,51 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FirstPersonCameraController : PlayerCameraController
+namespace Raider.Game.Cameras
 {
-    public FirstPersonCameraController()
-    {
-        pointStartingPos = new Vector3(0, 1.7f, 0);
-    }
 
-    // Update is called once per frame
-    void Update () {
-        RotatePlayer();
-        RotateCamera();
-        LockCamPointZRotation();
-        LockCamPointYRotation();
-    }
-    
-    void RotateCamera()
+    public class FirstPersonCameraController : PlayerCameraController
     {
-        //Looking up and down, needs to be inverted for some reason...
-        float _xRot = -Input.GetAxisRaw("Mouse Y");
-
-        //If the camera is set to inverted mode, invert the rotation.
-        if(modeController.firstPersonCamSettings.inverted)
+        public FirstPersonCameraController()
         {
-            _xRot = -_xRot;
+            pointStartingPos = new Vector3(0, 1.7f, 0);
         }
 
-        Vector3 _rotation = new Vector3(_xRot, 0f, 0f) * modeController.firstPersonCamSettings.lookSensitivity;
+        new void Start()
+        {
+            //if (CameraModeController.instance.firstPersonCamSettings.moveWithBody)
+            //{
+            //    base.parent = GameObject.FindGameObjectWithTag("localPlayer").transform.Find("Graphics");
+            //}
+            base.Start();
+        }
 
-        _rotation = ApplyXBufferToRotation(cam.transform.eulerAngles, _rotation);
+        // Update is called once per frame
+        void Update()
+        {
+            RotatePlayer();
+            RotateCamera();
+            LockCamPointZRotation();
+            LockCamPointYRotation();
+        }
 
-        //Apply rotation
-        camPoint.transform.Rotate(_rotation);
+        void RotateCamera()
+        {
+            //Looking up and down, needs to be inverted for some reason...
+            float _xRot = -Input.GetAxisRaw("Mouse Y");
+
+            //If the camera is set to inverted mode, invert the rotation.
+            if (CameraModeController.instance.firstPersonCamSettings.inverted)
+            {
+                _xRot = -_xRot;
+            }
+
+            Vector3 _rotation = new Vector3(_xRot, 0f, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+
+            _rotation = ApplyXBufferToRotation(cam.transform.eulerAngles, _rotation);
+
+            //Apply rotation
+            camPoint.transform.Rotate(_rotation);
+        }
     }
 }

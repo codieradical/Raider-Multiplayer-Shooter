@@ -1,26 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HUDAnimationController : MonoBehaviour {
-
-    Animator animatorInstance;
-
-    // Use this for initialization
-    void Start()
+namespace Raider.Game.Player.HUD
+{
+    public class HUDAnimationController : MonoBehaviour
     {
-        animatorInstance = gameObject.GetComponent<Animator>();
-        if (animatorInstance == null)
-            Debug.LogError("A Hud Widget Animation Controller is missing an Animator!");
-    }
+        Animator animatorInstance;
 
-    public void HudWidgetBoot()
-    {
-        //Boot hud widget anim.
-    }
+        // Use this for initialization
+        void Start()
+        {
+            animatorInstance = gameObject.GetComponent<Animator>();
+            if (animatorInstance == null)
+                Debug.LogError("A Hud Widget Animation Controller is missing an Animator!");
+        }
 
-    public void HudWidgetShutDown()
-    {
-        //close hud widget anim.
-    }
+        public void HudWidgetBoot()
+        {
+            //Boot hud widget anim.
+        }
 
+        public void HudWidgetShutDown()
+        {
+            //close hud widget anim.
+        }
+
+    }
 }

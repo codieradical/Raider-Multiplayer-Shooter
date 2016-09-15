@@ -1,21 +1,24 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(PlayerAnimationController))]
-[RequireComponent(typeof(MovementController))]
-public class Player : MonoBehaviour {
+namespace Raider.Game.Player
+{
 
+    [RequireComponent(typeof(PlayerAnimationController))]
+    [RequireComponent(typeof(MovementController))]
+    public class Player : MonoBehaviour
+    {
+        public bool lockCursor = true;
 
-
-    public bool lockCursor = true;
-
-	// Use this for initialization
-	void Start () {
-        if (lockCursor)
+        // Use this for initialization
+        void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+            if (lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
 
-        this.gameObject.tag = "localPlayer";
+            this.gameObject.tag = "localPlayer";
+        }
     }
 }

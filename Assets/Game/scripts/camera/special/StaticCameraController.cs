@@ -1,30 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StaticCameraController : ThirdPersonCameraController
+namespace Raider.Game.Cameras
 {
-    Vector3 cameraPosition;
-    Quaternion cameraRotation;
 
-    StaticCameraController()
+    public class StaticCameraController : ThirdPersonCameraController
     {
-        camStartingPos = new Vector3(0, 1.8f, 0);
-        pointStartingPos = Vector3.zero;
-        pointStartingRot = Vector3.zero;
-        camStartingRot = Vector3.zero;
-        overrideWalking = false;
-    }
+        Vector3 cameraPosition;
+        Quaternion cameraRotation;
 
-    void Start()
-    {
-        base.Start();
+        StaticCameraController()
+        {
+            camStartingPos = new Vector3(0, 1.8f, 0);
+            pointStartingPos = Vector3.zero;
+            pointStartingRot = Vector3.zero;
+            camStartingRot = Vector3.zero;
+            overrideWalking = false;
+        }
 
-        //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
-        modeController.RemoveCameraParent();
-    }
+        new void Start()
+        {
+            base.Start();
 
-    void Update()
-    {
-        RotatePlayer();
+            //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
+            CameraModeController.instance.RemoveCameraParent();
+        }
+
+        void Update()
+        {
+            RotatePlayer();
+        }
     }
 }

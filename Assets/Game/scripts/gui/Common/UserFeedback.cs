@@ -4,57 +4,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class UserFeedback : MonoBehaviour
+namespace Raider.Game.GUI
 {
-    #region Singleton Setup
-
-    public static UserFeedback instance;
-
-    public void Awake()
+    public class UserFeedback : MonoBehaviour
     {
-        if (instance != null)
-            Debug.LogAssertion("It seems that multiple User Feedback Scripts are active, breaking the singleton instance.");
-        instance = this;
-    }
+        #region Singleton Setup
 
-    public void OnDestroy()
-    {
-        instance = null;
-    }
+        public static UserFeedback instance;
 
-    #endregion
-
-    private Queue<string> messageLog = new Queue<string>();
-    private const int MAX_LOG_COUNT = 5;
-
-    public static void LogError(string message)
-    {
-        AddToLog(message);
-    }
-
-    private static void AddToLog(string line)
-    {
-        if (instance == null)
+        public void Awake()
         {
-            Debug.LogError("User feedback instance is null.");
-            return;
+            if (instance != null)
+                Debug.LogAssertion("It seems that multiple User Feedback Scripts are active, breaking the singleton instance.");
+            instance = this;
+
+            DontDestroyOnLoad(gameObject);
         }
 
-        instance.messageLog.Enqueue(line);
-        if(instance.messageLog.Count > MAX_LOG_COUNT)
+        public void OnDestroy()
         {
-            instance.messageLog.Dequeue();
+            instance = null;
         }
-    }
 
-    void OnGUI()
-    {
-        if(messageLog.Count > 1)
-            for(int i = messageLog.Count - 1; i >= 0; i--)
+        #endregion
+
+        private Queue<string> messageLog = new Queue<string>();
+        private const int MAX_LOG_COUNT = 15;
+
+        public static void LogError(string message)
+        {
+            AddToLog(message);
+        }
+
+        private static void AddToLog(string line)
+        {
+            if (instance == null)
             {
-                GUI.Label(new Rect(0, i * 15, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
+                Debug.LogError("User feedback instance is null.");
+                return;
             }
 
-        GUI.Label(new Rect(0, Screen.height - 20, Screen.width, Screen.height), "Project Excavator, 2016 Private Alpha");
+            instance.messageLog.Enqueue(line);
+            if (instance.messageLog.Count > MAX_LOG_COUNT)
+            {
+                instance.messageLog.Dequeue();
+            }
+        }
+
+        void OnGUI()
+        {
+            UnityEngine.GUI.Label(new Rect(0, 0, Screen.width, 30), "Project Excavator, 2016 Private Alpha");
+
+            if (messageLog.Count > 0)
+                for (int i = messageLog.Count - 1; i >= 0; i--)
+                {
+                    UnityEngine.GUI.Label(new Rect(0, (i * 15) + 30, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
+                }
+        }
     }
 }

@@ -2,83 +2,89 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Globalization;
+using Raider.Game.GUI.Components;
 
-[RequireComponent(typeof(MenuManager))]
-public class MainmenuHandler : MonoBehaviour {
+namespace Raider.Game.GUI.Screens
+{
 
-    #region Singleton Setup
-
-    public static MainmenuHandler instance;
-
-    public void Awake()
+    [RequireComponent(typeof(MenuManager))]
+    public class MainmenuHandler : MonoBehaviour
     {
-        if (instance != null)
-            Debug.LogAssertion("It seems that multiple Main Menu Managers are active, breaking the singleton instance.");
-        instance = this;
-    }
 
-    public void OnDestroy()
-    {
-        instance = null;
-    }
+        #region Singleton Setup
 
-    #endregion
+        public static MainmenuHandler instance;
 
-
-    [SerializeField]
-    public CharacterEditorHandler editorHandler = new CharacterEditorHandler();
-
-    [Header("Screens")]
-    public GameObject LoginScreen;
-    public GameObject ChooseCharacterScreen;
-    public GameObject CreateCharacterScreen;
-    public GameObject MainMenuScreen;
-
-    public void Login(Text _textComponent)
-    {
-        string _username = _textComponent.text;
-
-        if (string.IsNullOrEmpty(_username))
+        public void Awake()
         {
-            UserFeedback.LogError("No username provided.");
-            //Display info.
-            return;
+            if (instance != null)
+                Debug.LogAssertion("It seems that multiple Main Menu Managers are active, breaking the singleton instance.");
+            instance = this;
         }
 
-        Session.Login(_username);
-        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
-        MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
-    }
+        public void OnDestroy()
+        {
+            instance = null;
+        }
 
-    public void CloseCharacterEditor()
-    {
-        ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
-        MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
-    }
+        #endregion
 
-    public void ChooseCharacter(int characterIndex)
-    {
-        Session.SelectCharacter(characterIndex);
 
-        LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
-        playerNameplate.username = Session.saveDataHandler.GetUsername();
-        playerNameplate.leader = true;
-        playerNameplate.character = Session.character;
+        [SerializeField]
+        public CharacterEditorHandler editorHandler = new CharacterEditorHandler();
 
-        LobbyHandler.AddPlayer(playerNameplate);
+        [Header("Screens")]
+        public GameObject LoginScreen;
+        public GameObject ChooseCharacterScreen;
+        public GameObject CreateCharacterScreen;
+        public GameObject MainMenuScreen;
 
-        MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
-    }
+        public void Login(Text _textComponent)
+        {
+            string _username = _textComponent.text;
 
-    public void CreateCharacter()
-    {
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().NewCharacter();
-        MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
-    }
+            if (string.IsNullOrEmpty(_username))
+            {
+                UserFeedback.LogError("No username provided.");
+                //Display info.
+                return;
+            }
 
-    public void EditCharacter(int slot)
-    {
-        CreateCharacterScreen.GetComponent<CharacterEditorHandler>().EditCharacter(slot);
-        MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+            Session.Login(_username);
+            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+            MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+        }
+
+        public void CloseCharacterEditor()
+        {
+            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+            MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+        }
+
+        public void ChooseCharacter(int characterIndex)
+        {
+            Session.SelectCharacter(characterIndex);
+
+            LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
+            playerNameplate.username = Session.saveDataHandler.GetUsername();
+            playerNameplate.leader = true;
+            playerNameplate.character = Session.character;
+
+            LobbyHandler.AddPlayer(playerNameplate);
+
+            MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+        }
+
+        public void CreateCharacter()
+        {
+            CreateCharacterScreen.GetComponent<CharacterEditorHandler>().NewCharacter();
+            MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+        }
+
+        public void EditCharacter(int slot)
+        {
+            CreateCharacterScreen.GetComponent<CharacterEditorHandler>().EditCharacter(slot);
+            MenuManager.instance.ShowMenu(CreateCharacterScreen.GetComponent<Menu>());
+        }
     }
 }

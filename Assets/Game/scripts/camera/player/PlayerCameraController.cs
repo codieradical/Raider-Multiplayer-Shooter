@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
 
-abstract public class PlayerCameraController : CameraController
+namespace Raider.Game.Cameras
 {
-    public CharacterController characterController;
-    public Transform playerTransform;
-    
-    public void Start()
+
+    abstract public class PlayerCameraController : CameraController
     {
-        playerTransform = GameObject.FindGameObjectWithTag("localPlayer").transform;
-        base.parent = playerTransform;
-        characterController = playerTransform.gameObject.GetComponent<CharacterController>();
+        public CharacterController characterController;
+        public Transform playerTransform;
 
-        base.Start();
-    }
+        public new void Start()
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("localPlayer").transform;
+            base.parent = playerTransform;
+            characterController = playerTransform.gameObject.GetComponent<CharacterController>();
 
-    public void RotatePlayer()
-    {
-        float _yRot = Input.GetAxisRaw("Mouse X");
+            base.Start();
+        }
 
-        Vector3 _rotation = new Vector3(0f, _yRot, 0f) * modeController.firstPersonCamSettings.lookSensitivity;
+        public void RotatePlayer()
+        {
+            float _yRot = Input.GetAxisRaw("Mouse X");
 
-        //Apply rotation
-        characterController.transform.Rotate(_rotation);
+            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+
+            //Apply rotation
+            characterController.transform.Rotate(_rotation);
+        }
     }
 }

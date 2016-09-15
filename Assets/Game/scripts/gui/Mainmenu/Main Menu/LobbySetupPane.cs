@@ -1,79 +1,98 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Raider.Game.Scene;
 
-public class LobbySetupPane : MonoBehaviour {
+namespace Raider.Game.GUI.Components
+{
 
-    public static LobbySetupPane instance;
-
-    Animator animatorInstance;
-
-    public Text paneTitle;
-    public Text mapLabel;
-    public Text networkLabel;
-    public Text gametypeLabel;
-    public Image mapImage;
-
-    private Scenario.Gametype _selectedGametype;
-    public Scenario.Gametype selectedGametype
+    public class LobbySetupPane : MonoBehaviour
     {
-        get { return _selectedGametype; }
-        set
+
+        public static LobbySetupPane instance;
+
+        Animator animatorInstance;
+
+        public Text paneTitle;
+        public Text mapLabel;
+        public Text networkLabel;
+        public Text gametypeLabel;
+        public Image mapImage;
+
+        private Scenario.Gametype _selectedGametype;
+        public Scenario.Gametype selectedGametype
         {
-            _selectedGametype = value;
-            paneTitle.text = value.ToString();
+            get { return _selectedGametype; }
+            set
+            {
+                _selectedGametype = value;
+                paneTitle.text = value.ToString();
+            }
         }
-    }
 
-    private string _selectedScene;
-    public string selectedScene
-    {
-        get { return _selectedScene; }
-        set
+        private string _selectedScene;
+        public string selectedScene
         {
-            mapLabel.text = value;
-            _selectedScene = value;
-            
-            ///mapImage.mainTexture = value;
+            get { return _selectedScene; }
+            set
+            {
+                mapLabel.text = value;
+                _selectedScene = value;
+
+                mapImage.sprite = GetMapImage(value);
+            }
         }
-    }
 
 
-    public void OpenPane(Scenario.Gametype gametype)
-    {
-        animatorInstance.SetBool("open", true);
-        selectedScene = Scenario.instance.getScenesByGametype(gametype)[0];
-    }
+        public void OpenPane(Scenario.Gametype gametype)
+        {
+            animatorInstance.SetBool("open", true);
+            selectedGametype = gametype;
+            selectedScene = Scenario.instance.getScenesByGametype(gametype)[0];
+        }
 
-    public void ClosePane()
-    {
-        animatorInstance.SetBool("open", false);
-        GametypeButtons.instance.ShowButtons();
-    }
+        public void ClosePane()
+        {
+            animatorInstance.SetBool("open", false);
+            GametypeButtons.instance.ShowButtons();
+        }
 
-    public void StartGame()
-    {
-        Scenario.instance.LoadScene(selectedScene, selectedGametype);
-    }
+        public void StartGame()
+        {
+            Scenario.instance.LoadScene(selectedScene, selectedGametype);
+        }
 
 
 
-	// Use this for initialization
-	void Start () {
-        if (instance != null)
-            Debug.LogWarning("Multiple LobbySetupPanes instanced");
-        instance = this;
+        // Use this for initialization
+        void Start()
+        {
+            if (instance != null)
+                Debug.LogWarning("Multiple LobbySetupPanes instanced");
+            instance = this;
 
-        //This could use tidying.
-        if (paneTitle == null || mapLabel == null || networkLabel == null || gametypeLabel == null || mapImage == null)
-            Debug.LogWarning("The lobby setup pane is missing some important objects!");
+            //This could use tidying.
+            if (paneTitle == null || mapLabel == null || networkLabel == null || gametypeLabel == null || mapImage == null)
+                Debug.LogWarning("The lobby setup pane is missing some important objects!");
 
-        animatorInstance = GetComponent<Animator>();
-        //ClosePane(); //make sure it's closed.
-	}
+            animatorInstance = GetComponent<Animator>();
+        }
 
-    void OnDestroy()
-    {
-        instance = null;
+        void OnDestroy()
+        {
+            instance = null;
+        }
+
+        Sprite GetMapImage(string mapName)
+        {
+            //Load singular just wouldn't work!
+            Sprite image = Resources.Load<Sprite>("gui/mapImg/" + mapName);
+            if (image == null)
+            {
+                return Resources.Load<Sprite>("gui/mapImg");
+            }
+            else
+                return image;
+        }
     }
 }

@@ -1,56 +1,61 @@
 ﻿using UnityEngine;
+using Raider.Game.Cameras;
 using System.Collections;
 
-public class PlayerAnimationController : MonoBehaviour {
+namespace Raider.Game.Player
+{
 
-    private Animator attachedAnimator;
-
-    // Use this for initialization
-    void Start()
-    {
-        attachedAnimator = GetComponent<Animator>();
-    }
-
-    // Update is called once per frame
-    void Update()
+    public class PlayerAnimationController : MonoBehaviour
     {
 
-        //Only update the animator of the camera controller allows movement.
-        if (!CameraModeController.controllerInstance.preventMovement)
+        private Animator attachedAnimator;
+
+        // Use this for initialization
+        void Start()
         {
-            attachedAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
-            attachedAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+            attachedAnimator = GetComponent<Animator>();
+        }
 
-            //if (Input.GetButton("Jump"))
-            //{
-            //    attachedAnimator.SetBool("jumping", true);
-            //    Invoke("StopJumping", 0.1f);
-            //}
-
-            if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
+        // Update is called once per frame
+        void Update()
+        {
+            //Only update the animator of the camera controller allows movement.
+            if (!CameraModeController.controllerInstance.preventMovement)
             {
-                attachedAnimator.SetBool("running", true);
+                attachedAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
+                attachedAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+
+                //if (Input.GetButton("Jump"))
+                //{
+                //    attachedAnimator.SetBool("jumping", true);
+                //    Invoke("StopJumping", 0.1f);
+                //}
+
+                if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
+                {
+                    attachedAnimator.SetBool("running", true);
+                }
+                else
+                {
+                    attachedAnimator.SetBool("running", false);
+                }
             }
             else
             {
-                attachedAnimator.SetBool("running", false);
+                StopAnimations();
             }
         }
-        else
+
+        void StopAnimations()
         {
-            StopAnimations();
+            attachedAnimator.SetFloat("verticalSpeed", 0f);
+            attachedAnimator.SetFloat("horizontalSpeed", 0f);
+            attachedAnimator.SetBool("running", false);
         }
-    }
 
-    void StopAnimations()
-    {
-        attachedAnimator.SetFloat("verticalSpeed", 0f);
-        attachedAnimator.SetFloat("horizontalSpeed", 0f);
-        attachedAnimator.SetBool("running", false);
-    }
-
-    void StopJumping()
-    {
-        attachedAnimator.SetBool("jumping", false);
+        void StopJumping()
+        {
+            attachedAnimator.SetBool("jumping", false);
+        }
     }
 }

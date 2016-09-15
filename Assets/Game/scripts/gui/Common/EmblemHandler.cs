@@ -1,38 +1,44 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Raider.Game.Saves;
 
-public class EmblemHandler : MonoBehaviour {
+namespace Raider.Game.GUI.Components
+{
 
-    [HideInInspector]
-    public Sprite[] layer0sprites;
-    [HideInInspector]
-    public Sprite[] layer1sprites;
-    [HideInInspector]
-    public Sprite[] layer2sprites;
-
-    [Header("Images")]
-    public Image layer0image;
-    public Image layer1image;
-    public Image layer2image;
-
-    public void Awake()
+    public class EmblemHandler : MonoBehaviour
     {
-        layer0sprites = Resources.LoadAll<Sprite>("gui/emblems/layer0");
-        layer1sprites = Resources.LoadAll<Sprite>("gui/emblems/layer1");
-        layer2sprites = Resources.LoadAll<Sprite>("gui/emblems/layer2");
-    }
 
-    public void UpdateEmblem(SaveDataStructure.Character _character)
-    {
-        layer0image.color = _character.emblemLayer0Color.color;
-        layer1image.color = _character.emblemLayer1Color.color;
-        layer2image.color = _character.emblemLayer2Color.color;
+        [HideInInspector]
+        public Sprite[] layer0sprites;
+        [HideInInspector]
+        public Sprite[] layer1sprites;
+        [HideInInspector]
+        public Sprite[] layer2sprites;
 
-        layer2image.gameObject.SetActive(_character.emblemLayer2);
+        [Header("Images")]
+        public Image layer0image;
+        public Image layer1image;
+        public Image layer2image;
 
-        layer0image.sprite = layer0sprites[_character.emblemLayer0];
-        layer1image.sprite = layer1sprites[_character.emblemLayer1];
-        layer2image.sprite = layer2sprites[_character.emblemLayer1];
+        public void Awake()
+        {
+            layer0sprites = Resources.LoadAll<Sprite>("gui/emblems/layer0");
+            layer1sprites = Resources.LoadAll<Sprite>("gui/emblems/layer1");
+            layer2sprites = Resources.LoadAll<Sprite>("gui/emblems/layer2");
+        }
+
+        public void UpdateEmblem(SaveDataStructure.Character _character)
+        {
+            layer0image.color = _character.emblemLayer0Color.color;
+            layer1image.color = _character.emblemLayer1Color.color;
+            layer2image.color = _character.emblemLayer2Color.color;
+
+            layer2image.gameObject.SetActive(_character.emblemLayer2);
+
+            layer0image.sprite = layer0sprites[_character.emblemLayer0];
+            layer1image.sprite = layer1sprites[_character.emblemLayer1];
+            layer2image.sprite = layer2sprites[_character.emblemLayer1];
+        }
     }
 }

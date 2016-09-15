@@ -1,16 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SceneOverviewCameraController : CameraController {
+namespace Raider.Game.Cameras
+{
 
-    public Transform parentTransform;
+    public class SceneOverviewCameraController : CameraController
+    {
 
-    // Use this for initialization
-    void Start () {
-        parentTransform = GameObject.Find("_SceneOverview").transform;
-        base.parent = parentTransform;
-        base.preventMovement = true;
+        public Transform parentTransform;
 
-        base.Start();
+        // Use this for initialization
+        new void Start()
+        {
+            parentTransform = GameObject.Find("_SceneOverview").transform;
+            base.parent = parentTransform;
+            base.preventMovement = true;
+
+            base.Start();
+        }
     }
 }

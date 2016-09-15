@@ -2,59 +2,66 @@
 using UnityEngine.UI;
 using System.Collections;
 
-[AddComponentMenu("Layout/Match Object Size")]
-[ExecuteInEditMode]
-[RequireComponent(typeof(RectTransform))]
-public class MatchObjectSize : MonoBehaviour {
+namespace Raider.Game.GUI.Layout
+{
 
-    public GameObject matchGameObject;
-    public bool matchWidth;
-    public bool matchHeight;
-    
-	// Use this for initialization
-	void Start () {
-	    if(matchGameObject == null)
-        {
-            Debug.Log(string.Format("[GUI] Match game object on {0} was provided no object to match",this.name));
-        }
-        else if(matchGameObject.GetComponent<RectTransform>() == null)
-        {
-            Debug.Log(string.Format("[GUI] {0} trying to match a game object with no rect transform ({1}).", this.name, matchGameObject.name));
-        }
-	}
-
-	// Update is called once per frame
-
-    void ResizeUI()
+    [AddComponentMenu("Layout/Match Object Size")]
+    [ExecuteInEditMode]
+    [RequireComponent(typeof(RectTransform))]
+    public class MatchObjectSize : MonoBehaviour
     {
-        RectTransform matchRect = matchGameObject.GetComponent<RectTransform>();
 
-        if (matchRect != null)
+        public GameObject matchGameObject;
+        public bool matchWidth;
+        public bool matchHeight;
+
+        // Use this for initialization
+        void Start()
         {
-            RectTransform currentRect = GetComponent<RectTransform>();
-            Vector2 updatedSize = currentRect.rect.size;
-            if (matchWidth)
+            if (matchGameObject == null)
             {
-                updatedSize.x = matchRect.rect.size.x;
+                Debug.Log(string.Format("[GUI] Match game object on {0} was provided no object to match", this.name));
             }
-            if (matchHeight)
+            else if (matchGameObject.GetComponent<RectTransform>() == null)
             {
-                updatedSize.y = matchRect.rect.size.y;
+                Debug.Log(string.Format("[GUI] {0} trying to match a game object with no rect transform ({1}).", this.name, matchGameObject.name));
             }
-
-            currentRect.sizeDelta = updatedSize;
         }
-    }
 
-    void Update()
-    {
-        ResizeUI();
-    }
+        // Update is called once per frame
+
+        void ResizeUI()
+        {
+            RectTransform matchRect = matchGameObject.GetComponent<RectTransform>();
+
+            if (matchRect != null)
+            {
+                RectTransform currentRect = GetComponent<RectTransform>();
+                Vector2 updatedSize = currentRect.rect.size;
+                if (matchWidth)
+                {
+                    updatedSize.x = matchRect.rect.size.x;
+                }
+                if (matchHeight)
+                {
+                    updatedSize.y = matchRect.rect.size.y;
+                }
+
+                currentRect.sizeDelta = updatedSize;
+            }
+        }
+
+        void Update()
+        {
+            ResizeUI();
+        }
 
 #if UNITY_EDITOR
-    void OnRenderObject () {
-        ResizeUI();
-        //LayoutRebuilder.MarkLayoutForRebuild(GetComponent<RectTransform>());
-    }
+        void OnRenderObject()
+        {
+            ResizeUI();
+            //LayoutRebuilder.MarkLayoutForRebuild(GetComponent<RectTransform>());
+        }
 #endif
+    }
 }

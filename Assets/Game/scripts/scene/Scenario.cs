@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class Scenario : MonoBehaviour {
+namespace Raider.Game.Scene
+{
 
-    [HideInInspector]
-    public static Scenario instance;
-
-    public string currentScene;
-    public Gametype currentGametype;
-
-    public List<string> scenes;
-    public List<string> getScenesByGametype(Gametype gametype)
+    public class Scenario : MonoBehaviour
     {
-        List<string> appropriateScenes = new List<string>();
+
+        [HideInInspector]
+        public static Scenario instance;
+
+        public string currentScene;
+        public Gametype currentGametype;
+
+        public List<string> scenes;
+        public List<string> getScenesByGametype(Gametype gametype)
+        {
+            List<string> appropriateScenes = new List<string>();
 
 #if UNITY_EDITOR
-        foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
-        {
-            if (scene.path.Contains(gametype.ToString().ToLower()))
-                appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
-        }
+            foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
+            {
+                if (scene.path.Contains(gametype.ToString().ToLower()))
+                    appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
+            }
 #else
         for(int i = SceneManager.sceneCount - 1; i > -1; i--)
         {
@@ -28,35 +32,35 @@ public class Scenario : MonoBehaviour {
                 appropriateScenes.Add(SceneManager.GetSceneAt(i).name);
         }
 #endif
-        return appropriateScenes;
-    }
+            return appropriateScenes;
+        }
 
-    public enum Gametype
-    {
-        None,
-        Story,
-        Survival,
-        Seige,
-        Skirmish,
-        Anvil,
-        Ui,
-        Test
-    }
+        public enum Gametype
+        {
+            None,
+            Story,
+            Survival,
+            Seige,
+            Skirmish,
+            Anvil,
+            Ui,
+            Test
+        }
 
-	// Use this for initialization
-	void Start ()
-    {
-        DontDestroyOnLoad(gameObject);
+        // Use this for initialization
+        void Start()
+        {
+            DontDestroyOnLoad(gameObject);
 
-        if (instance != null)
-            return;
-        instance = this;
+            if (instance != null)
+                return;
+            instance = this;
 
 #if UNITY_EDITOR
-        foreach(UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
-        {
-            scenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity",""));
-        }
+            foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
+            {
+                scenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
+            }
 #else
         for(int i = SceneManager.sceneCount - 1; i > -1; i--)
         {
@@ -64,18 +68,18 @@ public class Scenario : MonoBehaviour {
         }
 #endif
 
-        currentScene = SceneManager.GetActiveScene().name;
+            currentScene = SceneManager.GetActiveScene().name;
 
-	}
+        }
 
-    void OnDestroy()
-    {
-        instance = null;
-        Debug.LogWarning("Something just destroyed the scenario script!");
-    }
+        void OnDestroy()
+        {
+            instance = null;
+            Debug.LogWarning("Something just destroyed the scenario script!");
+        }
 
-    public void LoadScene(string sceneName, Gametype gametype)
-    {
+        public void LoadScene(string sceneName, Gametype gametype)
+        {
 #if !UNITY_EDITOR
         Scene newScene = SceneManager.GetSceneByName(sceneName);
 
@@ -86,6 +90,7 @@ public class Scenario : MonoBehaviour {
             Debug.LogError(string.Format("Can't load {0} with gametype {1}", newScene.path + newScene.name, gametype.ToString()));
 
 #endif
-        SceneManager.LoadScene(sceneName);
+            SceneManager.LoadScene(sceneName);
+        }
     }
 }

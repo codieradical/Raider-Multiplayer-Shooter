@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-namespace UnityEngine.UI
+namespace Raider.Game.GUI.Layout
 {
 
     [AddComponentMenu("Layout/Layout Element Aspect Ratio Fitter", 142)]
@@ -135,11 +135,11 @@ namespace UnityEngine.UI
             return parent.rect.size;
         }
 
-        public virtual void SetLayoutHorizontal() { }
+        public new virtual void SetLayoutHorizontal() { }
 
-        public virtual void SetLayoutVertical() { }
+        public new virtual void SetLayoutVertical() { }
 
-        protected void SetDirty()
+        protected new void SetDirty()
         {
             if (!IsActive())
                 return;

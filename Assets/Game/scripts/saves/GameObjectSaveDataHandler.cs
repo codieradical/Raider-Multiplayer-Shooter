@@ -3,110 +3,114 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// The GameObject Save Data Handler is volatile! 
-/// It's used for temporary storage on a script attached to a game object.
-/// 
-/// A plugin should be built to help with save data.
-/// </summary>
-public class GameObjectSaveDataHandler : MonoBehaviour, ISaveDataHandler
+namespace Raider.Game.Saves
 {
-    #region Singleton Setup
 
-    //I think I can refactor this,
-    //because MonoBehaviours can't be constructed,
-    //I've had to make a kinda fake constructor method.
-    //Maybe an instanciatable inheriting class would work.
-    public static GameObjectSaveDataHandler CreateGameObjectSaveDataHandler()
+    /// <summary>
+    /// The GameObject Save Data Handler is volatile! 
+    /// It's used for temporary storage on a script attached to a game object.
+    /// 
+    /// A plugin should be built to help with save data.
+    /// </summary>
+    public class GameObjectSaveDataHandler : MonoBehaviour, ISaveDataHandler
     {
-        GameObject hostObject = new GameObject();
-        hostObject.AddComponent<GameObjectSaveDataHandler>();
-        return instance;
-    }
+        #region Singleton Setup
 
-    public static GameObjectSaveDataHandler instance;
+        //I think I can refactor this,
+        //because MonoBehaviours can't be constructed,
+        //I've had to make a kinda fake constructor method.
+        //Maybe an instanciatable inheriting class would work.
+        public static GameObjectSaveDataHandler CreateGameObjectSaveDataHandler()
+        {
+            GameObject hostObject = new GameObject();
+            hostObject.AddComponent<GameObjectSaveDataHandler>();
+            return instance;
+        }
 
-    public void Awake()
-    {
-        if (instance != null)
-            Debug.LogWarning("Multiple objects are holding save data. Ignoring additional.");
-        else
-            instance = this;
-        parentObject = gameObject;
-    }
+        public static GameObjectSaveDataHandler instance;
 
-    public void OnDestroy()
-    {
-        instance = null;
-    }
+        public void Awake()
+        {
+            if (instance != null)
+                Debug.LogWarning("Multiple objects are holding save data. Ignoring additional.");
+            else
+                instance = this;
+            parentObject = gameObject;
+        }
 
-    #endregion
+        public void OnDestroy()
+        {
+            instance = null;
+        }
 
-    public SaveDataStructure data;
-    public GameObject parentObject;
+        #endregion
 
-    public SaveDataStructure ReadData()
-    {
-        return data;
-    }
+        public SaveDataStructure data;
+        public GameObject parentObject;
 
-    public void SaveData(SaveDataStructure _data)
-    {
-        //Game object data is non-persistant.
-    }
+        public SaveDataStructure ReadData()
+        {
+            return data;
+        }
 
-    public void ReloadData()
-    {
-        //Game object data is non-persistant.
-    }
+        public void SaveData(SaveDataStructure _data)
+        {
+            //Game object data is non-persistant.
+        }
 
-    public void DeleteData()
-    {
-        data = null;
-    }
+        public void ReloadData()
+        {
+            //Game object data is non-persistant.
+        }
 
-    public void NewData()
-    {
-        data = new SaveDataStructure();
-    }
+        public void DeleteData()
+        {
+            data = null;
+        }
 
-    public void NewCharacter(SaveDataStructure.Character character)
-    {
-        data.characters.Add(character);
-    }
+        public void NewData()
+        {
+            data = new SaveDataStructure();
+        }
 
-    public void SaveCharacter(int slot, SaveDataStructure.Character character)
-    {
-        data.characters[slot] = character;
-    }
+        public void NewCharacter(SaveDataStructure.Character character)
+        {
+            data.characters.Add(character);
+        }
 
-    public SaveDataStructure.Character GetCharacter(int slot)
-    {
-        return data.characters[slot];
-    }
+        public void SaveCharacter(int slot, SaveDataStructure.Character character)
+        {
+            data.characters[slot] = character;
+        }
 
-    public List<SaveDataStructure.Character> GetAllCharacters()
-    {
-        return data.characters;
-    }
+        public SaveDataStructure.Character GetCharacter(int slot)
+        {
+            return data.characters[slot];
+        }
 
-    public string GetUsername()
-    {
-        return data.username;
-    }
+        public List<SaveDataStructure.Character> GetAllCharacters()
+        {
+            return data.characters;
+        }
 
-    public void SetUsername(string _username)
-    {
-        data.username = _username;
-    }
+        public string GetUsername()
+        {
+            return data.username;
+        }
 
-    public int characterCount
-    {
-        get { return data.characters.Count; }
-    }
+        public void SetUsername(string _username)
+        {
+            data.username = _username;
+        }
 
-    public void DeleteCharacter(int slot)
-    {
-        data.characters.RemoveAt(slot);
+        public int characterCount
+        {
+            get { return data.characters.Count; }
+        }
+
+        public void DeleteCharacter(int slot)
+        {
+            data.characters.RemoveAt(slot);
+        }
     }
 }
