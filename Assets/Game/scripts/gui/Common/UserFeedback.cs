@@ -49,9 +49,12 @@ public class UserFeedback : MonoBehaviour
 
     void OnGUI()
     {
-        for(int i = messageLog.Count; i <= 0; i--)
-        {
-            GUI.Label(new Rect(0, i * 20, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
-        }
+        if(messageLog.Count > 1)
+            for(int i = messageLog.Count - 1; i >= 0; i--)
+            {
+                GUI.Label(new Rect(0, i * 15, Screen.width, Screen.height / 2), messageLog.ElementAt(i));
+            }
+
+        GUI.Label(new Rect(0, Screen.height - 20, Screen.width, Screen.height), "Project Excavator, 2016 Private Alpha");
     }
 }

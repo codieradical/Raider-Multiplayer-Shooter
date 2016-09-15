@@ -139,7 +139,14 @@ public class CameraModeController : MonoBehaviour
 
     public void ChangeCameraParent(Transform _newParent)
     {
+        if (_newParent == null)
+            Debug.LogWarning("[CameraModeController] Attempted to switch camera parent to null.");
         gameObject.transform.parent = _newParent;
+    }
+
+    public void RemoveCameraParent()
+    {
+        gameObject.transform.parent = null;
     }
 
     void RemoveCameraController()

@@ -20,7 +20,7 @@ public class StaticCameraController : ThirdPersonCameraController
         base.Start();
 
         //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
-        modeController.ChangeCameraParent(null);
+        modeController.RemoveCameraParent();
     }
 
     void Update()

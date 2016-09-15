@@ -66,24 +66,40 @@ public class CharacterPreviewHandler : MonoBehaviour {
 
     #region create and setup previews
 
-    public void NewPreview(string _previewName, SaveDataStructure.Character _previewCharacter, PreviewType _previewtype, RawImage _rawImage)
+    public void NewPreview(string _previewName, SaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage)
     {
         Camera previewCamera;
-        InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewtype, out previewCamera);
-        SetupPreviewDisplay(previewCamera, _previewtype, _rawImage);
+        GameObject newPreviewGraphics; //This isn't actually used, I just don't want too many different overloads.
+        InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out previewCamera);
+        SetupPreviewDisplay(previewCamera, _previewType, _rawImage);
+        PushPreviewUpdate(_previewName, _previewCharacter);
     }
 
-    void InstanceNewPreviewObject(string _previewName, SaveDataStructure.Character.Race _race, PreviewType _previewType, out Camera previewCamera)
+    //Character Display Handler Overload.
+    public void NewPreview(string _previewName, SaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage, CharacterPreviewDisplayHandler _displayHandler)
+    {
+        Camera newPreviewCamera;
+        GameObject newPreviewGraphics;
+        InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out newPreviewCamera);
+        SetupPreviewDisplay(newPreviewCamera, _previewType, _rawImage);
+        SetupPreviewDisplayHandler(_displayHandler, newPreviewGraphics, newPreviewCamera);
+        PushPreviewUpdate(_previewName, _previewCharacter);
+    }
+
+    void InstanceNewPreviewObject(string _previewName, SaveDataStructure.Character.Race _race, PreviewType _previewType, out GameObject newPreviewGraphics, out Camera newPreviewCamera)
     {
         Object prefab = GetRacePreviewPrefab(_race, _previewType);
 
         GameObject newPreviewObject = Instantiate(prefab) as GameObject;
         newPreviewObject.transform.SetParent(transform, false);
         newPreviewObject.transform.position += new Vector3(nextPreviewX, 0, 0);
+        nextPreviewX += 100;
 
         newPreviewObject.name = _previewName;
 
-        previewCamera = newPreviewObject.transform.Find(CAMERA_OBJECT_NAME).gameObject.GetComponent<Camera>();
+        //It's important to pass these objects on now, as the usual method of finding these is unavailable just after instance.
+        newPreviewGraphics = newPreviewObject.transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
+        newPreviewCamera = newPreviewObject.transform.Find(CAMERA_OBJECT_NAME).gameObject.GetComponent<Camera>();
     }
 
     void SetupPreviewDisplay(Camera _previewCamera, PreviewType _previewType, RawImage _rawImage)
@@ -91,9 +107,9 @@ public class CharacterPreviewHandler : MonoBehaviour {
         RenderTexture newPreviewTexture;
 
         if (_previewType == PreviewType.Plate)
-            newPreviewTexture = new RenderTexture(Screen.height / 3, Screen.height / 3, 24, RenderTextureFormat.ARGB32);
+            newPreviewTexture = new RenderTexture((int)(Screen.height / 2.5), (int)(Screen.height / 2.5), 24, RenderTextureFormat.ARGB32);
         else if (_previewType == PreviewType.Full)
-            newPreviewTexture = new RenderTexture(Screen.height / 3, Screen.height / 3, 24, RenderTextureFormat.ARGB32);
+            newPreviewTexture = new RenderTexture(Screen.height, Screen.height, 24, RenderTextureFormat.ARGB32);
         else
         {
             Debug.LogError("[GUI/CharacterPreviewHandler] Unrecognized PreviewType, creating a very large Preview Texture.");
@@ -106,6 +122,12 @@ public class CharacterPreviewHandler : MonoBehaviour {
         _rawImage.texture = newPreviewTexture;
     }
 
+    void SetupPreviewDisplayHandler(CharacterPreviewDisplayHandler _displayHandler, GameObject newPreviewGraphics, Camera newPreviewCamera)
+    {
+        _displayHandler.previewCamera = newPreviewCamera;
+        _displayHandler.previewCharacterGraphics = newPreviewGraphics;
+    }
+
     #endregion
 
     #region update preview appearence.
@@ -115,14 +137,14 @@ public class CharacterPreviewHandler : MonoBehaviour {
 
     private struct PreviewAppearenceUpdate
     {
-        public PreviewAppearenceUpdate(string _previewName, SaveDataStructure.Character _character)
+        public PreviewAppearenceUpdate(string _previewName, SaveDataStructure.Character _previewCharacter)
         {
             previewName = _previewName;
-            character = _character;
+            previewCharacter = _previewCharacter;
         }
 
         public string previewName;
-        public SaveDataStructure.Character character;
+        public SaveDataStructure.Character previewCharacter;
     }
 
     void LateUpdate()
@@ -143,7 +165,7 @@ public class CharacterPreviewHandler : MonoBehaviour {
         //Find the graphics object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
         GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
         PlayerAppearenceController _appearenceController = _previewGraphics.GetComponent<PlayerAppearenceController>();
-        _appearenceController.UpdatePlayerAppearence(update.previewName, update.character);
+        _appearenceController.UpdatePlayerAppearence(update.previewName, update.previewCharacter);
     }
 
     #endregion

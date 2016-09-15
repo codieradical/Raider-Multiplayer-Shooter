@@ -40,6 +40,7 @@ public class MainmenuHandler : MonoBehaviour {
 
         if (string.IsNullOrEmpty(_username))
         {
+            UserFeedback.LogError("No username provided.");
             //Display info.
             return;
         }

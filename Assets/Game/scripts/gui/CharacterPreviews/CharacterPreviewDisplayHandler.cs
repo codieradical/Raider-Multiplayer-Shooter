@@ -14,10 +14,7 @@ public class CharacterPreviewDisplayHandler : MonoBehaviour {
 
     float cameraDistance
     {
-        get
-        {
-            return previewCamera.transform.localPosition.z;
-        }
+        get { return previewCamera.transform.localPosition.z; }
 
         set
         {

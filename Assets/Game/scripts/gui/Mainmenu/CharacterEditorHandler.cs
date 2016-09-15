@@ -60,7 +60,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = Session.saveDataHandler.characterCount;
         editingCharacter = new SaveDataStructure.Character();
 
-        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
 
         ResetFieldValues();
         UpdatePreview();
@@ -71,7 +71,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         characterSlot = _slot;
         editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 
-        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
 
         ResetFieldValues();
         UpdatePreview();
@@ -115,7 +115,7 @@ public class CharacterEditorHandler : MonoBehaviour {
         editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
 
         CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
-        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage);
+        CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
     }
 
     #endregion
