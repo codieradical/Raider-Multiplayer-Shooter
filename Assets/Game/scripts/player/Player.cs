@@ -4,6 +4,8 @@
 [RequireComponent(typeof(MovementController))]
 public class Player : MonoBehaviour {
 
+
+
     public bool lockCursor = true;
 
 	// Use this for initialization
