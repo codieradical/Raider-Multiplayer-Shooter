@@ -3,7 +3,7 @@
 namespace Raider.Game.Cameras
 {
 
-    abstract public class CameraController : MonoBehaviour
+    public abstract class CameraController : MonoBehaviour
     {
         //These values represent local positions and rotations!
         [Header("Camera Point")]

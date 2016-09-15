@@ -46,7 +46,8 @@ namespace Raider.Game.Cameras
             Static = 4,
             Follow = 5,
             SceneOverview = 6,
-            FreeCam = 7
+            FreeCam = 7,
+            FollowPath = 8
         }
 
         public CameraModes selectedCameraMode = CameraModes.ThirdPerson;
@@ -137,6 +138,9 @@ namespace Raider.Game.Cameras
                     break;
                 case CameraModes.Follow:
                     gameObject.AddComponent<FollowCameraController>();
+                    break;
+                case CameraModes.FollowPath:
+                    gameObject.AddComponent<FollowPathCameraController>();
                     break;
             }
         }
