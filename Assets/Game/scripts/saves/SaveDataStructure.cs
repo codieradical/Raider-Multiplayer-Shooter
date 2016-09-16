@@ -45,9 +45,10 @@ namespace Raider.Game.Saves
                 emblemLayer2 = true;
                 race = Race.X;
                 guild = "";
+                currentMission = "New Campaign";
             }
 
-            public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp, Race _race)
+            public Character(string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, Color _emblemLayer2Color, Color _emblemLayer1Color, Color _emblemLayer0Color, int _emblemLayer0, int _emblemLayer1, bool _emblemLayer2, int _level, int _exp, Race _race, string _currentMission)
             {
                 guild = _guild;
                 armourPrimaryColor = new SerializableColor(_armourPrimaryColor);
@@ -62,6 +63,7 @@ namespace Raider.Game.Saves
                 level = _level;
                 exp = _exp;
                 race = _race;
+                currentMission = _currentMission;
             }
 
             public enum AvailableArmours
@@ -76,6 +78,7 @@ namespace Raider.Game.Saves
                 Y = 1
             }
 
+            public string currentMission;
             public Race race;
             public string guild;
             public SerializableColor armourPrimaryColor;

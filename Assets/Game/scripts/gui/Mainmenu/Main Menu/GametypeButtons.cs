@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System;
 using Raider.Game.Scene;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {
 
     public class GametypeButtons : MonoBehaviour
     {
+
+        public Text currentMissionText;
+        //public Text weeklyHopperText;
 
         public static GametypeButtons instance;
 
@@ -28,6 +32,7 @@ namespace Raider.Game.GUI.Components
 
         public void ShowButtons()
         {
+            currentMissionText.text = Session.activeCharacter.currentMission;
             animatorInstance.SetBool("open", true);
         }
 

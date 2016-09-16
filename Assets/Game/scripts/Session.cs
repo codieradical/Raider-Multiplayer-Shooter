@@ -8,7 +8,7 @@ namespace Raider
     {
         public static ISaveDataHandler saveDataHandler;
         public static bool online = false;
-        public static SaveDataStructure.Character character;
+        public static SaveDataStructure.Character activeCharacter;
 
         public static void Login(string _username)
         {
@@ -18,7 +18,7 @@ namespace Raider
 
         public static void SelectCharacter(int slot)
         {
-            character = saveDataHandler.GetCharacter(slot);
+            activeCharacter = saveDataHandler.GetCharacter(slot);
         }
 
         public static void InitializeSaveDataHandler()

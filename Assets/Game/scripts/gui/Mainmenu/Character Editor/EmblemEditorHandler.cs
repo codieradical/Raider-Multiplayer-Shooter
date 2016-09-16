@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEditor;
 using Raider.Game.Saves;
 using Raider.Game.GUI.Components;
+using System;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -29,6 +30,14 @@ namespace Raider.Game.GUI.Screens
         private Color layer0color;
         private Color layer1color;
         private Color layer2color;
+
+        new void Awake()
+        {
+            //Make sure the character can't select an emblem index above the amount of emblems.
+            base.Awake();
+            layer1field.max = layer1sprites.Length - 1;
+            layer0field.max = layer0sprites.Length - 1;
+        }
 
         public void OpenEditor()
         {
@@ -88,6 +97,20 @@ namespace Raider.Game.GUI.Screens
             characterEditorHandler.UpdatePreview();
 
             CloseEditor();
+        }
+
+        public void RandomiseEmblem()
+        {
+            layer0field.value = UnityEngine.Random.Range(0, layer0sprites.Length - 1);
+            layer1field.value = UnityEngine.Random.Range(0, layer1sprites.Length - 1);
+            System.Random rand = new System.Random();
+            layer2field.isOn = Convert.ToBoolean(rand.Next(0, 2));
+
+            layer0color = UnityEngine.Random.ColorHSV();
+            layer1color = UnityEngine.Random.ColorHSV();
+            layer2color = UnityEngine.Random.ColorHSV();
+
+            UpdatePreview();
         }
 
         #region ColorHandling

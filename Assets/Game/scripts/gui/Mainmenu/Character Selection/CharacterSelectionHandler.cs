@@ -70,7 +70,7 @@ namespace Raider.Game.GUI.Screens
 
         public void ChooseCharacter(int slot)
         {
-            Session.character = Session.saveDataHandler.GetCharacter(slot);
+            Session.activeCharacter = Session.saveDataHandler.GetCharacter(slot);
             MainmenuHandler.instance.ChooseCharacter(slot);
         }
 

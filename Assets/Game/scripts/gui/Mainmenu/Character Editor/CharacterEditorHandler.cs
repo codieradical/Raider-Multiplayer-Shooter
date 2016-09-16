@@ -128,6 +128,23 @@ namespace Raider.Game.GUI.Screens
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
         }
 
+        public void RandomiseCharacter()
+        {
+            editingCharacter.armourPrimaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.armourSecondaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.armourTertiaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+
+            //unity rand isn't good at certain things...
+
+            System.Random rand = new System.Random();
+
+            SaveDataStructure.Character.Race newRace = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
+            if (editingCharacter.race != newRace)
+                EditRace((int)newRace);
+            else
+                UpdatePreview();
+        }
+
         #endregion
 
         #region color stuff

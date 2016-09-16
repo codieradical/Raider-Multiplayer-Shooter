@@ -69,11 +69,12 @@ namespace Raider.Game.GUI.Screens
             LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
             playerNameplate.username = Session.saveDataHandler.GetUsername();
             playerNameplate.leader = true;
-            playerNameplate.character = Session.character;
+            playerNameplate.character = Session.activeCharacter;
 
             LobbyHandler.AddPlayer(playerNameplate);
 
             MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+            GametypeButtons.instance.ShowButtons();
         }
 
         public void CreateCharacter()
