@@ -31,7 +31,7 @@ namespace Raider.Game.GUI.Screens
 
 
         [SerializeField]
-        public CharacterEditorHandler editorHandler = new CharacterEditorHandler();
+        public CharacterEditorHandler editorHandler;
 
         [Header("Screens")]
         public GameObject LoginScreen;

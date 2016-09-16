@@ -137,8 +137,7 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         #region update preview appearence.
 
-        //I needed a way to update preview appearence next frame, and I've been waiting for an excuse to use a Stack.
-        private Stack<PreviewAppearenceUpdate> appearenceUpdates = new Stack<PreviewAppearenceUpdate>();
+        private List<PreviewAppearenceUpdate> appearenceUpdates = new List<PreviewAppearenceUpdate>();
 
         private struct PreviewAppearenceUpdate
         {
@@ -156,13 +155,14 @@ namespace Raider.Game.GUI.CharacterPreviews
         {
             while (appearenceUpdates.Count > 0)
             {
-                UpdatePreviewAppearence(appearenceUpdates.Pop());
+                UpdatePreviewAppearence(appearenceUpdates[0]);
+                appearenceUpdates.RemoveAt(0);
             }
         }
 
         public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
         {
-            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
+            appearenceUpdates.Add(new PreviewAppearenceUpdate(_previewName, _character));
         }
 
         void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
@@ -207,6 +207,13 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         public void DestroyPreviewObject(string _previewName)
         {
+            foreach(PreviewAppearenceUpdate previewAppearenceUpdate in appearenceUpdates)
+            {
+                if (previewAppearenceUpdate.previewName == _previewName)
+                    appearenceUpdates.Remove(previewAppearenceUpdate);
+                //It shouldn't matter if multiple updates of the same name are present,
+                //They can be removed in any order as long as all of them are removed.
+            }
             Destroy(GetPreviewObject(_previewName));
         }
 
