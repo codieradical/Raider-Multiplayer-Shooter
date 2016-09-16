@@ -21,7 +21,7 @@ namespace Raider.Game.GUI.Components
                 else
                     return 0;
             }
-            private set
+            set
             {
                 if (IF != null)
                     IF.text = value.ToString();

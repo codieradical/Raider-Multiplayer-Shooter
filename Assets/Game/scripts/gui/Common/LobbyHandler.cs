@@ -97,8 +97,12 @@ namespace Raider.Game.GUI.Components
                 float _h, _s, _v;
                 Color.RGBToHSV(plateColor, out _h, out _s, out _v);
 
-                plateColor = Color.HSVToRGB(_h, _s, 0.3f);
+                plateColor = Color.HSVToRGB(_h, _s, 0.5f);
                 plateColor.a = 200f / 255f;
+
+                //Color plateColor = character.armourPrimaryColor.color;
+                //plateColor.a = 0.5f;
+                //newPlate.GetComponent<Image>().color = plateColor;
 
                 newPlayer.GetComponent<Image>().color = plateColor;
 

@@ -16,6 +16,8 @@ namespace Raider.Game.GUI.Screens
         public EmblemEditorHandler emblemEditor;
         public EmblemHandler emblemPreview;
 
+        private Text titleText;
+
         public GameObject optionsParent;
         private Dropdown raceDropdown;
         private Image primaryColorButton;
@@ -40,6 +42,7 @@ namespace Raider.Game.GUI.Screens
         void Start()
         {
             characterPreviewRawImage = characterPreviewImage.GetComponent<RawImage>();
+            titleText = transform.Find("Title").GetComponent<Text>();
 
             emblemEditor.characterEditorHandler = this;
 
@@ -62,6 +65,7 @@ namespace Raider.Game.GUI.Screens
 
         public void NewCharacter()
         {
+            titleText.text = "Create a Character";
             characterSlot = Session.saveDataHandler.characterCount;
             editingCharacter = new SaveDataStructure.Character();
 
@@ -73,6 +77,7 @@ namespace Raider.Game.GUI.Screens
 
         public void EditCharacter(int _slot)
         {
+            titleText.text = "Edit a Character";
             characterSlot = _slot;
             editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 

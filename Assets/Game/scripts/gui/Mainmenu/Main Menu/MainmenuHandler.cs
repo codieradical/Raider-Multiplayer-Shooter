@@ -38,6 +38,7 @@ namespace Raider.Game.GUI.Screens
         public GameObject ChooseCharacterScreen;
         public GameObject CreateCharacterScreen;
         public GameObject MainMenuScreen;
+        public GameObject EmblemEditorScreen;
 
         public void Login(Text _textComponent)
         {

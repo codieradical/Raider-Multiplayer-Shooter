@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 namespace Raider.Game.GUI
 {
+    [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(CanvasGroup))]
     public class Menu : MonoBehaviour
     {
 

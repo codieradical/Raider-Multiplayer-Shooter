@@ -30,29 +30,27 @@ namespace Raider.Game.GUI.Screens
         private Color layer1color;
         private Color layer2color;
 
-        void Start()
-        {
-            gameObject.SetActive(false);
-
-            layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.color;
-            layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.color;
-            layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.color;
-
-            UpdatePreview();
-        }
-
         public void OpenEditor()
         {
-            //For some reason the object isn't activated until the second click, this is a temp fix.
-            while (!gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
+            UpdateFields();
+            UpdatePreview();
+            MenuManager.instance.ShowMenu(this.GetComponent<Menu>());
         }
 
         public void CloseEditor()
         {
-            gameObject.SetActive(false);
+            MenuManager.instance.ShowMenu(characterEditorHandler.gameObject.GetComponent<Menu>());
+        }
+
+        void UpdateFields()
+        {
+            layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.color;
+            layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.color;
+            layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.color;
+
+            layer0field.value = characterEditorHandler.editingCharacter.emblemLayer0;
+            layer1field.value = characterEditorHandler.editingCharacter.emblemLayer1;
+            layer2field.isOn = characterEditorHandler.editingCharacter.emblemLayer2;
         }
 
         public void UpdatePreview()
