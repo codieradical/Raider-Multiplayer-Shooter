@@ -24,6 +24,7 @@ namespace Raider.Game.Saves
         {
             GameObject hostObject = new GameObject();
             hostObject.AddComponent<GameObjectSaveDataHandler>();
+            instance.data = new SaveDataStructure();
             return instance;
         }
 

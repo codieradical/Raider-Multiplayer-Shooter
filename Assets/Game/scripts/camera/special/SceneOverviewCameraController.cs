@@ -12,7 +12,7 @@ namespace Raider.Game.Cameras
         // Use this for initialization
         new void Start()
         {
-            parentTransform = GameObject.Find("_SceneOverview").transform;
+            parentTransform = CameraModeController.instance.sceneOverviewGameObject.transform;
             base.parent = parentTransform;
             base.preventMovement = true;
 

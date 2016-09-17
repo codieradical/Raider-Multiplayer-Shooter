@@ -19,7 +19,7 @@ namespace Raider.Game.Cameras
             base.Start();
 
             pathObjects = new List<GameObject>();
-            foreach(Transform child in GameObject.Find("_CameraPath").transform)
+            foreach(Transform child in CameraModeController.instance.cameraPathGameObject.transform)
             {
                 pathObjects.Add(child.gameObject);
             }
