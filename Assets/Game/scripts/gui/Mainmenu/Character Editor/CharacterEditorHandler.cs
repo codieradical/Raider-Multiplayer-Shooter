@@ -16,15 +16,13 @@ namespace Raider.Game.GUI.Screens
         public EmblemEditorHandler emblemEditor;
         public EmblemHandler emblemPreview;
 
-        private Text titleText;
-
-        public GameObject optionsParent;
-        private Dropdown raceDropdown;
-        private Image primaryColorButton;
-        private Image secondaryColorButton;
-        private Image tertiaryColorButton;
-        private Text usernameLabel;
-        private InputField guildInput;
+        public Text titleText;
+        public Dropdown raceDropdown;
+        public Image primaryColorButton;
+        public Image secondaryColorButton;
+        public Image tertiaryColorButton;
+        public Text usernameLabel;
+        public InputField guildInput;
 
         public GameObject characterPreviewImage;
         RawImage characterPreviewRawImage;
@@ -42,25 +40,11 @@ namespace Raider.Game.GUI.Screens
         void Start()
         {
             characterPreviewRawImage = characterPreviewImage.GetComponent<RawImage>();
-            titleText = transform.Find("Title").GetComponent<Text>();
 
             emblemEditor.characterEditorHandler = this;
 
-            FindOptionFields();
-
             if (primaryColorButton == null || secondaryColorButton == null || tertiaryColorButton == null || usernameLabel == null)
                 Debug.LogError("[GUI/CharacterEditorHandler] Missing a required game object.");
-        }
-
-        public void FindOptionFields()
-        {
-            //A better way to assign these would be nice.
-            primaryColorButton = optionsParent.transform.Find("color1").Find("Button").GetComponent<Image>();
-            secondaryColorButton = optionsParent.transform.Find("color2").Find("Button").GetComponent<Image>();
-            tertiaryColorButton = optionsParent.transform.Find("color3").Find("Button").GetComponent<Image>();
-            usernameLabel = optionsParent.transform.Find("username").Find("value").GetComponent<Text>();
-            guildInput = optionsParent.transform.Find("guild").Find("InputField").GetComponent<InputField>();
-            raceDropdown = optionsParent.transform.Find("race").Find("Dropdown").GetComponent<Dropdown>();
         }
 
         public void NewCharacter()

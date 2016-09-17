@@ -37,6 +37,9 @@ namespace Raider.Game.Cameras
         public FirstPersonCameraSettings firstPersonCamSettings;
         public ThirdPersonCameraSettings thirdPersonCamSettings;
 
+        public GameObject sceneOverviewGameObject;
+        public GameObject cameraPathGameObject;
+
         public enum CameraModes
         {
             FirstPerson = 0,
@@ -78,6 +81,12 @@ namespace Raider.Game.Cameras
         // Use this for initialization
         void Start()
         {
+            if (cameraPathGameObject == null || sceneOverviewGameObject == null)
+            {
+                Debug.LogWarning("The camera mode controller is missing an object reference.");
+                Debug.LogWarning("A scene probably has an overview or path cam.");
+            }
+
             camPoint = this.gameObject;
 
             activeCamera = selectedCameraMode;
