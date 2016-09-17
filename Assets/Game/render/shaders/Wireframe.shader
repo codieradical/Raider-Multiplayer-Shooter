@@ -1,9 +1,12 @@
-﻿Shader "Custom/Wireframe" {
-	Properties {
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Custom/Wireframe" {
+	Properties{
 		_Color("Line Color", Color) = (1,1,1,1)
 		_Thickness("Thickness", Float) = 1
 		_Resolution("Resolution For Thickness", Float) = 1080
 		_FaceColor("Face Color", Color) = (0,0,0,0)
+		//_DrawDist("DrawDist", Float) = 200
 	}
 	SubShader {
 
@@ -73,6 +76,7 @@
 			float _Thickness = 1;		// line thickness
 			float4 _Color = { 1,1,1,1 };	// line color
 			float _ThicknessAtResolution = 1080;
+			//float _DrawDist = 200;
 
 			//vert
 			//Build object
@@ -80,6 +84,7 @@
 			v2g vert(appdata_base v)
 			{
 				v2g output;
+
 				output.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				return output;
@@ -130,6 +135,12 @@
 			//render lines
 			float4 frag(g2f input) : COLOR
 			{
+				//if(distance(_WorldSpaceCameraPos, mul(unity_ObjectToWorld, input.pos)) > _DrawDist)
+				//{
+				//	float4 col = {0,0,0,0};
+				//	return col;
+				//}
+
 				//find the smallest distance
 				float val = min(input.dist.x, min(input.dist.y, input.dist.z));
 				
