@@ -3,13 +3,17 @@
 Shader "Custom/Wireframe" {
 	Properties{
 		_Color("Line Color", Color) = (1,1,1,1)
+		_FadeColor("Line Faded Color", Color) = (1,1,1,1)
 		_Thickness("Thickness", Float) = 1
 		_Resolution("Resolution For Thickness", Float) = 1080
 		_FaceColor("Face Color", Color) = (0,0,0,0)
-		//_DrawDist("DrawDist", Float) = 200
+		_FadeStartDist("Fade Start Dist", Float) = 150000
+		_FadeEndDist("Fade End Dist", Float) = 200000
+		_FadedFaceColor("Faded Face Color", Color) = (0,0,0,0)
 	}
 	SubShader {
 
+		//First Pass, draw face color.
 		Pass{
 			Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
 
@@ -31,6 +35,8 @@ Shader "Custom/Wireframe" {
 			};
 
 			float4 _FaceColor = { 0,0,0,0 };
+			float _FadeEndDist = 200000;
+			float4 _FadedFaceColor = { 0,0,0,0 };
 
 			v2f vert(appdata IN)
 			{
@@ -42,12 +48,20 @@ Shader "Custom/Wireframe" {
 			}
 
 			fixed4 frag(v2f IN) : SV_Target{
+
+				float dist = distance(_WorldSpaceCameraPos, mul(unity_ObjectToWorld, IN.position));
+				if (dist > _FadeEndDist)
+				{
+					return _FadedFaceColor;
+				}
+
 				return _FaceColor;
 			}
 
 			ENDCG
 		}
 
+		//Second pass, draw wireframe.
 		Pass{
 			Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
 
@@ -75,8 +89,10 @@ Shader "Custom/Wireframe" {
 
 			float _Thickness = 1;		// line thickness
 			float4 _Color = { 1,1,1,1 };	// line color
+			float4 _FadeColor = { 1,1,1,1 };
 			float _ThicknessAtResolution = 1080;
-			//float _DrawDist = 200;
+			float _FadeStartDist = 150000;
+			float _FadeEndDist = 200000;
 
 			//vert
 			//Build object
@@ -135,12 +151,7 @@ Shader "Custom/Wireframe" {
 			//render lines
 			float4 frag(g2f input) : COLOR
 			{
-				//if(distance(_WorldSpaceCameraPos, mul(unity_ObjectToWorld, input.pos)) > _DrawDist)
-				//{
-				//	float4 col = {0,0,0,0};
-				//	return col;
-				//}
-
+				float dist = distance(_WorldSpaceCameraPos, mul(unity_ObjectToWorld, input.pos));
 				//find the smallest distance
 				float val = min(input.dist.x, min(input.dist.y, input.dist.z));
 				
@@ -157,6 +168,28 @@ Shader "Custom/Wireframe" {
 
 				if (col.a < 0.5f) discard;
 				else col.a = 1.0f;
+
+				if (dist > _FadeEndDist)
+				{
+					discard;
+				}
+				else if (dist > _FadeStartDist)
+				{
+					//float4 alpha = (dist - _FadeEndDist) / (_FadeEndDist - _FadeStartDist);
+					//_FadeColor.a = alpha * 255;
+					//return _FadeColor;
+					//float colormul = (dist - _FadeStartDist) / (_FadeEndDist - _FadeStartDist);
+					//float4 colordiff = _Color - _FadeColor;
+					//return colordiff * colormul;
+
+					//float4 colorDiff = (_FadeColor - _Color);
+					float4 colorDiff = (_Color - _FadeColor);
+					float fadeAmount = (_FadeEndDist - dist) / (_FadeEndDist - _FadeStartDist);
+					//float fadeAmount = (-(_FadeEndDist - _FadeStartDist) / (_FadeEndDist - dist));
+					//float fadeAmounr = (_FadeEndDist - _FadeStartDist)
+					//return _Color + (colorDiff * fadeAmount);
+					return _FadeColor + (colorDiff * fadeAmount);
+				}
 
 				return col;
 			}
