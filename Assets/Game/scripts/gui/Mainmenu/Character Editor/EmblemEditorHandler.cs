@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using UnityEditor;
 using Raider.Game.Saves;
 using Raider.Game.GUI.Components;
 using System;

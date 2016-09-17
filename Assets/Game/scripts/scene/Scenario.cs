@@ -26,11 +26,11 @@ namespace Raider.Game.Scene
                     appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
             }
 #else
-        for(int i = SceneManager.sceneCount - 1; i > -1; i--)
-        {
-            if (scene.path.Contains(gametype.ToString().ToLower()))
-                appropriateScenes.Add(SceneManager.GetSceneAt(i).name);
-        }
+            for(int i = SceneManager.sceneCount - 1; i > -1; i--)
+            {
+                if (SceneManager.GetSceneAt(i).path.Contains(gametype.ToString().ToLower()))
+                    appropriateScenes.Add(SceneManager.GetSceneAt(i).name);
+            }
 #endif
             return appropriateScenes;
         }
@@ -62,10 +62,10 @@ namespace Raider.Game.Scene
                 scenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
             }
 #else
-        for(int i = SceneManager.sceneCount - 1; i > -1; i--)
-        {
-            scenes.Add(SceneManager.GetSceneAt(i).name);
-        }
+            for(int i = SceneManager.sceneCount - 1; i > -1; i--)
+            {
+                scenes.Add(SceneManager.GetSceneAt(i).name);
+            }
 #endif
 
             currentScene = SceneManager.GetActiveScene().name;
@@ -81,7 +81,7 @@ namespace Raider.Game.Scene
         public void LoadScene(string sceneName, Gametype gametype)
         {
 #if !UNITY_EDITOR
-        Scene newScene = SceneManager.GetSceneByName(sceneName);
+        UnityEngine.SceneManagement.Scene newScene = SceneManager.GetSceneByName(sceneName);
 
         if (newScene == null)
             Debug.LogError("[Scenario]Scene not found!");
