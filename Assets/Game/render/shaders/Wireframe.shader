@@ -2,8 +2,48 @@
 	Properties {
 		_Color("Line Color", Color) = (1,1,1,1)
 		_Thickness("Thickness", Float) = 1
+		_Resolution("Resolution For Thickness", Float) = 1080
+		_FaceColor("Face Color", Color) = (0,0,0,0)
 	}
 	SubShader {
+
+		Pass{
+			Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
+
+			Blend SrcAlpha OneMinusSrcAlpha
+			LOD 200
+
+			CGPROGRAM
+
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+
+			struct appdata {
+				float4 vertex : POSITION;
+			};
+
+			struct v2f {
+				float4 position: POSITION;
+			};
+
+			float4 _FaceColor = { 0,0,0,0 };
+
+			v2f vert(appdata IN)
+			{
+				v2f OUT;
+
+				OUT.position = mul(UNITY_MATRIX_MVP, IN.vertex);
+
+				return OUT;
+			}
+
+			fixed4 frag(v2f IN) : SV_Target{
+				return _FaceColor;
+			}
+
+			ENDCG
+		}
 
 		Pass{
 			Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
@@ -32,6 +72,7 @@
 
 			float _Thickness = 1;		// line thickness
 			float4 _Color = { 1,1,1,1 };	// line color
+			float _ThicknessAtResolution = 1080;
 
 			//vert
 			//Build object
@@ -91,9 +132,11 @@
 			{
 				//find the smallest distance
 				float val = min(input.dist.x, min(input.dist.y, input.dist.z));
+				
+				float modifiedThickness = _Thickness * (_ScreenParams.y / _ThicknessAtResolution);
 
 				//calculate power to 2 to thin the line
-				val = exp2(-1 / _Thickness * val * val);
+				val = exp2(-1 / (_Thickness) * val * val);
 
 				//blend between the lines and the negative space to give illusion of anti aliasing
 				float4 targetColor = _Color;
