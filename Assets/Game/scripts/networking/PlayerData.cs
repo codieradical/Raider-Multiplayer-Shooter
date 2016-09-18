@@ -55,6 +55,8 @@ public class PlayerData : NetworkBehaviour {
         UpdateLocalData(_username, _character);
     }
 
+    [SyncVar]
     public string username;
+    [SyncVar]
     public SaveDataStructure.Character character;
 }
