@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Saves
 {
@@ -78,23 +81,41 @@ namespace Raider.Game.Saves
                 Y = 1
             }
 
+            [SyncVar]
             public string currentMission;
+            [SyncVar]
             public Race race;
+            [SyncVar]
             public string guild;
+            [SyncVar]
             public SerializableColor armourPrimaryColor;
+            [SyncVar]
             public SerializableColor serializableArmourPrimaryColor;
+            [SyncVar]
             public SerializableColor armourSecondaryColor;
+            [SyncVar]
             public SerializableColor armourTertiaryColor;
+            [SyncVar]
             public SerializableColor emblemLayer2Color;
+            [SyncVar]
             public SerializableColor emblemLayer1Color;
+            [SyncVar]
             public SerializableColor emblemLayer0Color;
+            [SyncVar]
             public AvailableArmours shoulderArmour;
+            [SyncVar]
             public AvailableArmours helmetArmour;
+            [SyncVar]
             public AvailableArmours chestArmour;
+            [SyncVar]
             public int emblemLayer0;
+            [SyncVar]
             public int emblemLayer1;
+            [SyncVar]
             public bool emblemLayer2;
+            [SyncVar]
             public int level;
+            [SyncVar]
             public int exp;
         }
     }

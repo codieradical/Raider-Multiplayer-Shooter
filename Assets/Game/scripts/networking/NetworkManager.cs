@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Raider.Game.GUI.Components;
 
 namespace Raider.Game.Networking
 {
 
     public class NetworkManager : UnityEngine.Networking.NetworkLobbyManager
     {
+
         #region singleton setup
 
         //This class already inherits a singleton...
-        NetworkManager instance;
+        public static NetworkManager instance;
 
         void Awake()
         {
@@ -46,8 +48,18 @@ namespace Raider.Game.Networking
         // Use this for initialization
         void Start()
         {
-            lobby = new GameObject("_Lobby");
+            if(lobby == null)
+                lobby = new GameObject("_Lobby");
             DontDestroyOnLoad(lobby);
+        }
+
+        public override GameObject OnLobbyServerCreateLobbyPlayer(UnityEngine.Networking.NetworkConnection conn, short playerControllerId)
+        {
+            if (lobby == null)
+                lobby = new GameObject("_Lobby");
+            GameObject player = Instantiate(lobbyPlayerPrefab.transform.gameObject);
+            player.transform.parent = lobby.transform;
+            return player;
         }
 
         // Update is called once per frame
@@ -64,6 +76,15 @@ namespace Raider.Game.Networking
         public new void StartHost()
         {
             base.StartHost();
+        }
+
+        public void UpdateUILobby()
+        {
+            LobbyHandler.DestroyAllPlayers();
+            foreach(PlayerData newPlayer in players)
+            {
+                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, false, false, false, newPlayer.character));
+            }
         }
     }
 }

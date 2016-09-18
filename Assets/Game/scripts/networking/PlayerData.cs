@@ -12,15 +12,29 @@ public class PlayerData : NetworkBehaviour {
     {
         if (isLocalPlayer)
         {
-            character = Session.activeCharacter;
-            currentScenario = Scenario.instance;
-            username = Session.saveDataHandler.GetUsername();
+            this.character = Session.activeCharacter;
+            //currentScenario = Scenario.instance;
+            this.username = Session.saveDataHandler.GetUsername();
+            CmdSendPlayerData(username, character);
             this.gameObject.name = username;
+            Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
         }
     }
 
+    [Command]
+    void CmdSendPlayerData(string _username, SaveDataStructure.Character _character)
+    {
+        this.username = _username;
+        this.character = _character;
+        this.gameObject.name = username;
+        Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
+    }
+
+    [SyncVar]
     public string username;
+    [SyncVar]
     public SaveDataStructure.Character character;
-    public Scenario currentScenario;
+    //[SyncVar]
+    //public Scenario currentScenario;
 
 }

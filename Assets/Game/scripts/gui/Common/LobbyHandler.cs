@@ -66,6 +66,19 @@ namespace Raider.Game.GUI.Components
             public SaveDataStructure.Character character;
         }
 
+        public static void DestroyAllPlayers()
+        {
+            players = new List<PlayerNameplate>();
+
+            foreach(LobbyHandler instance in instances)
+            {
+                foreach (Transform nameplate in instance.gameObject.transform.FindChild("Players"))
+                {
+                    Destroy(nameplate.gameObject);
+                }
+            }
+        }
+
         public static void AddPlayer(PlayerNameplate player)
         {
             players.Add(player);
