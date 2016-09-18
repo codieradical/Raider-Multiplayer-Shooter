@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Raider.Game.GUI.Components;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.SceneManagement;
+using System;
 
 namespace Raider.Game.Networking
 {
 
-    public class NetworkManager : UnityEngine.Networking.NetworkLobbyManager
+    public class NetworkManager : NetworkLobbyManager
     {
 
         #region singleton setup
@@ -29,14 +33,14 @@ namespace Raider.Game.Networking
 
         #endregion
 
+        public GameObject lobbyGameObject;
 
-        GameObject lobby;
         List<PlayerData> players
         {
             get
             {
                 List<PlayerData> _players = new List<PlayerData>();
-                foreach(Transform playerObject in lobby.transform)
+                foreach(Transform playerObject in lobbyGameObject.transform)
                 {
                     _players.Add(playerObject.GetComponent<PlayerData>());
                 }
@@ -48,24 +52,19 @@ namespace Raider.Game.Networking
         // Use this for initialization
         void Start()
         {
-            if(lobby == null)
-                lobby = new GameObject("_Lobby");
-            DontDestroyOnLoad(lobby);
+            lobbyGameObject = new GameObject("_Lobby");
+            DontDestroyOnLoad(lobbyGameObject);
         }
-
-        public override GameObject OnLobbyServerCreateLobbyPlayer(UnityEngine.Networking.NetworkConnection conn, short playerControllerId)
+        
+        new void OnClientConnect(NetworkConnection conn)
         {
-            if (lobby == null)
-                lobby = new GameObject("_Lobby");
-            GameObject player = Instantiate(lobbyPlayerPrefab.transform.gameObject);
-            player.transform.parent = lobby.transform;
-            return player;
+            base.OnClientConnect(conn);
         }
-
+        
         // Update is called once per frame
         void Update()
         {
-
+            
         }
 
         public new void StartClient()
@@ -86,5 +85,69 @@ namespace Raider.Game.Networking
                 LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, false, false, false, newPlayer.character));
             }
         }
+
+        #region Network Lobby Manager Overrides
+
+        byte FindSlot()
+        {
+            for (byte i = 0; i < maxPlayers; i++)
+            {
+                if (lobbySlots[i] == null)
+                {
+                    return i;
+                }
+            }
+            return byte.MaxValue;
+        }
+
+        public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+        {
+            string loadedSceneName = SceneManager.GetSceneAt(0).name;
+            if (loadedSceneName != lobbyScene)
+            {
+                return;
+            }
+
+            // check MaxPlayersPerConnection
+            int numPlayersForConnection = 0;
+            foreach (var player in conn.playerControllers)
+            {
+                if (player.IsValid)
+                    numPlayersForConnection += 1;
+            }
+
+            if (numPlayersForConnection >= maxPlayersPerConnection)
+            {
+                if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager no more players for this connection."); }
+
+                var errorMsg = new EmptyMessage();
+                conn.Send(MsgType.LobbyAddPlayerFailed, errorMsg);
+                return;
+            }
+
+            byte slot = FindSlot();
+            if (slot == byte.MaxValue)
+            {
+                if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager no space for more players"); }
+
+                var errorMsg = new EmptyMessage();
+                conn.Send(MsgType.LobbyAddPlayerFailed, errorMsg);
+                return;
+            }
+
+            var newLobbyGameObject = OnLobbyServerCreateLobbyPlayer(conn, playerControllerId);
+            if (newLobbyGameObject == null)
+            {
+                newLobbyGameObject = Instantiate(lobbyPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
+            }
+
+            var newLobbyPlayer = newLobbyGameObject.GetComponent<NetworkLobbyPlayer>();
+            newLobbyPlayer.slot = slot;
+            lobbySlots[slot] = newLobbyPlayer;
+
+            NetworkServer.AddPlayerForConnection(conn, newLobbyGameObject, playerControllerId);
+        }
+
+        #endregion
     }
 }

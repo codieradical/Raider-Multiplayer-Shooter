@@ -4,37 +4,57 @@ using UnityEngine;
 using Raider.Game.Saves;
 using Raider.Game.Scene;
 using UnityEngine.Networking;
+using Raider.Game.Networking;
 using Raider;
 
+[System.Serializable]
 public class PlayerData : NetworkBehaviour {
 
     void Start()
     {
+        this.transform.parent = Raider.Game.Networking.NetworkManager.instance.lobbyGameObject.transform;
+
         if (isLocalPlayer)
         {
-            this.character = Session.activeCharacter;
-            //currentScenario = Scenario.instance;
-            this.username = Session.saveDataHandler.GetUsername();
-            CmdSendPlayerData(username, character);
-            this.gameObject.name = username;
+            UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter);
+
             Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
+
+            if (!isServer)
+                CmdUpdateServer(this.username, this.character);
+        }
+        else
+        {
+            CmdRequestUpdateFromServer();
         }
     }
 
-    [Command]
-    void CmdSendPlayerData(string _username, SaveDataStructure.Character _character)
+    void UpdateLocalData(string _username, SaveDataStructure.Character _character)
     {
         this.username = _username;
         this.character = _character;
-        this.gameObject.name = username;
+        this.transform.gameObject.name = this.username;
         Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
     }
 
-    [SyncVar]
-    public string username;
-    [SyncVar]
-    public SaveDataStructure.Character character;
-    //[SyncVar]
-    //public Scenario currentScenario;
+    [Command]
+    void CmdUpdateServer(string _username, SaveDataStructure.Character _character)
+    {
+        UpdateLocalData(_username, _character);
+    }
 
+    [Command]
+    void CmdRequestUpdateFromServer()
+    {
+        TargetRecieveUpdateFromServer(connectionToClient, this.username, this.character);
+    }
+
+    [TargetRpc]
+    void TargetRecieveUpdateFromServer(NetworkConnection target, string _username, SaveDataStructure.Character _character)
+    {
+        UpdateLocalData(_username, _character);
+    }
+
+    public string username;
+    public SaveDataStructure.Character character;
 }

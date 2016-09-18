@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using Raider.Game.Saves;
 using Raider.Game.GUI.Layout;
+using Raider.Game.Networking;
 
 namespace Raider.Game.GUI.Components
 {
@@ -29,9 +30,6 @@ namespace Raider.Game.GUI.Components
         }
 
         #endregion
-
-        //This needs to be moved to networking when implemented.
-        private static int maxPlayers = 6;
 
         public static UnityEngine.Object nameplatePrefab;
         /// <summary>
@@ -127,7 +125,7 @@ namespace Raider.Game.GUI.Components
         {
             foreach (LobbyHandler instance in instances)
             {
-                instance.transform.FindChild("Sidebar").FindChild("Player Count").GetComponent<Text>().text = String.Format("{0}/{1}", players.Count.ToString(), maxPlayers);
+                instance.transform.FindChild("Sidebar").FindChild("Player Count").GetComponent<Text>().text = String.Format("{0}/{1}", players.Count.ToString(), NetworkManager.instance.maxPlayers);
             }
         }
     }
