@@ -137,7 +137,8 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         #region update preview appearence.
 
-        private List<PreviewAppearenceUpdate> appearenceUpdates = new List<PreviewAppearenceUpdate>();
+        //A queue would be nice, but queues don't have Pop();
+        private Stack<PreviewAppearenceUpdate> appearenceUpdates = new Stack<PreviewAppearenceUpdate>();
 
         private struct PreviewAppearenceUpdate
         {
@@ -155,22 +156,27 @@ namespace Raider.Game.GUI.CharacterPreviews
         {
             while (appearenceUpdates.Count > 0)
             {
-                UpdatePreviewAppearence(appearenceUpdates[0]);
-                appearenceUpdates.RemoveAt(0);
+                UpdatePreviewAppearence(appearenceUpdates.Pop());
             }
         }
 
         public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
         {
-            appearenceUpdates.Add(new PreviewAppearenceUpdate(_previewName, _character));
+            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
         }
 
         void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
         {
             //Find the graphics object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
             GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
+
+            //If the preview was destored last frame, or earlier this frame.
+            if (_previewGraphics == null)
+                return;
+
             PlayerAppearenceController _appearenceController = _previewGraphics.GetComponent<PlayerAppearenceController>();
             _appearenceController.UpdatePlayerAppearence(update.previewName, update.previewCharacter);
+            
         }
 
         #endregion
@@ -207,13 +213,6 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         public void DestroyPreviewObject(string _previewName)
         {
-            foreach(PreviewAppearenceUpdate previewAppearenceUpdate in appearenceUpdates)
-            {
-                if (previewAppearenceUpdate.previewName == _previewName)
-                    appearenceUpdates.Remove(previewAppearenceUpdate);
-                //It shouldn't matter if multiple updates of the same name are present,
-                //They can be removed in any order as long as all of them are removed.
-            }
             Destroy(GetPreviewObject(_previewName));
         }
 
