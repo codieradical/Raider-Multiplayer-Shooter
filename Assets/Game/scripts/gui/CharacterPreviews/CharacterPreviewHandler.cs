@@ -77,7 +77,7 @@ namespace Raider.Game.GUI.CharacterPreviews
             GameObject newPreviewGraphics; //This isn't actually used, I just don't want too many different overloads.
             InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out previewCamera);
             SetupPreviewDisplay(previewCamera, _previewType, _rawImage);
-            PushPreviewUpdate(_previewName, _previewCharacter);
+            EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
 
         //Character Display Handler Overload.
@@ -88,7 +88,7 @@ namespace Raider.Game.GUI.CharacterPreviews
             InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out newPreviewCamera);
             SetupPreviewDisplay(newPreviewCamera, _previewType, _rawImage);
             SetupPreviewDisplayHandler(_displayHandler, newPreviewGraphics, newPreviewCamera);
-            PushPreviewUpdate(_previewName, _previewCharacter);
+            EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
 
         void InstanceNewPreviewObject(string _previewName, SaveDataStructure.Character.Race _race, PreviewType _previewType, out GameObject newPreviewGraphics, out Camera newPreviewCamera)
@@ -138,7 +138,7 @@ namespace Raider.Game.GUI.CharacterPreviews
         #region update preview appearence.
 
         //A queue would be nice, but queues don't have Pop();
-        private Stack<PreviewAppearenceUpdate> appearenceUpdates = new Stack<PreviewAppearenceUpdate>();
+        private Queue<PreviewAppearenceUpdate> appearenceUpdates = new Queue<PreviewAppearenceUpdate>();
 
         private struct PreviewAppearenceUpdate
         {
@@ -156,13 +156,13 @@ namespace Raider.Game.GUI.CharacterPreviews
         {
             while (appearenceUpdates.Count > 0)
             {
-                UpdatePreviewAppearence(appearenceUpdates.Pop());
+                UpdatePreviewAppearence(appearenceUpdates.Dequeue());
             }
         }
 
-        public void PushPreviewUpdate(string _previewName, SaveDataStructure.Character _character)
+        public void EnqueuePreviewUpdate(string _previewName, SaveDataStructure.Character _character)
         {
-            appearenceUpdates.Push(new PreviewAppearenceUpdate(_previewName, _character));
+            appearenceUpdates.Enqueue(new PreviewAppearenceUpdate(_previewName, _character));
         }
 
         void UpdatePreviewAppearence(PreviewAppearenceUpdate update)

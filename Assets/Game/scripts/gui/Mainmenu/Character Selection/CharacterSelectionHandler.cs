@@ -21,13 +21,23 @@ namespace Raider.Game.GUI.Screens
 
         public void LoadCharacterPlates()
         {
+            bool platesPreviouslyExisted = false;
+
             //Destroy all of the plates.
             foreach (Transform child in plateContainer.transform)
             {
                 Destroy(child.gameObject);
+                platesPreviouslyExisted = true;
             }
 
             CharacterPreviewHandler.instance.DestroyPreviews();
+
+            //If no characters have been created go straight to the editor.
+            if (Session.saveDataHandler.GetAllCharacters().Count < 1 && !platesPreviouslyExisted)
+            {
+                MainmenuHandler.instance.CreateCharacter();
+                return;
+            }
 
             //Create new plates
             int slot = 0;

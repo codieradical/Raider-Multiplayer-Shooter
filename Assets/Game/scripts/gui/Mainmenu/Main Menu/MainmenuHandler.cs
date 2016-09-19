@@ -52,14 +52,14 @@ namespace Raider.Game.GUI.Screens
             }
 
             Session.Login(_username);
-            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
         }
 
         public void CloseCharacterEditor()
         {
-            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
         }
 
         public void ChooseCharacter(int characterIndex)

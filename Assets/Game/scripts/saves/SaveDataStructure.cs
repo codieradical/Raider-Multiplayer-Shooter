@@ -93,8 +93,6 @@ namespace Raider.Game.Saves
             [SyncVar]
             public SerializableColor armourPrimaryColor;
             [SyncVar]
-            public SerializableColor serializableArmourPrimaryColor;
-            [SyncVar]
             public SerializableColor armourSecondaryColor;
             [SyncVar]
             public SerializableColor armourTertiaryColor;

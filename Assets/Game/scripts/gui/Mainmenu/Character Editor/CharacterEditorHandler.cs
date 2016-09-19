@@ -53,8 +53,6 @@ namespace Raider.Game.GUI.Screens
             characterSlot = Session.saveDataHandler.characterCount;
             editingCharacter = new SaveDataStructure.Character();
 
-            CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
-
             RandomiseCharacter();
             RandomiseEmblem();
 
@@ -75,7 +73,7 @@ namespace Raider.Game.GUI.Screens
 
         public void UpdatePreview()
         {
-            CharacterPreviewHandler.instance.PushPreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
+            CharacterPreviewHandler.instance.EnqueuePreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
 
             primaryColorButton.color = editingCharacter.armourPrimaryColor.color;
             secondaryColorButton.color = editingCharacter.armourSecondaryColor.color;
@@ -110,7 +108,9 @@ namespace Raider.Game.GUI.Screens
         {
             editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
 
-            CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+            try {
+                CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+            } catch { }
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
         }
 
@@ -125,13 +125,9 @@ namespace Raider.Game.GUI.Screens
             System.Random rand = new System.Random();
 
             SaveDataStructure.Character.Race newRace = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
-            
-            //I wasn't expecting this to crash but for some reason
-            //this duplicates EditingChar. Wierd.
-            //if (editingCharacter.race != newRace)
-                EditRace((int)newRace);
-            //else
-                //UpdatePreview();
+
+            EditRace((int)newRace);
+            UpdatePreview(); //Update the preview to make sure that the buttons are up to date.
         }
 
         public void RandomiseEmblem()
