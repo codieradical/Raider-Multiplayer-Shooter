@@ -125,10 +125,13 @@ namespace Raider.Game.GUI.Screens
             System.Random rand = new System.Random();
 
             SaveDataStructure.Character.Race newRace = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
-            if (editingCharacter.race != newRace)
+            
+            //I wasn't expecting this to crash but for some reason
+            //this duplicates EditingChar. Wierd.
+            //if (editingCharacter.race != newRace)
                 EditRace((int)newRace);
-            else
-                UpdatePreview();
+            //else
+                //UpdatePreview();
         }
 
         public void RandomiseEmblem()
