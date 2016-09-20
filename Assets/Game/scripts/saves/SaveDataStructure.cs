@@ -34,7 +34,7 @@ namespace Raider.Game.Saves
 
         public List<Character> characters = new List<Character>();
 
-        [System.Serializable]
+        [System.Serializable] // Todo: Write custom serializer for networking.
         public class Character
         {
             /// <summary>
