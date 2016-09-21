@@ -42,6 +42,5 @@ namespace Raider.Game.GUI
             CurrentMenu = menu;
             CurrentMenu.IsOpen = true;
         }
-
     }
 }

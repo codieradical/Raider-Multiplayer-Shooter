@@ -30,3 +30,4 @@ sysinfo.txt
 *.unitypackage
 /bin
 /Assets/Third Party Assets/Ignored
+/Assets/Third Party Assets/Ignored.meta

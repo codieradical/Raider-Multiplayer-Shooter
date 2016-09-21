@@ -35,7 +35,7 @@ namespace Raider.Game.Networking
 
         public GameObject lobbyGameObject;
 
-        List<PlayerData> players
+        public List<PlayerData> players
         {
             get
             {
@@ -56,31 +56,36 @@ namespace Raider.Game.Networking
             DontDestroyOnLoad(lobbyGameObject);
         }
         
-        new void OnClientConnect(NetworkConnection conn)
+        public override void OnLobbyClientConnect(NetworkConnection conn)
         {
-            base.OnClientConnect(conn);
+            UpdateLobbyNameplates();
         }
-        
-        // Update is called once per frame
-        void Update()
+
+        public override void OnLobbyServerConnect(NetworkConnection conn)
         {
-            
+            UpdateLobbyNameplates();
         }
 
         public new void StartClient()
         {
-            base.StartClient();
+            if (Session.activeCharacter != null)
+                base.StartClient();
+            else
+                Debug.Log("Can't join server when you haven't selected a character!");
         }
 
         public new void StartHost()
         {
-            base.StartHost();
+            if (Session.activeCharacter != null)
+                base.StartHost();
+            else
+                Debug.Log("Can't host server when you haven't selected a character!");
         }
 
-        public void UpdateUILobby()
+        public static void UpdateLobbyNameplates()
         {
             LobbyHandler.DestroyAllPlayers();
-            foreach(PlayerData newPlayer in players)
+            foreach (PlayerData newPlayer in NetworkManager.instance.players)
             {
                 LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, false, false, false, newPlayer.character));
             }

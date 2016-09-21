@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
+using Raider.Game.GUI;
 
 namespace Raider.Game.Cameras
 {
@@ -99,11 +99,6 @@ namespace Raider.Game.Cameras
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                //if(seectedCameraMode == CameraModes.FirstPerson)
-                //    seectedCameraMode = CameraModes.ThirdPerson;
-                //else
-                //    seectedCameraMode = CameraModes.FirstPerson;
-
                 selectedCameraMode++;
 
                 if ((int)selectedCameraMode == Enum.GetNames(typeof(CameraModes)).Length)
@@ -111,6 +106,7 @@ namespace Raider.Game.Cameras
                     selectedCameraMode = 0;
                 }
 
+                UserFeedback.LogError("Changed Camera Mode to " + selectedCameraMode.ToString());
             }
         }
 
@@ -174,7 +170,10 @@ namespace Raider.Game.Cameras
 
         void FixedUpdate()
         {
+
+#if UNITY_EDITOR
             ChangeCameraMode();
+#endif
 
             if (activeCamera != selectedCameraMode)
             {

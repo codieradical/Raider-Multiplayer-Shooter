@@ -1,62 +1,72 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Raider.Game.GUI.Components;
 using Raider.Game.Saves;
-using Raider.Game.Scene;
 using UnityEngine.Networking;
-using Raider.Game.Networking;
-using Raider;
 
-[System.Serializable]
-public class PlayerData : NetworkBehaviour {
+namespace Raider.Game.Networking
+{
 
-    void Start()
+    [System.Serializable]
+    public class PlayerData : NetworkBehaviour
     {
-        this.transform.parent = Raider.Game.Networking.NetworkManager.instance.lobbyGameObject.transform;
 
-        if (isLocalPlayer)
+        void Start()
         {
-            UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter);
+            this.transform.parent = NetworkManager.instance.lobbyGameObject.transform;
 
-            Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
+            if (isLocalPlayer)
+            {
+                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter);
 
-            if (!isServer)
-                CmdUpdateServer(this.username, this.character);
+                if (!isServer)
+                    CmdUpdateServer(this.username, Serialization.Serialize(character));
+            }
+            else
+            {
+                CmdRequestUpdateFromServer();
+            }
         }
-        else
+
+        public string username
         {
-            CmdRequestUpdateFromServer();
+            get { return this.gameObject.name; }
+            set { this.gameObject.name = value; }
         }
-    }
 
-    void UpdateLocalData(string _username, SaveDataStructure.Character _character)
-    {
-        this.username = _username;
-        this.character = _character;
-        this.transform.gameObject.name = this.username;
-        Raider.Game.Networking.NetworkManager.instance.UpdateUILobby();
-    }
+        public SaveDataStructure.Character character;
 
-    [Command]
-    void CmdUpdateServer(string _username, SaveDataStructure.Character _character)
-    {
-        UpdateLocalData(_username, _character);
-    }
+        #region serialization and syncing
 
-    [Command]
-    void CmdRequestUpdateFromServer()
-    {
-        TargetRecieveUpdateFromServer(connectionToClient, this.username, this.character);
-    }
+        private string serializedCharacter
+        {
+            get { return Serialization.Serialize(character); }
+            set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
+        }
 
-    [TargetRpc]
-    void TargetRecieveUpdateFromServer(NetworkConnection target, string _username, SaveDataStructure.Character _character)
-    {
-        UpdateLocalData(_username, _character);
-    }
+        void UpdateLocalData(string _username, SaveDataStructure.Character _character)
+        {
+            this.username = _username;
+            this.character = _character;
+            NetworkManager.UpdateLobbyNameplates();
+        }
 
-    [SyncVar]
-    public string username;
-    [SyncVar]
-    public SaveDataStructure.Character character;
+        [Command]
+        void CmdUpdateServer(string _username, string _serializedCharacter)
+        {
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+        }
+
+        [Command]
+        void CmdRequestUpdateFromServer()
+        {
+            RpcRecieveUpdateFromServer(this.username, Serialization.Serialize(this.character));
+        }
+
+        [ClientRpc]
+        void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter)
+        {
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+        }
+
+        #endregion
+    }
 }
