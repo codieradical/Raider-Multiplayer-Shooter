@@ -45,8 +45,10 @@ namespace Raider.Game.GUI.Components
                 nameplatePrefab = instanceNameplatePrefab;
         }
 
-        public struct PlayerNameplate
+        public class PlayerNameplate
         {
+            public PlayerNameplate() { }
+
             public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, SaveDataStructure.Character _character)
             {
                 username = _username;
@@ -62,6 +64,26 @@ namespace Raider.Game.GUI.Components
             public bool canspeak;
 
             public SaveDataStructure.Character character;
+        }
+
+        public class LoadingPlayerNameplate : PlayerNameplate
+        {
+            public LoadingPlayerNameplate()
+            {
+                username = "<Loading Player...>";
+                leader = false;
+                speaking = false;
+                canspeak = false;
+
+                SaveDataStructure.Character _character = new SaveDataStructure.Character();
+                _character.armourPrimaryColor = new SaveDataStructure.SerializableColor(Color.white);
+                _character.armourSecondaryColor = new SaveDataStructure.SerializableColor(Color.white);
+                _character.armourTertiaryColor = new SaveDataStructure.SerializableColor(Color.white);
+                _character.emblemLayer0Color = new SaveDataStructure.SerializableColor(Color.white);
+                _character.emblemLayer1Color = new SaveDataStructure.SerializableColor(Color.white);
+                _character.emblemLayer2Color = new SaveDataStructure.SerializableColor(Color.white);
+                character = _character;
+            }
         }
 
         public static void DestroyAllPlayers()

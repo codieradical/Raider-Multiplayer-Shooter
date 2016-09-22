@@ -1,6 +1,6 @@
-﻿using Raider.Game.GUI.Components;
-using Raider.Game.Saves;
+﻿using Raider.Game.Saves;
 using UnityEngine.Networking;
+using UnityEngine;
 
 namespace Raider.Game.Networking
 {
@@ -8,70 +8,77 @@ namespace Raider.Game.Networking
     [System.Serializable]
     public class PlayerData : NetworkBehaviour
     {
-        bool gotData = false;
+        /// <summary>
+        /// Is the PlayerData up to date?
+        /// </summary>
+        public bool gotData = false;
         void Start()
         {
             this.transform.parent = NetworkManager.instance.lobbyGameObject.transform;
 
             if (isLocalPlayer)
             {
-                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter);
+                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, Network.isServer);
 
-                if (isServer)
-                    RpcRecieveUpdateFromServer(this.username, serializedCharacter);
+                if (isHost)
+                    RpcRecieveUpdateFromServer(this.username, serializedCharacter, isHost);
                 else
-                    CmdUpdateServer(this.username, serializedCharacter);
+                    CmdUpdateServer(this.username, serializedCharacter, isHost);
             }
         }
 
+        //Player DATA
         public string username
         {
             get { return this.gameObject.name; }
             set { this.gameObject.name = value; }
         }
-
         public SaveDataStructure.Character character;
+        public bool isHost;
 
         #region serialization and syncing
 
-        private string serializedCharacter
+        public string serializedCharacter
         {
             get { return Serialization.Serialize(character); }
             set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
         }
 
-        void UpdateLocalData(string _username, SaveDataStructure.Character _character)
+        void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isHost)
         {
             this.username = _username;
             this.character = _character;
-            gotData = true;
+            this.isHost = _isHost;
+            this.gotData = true;
             NetworkManager.UpdateLobbyNameplates();
         }
 
         [Command]
-        void CmdRequestUpdateFromServer()
+        void CmdUpdateServer(string _username, string _serializedCharacter, bool _isHost)
         {
-            if (gotData)
-                TargetRecieveUpdateFromServer(connectionToClient, this.username, Serialization.Serialize(this.character));
-        }
+            RpcRecieveUpdateFromServer(_username, _serializedCharacter, _isHost);
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isHost);
 
-        [Command]
-        void CmdUpdateServer(string _username, string _serializedCharacter)
-        {
-            RpcRecieveUpdateFromServer(_username, _serializedCharacter);
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+            //If the client has sent their player data to the server, 
+            //that means it's spawned and ready to recieve data regarding other players.
+            //So now the server sends that data using the Client RPC.
+            UpdateClientPlayerDataObjects();
         }
 
         [ClientRpc]
-        void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter)
+        public void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter, bool _isHost)
         {
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isHost);
         }
 
-        [TargetRpc]
-        void TargetRecieveUpdateFromServer(NetworkConnection conn, string _username, string _serializedCharacter)
+        [Server]
+        public void UpdateClientPlayerDataObjects()
         {
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+            foreach (PlayerData player in NetworkManager.instance.players)
+            {
+                if (player.gotData)
+                    player.RpcRecieveUpdateFromServer(player.username, player.serializedCharacter, player.isHost);
+            }
         }
 
         #endregion

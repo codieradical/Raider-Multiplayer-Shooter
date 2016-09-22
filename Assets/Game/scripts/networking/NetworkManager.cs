@@ -48,22 +48,11 @@ namespace Raider.Game.Networking
             }
         }
 
-
         // Use this for initialization
         void Start()
         {
             lobbyGameObject = new GameObject("_Lobby");
             DontDestroyOnLoad(lobbyGameObject);
-        }
-        
-        public override void OnLobbyClientConnect(NetworkConnection conn)
-        {
-            UpdateLobbyNameplates();
-        }
-
-        public override void OnLobbyServerConnect(NetworkConnection conn)
-        {
-            UpdateLobbyNameplates();
         }
 
         public new void StartClient()
@@ -82,14 +71,31 @@ namespace Raider.Game.Networking
                 Debug.Log("Can't host server when you haven't selected a character!");
         }
 
+        #region Lobby Methods
+
         public static void UpdateLobbyNameplates()
         {
             LobbyHandler.DestroyAllPlayers();
-            foreach (PlayerData newPlayer in NetworkManager.instance.players)
+            foreach (PlayerData newPlayer in instance.players)
             {
-                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, false, false, false, newPlayer.character));
+                if (newPlayer.gotData)
+                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, newPlayer.isHost, false, false, newPlayer.character));
+                else
+                    LobbyHandler.AddPlayer(new LobbyHandler.LoadingPlayerNameplate());
             }
         }
+
+        public override void OnLobbyServerConnect(NetworkConnection conn)
+        {
+            UpdateLobbyNameplates();
+        }
+        public override void OnLobbyClientConnect(NetworkConnection conn)
+        {
+            UpdateLobbyNameplates();
+        }
+
+        #endregion
+
 
         #region Network Lobby Manager Overrides
 
