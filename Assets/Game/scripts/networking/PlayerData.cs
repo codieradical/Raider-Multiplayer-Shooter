@@ -8,7 +8,7 @@ namespace Raider.Game.Networking
     [System.Serializable]
     public class PlayerData : NetworkBehaviour
     {
-
+        bool gotData = false;
         void Start()
         {
             this.transform.parent = NetworkManager.instance.lobbyGameObject.transform;
@@ -17,12 +17,10 @@ namespace Raider.Game.Networking
             {
                 UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter);
 
-                if (!isServer)
-                    CmdUpdateServer(this.username, Serialization.Serialize(character));
-            }
-            else
-            {
-                CmdRequestUpdateFromServer();
+                if (isServer)
+                    RpcRecieveUpdateFromServer(this.username, serializedCharacter);
+                else
+                    CmdUpdateServer(this.username, serializedCharacter);
             }
         }
 
@@ -46,23 +44,32 @@ namespace Raider.Game.Networking
         {
             this.username = _username;
             this.character = _character;
+            gotData = true;
             NetworkManager.UpdateLobbyNameplates();
-        }
-
-        [Command]
-        void CmdUpdateServer(string _username, string _serializedCharacter)
-        {
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
         }
 
         [Command]
         void CmdRequestUpdateFromServer()
         {
-            RpcRecieveUpdateFromServer(this.username, Serialization.Serialize(this.character));
+            if (gotData)
+                TargetRecieveUpdateFromServer(connectionToClient, this.username, Serialization.Serialize(this.character));
+        }
+
+        [Command]
+        void CmdUpdateServer(string _username, string _serializedCharacter)
+        {
+            RpcRecieveUpdateFromServer(_username, _serializedCharacter);
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
         }
 
         [ClientRpc]
         void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter)
+        {
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
+        }
+
+        [TargetRpc]
+        void TargetRecieveUpdateFromServer(NetworkConnection conn, string _username, string _serializedCharacter)
         {
             UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter));
         }
