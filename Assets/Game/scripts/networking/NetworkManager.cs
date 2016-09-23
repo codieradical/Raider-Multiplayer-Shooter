@@ -73,6 +73,26 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
+        public override void OnServerDisconnect(NetworkConnection conn)
+        {
+            PlayerData removePlayer = null;
+            foreach (PlayerData player in players)
+            {
+                if (player.connectionToClient == conn)
+                    removePlayer = player;
+            }
+            if(removePlayer != null)
+            {
+                removePlayer.CmdDestroyPlayerData();
+                PlayerData.UpdateClientPlayerDataObjects(); // RPC to update nameplates.
+                UpdateLobbyNameplates(); //Update the server too.
+            }
+            else
+                Debug.LogError("Failed to remove a lobby object");
+
+            base.OnServerDisconnect(conn);
+        }
+
         public static void UpdateLobbyNameplates()
         {
             LobbyHandler.DestroyAllPlayers();

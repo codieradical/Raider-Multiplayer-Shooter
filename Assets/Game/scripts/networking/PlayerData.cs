@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Raider.Game.Networking
 {
-
     [System.Serializable]
     public class PlayerData : NetworkBehaviour
     {
@@ -65,6 +64,12 @@ namespace Raider.Game.Networking
             UpdateClientPlayerDataObjects();
         }
 
+        [Command]
+        public void CmdDestroyPlayerData()
+        {
+            NetworkServer.Destroy(this.gameObject);
+        }
+
         [ClientRpc]
         public void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter, bool _isHost)
         {
@@ -72,13 +77,19 @@ namespace Raider.Game.Networking
         }
 
         [Server]
-        public void UpdateClientPlayerDataObjects()
+        public static void UpdateClientPlayerDataObjects()
         {
             foreach (PlayerData player in NetworkManager.instance.players)
             {
                 if (player.gotData)
                     player.RpcRecieveUpdateFromServer(player.username, player.serializedCharacter, player.isHost);
             }
+        }
+
+        [TargetRpc]
+        public void TargetUpdateLobbyNameplates(NetworkConnection conn)
+        {
+            NetworkManager.UpdateLobbyNameplates();
         }
 
         #endregion
