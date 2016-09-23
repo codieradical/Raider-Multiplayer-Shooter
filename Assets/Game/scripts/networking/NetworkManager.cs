@@ -101,7 +101,7 @@ namespace Raider.Game.Networking
                 if (newPlayer.gotData)
                     LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, newPlayer.isHost, false, false, newPlayer.character));
                 else
-                    LobbyHandler.AddPlayer(new LobbyHandler.LoadingPlayerNameplate());
+                    LobbyHandler.AddLoadingPlayer();
             }
         }
 

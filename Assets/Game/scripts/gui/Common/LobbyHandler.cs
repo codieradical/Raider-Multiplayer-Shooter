@@ -31,24 +31,16 @@ namespace Raider.Game.GUI.Components
 
         #endregion
 
-        public static UnityEngine.Object nameplatePrefab;
         /// <summary>
         /// This prefab needs to be available on at least one lobby handler per scene.
         /// </summary>
-        public UnityEngine.Object instanceNameplatePrefab;
+        public UnityEngine.Object nameplatePrefab;
+        public UnityEngine.Object loadingNameplatePrefab;
 
         private static List<PlayerNameplate> players = new List<PlayerNameplate>();
 
-        void Start()
+        public struct PlayerNameplate
         {
-            if (nameplatePrefab == null && instanceNameplatePrefab != null)
-                nameplatePrefab = instanceNameplatePrefab;
-        }
-
-        public class PlayerNameplate
-        {
-            public PlayerNameplate() { }
-
             public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, SaveDataStructure.Character _character)
             {
                 username = _username;
@@ -66,26 +58,6 @@ namespace Raider.Game.GUI.Components
             public SaveDataStructure.Character character;
         }
 
-        public class LoadingPlayerNameplate : PlayerNameplate
-        {
-            public LoadingPlayerNameplate()
-            {
-                username = "<Loading Player...>";
-                leader = false;
-                speaking = false;
-                canspeak = false;
-
-                SaveDataStructure.Character _character = new SaveDataStructure.Character();
-                _character.armourPrimaryColor = new SaveDataStructure.SerializableColor(Color.white);
-                _character.armourSecondaryColor = new SaveDataStructure.SerializableColor(Color.white);
-                _character.armourTertiaryColor = new SaveDataStructure.SerializableColor(Color.white);
-                _character.emblemLayer0Color = new SaveDataStructure.SerializableColor(Color.white);
-                _character.emblemLayer1Color = new SaveDataStructure.SerializableColor(Color.white);
-                _character.emblemLayer2Color = new SaveDataStructure.SerializableColor(Color.white);
-                character = _character;
-            }
-        }
-
         public static void DestroyAllPlayers()
         {
             players = new List<PlayerNameplate>();
@@ -99,20 +71,37 @@ namespace Raider.Game.GUI.Components
             }
         }
 
-        public static void AddPlayer(PlayerNameplate player)
+        public static void AddLoadingPlayer()
         {
-            players.Add(player);
-
-            foreach (LobbyHandler instance in instances)
+            foreach(LobbyHandler instance in instances)
             {
-                if (nameplatePrefab == null)
+                if (instance.loadingNameplatePrefab == null)
                 {
                     Debug.Log("A lobby handler is missing a nameplate prefab.");
                     Debug.LogAssertion("Please add the prefab to any lobby in the scene.");
                     throw new MissingFieldException();
                 }
 
-                GameObject newPlayer = Instantiate(nameplatePrefab) as GameObject;
+                GameObject newPlayer = Instantiate(instance.loadingNameplatePrefab) as GameObject;
+                newPlayer.transform.SetParent(instance.gameObject.transform.FindChild("Players"), false);
+                UpdateSidebars();
+            }
+        }
+
+        public static void AddPlayer(PlayerNameplate player)
+        {
+            players.Add(player);
+
+            foreach (LobbyHandler instance in instances)
+            {
+                if (instance.nameplatePrefab == null)
+                {
+                    Debug.Log("A lobby handler is missing a nameplate prefab.");
+                    Debug.LogAssertion("Please add the prefab to any lobby in the scene.");
+                    throw new MissingFieldException();
+                }
+
+                GameObject newPlayer = Instantiate(instance.nameplatePrefab) as GameObject;
 
                 newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = instance.gameObject;
 
