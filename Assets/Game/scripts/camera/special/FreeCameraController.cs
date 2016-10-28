@@ -15,36 +15,36 @@ namespace Raider.Game.Cameras
         new void Start()
         {
             base.Start();
-            base.preventMovement = true;
+            Raider.Game.GUI.UserFeedback.LogError("FreeCam Enabled, press SLASH to switch between camera and player control.");
         }
+
+        bool controllingPlayer = false;
+        bool controllingCamera { get { return !controllingPlayer; } set { controllingPlayer = !value; } }
 
         // Update is called once per frame
         void Update()
         {
-            RotateCamera();
-            MoveCamera();
-            LockCamZRotation();
-            LockCamPointZRotation();
-        }
-
-        new void RotateCamera()
-        {
-            //Looking up and down, needs to be inverted for some reason...
-            float _yRot = Input.GetAxisRaw("Mouse X");
-            float _xRot = -Input.GetAxisRaw("Mouse Y");
-
-            //If the camera is set to inverted mode, invert the rotation.
-            if (CameraModeController.instance.firstPersonCamSettings.inverted)
+            if (Input.GetKeyDown(KeyCode.Slash))
             {
-                _xRot = -_xRot;
+                controllingPlayer = !controllingPlayer;
+                Raider.Game.GUI.UserFeedback.LogError("FreeCam: Switched Controls.");
             }
 
-            Vector3 _camPointRotation = new Vector3(_xRot, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            if (controllingCamera)
+            {
+                MoveCamera();
+                RotateCamera();
+                preventMovement = true;
+            }
 
-            _camPointRotation = ApplyXBufferToRotation(cam.transform.eulerAngles, _camPointRotation);
+            if(controllingPlayer)
+            {
+                RotatePlayer();
+                preventMovement = false;
+            }
 
-            //Apply rotation
-            camPoint.transform.Rotate(_camPointRotation);
+            LockCamZRotation();
+            LockCamPointZRotation();
         }
 
         void MoveCamera()
@@ -55,8 +55,6 @@ namespace Raider.Game.Cameras
             Vector3 movement = new Vector3(_movX, 0, _movZ);
             //Slow it down a little.
             movement *= 0.5f;
-
-            movement = KeepCameraInsideWalls(movement);
 
             camPoint.transform.Translate(movement);
         }

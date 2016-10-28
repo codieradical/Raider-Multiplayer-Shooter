@@ -8,7 +8,7 @@ namespace Raider.Game.Cameras
     {
         FlyCameraController()
         {
-            camStartingPos = new Vector3(0, 2, 0);
+            camStartingPos = new Vector3(0, 0, 0);
             pointStartingPos = new Vector3(0, 0, 0);
         }
 
@@ -16,8 +16,8 @@ namespace Raider.Game.Cameras
         {
             base.Start();
 
-            base.preventMovement = true;
-            base.overrideWalking = false;
+            preventMovement = true;
+            overrideWalking = false;
         }
 
         // Update is called once per frame
