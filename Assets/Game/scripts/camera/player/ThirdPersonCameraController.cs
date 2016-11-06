@@ -48,12 +48,12 @@ namespace Raider.Game.Cameras
                 _yRot = 0;
             }
 
-            if (CameraModeController.instance.thirdPersonCamSettings.inverted)
+            if (CameraModeController.singleton.thirdPersonCamSettings.inverted)
             {
                 _xRot = -_xRot;
             }
 
-            Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.instance.thirdPersonCamSettings.lookSensetivity;
+            Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensetivity;
 
             _camPointRotate = ApplyXBufferToRotation(camPoint.transform.eulerAngles, _camPointRotate);
             KeepCameraRotationWithinWalls(camPoint.transform.eulerAngles, _camPointRotate);
@@ -72,7 +72,7 @@ namespace Raider.Game.Cameras
 
         public void RotatePlayer(float _yRot)
         {
-            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.singleton.firstPersonCamSettings.lookSensitivity;
 
             //Apply rotation
             characterController.transform.Rotate(_rotation);
@@ -84,8 +84,8 @@ namespace Raider.Game.Cameras
             float castDistance = Vector3.Distance(transform.position, _castToPos);
 
             //This cast checks if anything is inbetween transform.position and _castToPos (the camPoint and the _desiredCam).
-            bool hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
-            float newCamDistance = (cam.transform.localPosition.z - (objectHitInfo.distance - castDistance)) * (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent);
+            bool hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
+            float newCamDistance = (cam.transform.localPosition.z - (objectHitInfo.distance - castDistance)) * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
             if (hitWall)
             {
                 ChangeCameraDistance(newCamDistance);
@@ -93,9 +93,9 @@ namespace Raider.Game.Cameras
             //If no collision is found, cast with infinate distance, to figure out where the camera can go.
             else
             {
-                hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
+                hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
                 //Update the newCamDistance for the last raycast.
-                newCamDistance = -objectHitInfo.distance * (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent);
+                newCamDistance = -objectHitInfo.distance * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
                 if (hitWall)
                 {
                     //If there's more space than the camera needs, just use the chosen distance. (less than because camera distance is negative.)
@@ -166,28 +166,28 @@ namespace Raider.Game.Cameras
         {
             if (Input.GetAxisRaw("Mouse ScrollWheel") != 0)
             {
-                float _proposedNewLocation = cam.transform.localPosition.z + Input.GetAxisRaw("Mouse ScrollWheel") * CameraModeController.instance.thirdPersonCamSettings.distanceMoveSpeed;
+                float _proposedNewLocation = cam.transform.localPosition.z + Input.GetAxisRaw("Mouse ScrollWheel") * CameraModeController.singleton.thirdPersonCamSettings.distanceMoveSpeed;
 
                 //Camera distances are negative because the camera is behind the player dingus.
                 //Check if the new distance is above or below the max/min.
 
-                if (_proposedNewLocation < -CameraModeController.instance.thirdPersonCamSettings.maxDistance)
+                if (_proposedNewLocation < -CameraModeController.singleton.thirdPersonCamSettings.maxDistance)
                 {
-                    _proposedNewLocation = -CameraModeController.instance.thirdPersonCamSettings.maxDistance;
+                    _proposedNewLocation = -CameraModeController.singleton.thirdPersonCamSettings.maxDistance;
                 }
-                else if (_proposedNewLocation > -CameraModeController.instance.thirdPersonCamSettings.minDistance)
+                else if (_proposedNewLocation > -CameraModeController.singleton.thirdPersonCamSettings.minDistance)
                 {
-                    _proposedNewLocation = -CameraModeController.instance.thirdPersonCamSettings.minDistance;
+                    _proposedNewLocation = -CameraModeController.singleton.thirdPersonCamSettings.minDistance;
                 }
 
                 //Now raycast to check if the distance is valid.
 
                 RaycastHit objectHitInfo;
-                bool _hitWall = Physics.Raycast(transform.position, (cam.transform.position - transform.position).normalized, out objectHitInfo/*, _proposedNewLocation*/, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
+                bool _hitWall = Physics.Raycast(transform.position, (cam.transform.position - transform.position).normalized, out objectHitInfo/*, _proposedNewLocation*/, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
                 //If there's not enough space for the desired camera distance, use what is available.
                 if (_hitWall)
                 {
-                    ChangeCameraDistance(-objectHitInfo.distance * (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent));
+                    ChangeCameraDistance(-objectHitInfo.distance * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent));
                 }
                 //else, use the chosen position.
                 else

@@ -23,7 +23,7 @@ namespace Raider.Game.Cameras
             base.Start();
 
             //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
-            CameraModeController.instance.RemoveCameraParent();
+            CameraModeController.singleton.RemoveCameraParent();
         }
 
         void Update()

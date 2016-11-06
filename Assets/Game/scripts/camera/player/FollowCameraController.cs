@@ -36,12 +36,12 @@ namespace Raider.Game.Cameras
                     _yRot = 0;
                 }
 
-                if (CameraModeController.instance.thirdPersonCamSettings.inverted)
+                if (CameraModeController.singleton.thirdPersonCamSettings.inverted)
                 {
                     _xRot = -_xRot;
                 }
 
-                Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.instance.thirdPersonCamSettings.lookSensetivity;
+                Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensetivity;
 
                 _camPointRotate = ApplyXBufferToRotation(camPoint.transform.eulerAngles, _camPointRotate);
                 KeepCameraRotationWithinWalls(camPoint.transform.eulerAngles, _camPointRotate);
@@ -55,7 +55,7 @@ namespace Raider.Game.Cameras
         {
             float _yRot = Input.GetAxis("Horizontal");
 
-            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.singleton.firstPersonCamSettings.lookSensitivity;
 
             //Apply rotation
             characterController.transform.Rotate(_rotation);

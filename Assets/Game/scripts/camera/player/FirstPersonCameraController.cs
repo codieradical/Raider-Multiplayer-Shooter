@@ -35,12 +35,12 @@ namespace Raider.Game.Cameras
             float _xRot = -Input.GetAxisRaw("Mouse Y");
 
             //If the camera is set to inverted mode, invert the rotation.
-            if (CameraModeController.instance.firstPersonCamSettings.inverted)
+            if (CameraModeController.singleton.firstPersonCamSettings.inverted)
             {
                 _xRot = -_xRot;
             }
 
-            Vector3 _rotation = new Vector3(_xRot, 0f, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            Vector3 _rotation = new Vector3(_xRot, 0f, 0f) * CameraModeController.singleton.firstPersonCamSettings.lookSensitivity;
 
             _rotation = ApplyXBufferToRotation(cam.transform.eulerAngles, _rotation);
 

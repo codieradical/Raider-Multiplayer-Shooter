@@ -21,7 +21,7 @@ namespace Raider.Game.Cameras
         {
             float _yRot = Input.GetAxisRaw("Mouse X");
 
-            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            Vector3 _rotation = new Vector3(0f, _yRot, 0f) * CameraModeController.singleton.firstPersonCamSettings.lookSensitivity;
 
             //Apply rotation
             characterController.transform.Rotate(_rotation);

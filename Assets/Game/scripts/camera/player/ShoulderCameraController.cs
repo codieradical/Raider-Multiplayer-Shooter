@@ -31,7 +31,7 @@ namespace Raider.Game.Cameras
             //calculate the local position.
             _CollisionPosition = camPoint.transform.InverseTransformPoint(_CollisionPosition);
             //Apply padding percentage.
-            _CollisionPosition *= (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent);
+            _CollisionPosition *= (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
 
             Vector3 newLocation = _CollisionPosition;
             cam.transform.localPosition = newLocation;
@@ -43,8 +43,8 @@ namespace Raider.Game.Cameras
             float castDistance = Vector3.Distance(transform.position, _castToPos);
 
             //This cast checks if anything is inbetween transform.position and _castToPos (the camPoint and the _desiredCam).
-            bool hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
-            float newCamDistance = (cam.transform.localPosition.z - (objectHitInfo.distance - castDistance)) * (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent);
+            bool hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
+            float newCamDistance = (cam.transform.localPosition.z - (objectHitInfo.distance - castDistance)) * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
             if (hitWall)
             {
                 ChangeCameraOffsetBasedOnCollision(objectHitInfo.point);
@@ -52,9 +52,9 @@ namespace Raider.Game.Cameras
             //If no collision is found, cast with infinate distance, to figure out where the camera can go.
             else
             {
-                hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
+                hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
                 //Update the newCamDistance for the last raycast.
-                newCamDistance = -objectHitInfo.distance * (1 - CameraModeController.instance.thirdPersonCamSettings.cameraPaddingPercent);
+                newCamDistance = -objectHitInfo.distance * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
                 if (hitWall)
                 {
                     //If there's more space than the camera needs, just use the chosen distance. (less than because camera distance is negative.)

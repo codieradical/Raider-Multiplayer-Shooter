@@ -3,7 +3,9 @@ using System.Collections;
 
 namespace Raider.Game.Cameras
 {
-
+    /// <summary>
+    /// Switch between follow and fly.
+    /// </summary>
     public class FreeCameraController : ThirdPersonCameraController
     {
         FreeCameraController()
@@ -15,7 +17,7 @@ namespace Raider.Game.Cameras
         new void Start()
         {
             base.Start();
-            Raider.Game.GUI.UserFeedback.LogError("FreeCam Enabled, press SLASH to switch between camera and player control.");
+            GUI.UserFeedback.LogError("FreeCam Enabled, press SLASH to switch between camera and player control.");
         }
 
         bool controllingPlayer = false;
@@ -27,7 +29,7 @@ namespace Raider.Game.Cameras
             if (Input.GetKeyDown(KeyCode.Slash))
             {
                 controllingPlayer = !controllingPlayer;
-                Raider.Game.GUI.UserFeedback.LogError("FreeCam: Switched Controls.");
+                GUI.UserFeedback.LogError("FreeCam: Switched Controls.");
             }
 
             if (controllingCamera)
@@ -35,16 +37,18 @@ namespace Raider.Game.Cameras
                 MoveCamera();
                 RotateCamera();
                 preventMovement = true;
+                overrideWalking = true;
             }
 
             if(controllingPlayer)
             {
                 RotatePlayer();
                 preventMovement = false;
+                overrideWalking = false;
             }
 
-            LockCamZRotation();
             LockCamPointZRotation();
+            LockCamZRotation();
         }
 
         void MoveCamera()
@@ -64,7 +68,7 @@ namespace Raider.Game.Cameras
             Vector3 desiredCamPointPos = camPoint.transform.position + _movement;
 
             RaycastHit objectHitInfo;
-            bool hitwall = Physics.Linecast(camPoint.transform.position, desiredCamPointPos, out objectHitInfo, ~CameraModeController.instance.thirdPersonCamSettings.transparent);
+            bool hitwall = Physics.Linecast(camPoint.transform.position, desiredCamPointPos, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
             if (hitwall)
             {
                 _movement = Vector3.zero;

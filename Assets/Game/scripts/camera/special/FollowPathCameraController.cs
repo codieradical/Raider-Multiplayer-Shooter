@@ -19,12 +19,12 @@ namespace Raider.Game.Cameras
             base.Start();
 
             pathObjects = new List<GameObject>();
-            foreach(Transform child in CameraModeController.instance.cameraPathGameObject.transform)
+            foreach(Transform child in CameraModeController.singleton.cameraPathGameObject.transform)
             {
                 pathObjects.Add(child.gameObject);
             }
 
-            CameraModeController.instance.RemoveCameraParent();
+            CameraModeController.singleton.RemoveCameraParent();
             camPoint.transform.rotation = pathObjects[0].transform.localRotation;
             camPoint.transform.position = pathObjects[0].transform.position;
             lastPointIndex = pathObjects.Count - 1;

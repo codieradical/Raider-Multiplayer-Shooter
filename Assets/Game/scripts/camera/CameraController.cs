@@ -22,9 +22,9 @@ namespace Raider.Game.Cameras
 
         public void Start()
         {
-            CameraModeController.instance.ChangeCameraParent(parent);
+            CameraModeController.singleton.ChangeCameraParent(parent);
 
-            camPoint = CameraModeController.instance.camPoint;
+            camPoint = CameraModeController.singleton.camPoint;
 
             //Assign the camera.
             cam = camPoint.transform.GetChild(0).gameObject;
@@ -73,13 +73,13 @@ namespace Raider.Game.Cameras
         /// <returns>Returns the corrected rotation.</returns>
         public Vector3 ApplyXBufferToRotation(Vector3 _currentRotation, Vector3 _rotate)
         {
-            if (_currentRotation.x + _rotate.x > 90 - CameraModeController.instance.xAxisBuffer && _currentRotation.x < 270)
+            if (_currentRotation.x + _rotate.x > 90 - CameraModeController.singleton.xAxisBuffer && _currentRotation.x < 270)
             {
-                _rotate.x = (90 - CameraModeController.instance.xAxisBuffer) - _currentRotation.x;
+                _rotate.x = (90 - CameraModeController.singleton.xAxisBuffer) - _currentRotation.x;
             }
-            else if (_currentRotation.x + _rotate.x < 270 + CameraModeController.instance.xAxisBuffer && _currentRotation.x > 90)
+            else if (_currentRotation.x + _rotate.x < 270 + CameraModeController.singleton.xAxisBuffer && _currentRotation.x > 90)
             {
-                _rotate.x = (270 + CameraModeController.instance.xAxisBuffer) - _currentRotation.x;
+                _rotate.x = (270 + CameraModeController.singleton.xAxisBuffer) - _currentRotation.x;
             }
             return _rotate;
         }

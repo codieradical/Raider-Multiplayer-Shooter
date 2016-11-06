@@ -9,22 +9,22 @@ namespace Raider.Game.Cameras
     {
         #region Singleton Setup
 
-        public static CameraModeController instance;
+        public static CameraModeController singleton;
         public static CameraController controllerInstance
         {
-            get { return instance.GetComponent<CameraController>(); }
+            get { return singleton.GetComponent<CameraController>(); }
         }
 
         public void Awake()
         {
-            if (instance != null)
+            if (singleton != null)
                 Debug.LogAssertion("It seems that multiple Camera Mode Controllers are active, breaking the singleton instance.");
-            instance = this;
+            singleton = this;
         }
 
         public void OnDestroy()
         {
-            instance = null;
+            singleton = null;
         }
 
         #endregion
