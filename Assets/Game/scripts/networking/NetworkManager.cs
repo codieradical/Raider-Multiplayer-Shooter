@@ -33,27 +33,18 @@ namespace Raider.Game.Networking
 
         #endregion
 
-        public GameObject lobbyGameObject;
-
-        public List<PlayerData> players
-        {
-            get
-            {
-                List<PlayerData> _players = new List<PlayerData>();
-                foreach(Transform playerObject in lobbyGameObject.transform)
-                {
-                    _players.Add(playerObject.GetComponent<PlayerData>());
-                }
-                return _players;
-            }
-        }
-
-        // Use this for initialization
-        void Start()
-        {
-            lobbyGameObject = new GameObject("_Lobby");
-            DontDestroyOnLoad(lobbyGameObject);
-        }
+        //public List<PlayerData> players
+        //{
+        //    get
+        //    {
+        //        List<PlayerData> _players = new List<PlayerData>();
+        //        foreach(Transform playerObject in lobbyGameObject.transform)
+        //        {
+        //            _players.Add(playerObject.GetComponent<PlayerData>());
+        //        }
+        //        return _players;
+        //    }
+        //}
 
         public new void StartClient()
         {
@@ -73,33 +64,34 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
-        public override void OnServerDisconnect(NetworkConnection conn)
-        {
-            PlayerData removePlayer = null;
-            foreach (PlayerData player in players)
-            {
-                if (player.connectionToClient == conn)
-                    removePlayer = player;
-            }
-            if(removePlayer != null)
-            {
-                removePlayer.CmdDestroyPlayerData();
-                PlayerData.UpdateClientPlayerDataObjects(); // RPC to update nameplates.
-                UpdateLobbyNameplates(); //Update the server too.
-            }
-            else
-                Debug.LogError("Failed to remove a lobby object");
+        //public override void OnServerDisconnect(NetworkConnection conn)
+        //{
+        //    PlayerData removePlayer = null;
+        //    foreach (PlayerData player in players)
+        //    {
+        //        if (player.connectionToClient == conn)
+        //            removePlayer = player;
+        //    }
+        //    if(removePlayer != null)
+        //    {
+        //        removePlayer.CmdDestroyPlayerData();
+        //        PlayerData.UpdateClientPlayerDataObjects(); // RPC to update nameplates.
+        //        UpdateLobbyNameplates(); //Update the server too.
+        //    }
+        //    else
+        //        Debug.LogError("Failed to remove a lobby object");
 
-            base.OnServerDisconnect(conn);
-        }
+        //    base.OnServerDisconnect(conn);
+        //}
 
-        public static void UpdateLobbyNameplates()
+        public void UpdateLobbyNameplates()
         {
             LobbyHandler.DestroyAllPlayers();
-            foreach (PlayerData newPlayer in instance.players)
+            foreach (NetworkLobbyPlayer newPlayer in lobbySlots)
             {
-                if (newPlayer.gotData)
-                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(newPlayer.username, newPlayer.isHost, false, false, newPlayer.character));
+                PlayerData playerData = newPlayer.gameObject.GetComponent<PlayerData>();
+                if (playerData.gotData)
+                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isHost, false, false, playerData.character));
                 else
                     LobbyHandler.AddLoadingPlayer();
             }
