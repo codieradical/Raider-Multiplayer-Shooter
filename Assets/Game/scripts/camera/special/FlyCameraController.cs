@@ -3,7 +3,9 @@ using System.Collections;
 
 namespace Raider.Game.Cameras
 {
-
+    /// <summary>
+    /// Constrained flycam for spectators.
+    /// </summary>
     public class FlyCameraController : ThirdPersonCameraController
     {
         FlyCameraController()
@@ -25,8 +27,8 @@ namespace Raider.Game.Cameras
         {
             RotateCamera();
             MoveCamera();
-            LockCamZRotation();
             LockCamPointZRotation();
+            LockCamZRotation();
         }
 
         new void RotateCamera()
@@ -36,12 +38,12 @@ namespace Raider.Game.Cameras
             float _xRot = -Input.GetAxisRaw("Mouse Y");
 
             //If the camera is set to inverted mode, invert the rotation.
-            if (CameraModeController.instance.firstPersonCamSettings.inverted)
+            if (CameraModeController.singleton.firstPersonCamSettings.inverted)
             {
                 _xRot = -_xRot;
             }
 
-            Vector3 _camPointRotation = new Vector3(_xRot, _yRot, 0f) * CameraModeController.instance.firstPersonCamSettings.lookSensitivity;
+            Vector3 _camPointRotation = new Vector3(_xRot, _yRot, 0f) * CameraModeController.singleton.firstPersonCamSettings.lookSensitivity;
 
             _camPointRotation = ApplyXBufferToRotation(cam.transform.eulerAngles, _camPointRotation);
 
@@ -60,5 +62,19 @@ namespace Raider.Game.Cameras
 
             camPoint.transform.Translate(movement);
         }
+
+        //new Vector3 KeepCameraInsideWalls(Vector3 _movement)
+        //{
+        //    Vector3 desiredCamPointPos = camPoint.transform.position + _movement;
+
+        //    RaycastHit objectHitInfo;
+        //    bool hitwall = Physics.Linecast(camPoint.transform.position, desiredCamPointPos, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
+        //    if (hitwall)
+        //    {
+        //        _movement = Vector3.zero;
+        //    }
+
+        //    return _movement;
+        //}
     }
 }
