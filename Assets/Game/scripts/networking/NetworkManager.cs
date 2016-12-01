@@ -127,6 +127,7 @@ namespace Raider.Game.Networking
             Debug.Log("OnServerDisconnect");
             base.OnServerDisconnect(conn);
             actionQueue.Enqueue(UpdateLobbyNameplates);
+            //actionQueue.Enqueue(GetMyPlayerData().RpcUpdateLobbyNameplates);
         }
 
         #endregion
