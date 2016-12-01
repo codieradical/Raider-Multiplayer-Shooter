@@ -83,6 +83,7 @@ namespace Raider.Game.GUI.Components
                 }
 
                 GameObject newPlayer = Instantiate(instance.loadingNameplatePrefab) as GameObject;
+                newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = instance.gameObject;
                 newPlayer.transform.SetParent(instance.gameObject.transform.FindChild("Players"), false);
                 UpdateSidebars();
             }

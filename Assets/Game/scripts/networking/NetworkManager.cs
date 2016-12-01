@@ -17,6 +17,13 @@ namespace Raider.Game.Networking
 
         //This class already inherits a singleton...
         public static NetworkManager instance;
+        public GameObject lobbyGameObject;
+
+        void Start()
+        {
+            GameObject lobby = new GameObject("_Lobby");
+            lobbyGameObject = lobby;
+        }
 
         void Awake()
         {
@@ -33,18 +40,42 @@ namespace Raider.Game.Networking
 
         #endregion
 
-        //public List<PlayerData> players
-        //{
-        //    get
-        //    {
-        //        List<PlayerData> _players = new List<PlayerData>();
-        //        foreach(Transform playerObject in lobbyGameObject.transform)
-        //        {
-        //            _players.Add(playerObject.GetComponent<PlayerData>());
-        //        }
-        //        return _players;
-        //    }
-        //}
+        //This Queue is used to store function calls which will be processed next frame.
+        //I really need to refactor this.
+        private Queue<Action> actionQueue = new Queue<Action>();
+
+        void Update()
+        {
+            while(actionQueue.Count > 0)
+            {
+                actionQueue.Dequeue()();
+            }
+        }
+
+        public List<PlayerData> players
+        {
+            get
+            {
+                List<PlayerData> _players = new List<PlayerData>();
+                foreach (Transform playerObject in lobbyGameObject.transform)
+                {
+                    _players.Add(playerObject.GetComponent<PlayerData>());
+                }
+                return _players;
+            }
+        }
+
+        public PlayerData GetMyPlayerData()
+        {
+            foreach(PlayerData player in players)
+            {
+                if(player.username == Session.saveDataHandler.GetUsername())
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
 
         public new void StartClient()
         {
@@ -64,32 +95,12 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
-        //public override void OnServerDisconnect(NetworkConnection conn)
-        //{
-        //    PlayerData removePlayer = null;
-        //    foreach (PlayerData player in players)
-        //    {
-        //        if (player.connectionToClient == conn)
-        //            removePlayer = player;
-        //    }
-        //    if(removePlayer != null)
-        //    {
-        //        removePlayer.CmdDestroyPlayerData();
-        //        PlayerData.UpdateClientPlayerDataObjects(); // RPC to update nameplates.
-        //        UpdateLobbyNameplates(); //Update the server too.
-        //    }
-        //    else
-        //        Debug.LogError("Failed to remove a lobby object");
-
-        //    base.OnServerDisconnect(conn);
-        //}
-
         public void UpdateLobbyNameplates()
         {
             LobbyHandler.DestroyAllPlayers();
-            foreach (NetworkLobbyPlayer newPlayer in lobbySlots)
+
+            foreach(PlayerData playerData in players)
             {
-                PlayerData playerData = newPlayer.gameObject.GetComponent<PlayerData>();
                 if (playerData.gotData)
                     LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isHost, false, false, playerData.character));
                 else
@@ -106,69 +117,16 @@ namespace Raider.Game.Networking
             UpdateLobbyNameplates();
         }
 
-        #endregion
-
-
-        #region Network Lobby Manager Overrides
-
-        byte FindSlot()
+        void OnPlayerDisconnected(NetworkPlayer networkPlayer)
         {
-            for (byte i = 0; i < maxPlayers; i++)
-            {
-                if (lobbySlots[i] == null)
-                {
-                    return i;
-                }
-            }
-            return byte.MaxValue;
+            Debug.Log("OnPlayerDisconnected");
         }
 
-        public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+        public override void OnServerDisconnect(NetworkConnection conn)
         {
-            string loadedSceneName = SceneManager.GetSceneAt(0).name;
-            if (loadedSceneName != lobbyScene)
-            {
-                return;
-            }
-
-            // check MaxPlayersPerConnection
-            int numPlayersForConnection = 0;
-            foreach (var player in conn.playerControllers)
-            {
-                if (player.IsValid)
-                    numPlayersForConnection += 1;
-            }
-
-            if (numPlayersForConnection >= maxPlayersPerConnection)
-            {
-                if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager no more players for this connection."); }
-
-                var errorMsg = new EmptyMessage();
-                conn.Send(MsgType.LobbyAddPlayerFailed, errorMsg);
-                return;
-            }
-
-            byte slot = FindSlot();
-            if (slot == byte.MaxValue)
-            {
-                if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager no space for more players"); }
-
-                var errorMsg = new EmptyMessage();
-                conn.Send(MsgType.LobbyAddPlayerFailed, errorMsg);
-                return;
-            }
-
-            var newLobbyGameObject = OnLobbyServerCreateLobbyPlayer(conn, playerControllerId);
-            if (newLobbyGameObject == null)
-            {
-                newLobbyGameObject = Instantiate(lobbyPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
-            }
-
-            var newLobbyPlayer = newLobbyGameObject.GetComponent<NetworkLobbyPlayer>();
-            newLobbyPlayer.slot = slot;
-            lobbySlots[slot] = newLobbyPlayer;
-
-            NetworkServer.AddPlayerForConnection(conn, newLobbyGameObject, playerControllerId);
+            Debug.Log("OnServerDisconnect");
+            base.OnServerDisconnect(conn);
+            actionQueue.Enqueue(UpdateLobbyNameplates);
         }
 
         #endregion
