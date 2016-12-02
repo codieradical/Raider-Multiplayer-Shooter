@@ -9,7 +9,6 @@ using Raider.Game.Networking;
 
 namespace Raider.Game.GUI.Components
 {
-
     public class LobbyHandler : MonoBehaviour
     {
         #region Singleton Setup
@@ -26,7 +25,6 @@ namespace Raider.Game.GUI.Components
         void OnDestroy()
         {
             instances.Remove(this);
-            //instances.RemoveAt(instancePositionInArray);
         }
 
         #endregion

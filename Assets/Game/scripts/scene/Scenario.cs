@@ -12,7 +12,7 @@ namespace Raider.Game.Scene
         public static Scenario instance;
 
         public string currentScene;
-        public Gametype currentGametype;
+        public Gametype currentGametype = Gametype.None;
 
         public List<string> scenes;
         public List<string> getScenesByGametype(Gametype gametype)
@@ -55,7 +55,7 @@ namespace Raider.Game.Scene
         }
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             DontDestroyOnLoad(gameObject);
 
@@ -87,17 +87,19 @@ namespace Raider.Game.Scene
 
         public void LoadScene(string sceneName, Gametype gametype)
         {
-#if !UNITY_EDITOR
-        UnityEngine.SceneManagement.Scene newScene = SceneManager.GetSceneByName(sceneName);
-
-        if (newScene == null)
-            Debug.LogError("[Scenario]Scene not found!");
-
-        if (!newScene.path.Contains(gametype.ToString().ToLower()))
-            Debug.LogError(string.Format("Can't load {0} with gametype {1}", newScene.path + newScene.name, gametype.ToString()));
-
-#endif
             SceneManager.LoadScene(sceneName);
+
+            //Now the scene has loaded, we can check
+#if !UNITY_EDITOR
+            UnityEngine.SceneManagement.Scene newScene = SceneManager.GetSceneByName(sceneName);
+
+            if (!newScene.path.Contains(gametype.ToString().ToLower()))
+                Debug.LogError(string.Format("Incompatible Gametype, loaded {0} with gametype {1}", newScene.path + newScene.name, gametype.ToString()));
+            
+            SceneManager.SetActiveScene(newScene);
+#endif
+            currentGametype = gametype;
+
         }
     }
 }

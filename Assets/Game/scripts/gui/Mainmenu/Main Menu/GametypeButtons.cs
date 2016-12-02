@@ -2,10 +2,11 @@
 using System;
 using Raider.Game.Scene;
 using UnityEngine.UI;
+using Raider.Game.GUI.Screens;
 
 namespace Raider.Game.GUI.Components
 {
-
+    [RequireComponent(typeof(Animator))]
     public class GametypeButtons : MonoBehaviour
     {
 
@@ -17,7 +18,7 @@ namespace Raider.Game.GUI.Components
         Animator animatorInstance;
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             if (instance != null)
                 Debug.LogWarning("More than one GametypeButtons instance");
@@ -53,6 +54,12 @@ namespace Raider.Game.GUI.Components
             {
                 Debug.LogError("Unable to parse gametype attached to this button.");
             }
+        }
+
+        public void MatchmakingButtonClick()
+        {
+            HideButtons();
+            MenuManager.instance.ShowMenu(MainmenuHandler.instance.MatchmakingScreen.GetComponent<Menu>());
         }
     }
 }

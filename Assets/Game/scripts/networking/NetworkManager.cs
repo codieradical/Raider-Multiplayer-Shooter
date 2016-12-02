@@ -23,6 +23,10 @@ namespace Raider.Game.Networking
         {
             GameObject lobby = new GameObject("_Lobby");
             lobbyGameObject = lobby;
+
+            //Although this functionality is built into the network lobby manager,
+            //It only works on update.
+            DontDestroyOnLoad(this);
         }
 
         void Awake()

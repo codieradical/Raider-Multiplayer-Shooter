@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 using Raider.Game.Scene;
+using System.Collections.Generic;
+using Raider.Game.Networking;
 
 namespace Raider.Game.GUI.Components
 {
@@ -56,6 +58,9 @@ namespace Raider.Game.GUI.Components
         {
             animatorInstance.SetBool("open", false);
             GametypeButtons.instance.ShowButtons();
+
+            if (NetworkManager.instance.isNetworkActive)
+                NetworkManager.instance.StopHost();
         }
 
         public void StartGame()
@@ -63,7 +68,29 @@ namespace Raider.Game.GUI.Components
             Scenario.instance.LoadScene(selectedScene, selectedGametype);
         }
 
+        public void OpenNetworkOptions()
+        {
+            List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
 
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Offline", "Splitscreen co-op. Not Yet Implemented."));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Local", "Host a Local Area Nework Lobby. Not Yet Implemented."));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Online", "Host an online lobby on your PC"));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Online Server", "Host an online server lobby on your PC"));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Matchmaker/Dedicated", "Not yet implemented."));
+
+            OptionsPaneHandler.instance.ShowOptions("Network", options, SelectNetwork);
+        }
+
+        public void SelectNetwork(string option)
+        {
+            if (option == "Online")
+                NetworkManager.instance.StopServer();
+                NetworkManager.instance.StartHost();
+            if (option == "Online Server")
+                NetworkManager.instance.StopHost();
+                NetworkManager.instance.StartServer();
+
+        }
 
         // Use this for initialization
         void Start()

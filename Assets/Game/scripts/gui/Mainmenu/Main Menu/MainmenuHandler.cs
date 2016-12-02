@@ -30,6 +30,22 @@ namespace Raider.Game.GUI.Screens
         #endregion
 
 
+        public void Start()
+        {
+            if (Session.activeCharacter != null)
+            {
+                MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+
+                LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
+                playerNameplate.username = Session.saveDataHandler.GetUsername();
+                playerNameplate.leader = true;
+                playerNameplate.character = Session.activeCharacter;
+                LobbyHandler.AddPlayer(playerNameplate);
+
+                GametypeButtons.instance.ShowButtons();
+            }
+        }
+
         [SerializeField]
         public CharacterEditorHandler editorHandler;
 
@@ -39,6 +55,7 @@ namespace Raider.Game.GUI.Screens
         public GameObject CreateCharacterScreen;
         public GameObject MainMenuScreen;
         public GameObject EmblemEditorScreen;
+        public GameObject MatchmakingScreen;
 
         public void Login(Text _textComponent)
         {

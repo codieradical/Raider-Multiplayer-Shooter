@@ -20,7 +20,7 @@ namespace Raider.Game.Scene
             instance = null;
         }
 
-        PhysicsSettings physicsSettings;
+        public PhysicsSettings physicsSettings = new PhysicsSettings();
 
         [Serializable]
         public class PhysicsSettings

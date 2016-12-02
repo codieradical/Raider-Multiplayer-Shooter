@@ -17,8 +17,6 @@ namespace Raider.Game.GUI.Components
         //constructor needs to be used, as this componenent is awoken by instance reference.
         HSLColorPicker()
         {
-            if (instance != null)
-                Debug.LogAssertion("It seems that multiple HSL Color Pickers are active, breaking the singleton instance.");
             instance = this;
         }
 
