@@ -83,7 +83,7 @@ namespace Raider.Game.GUI.Screens
             if(Session.activeCharacter != null)
             {
                 UserFeedback.LogError("Can't select a new character when you're already logged in!");
-                Debug.LogError("Attempted to login to chaaracter when activeCharacter not null");
+                Debug.LogError("Attempted to login to character when activeCharacter not null");
                 return;
             }
             Session.activeCharacter = Session.saveDataHandler.GetCharacter(slot);
