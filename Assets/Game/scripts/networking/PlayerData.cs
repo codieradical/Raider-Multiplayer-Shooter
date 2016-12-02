@@ -64,12 +64,6 @@ namespace Raider.Game.Networking
             UpdateClientPlayerDataObjects();
         }
 
-        [Command]
-        public void CmdDestroyPlayerData()
-        {
-            NetworkServer.Destroy(this.gameObject);
-        }
-
         [ClientRpc]
         public void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter, bool _isHost)
         {
@@ -86,18 +80,13 @@ namespace Raider.Game.Networking
             }
         }
 
-        [TargetRpc]
-        public void TargetUpdateLobbyNameplates(NetworkConnection conn)
-        {
-            NetworkManager.instance.UpdateLobbyNameplates();
-        }
-
-        //[ClientRpc]
-        //public void RpcUpdateLobbyNameplates()
-        //{
-        //    NetworkManager.instance.UpdateLobbyNameplates();
-        //}
-
         #endregion
+
+        //If a player is remove from the scene, update the lobby!
+        public override void OnNetworkDestroy()
+        {
+            base.OnNetworkDestroy();
+            NetworkManager.instance.actionQueue.Enqueue(NetworkManager.instance.UpdateLobbyNameplates);
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace Raider.Game.Networking
 
         //This Queue is used to store function calls which will be processed next frame.
         //I really need to refactor this.
-        private Queue<Action> actionQueue = new Queue<Action>();
+        public Queue<Action> actionQueue = new Queue<Action>();
 
         void Update()
         {
@@ -65,33 +65,25 @@ namespace Raider.Game.Networking
             }
         }
 
-        public PlayerData GetMyPlayerData()
-        {
-            foreach(PlayerData player in players)
-            {
-                if(player.username == Session.saveDataHandler.GetUsername())
-                {
-                    return player;
-                }
-            }
-            return null;
-        }
+        //These methods aren't working.
+        //But they should be here anyway.
+        //I need the start client/server buttons to check if the user is logged in.
 
-        public new void StartClient()
-        {
-            if (Session.activeCharacter != null)
-                base.StartClient();
-            else
-                Debug.Log("Can't join server when you haven't selected a character!");
-        }
+        //public new void StartClient()
+        //{
+        //    if (Session.activeCharacter != null)
+        //        base.StartClient();
+        //    else
+        //        Debug.Log("Can't join server when you haven't selected a character!");
+        //}
 
-        public new void StartHost()
-        {
-            if (Session.activeCharacter != null)
-                base.StartHost();
-            else
-                Debug.Log("Can't host server when you haven't selected a character!");
-        }
+        //public new void StartHost()
+        //{
+        //    if (Session.activeCharacter != null)
+        //        base.StartHost();
+        //    else
+        //        Debug.Log("Can't host server when you haven't selected a character!");
+        //}
 
         #region Lobby Methods
 
@@ -106,28 +98,6 @@ namespace Raider.Game.Networking
                 else
                     LobbyHandler.AddLoadingPlayer();
             }
-        }
-
-        public override void OnLobbyServerConnect(NetworkConnection conn)
-        {
-            UpdateLobbyNameplates();
-        }
-        public override void OnLobbyClientConnect(NetworkConnection conn)
-        {
-            UpdateLobbyNameplates();
-        }
-
-        void OnPlayerDisconnected(NetworkPlayer networkPlayer)
-        {
-            Debug.Log("OnPlayerDisconnected");
-        }
-
-        public override void OnServerDisconnect(NetworkConnection conn)
-        {
-            Debug.Log("OnServerDisconnect");
-            base.OnServerDisconnect(conn);
-            actionQueue.Enqueue(UpdateLobbyNameplates);
-            //actionQueue.Enqueue(GetMyPlayerData().RpcUpdateLobbyNameplates);
         }
 
         #endregion
