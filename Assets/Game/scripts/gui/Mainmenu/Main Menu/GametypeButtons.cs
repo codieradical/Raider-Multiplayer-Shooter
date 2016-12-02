@@ -9,7 +9,7 @@ namespace Raider.Game.GUI.Components
     public class GametypeButtons : MonoBehaviour
     {
 
-        public Text currentMissionText;
+        //public Text currentMissionText;
         //public Text weeklyHopperText;
 
         public static GametypeButtons instance;
@@ -32,8 +32,8 @@ namespace Raider.Game.GUI.Components
 
         public void ShowButtons()
         {
-            currentMissionText.text = Session.activeCharacter.currentMission;
             animatorInstance.SetBool("open", true);
+            //currentMissionText.text = Session.activeCharacter.currentMission;
         }
 
         public void HideButtons()
@@ -43,8 +43,16 @@ namespace Raider.Game.GUI.Components
 
         public void SelectGametype(string gametype)
         {
-            HideButtons();
-            LobbySetupPane.instance.OpenPane((Scenario.Gametype)Enum.Parse(typeof(Scenario.Gametype), gametype));
+            try
+            {
+                Scenario.Gametype enumGametype = (Scenario.Gametype)Enum.Parse(typeof(Scenario.Gametype), gametype);
+                HideButtons();
+                LobbySetupPane.instance.OpenPane(enumGametype);
+            }
+            catch (Exception)
+            {
+                Debug.LogError("Unable to parse gametype attached to this button.");
+            }
         }
     }
 }

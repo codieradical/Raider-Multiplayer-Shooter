@@ -38,13 +38,20 @@ namespace Raider.Game.Scene
         public enum Gametype
         {
             None,
-            Story,
-            Survival,
-            Seige,
-            Skirmish,
-            Anvil,
+            Slayer,
+            Capture_The_Flag,
+            King_Of_The_Hill,
+            Assault,
+            Oddball,
             Ui,
             Test
+
+            //Excavator Gametypes:
+            //Story,
+            //Survival,
+            //Seige,
+            //Skirmish,
+            //Anvil,
         }
 
         // Use this for initialization

@@ -26,7 +26,8 @@ namespace Raider.Game.GUI.Components
             set
             {
                 _selectedGametype = value;
-                paneTitle.text = value.ToString();
+                //Replace underscores with spaces.
+                paneTitle.text = value.ToString().Replace('_',' ');
             }
         }
 
@@ -36,7 +37,7 @@ namespace Raider.Game.GUI.Components
             get { return _selectedScene; }
             set
             {
-                mapLabel.text = value;
+                mapLabel.text = value.Replace('_',' ');
                 _selectedScene = value;
 
                 mapImage.sprite = GetMapImage(value);
