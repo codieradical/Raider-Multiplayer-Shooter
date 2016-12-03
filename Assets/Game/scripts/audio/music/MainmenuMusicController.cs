@@ -6,20 +6,26 @@ using Raider.Game.Scene;
 
 namespace Raider.Game.Audio
 {
+
+    /// <summary>
+    /// I can expand this class to be a general music controller rather than just the mainmenu.
+    /// </summary>
     [RequireComponent(typeof(AudioSource))]
     public class MainmenuMusicController : MonoBehaviour
     {
+        //Grab the audio source at the start.
         AudioSource audioSource;
-        // Use this for initialization
         void Start()
         {
             DontDestroyOnLoad(this);
 
             if (audioSource == null)
                 audioSource = GetComponent<AudioSource>();
+        }
 
-            //This game object starts on every scene it loads on.
-            //So the gametype will change.
+        //Every time the a scene loads, check if it's a Ui scene.
+        void OnLevelWasLoaded()
+        {
             if (Scenario.instance.currentGametype == Scenario.Gametype.Ui)
                 audioSource.mute = false;
             else

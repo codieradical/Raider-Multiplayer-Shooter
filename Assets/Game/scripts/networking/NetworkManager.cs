@@ -27,6 +27,8 @@ namespace Raider.Game.Networking
             //Although this functionality is built into the network lobby manager,
             //It only works on update.
             DontDestroyOnLoad(this);
+            lobby.AddComponent<NetworkLobbySettings>();
+            DontDestroyOnLoad(lobby);
         }
 
         void Awake()
@@ -69,25 +71,15 @@ namespace Raider.Game.Networking
             }
         }
 
-        //These methods aren't working.
-        //But they should be here anyway.
-        //I need the start client/server buttons to check if the user is logged in.
-
-        //public new void StartClient()
-        //{
-        //    if (Session.activeCharacter != null)
-        //        base.StartClient();
-        //    else
-        //        Debug.Log("Can't join server when you haven't selected a character!");
-        //}
-
-        //public new void StartHost()
-        //{
-        //    if (Session.activeCharacter != null)
-        //        base.StartHost();
-        //    else
-        //        Debug.Log("Can't host server when you haven't selected a character!");
-        //}
+        public PlayerData GetMyLobbyPlayer()
+        {
+            foreach(PlayerData player in players)
+            {
+                if (player.isLocalPlayer)
+                    return player;
+            }
+            return null;
+        }
 
         #region Lobby Methods
 
@@ -98,9 +90,66 @@ namespace Raider.Game.Networking
             foreach(PlayerData playerData in players)
             {
                 if (playerData.gotData)
-                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isHost, false, false, playerData.character));
+                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isLeader, false, false, playerData.character));
                 else
                     LobbyHandler.AddLoadingPlayer();
+            }
+        }
+
+        #endregion
+
+        #region Updating NetworkState
+
+        public enum NetworkState
+        {
+            Offline,
+            Client,
+            Host,
+            Server
+            //Matchmaking?
+        }
+
+        public NetworkState currentNetworkState
+        {
+            get
+            {
+                //Find what state the network is in, by checking if the server and or client are running.
+                if (NetworkServer.active)
+                    if (NetworkClient.active)
+                        return NetworkState.Host;
+                    else
+                        return NetworkState.Server;
+                else if (NetworkClient.active)
+                    return NetworkState.Client;
+                else
+                    return NetworkState.Offline;
+            }
+
+            set
+            {
+                //Call methods to switch state by starting/stopping communications.
+                if (value == NetworkState.Client)
+                    StartClient();
+                else if (value == NetworkState.Host)
+                    StartHost();
+                else if (value == NetworkState.Server)
+                    StartServer();
+                else if (value == NetworkState.Offline)
+                    StopCommunications();
+            }
+        }
+
+        public void StopCommunications()
+        {
+            //If the network is active, figure out what's running, and stop it.
+            if (isNetworkActive)
+            {
+                if (currentNetworkState == NetworkState.Client)
+                    StopClient();
+                else if (currentNetworkState == NetworkState.Host)
+                    StopHost();
+                else if (currentNetworkState == NetworkState.Server)
+                    StopServer();
             }
         }
 

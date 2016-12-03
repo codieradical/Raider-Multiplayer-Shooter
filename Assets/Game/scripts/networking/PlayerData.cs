@@ -17,12 +17,13 @@ namespace Raider.Game.Networking
 
             if (isLocalPlayer)
             {
-                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, Network.isServer);
+                //If the player is hosting (if networkserver is active), isLeader will be true.
+                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active);
 
-                if (isHost)
-                    RpcRecieveUpdateFromServer(this.username, serializedCharacter, isHost);
+                if (isLeader)
+                    RpcRecieveUpdateFromServer(this.username, serializedCharacter, isLeader);
                 else
-                    CmdUpdateServer(this.username, serializedCharacter, isHost);
+                    CmdUpdateServer(this.username, serializedCharacter, isLeader);
             }
         }
 
@@ -33,7 +34,7 @@ namespace Raider.Game.Networking
             set { this.gameObject.name = value; }
         }
         public SaveDataStructure.Character character;
-        public bool isHost;
+        public bool isLeader;
 
         #region serialization and syncing
 
@@ -43,11 +44,11 @@ namespace Raider.Game.Networking
             set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
         }
 
-        void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isHost)
+        void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isLeader)
         {
             this.username = _username;
             this.character = _character;
-            this.isHost = _isHost;
+            this.isLeader = _isLeader;
             this.gotData = true;
             NetworkManager.instance.UpdateLobbyNameplates();
         }
@@ -76,7 +77,7 @@ namespace Raider.Game.Networking
             foreach (PlayerData player in NetworkManager.instance.players)
             {
                 if (player.gotData)
-                    player.RpcRecieveUpdateFromServer(player.username, player.serializedCharacter, player.isHost);
+                    player.RpcRecieveUpdateFromServer(player.username, player.serializedCharacter, player.isLeader);
             }
         }
 
