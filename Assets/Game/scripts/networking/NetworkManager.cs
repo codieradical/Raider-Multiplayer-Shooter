@@ -178,6 +178,7 @@ namespace Raider.Game.Networking
 
                 //Sometimes this works now, sometimes it needs another frame.
                 UpdateLobbyNameplates();
+                actionQueue.Enqueue(UpdateLobbyNameplates);
             }
         }
 
