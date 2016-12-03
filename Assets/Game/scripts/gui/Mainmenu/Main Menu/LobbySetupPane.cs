@@ -4,6 +4,7 @@ using System.Collections;
 using Raider.Game.Scene;
 using System.Collections.Generic;
 using Raider.Game.Networking;
+using System;
 
 namespace Raider.Game.GUI.Components
 {
@@ -20,38 +21,30 @@ namespace Raider.Game.GUI.Components
         public Text networkLabel;
         public Text gametypeLabel;
         public Image mapImage;
-
-        private Scenario.Gametype _selectedGametype;
-        public Scenario.Gametype selectedGametype
-        {
-            get { return _selectedGametype; }
-            set
-            {
-                _selectedGametype = value;
-                //Replace underscores with spaces.
-                paneTitle.text = value.ToString().Replace('_',' ');
-            }
-        }
-
-        private string _selectedScene;
-        public string selectedScene
-        {
-            get { return _selectedScene; }
-            set
-            {
-                mapLabel.text = value.Replace('_',' ');
-                _selectedScene = value;
-
-                mapImage.sprite = GetMapImage(value);
-            }
-        }
-
+        public Button startGameButton;
 
         public void OpenPane(Scenario.Gametype gametype)
         {
             animatorInstance.SetBool("open", true);
-            selectedGametype = gametype;
-            selectedScene = Scenario.instance.getScenesByGametype(gametype)[0];
+            NetworkManager.instance.lobbySetup.scenarioGametype = gametype;
+
+            if (Scenario.instance.getScenesByGametype(gametype).Count < 1)
+                NetworkManager.instance.lobbySetup.SelectedScene = "No Scenes Found for " + gametype;
+            else
+                NetworkManager.instance.lobbySetup.SelectedScene = Scenario.instance.getScenesByGametype(gametype)[0];
+
+            UpdatePaneData();
+        }
+
+        //Used to open the pane before data has been send from the server...
+        public void OpenPane()
+        {
+            animatorInstance.SetBool("open", true);
+            paneTitle.text = "Loading Lobby...";
+            mapLabel.text = "";
+            networkLabel.text = "";
+            mapImage.sprite = null;
+            NetworkManager.instance.actionQueue.Enqueue(UpdatePaneData);
         }
 
         public void ClosePane()
@@ -65,7 +58,10 @@ namespace Raider.Game.GUI.Components
 
         public void StartGame()
         {
-            Scenario.instance.LoadScene(selectedScene, selectedGametype);
+            if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Offline)
+                Scenario.instance.LoadScene(NetworkManager.instance.lobbySetup.SelectedScene, NetworkManager.instance.lobbySetup.scenarioGametype);
+            else
+                NetworkManager.instance.ReadyToBegin();
         }
 
         // Use this for initialization
@@ -80,8 +76,6 @@ namespace Raider.Game.GUI.Components
                 Debug.LogWarning("The lobby setup pane is missing some important objects!");
 
             animatorInstance = GetComponent<Animator>();
-
-            networkLabel.text = "Offline";
         }
 
         void OnDestroy()
@@ -89,16 +83,14 @@ namespace Raider.Game.GUI.Components
             instance = null;
         }
 
-        Sprite GetMapImage(string mapName)
+        public void UpdatePaneData()
         {
-            //Load singular just wouldn't work!
-            Sprite image = Resources.Load<Sprite>("gui/mapImg/" + mapName);
-            if (image == null)
-            {
-                return Resources.Load<Sprite>("gui/mapImg");
-            }
-            else
-                return image;
+            paneTitle.text = NetworkManager.instance.lobbySetup.Gametype;
+            mapLabel.text = NetworkManager.instance.lobbySetup.SelectedScene;
+            networkLabel.text = NetworkManager.instance.lobbySetup.Network;
+            mapImage.sprite = Scenario.GetMapImage(NetworkManager.instance.lobbySetup.SelectedScene);
+
+            startGameButton.enabled = NetworkManager.instance.isLeader;
         }
     }
 }

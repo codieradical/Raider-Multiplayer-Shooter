@@ -37,6 +37,7 @@ namespace Raider.Game.GUI.Screens
                 //Grab the lobby details.
                 GametypeButtons.instance.HideButtons();
                 MenuManager.instance.ShowMenu(MainmenuHandler.instance.MainMenuScreen.GetComponent<Menu>());
+                LobbySetupPane.instance.OpenPane(NetworkManager.instance.lobbySetup.scenarioGametype);
             }
         }
 
@@ -59,13 +60,13 @@ namespace Raider.Game.GUI.Screens
             //The user might be switching from host to server, so it's important to end communications first.
             if (option == "Online")
             {
-                NetworkManager.instance.StopCommunications();
+                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
                 NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Host;
             }
 
             if (option == "Online Server")
             {
-                NetworkManager.instance.StopCommunications();
+                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
                 NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Server;
             }
 

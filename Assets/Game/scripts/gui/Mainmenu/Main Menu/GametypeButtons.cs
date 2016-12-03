@@ -50,7 +50,7 @@ namespace Raider.Game.GUI.Components
                 HideButtons();
                 LobbySetupPane.instance.OpenPane(enumGametype);
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 Debug.LogError("Unable to parse gametype attached to this button.");
             }

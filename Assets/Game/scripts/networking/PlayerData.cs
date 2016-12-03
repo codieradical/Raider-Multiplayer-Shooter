@@ -24,6 +24,11 @@ namespace Raider.Game.Networking
                     RpcRecieveUpdateFromServer(this.username, serializedCharacter, isLeader);
                 else
                     CmdUpdateServer(this.username, serializedCharacter, isLeader);
+
+                //If the player is not the host, they're automatically set to ready.
+                //This means the host's ready flag starts the game.
+                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Client)
+                    GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
             }
         }
 

@@ -101,5 +101,15 @@ namespace Raider.Game.Scene
             currentGametype = gametype;
 
         }
+
+        public static Sprite GetMapImage(string mapName)
+        {
+            //Load singular just wouldn't work!
+            Sprite image = Resources.Load<Sprite>("gui/mapImg/" + mapName);
+            if (image == null) //If no image was found, load the template.
+                return Resources.Load<Sprite>("gui/mapImg/template");
+            else
+                return image;
+        }
     }
 }

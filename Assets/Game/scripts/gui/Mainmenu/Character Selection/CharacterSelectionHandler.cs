@@ -17,7 +17,7 @@ namespace Raider.Game.GUI.Screens
         public GameObject plateContainer;
 
         public const string PREVIEW_CHARACTER_NAME = "plate";
-        const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full;
+        const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Plate;
 
         public void LoadCharacterPlates()
         {

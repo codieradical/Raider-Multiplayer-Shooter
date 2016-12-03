@@ -18,6 +18,7 @@ namespace Raider.Game.Networking
         //This class already inherits a singleton...
         public static NetworkManager instance;
         public GameObject lobbyGameObject;
+        public LobbySetup lobbySetup;
 
         void Start()
         {
@@ -27,7 +28,7 @@ namespace Raider.Game.Networking
             //Although this functionality is built into the network lobby manager,
             //It only works on update.
             DontDestroyOnLoad(this);
-            lobby.AddComponent<NetworkLobbySettings>();
+            lobbySetup = lobby.AddComponent<LobbySetup>();
             DontDestroyOnLoad(lobby);
         }
 
@@ -81,19 +82,57 @@ namespace Raider.Game.Networking
             return null;
         }
 
+        public bool isLeader
+        {
+            get
+            {
+                if (GetMyLobbyPlayer() != null)
+                    if (GetMyLobbyPlayer().isLeader)
+                        return true;
+                    else
+                        return false;
+                else
+                    return true;
+            }
+        }
+
+        //Used to call SendReadyToBeginMessage on PlayerData from other classes.
+        public void ReadyToBegin()
+        {
+            if (currentNetworkState == NetworkState.Client || currentNetworkState == NetworkState.Host)
+                GetMyLobbyPlayer().GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+        }
+
         #region Lobby Methods
 
         public void UpdateLobbyNameplates()
         {
-            LobbyHandler.DestroyAllPlayers();
-
-            foreach(PlayerData playerData in players)
+            //If the player is in a lobby, use the player lobby objects to create nameplates.
+            if (currentNetworkState != NetworkState.Offline)
             {
-                if (playerData.gotData)
-                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isLeader, false, false, playerData.character));
-                else
-                    LobbyHandler.AddLoadingPlayer();
+                LobbyHandler.DestroyAllPlayers();
+
+                foreach (PlayerData playerData in players)
+                {
+                    if (playerData.gotData)
+                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isLeader, false, false, playerData.character));
+                    else
+                        LobbyHandler.AddLoadingPlayer();
+                }
             }
+            //Otherwise, use their local data.
+            else
+            {
+                LobbyHandler.DestroyAllPlayers();
+                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.saveDataHandler.GetUsername(), true, false, false, Session.activeCharacter));
+            }
+        }
+
+        //When a client connects, update their lobby.
+        public override void OnLobbyServerConnect(NetworkConnection conn)
+        {
+            base.OnLobbyClientConnect(conn);
+            lobbySetup.TargetSendLobbySetup(conn, lobbySetup.Gametype, lobbySetup.Network, lobbySetup.SelectedScene);
         }
 
         #endregion
@@ -136,10 +175,14 @@ namespace Raider.Game.Networking
                     StartServer();
                 else if (value == NetworkState.Offline)
                     StopCommunications();
+
+                //Sometimes this works now, sometimes it needs another frame.
+                UpdateLobbyNameplates();
             }
         }
 
-        public void StopCommunications()
+        //This method doesn't call UpdateLobbyNameplates, so it shouldn't be called directly.
+        private void StopCommunications()
         {
             //If the network is active, figure out what's running, and stop it.
             if (isNetworkActive)
