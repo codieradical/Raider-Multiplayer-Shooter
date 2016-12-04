@@ -30,6 +30,8 @@ namespace Raider.Game.Networking
             DontDestroyOnLoad(this);
             lobbySetup = lobby.AddComponent<LobbySetup>();
             DontDestroyOnLoad(lobby);
+            //For some reason it's not active...
+            lobby.SetActive(true);
         }
 
         void Awake()
@@ -59,22 +61,22 @@ namespace Raider.Game.Networking
             }
         }
 
-        public List<PlayerData> players
+        public List<LobbyPlayerData> players
         {
             get
             {
-                List<PlayerData> _players = new List<PlayerData>();
+                List<LobbyPlayerData> _players = new List<LobbyPlayerData>();
                 foreach (Transform playerObject in lobbyGameObject.transform)
                 {
-                    _players.Add(playerObject.GetComponent<PlayerData>());
+                    _players.Add(playerObject.GetComponent<LobbyPlayerData>());
                 }
                 return _players;
             }
         }
 
-        public PlayerData GetMyLobbyPlayer()
+        public LobbyPlayerData GetMyLobbyPlayer()
         {
-            foreach(PlayerData player in players)
+            foreach(LobbyPlayerData player in players)
             {
                 if (player.isLocalPlayer)
                     return player;
@@ -112,7 +114,7 @@ namespace Raider.Game.Networking
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                foreach (PlayerData playerData in players)
+                foreach (LobbyPlayerData playerData in players)
                 {
                     if (playerData.gotData)
                         LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isLeader, false, false, playerData.character));
@@ -126,13 +128,6 @@ namespace Raider.Game.Networking
                 LobbyHandler.DestroyAllPlayers();
                 LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.saveDataHandler.GetUsername(), true, false, false, Session.activeCharacter));
             }
-        }
-
-        //When a client connects, update their lobby.
-        public override void OnLobbyServerConnect(NetworkConnection conn)
-        {
-            base.OnLobbyClientConnect(conn);
-            lobbySetup.TargetSendLobbySetup(conn, lobbySetup.Gametype, lobbySetup.Network, lobbySetup.SelectedScene);
         }
 
         #endregion
