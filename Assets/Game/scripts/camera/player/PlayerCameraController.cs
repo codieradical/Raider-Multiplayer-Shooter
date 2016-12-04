@@ -10,8 +10,7 @@ namespace Raider.Game.Cameras
 
         public new void Start()
         {
-            playerTransform = GameObject.FindGameObjectWithTag("localPlayer").transform;
-            base.parent = playerTransform;
+            parent = CameraModeController.singleton.playerGameObject.transform;
             characterController = playerTransform.gameObject.GetComponent<CharacterController>();
 
             base.Start();

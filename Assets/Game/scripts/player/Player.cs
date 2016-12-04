@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using Raider.Game.Networking;
+using UnityEngine.Networking;
+using Raider.Game.Cameras;
 
 namespace Raider.Game.Player
 {
 
     [RequireComponent(typeof(PlayerAnimationController))]
     [RequireComponent(typeof(MovementController))]
-    public class Player : MonoBehaviour
+    public class Player : NetworkBehaviour
     {
         public bool lockCursor = true;
 
@@ -18,7 +21,14 @@ namespace Raider.Game.Player
                 Cursor.visible = false;
             }
 
-            this.gameObject.tag = "localPlayer";
+            gameObject.name = Session.saveDataHandler.GetUsername();
+
+            if(isClient)
+            {
+                gameObject.AddComponent<MovementController>();
+                gameObject.AddComponent<PlayerAnimationController>();
+                CameraModeController.singleton.playerGameObject = gameObject;
+            }
         }
     }
 }

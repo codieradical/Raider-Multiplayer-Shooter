@@ -14,8 +14,23 @@ namespace Raider.Game.Scene
         public string currentScene;
         public Gametype currentGametype = Gametype.None;
 
+        //A list of scenes by path.
         public List<string> scenes;
-        public List<string> getScenesByGametype(Gametype gametype)
+
+        public List<string> getSceneNamesByGametype(Gametype gametype)
+        {
+            List<string> paths = getScenePathsByGametype(gametype);
+            List<string> names = new List<string>();
+
+            foreach (string path in paths)
+            {
+                names.Add(path.Remove(0, path.LastIndexOf("/") + 1).Replace(".unity", ""));
+            }
+
+            return names;
+        }
+
+        public List<string> getScenePathsByGametype(Gametype gametype)
         {
             List<string> appropriateScenes = new List<string>();
 
@@ -26,10 +41,10 @@ namespace Raider.Game.Scene
                     appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
             }
 #else
-            for(int i = SceneManager.sceneCount - 1; i > -1; i--)
+            foreach(string scene in scenes)
             {
-                if (SceneManager.GetSceneAt(i).path.Contains(gametype.ToString().ToLower()))
-                    appropriateScenes.Add(SceneManager.GetSceneAt(i).name);
+                if (scene.Contains(gametype.ToString().ToLower()))
+                    appropriateScenes.Add(scene);
             }
 #endif
             return appropriateScenes;
@@ -66,12 +81,12 @@ namespace Raider.Game.Scene
 #if UNITY_EDITOR
             foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
             {
-                scenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
+                scenes.Add(scene.path);
             }
 #else
-            for(int i = SceneManager.sceneCount - 1; i > -1; i--)
+            for(int i = SceneManager.sceneCountInBuildSettings - 1; i > -1; i--)
             {
-                scenes.Add(SceneManager.GetSceneAt(i).name);
+                scenes.Add(SceneUtility.GetScenePathByBuildIndex(i));
             }
 #endif
 

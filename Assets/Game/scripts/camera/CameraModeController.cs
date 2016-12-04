@@ -34,6 +34,8 @@ namespace Raider.Game.Cameras
         //how close the camera can be to directly overhead or underfoot.
         public float xAxisBuffer = 27f;
 
+        public GameObject playerGameObject;
+
         public FirstPersonCameraSettings firstPersonCamSettings;
         public ThirdPersonCameraSettings thirdPersonCamSettings;
 

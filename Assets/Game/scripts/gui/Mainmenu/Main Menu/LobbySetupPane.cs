@@ -28,10 +28,10 @@ namespace Raider.Game.GUI.Components
             animatorInstance.SetBool("open", true);
             NetworkManager.instance.lobbySetup.scenarioGametype = gametype;
 
-            if (Scenario.instance.getScenesByGametype(gametype).Count < 1)
+            if (Scenario.instance.getSceneNamesByGametype(gametype).Count < 1)
                 NetworkManager.instance.lobbySetup.SelectedScene = "No Scenes Found for " + gametype;
             else
-                NetworkManager.instance.lobbySetup.SelectedScene = Scenario.instance.getScenesByGametype(gametype)[0];
+                NetworkManager.instance.lobbySetup.SelectedScene = Scenario.instance.getSceneNamesByGametype(gametype)[0];
 
             UpdatePaneData();
         }
@@ -90,7 +90,24 @@ namespace Raider.Game.GUI.Components
             networkLabel.text = NetworkManager.instance.lobbySetup.Network;
             mapImage.sprite = Scenario.GetMapImage(NetworkManager.instance.lobbySetup.SelectedScene);
 
-            startGameButton.enabled = NetworkManager.instance.isLeader;
+            startGameButton.gameObject.SetActive(NetworkManager.instance.isLeader);
+        }
+
+        public void OpenMapOptions()
+        {
+            List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
+
+            foreach(string scene in Scenario.instance.getSceneNamesByGametype(NetworkManager.instance.lobbySetup.scenarioGametype))
+            {
+                options.Add(new OptionsPaneOption.OptionsPaneContents(scene, "This is the scene description", Scenario.GetMapImage(scene)));
+            }
+
+            OptionsPaneHandler.instance.ShowOptions("Select Map...", options, SelectMap);
+        }
+
+        public void SelectMap(string mapName)
+        {
+            NetworkManager.instance.lobbySetup.SelectedScene = mapName;
         }
     }
 }
