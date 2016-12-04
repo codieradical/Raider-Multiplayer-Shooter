@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Raider.Game.Cameras;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
 
     [RequireComponent(typeof(CharacterController))]
-    public class MovementController : MonoBehaviour
+    public class MovementController : NetworkBehaviour
     {
-        public movementAndRotationSettings movSettings;
-        public jumpingAndFallingSettings jumpSettings;
+        public movementAndRotationSettings movSettings = new movementAndRotationSettings();
+        public jumpingAndFallingSettings jumpSettings = new jumpingAndFallingSettings();
         CameraController camController;
 
         [System.Serializable]

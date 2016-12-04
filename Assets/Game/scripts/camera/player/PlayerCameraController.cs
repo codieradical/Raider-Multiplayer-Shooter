@@ -6,14 +6,13 @@ namespace Raider.Game.Cameras
     abstract public class PlayerCameraController : CameraController
     {
         public CharacterController characterController;
-        public Transform playerTransform;
 
-        public new void Start()
+        public override void Setup()
         {
             parent = CameraModeController.singleton.playerGameObject.transform;
-            characterController = playerTransform.gameObject.GetComponent<CharacterController>();
+            characterController = CameraModeController.singleton.playerGameObject.GetComponent<CharacterController>();
 
-            base.Start();
+            base.Setup();
         }
 
         public void RotatePlayer()

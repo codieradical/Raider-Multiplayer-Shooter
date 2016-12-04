@@ -20,15 +20,16 @@ namespace Raider.Game.Cameras
         public Transform parent = null;
         public bool preventMovement = false;
 
-        public void Start()
+        public virtual void Setup()
         {
             CameraModeController.singleton.ChangeCameraParent(parent);
 
             camPoint = CameraModeController.singleton.camPoint;
 
             //Assign the camera.
-            cam = camPoint.transform.GetChild(0).gameObject;
+            cam = CameraModeController.singleton.cam;
 
+            //I don't see why this is necessary.
             //Activate the camera.
             cam.SetActive(true);
 

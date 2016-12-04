@@ -117,15 +117,15 @@ namespace Raider.Game.GUI.Screens
         {
             if (index == 1)
             {
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor1", primaryButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor1, primaryButton.color);
             }
             else if (index == 2)
             {
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor2", secondaryButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor2, secondaryButton.color);
             }
             else if (index == 3)
             {
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor3", tertiaryButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor3, tertiaryButton.color);
             }
             else
             {

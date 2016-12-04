@@ -30,17 +30,8 @@ namespace Raider.Game.GUI.Screens
 
         #endregion
 
-
-        //Not sure where this could go...
-        public void SetupCameraMode()
-        {
-            CameraModeController.singleton.cameraPathGameObject = GameObject.Find("_CameraPath");
-            CameraModeController.singleton.selectedCameraMode = CameraModeController.CameraModes.FollowPath;
-        }
-
         public void Start()
         {
-            SetupCameraMode();
             if (Session.activeCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());

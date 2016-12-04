@@ -11,13 +11,13 @@ namespace Raider.Game.Cameras
             pointStartingPos = new Vector3(0, 1.7f, 0);
         }
 
-        new void Start()
+        public override void Setup()
         {
             //if (CameraModeController.instance.firstPersonCamSettings.moveWithBody)
             //{
             //    base.parent = GameObject.FindGameObjectWithTag("localPlayer").transform.Find("Graphics");
             //}
-            base.Start();
+            base.Setup();
         }
 
         // Update is called once per frame

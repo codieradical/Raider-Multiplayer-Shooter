@@ -41,7 +41,7 @@ namespace Raider.Game.Cameras
                     _xRot = -_xRot;
                 }
 
-                Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensetivity;
+                Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensitivity;
 
                 _camPointRotate = ApplyXBufferToRotation(camPoint.transform.eulerAngles, _camPointRotate);
                 KeepCameraRotationWithinWalls(camPoint.transform.eulerAngles, _camPointRotate);

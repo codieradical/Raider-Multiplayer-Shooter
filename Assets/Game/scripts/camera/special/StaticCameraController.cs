@@ -18,9 +18,9 @@ namespace Raider.Game.Cameras
             overrideWalking = false;
         }
 
-        new void Start()
+        public override void Setup()
         {
-            base.Start();
+            base.Setup();
 
             //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
             CameraModeController.singleton.RemoveCameraParent();

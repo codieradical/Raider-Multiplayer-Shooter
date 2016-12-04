@@ -95,9 +95,7 @@ namespace Raider.Game.GUI.Components
 
 
         [HideInInspector]
-        public MonoBehaviour callbackScript;
-        [HideInInspector]
-        public string callbackMethod;
+        public Action<Color> callbackMethod;
 
         void Start()
         {
@@ -107,20 +105,16 @@ namespace Raider.Game.GUI.Components
                 Debug.LogError("[GUI\\C0olorPicker] missing an input field object.");
         }
 
-        public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod)
+        public void OpenColorPicker(Action<Color> callback)
         {
-            callbackScript = _callbackScript;
-            callbackMethod = _callbackMethod;
+            callbackMethod = callback;
             gameObject.SetActive(true);
         }
 
-        public void OpenColorPicker(MonoBehaviour _callbackScript, string _callbackMethod, Color _currentColor)
+        public void OpenColorPicker(Action<Color> callback, Color currentColor)
         {
-            callbackScript = _callbackScript;
-            callbackMethod = _callbackMethod;
-            gameObject.SetActive(true);
-
-            SetSliders(_currentColor);
+            OpenColorPicker(callback);
+            SetSliders(currentColor);
         }
 
         void SetSliders(Color _color)
@@ -170,7 +164,7 @@ namespace Raider.Game.GUI.Components
         public void Done()
         {
             gameObject.SetActive(false);
-            callbackScript.StartCoroutine(callbackMethod, Color.HSVToRGB(hDec, sDec, lDec));
+            callbackMethod(Color.HSVToRGB(hDec, sDec, lDec));
         }
     }
 }

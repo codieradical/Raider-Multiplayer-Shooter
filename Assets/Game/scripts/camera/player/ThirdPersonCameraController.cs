@@ -53,7 +53,7 @@ namespace Raider.Game.Cameras
                 _xRot = -_xRot;
             }
 
-            Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensetivity;
+            Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensitivity;
 
             _camPointRotate = ApplyXBufferToRotation(camPoint.transform.eulerAngles, _camPointRotate);
             KeepCameraRotationWithinWalls(camPoint.transform.eulerAngles, _camPointRotate);
@@ -63,9 +63,9 @@ namespace Raider.Game.Cameras
         }
 
         //Add chosenCamDistance assignment to the inherited start method.
-        new public void Start()
+        public override void Setup()
         {
-            base.Start();
+            base.Setup();
 
             chosenCamDistance = cam.transform.localPosition.z;
         }
@@ -131,7 +131,7 @@ namespace Raider.Game.Cameras
             GameObject _desiredCam = new GameObject("_desiredCam");
 
             //Change the parents.
-            _desiredCamPoint.transform.parent = playerTransform;
+            _desiredCamPoint.transform.parent = CameraModeController.singleton.playerGameObject.transform;
             _desiredCam.transform.parent = _desiredCamPoint.transform;
 
             //Read the rotation and position from actual gameobjects.

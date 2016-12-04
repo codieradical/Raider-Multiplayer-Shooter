@@ -5,12 +5,11 @@ using Raider.Game.Cameras;
 
 namespace Raider.Game.Player
 {
-
-    [RequireComponent(typeof(PlayerAnimationController))]
-    [RequireComponent(typeof(MovementController))]
     public class Player : NetworkBehaviour
     {
         public bool lockCursor = true;
+
+        public static Player localPlayer;
 
         // Use this for initialization
         void Start()
@@ -23,13 +22,30 @@ namespace Raider.Game.Player
 
             gameObject.name = Session.saveDataHandler.GetUsername();
             //If the player is a client, or is playing alone, add the moving mechanics.
-            if(isClient || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
+            if(isLocalPlayer || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
             {
+                localPlayer = this;
+
                 gameObject.AddComponent<MovementController>();
                 gameObject.AddComponent<PlayerAnimationController>();
                 CameraModeController.singleton.playerGameObject = gameObject;
-                transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, Networking.NetworkManager.instance.GetMyLobbyPlayer().character);
+                CameraModeController.singleton.cameraMode = CameraModeController.CameraModes.ThirdPerson;
+                //transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, Networking.NetworkManager.instance.GetMyLobbyPlayer().character);
             }
+        }
+
+        public void PausePlayer()
+        {
+            GetComponent<MovementController>().enabled = false;
+            CameraModeController.singleton.GetCameraController().enabled = false;
+            Cursor.visible = true;
+        }
+
+        public void UnpausePlayer()
+        {
+            GetComponent<MovementController>().enabled = true;
+            CameraModeController.singleton.GetCameraController().enabled = true;
+            Cursor.visible = false;
         }
     }
 }

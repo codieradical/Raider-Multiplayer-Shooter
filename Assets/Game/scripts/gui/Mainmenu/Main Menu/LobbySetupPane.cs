@@ -28,6 +28,8 @@ namespace Raider.Game.GUI.Components
             animatorInstance.SetBool("open", true);
             NetworkManager.instance.lobbySetup.scenarioGametype = gametype;
 
+            NetworkManager.instance.lobbySetup.Network = "Offline";
+
             if (Scenario.instance.getSceneNamesByGametype(gametype).Count < 1)
                 NetworkManager.instance.lobbySetup.SelectedScene = "No Scenes Found for " + gametype;
             else

@@ -14,9 +14,9 @@ namespace Raider.Game.Cameras
 
 
         // Use this for initialization
-        new void Start()
+        public override void Setup()
         {
-            base.Start();
+            base.Setup();
 
             pathObjects = new List<GameObject>();
             foreach(Transform child in CameraModeController.singleton.cameraPathGameObject.transform)

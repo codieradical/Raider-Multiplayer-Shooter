@@ -180,11 +180,11 @@ namespace Raider.Game.GUI.Screens
         public void EditColor(int index)
         {
             if (index == 1)
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor1", primaryColorButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor1, primaryColorButton.color);
             else if (index == 2)
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor2", secondaryColorButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor2, secondaryColorButton.color);
             else if (index == 3)
-                HSLColorPicker.instance.OpenColorPicker(this, "SetColor3", tertiaryColorButton.color);
+                HSLColorPicker.instance.OpenColorPicker(SetColor3, tertiaryColorButton.color);
             else
                 Debug.Log("[GUI\\CharacterEditor] Invalid index provided for EditColor method.");
         }

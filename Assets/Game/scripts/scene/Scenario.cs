@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using Raider.Game.Networking;
 
 namespace Raider.Game.Scene
 {
@@ -13,6 +14,36 @@ namespace Raider.Game.Scene
 
         public string currentScene;
         public Gametype currentGametype = Gametype.None;
+
+        public static bool inLobby
+        {
+            get
+            {
+                if (SceneManager.GetActiveScene().name == NetworkManager.instance.lobbyScene)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public void LeaveGame()
+        {
+            if(inLobby)
+            {
+                Debug.LogWarning("Can't leave game when in lobby!");
+            }
+            else
+            {
+                if(NetworkManager.instance.currentNetworkState != NetworkManager.NetworkState.Offline)
+                {
+                    if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Server)
+                        NetworkManager.instance.ServerReturnToLobby();
+                    else
+                        NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
+                }
+                LoadScene(NetworkManager.instance.lobbyScene, Gametype.Ui);
+            }
+        }
 
         //A list of scenes by path.
         public List<string> scenes;

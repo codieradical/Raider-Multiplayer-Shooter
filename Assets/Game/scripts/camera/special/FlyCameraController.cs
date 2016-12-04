@@ -14,9 +14,9 @@ namespace Raider.Game.Cameras
             pointStartingPos = new Vector3(0, 0, 0);
         }
 
-        new void Start()
+        public override void Setup()
         {
-            base.Start();
+            base.Setup();
 
             preventMovement = true;
             overrideWalking = false;

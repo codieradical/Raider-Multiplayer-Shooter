@@ -13,9 +13,9 @@ namespace Raider.Game.Cameras
             camStartingPos = new Vector3(0.3f, -0.2f, -1.5f);
         }
 
-        new void Start()
+        public override void Setup()
         {
-            base.Start();
+            base.Setup();
             chosenCamDistance = camStartingPos.z;
         }
 
