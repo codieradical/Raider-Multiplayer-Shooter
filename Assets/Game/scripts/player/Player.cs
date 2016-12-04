@@ -34,6 +34,13 @@ namespace Raider.Game.Player
             }
         }
 
+        void OnDestroy()
+        {
+            //If the player is being destroyed, save the camera!
+            CameraModeController.singleton.RemoveCameraParent();
+            DontDestroyOnLoad(CameraModeController.singleton.camPoint);
+        }
+
         public void PausePlayer()
         {
             GetComponent<MovementController>().enabled = false;
