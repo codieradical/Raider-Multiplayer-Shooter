@@ -22,12 +22,13 @@ namespace Raider.Game.Player
             }
 
             gameObject.name = Session.saveDataHandler.GetUsername();
-
-            if(isClient)
+            //If the player is a client, or is playing alone, add the moving mechanics.
+            if(isClient || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
             {
                 gameObject.AddComponent<MovementController>();
                 gameObject.AddComponent<PlayerAnimationController>();
                 CameraModeController.singleton.playerGameObject = gameObject;
+                transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, Networking.NetworkManager.instance.GetMyLobbyPlayer().character);
             }
         }
     }

@@ -44,6 +44,7 @@ namespace Raider.Game.Cameras
 
         public enum CameraModes
         {
+            None = -1,
             FirstPerson = 0,
             ThirdPerson = 1,
             Shoulder = 2,
@@ -55,7 +56,7 @@ namespace Raider.Game.Cameras
             FollowPath = 8
         }
 
-        public CameraModes selectedCameraMode = CameraModes.ThirdPerson;
+        public CameraModes selectedCameraMode;
         private CameraModes activeCamera;
 
         [System.Serializable]
@@ -83,15 +84,17 @@ namespace Raider.Game.Cameras
         // Use this for initialization
         void Start()
         {
-            if (cameraPathGameObject == null || sceneOverviewGameObject == null)
-            {
-                Debug.LogWarning("The camera mode controller is missing an object reference.");
-                Debug.LogWarning("A scene probably has an overview or path cam.");
-            }
+            DontDestroyOnLoad(gameObject);
+            camPoint = gameObject;
+        }
 
-            camPoint = this.gameObject;
-
-            activeCamera = selectedCameraMode;
+        void OnLevelWasLoaded()
+        {
+            GameObject sceneOverview = GameObject.Find("_SceneOverview");
+            if (sceneOverview != null)
+                selectedCameraMode = CameraModes.SceneOverview;
+            else
+                selectedCameraMode = CameraModes.None;
 
             SwitchCameraMode();
         }
@@ -118,6 +121,14 @@ namespace Raider.Game.Cameras
             RemoveCameraController();
 
             activeCamera = selectedCameraMode;
+
+            if (selectedCameraMode == CameraModes.None)
+            {
+                transform.Find("Camera").GetComponent<Camera>().enabled = false;
+                return;
+            }
+            else
+                transform.Find("Camera").GetComponent<Camera>().enabled = true;
 
             //Might be a better way to do this, but it beats the old one.
             switch (selectedCameraMode)
