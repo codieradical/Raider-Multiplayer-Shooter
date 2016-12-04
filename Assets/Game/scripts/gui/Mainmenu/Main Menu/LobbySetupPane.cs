@@ -63,7 +63,12 @@ namespace Raider.Game.GUI.Components
             if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Offline)
                 Scenario.instance.LoadScene(NetworkManager.instance.lobbySetup.SelectedScene, NetworkManager.instance.lobbySetup.scenarioGametype);
             else
+            {
+                Scenario.instance.currentScene = NetworkManager.instance.lobbySetup.SelectedScene;
+                Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.scenarioGametype;
                 NetworkManager.instance.ReadyToBegin();
+            }
+            
         }
 
         // Use this for initialization

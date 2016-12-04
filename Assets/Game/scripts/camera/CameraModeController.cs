@@ -2,6 +2,8 @@
 using System;
 using Raider.Game.GUI;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Raider.Game.Cameras
 {
@@ -43,6 +45,26 @@ namespace Raider.Game.Cameras
 
         public GameObject sceneOverviewGameObject;
         public GameObject cameraPathGameObject;
+
+        [System.Serializable]
+        public class FirstPersonCameraSettings
+        {
+            public float lookSensitivity = 3f;
+            public bool inverted = false;
+            public bool moveWithBody = true;
+        }
+
+        [System.Serializable]
+        public class ThirdPersonCameraSettings
+        {
+            public LayerMask transparent;
+            public float lookSensitivity = 3f;
+            public float minDistance = 5f;
+            public float maxDistance = 15f;
+            public float distanceMoveSpeed = 3f;
+            public float cameraPaddingPercent = 0.3f;
+            public bool inverted = false;
+        }
 
         public enum CameraModes
         {
@@ -89,7 +111,8 @@ namespace Raider.Game.Cameras
                 return CameraModes.Unknown;
             }
 
-            set
+            //This can only be set once per frame, so a custom Change Camera method will ensure that happens.
+            private set
             {
                 RemoveCameraController();
 
@@ -140,32 +163,19 @@ namespace Raider.Game.Cameras
             }
         }
 
+        public Queue<CameraModes> cameraModeUpdates = new Queue<CameraModes>();
+
+        public void SetCameraMode(CameraModes newMode)
+        {
+            cameraModeUpdates.Enqueue(newMode);
+        }
+
         public CameraController GetCameraController()
         {
             if (cameraMode > 0)
                 return GetComponent<CameraController>();
             else
                 return null;
-        }
-
-        [System.Serializable]
-        public class FirstPersonCameraSettings
-        {
-            public float lookSensitivity = 3f;
-            public bool inverted = false;
-            public bool moveWithBody = true;
-        }
-
-        [System.Serializable]
-        public class ThirdPersonCameraSettings
-        {
-            public LayerMask transparent;
-            public float lookSensitivity = 3f;
-            public float minDistance = 5f;
-            public float maxDistance = 15f;
-            public float distanceMoveSpeed = 3f;
-            public float cameraPaddingPercent = 0.3f;
-            public bool inverted = false;
         }
 
         // Use this for initialization
@@ -176,8 +186,18 @@ namespace Raider.Game.Cameras
             cam = camPoint.transform.Find("Camera").gameObject;
         }
 
+        //Camera mode changes need to be performed frame by frame, to ensure that controllers have been initialized.
+        void Update()
+        {
+            if(cameraModeUpdates.Count > 0)
+                cameraMode = cameraModeUpdates.Dequeue();
+        }
+
         void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
         {
+            //When the scene changes, we don't need the old updates anymore.
+            cameraModeUpdates = new Queue<CameraModes>();
+
             cameraMode = CameraModes.None;
 
             SetupSceneCamera();

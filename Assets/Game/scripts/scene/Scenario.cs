@@ -12,6 +12,7 @@ namespace Raider.Game.Scene
         [HideInInspector]
         public static Scenario instance;
 
+        public string gameuiScene;
         public string currentScene;
         public Gametype currentGametype = Gametype.None;
 
@@ -83,14 +84,15 @@ namespace Raider.Game.Scene
 
         public enum Gametype
         {
-            None,
-            Slayer,
-            Capture_The_Flag,
-            King_Of_The_Hill,
-            Assault,
-            Oddball,
-            Ui,
-            Test
+            //1 represents a game scene, 2 represents a lobby scene.
+            None = 0,
+            Slayer = 1,
+            Capture_The_Flag = 1,
+            King_Of_The_Hill = 1,
+            Assault = 1,
+            Oddball = 1,
+            Ui = 2,
+            Test = 1
 
             //Excavator Gametypes:
             //Story,
@@ -131,6 +133,14 @@ namespace Raider.Game.Scene
             Debug.LogWarning("Something just destroyed the scenario script!");
         }
 
+        public void NetworkLoadedScene()
+        {
+            currentScene = NetworkManager.networkSceneName;
+
+            if ((int)currentGametype == 1)
+                SceneManager.LoadScene(gameuiScene, LoadSceneMode.Additive);
+        }
+
         public void LoadScene(string sceneName, Gametype gametype)
         {
             SceneManager.LoadScene(sceneName);
@@ -144,7 +154,12 @@ namespace Raider.Game.Scene
             
             SceneManager.SetActiveScene(newScene);
 #endif
+            currentScene = sceneName;
             currentGametype = gametype;
+
+            //If this is a game scene, load the game UI scene additive.
+            if ((int)gametype == 1)
+                SceneManager.LoadScene(gameuiScene, LoadSceneMode.Additive);
 
         }
 

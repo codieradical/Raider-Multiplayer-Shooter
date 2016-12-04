@@ -29,7 +29,7 @@ namespace Raider.Game.Player
                 gameObject.AddComponent<MovementController>();
                 gameObject.AddComponent<PlayerAnimationController>();
                 CameraModeController.singleton.playerGameObject = gameObject;
-                CameraModeController.singleton.cameraMode = CameraModeController.CameraModes.ThirdPerson;
+                CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.ThirdPerson);
                 //transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, Networking.NetworkManager.instance.GetMyLobbyPlayer().character);
             }
         }

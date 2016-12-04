@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 using System;
+using Raider.Game.Scene;
 
 namespace Raider.Game.Networking
 {
@@ -98,6 +99,8 @@ namespace Raider.Game.Networking
             }
         }
 
+        #region Lobby Methods
+
         //Used to call SendReadyToBeginMessage on PlayerData from other classes.
         public void ReadyToBegin()
         {
@@ -105,7 +108,42 @@ namespace Raider.Game.Networking
                 GetMyLobbyPlayer().GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
-        #region Lobby Methods
+        public override void OnLobbyServerPlayersReady()
+        {
+            GetMyLobbyPlayer().RpcUpdateScenarioGametype();
+            base.OnLobbyServerPlayersReady();
+        }
+
+        public override void OnLobbyClientSceneChanged(NetworkConnection conn)
+        {
+            Scenario.instance.NetworkLoadedScene();
+            base.OnLobbyClientSceneChanged(conn);
+        }
+
+        //TODO
+        //IMPLEMENT COUNTDOWN TIMER
+        //float countTimer = 0;
+
+        //public override void OnLobbyServerPlayersReady()
+        //{
+        //    countTimer = Time.time + 5;
+        //}
+
+        //void Update()
+        //{
+        //    if (countTimer == 0)
+        //        return;
+
+        //    if (Time.time > countTimer)
+        //    {
+        //        countTimer = 0;
+        //        ServerChangeScene(playScene);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Counting down " + (countTimer - Time.time));
+        //    }
+        //}
 
         public void UpdateLobbyNameplates()
         {

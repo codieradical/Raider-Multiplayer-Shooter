@@ -1,6 +1,7 @@
 ﻿using Raider.Game.Saves;
 using UnityEngine.Networking;
 using UnityEngine;
+using Raider.Game.Scene;
 
 namespace Raider.Game.Networking
 {
@@ -133,6 +134,12 @@ namespace Raider.Game.Networking
                 NetworkManager.instance.lobbySetup.Network = network;
                 NetworkManager.instance.lobbySetup.SelectedScene = selectedScene;
             }
+        }
+
+        [ClientRpc]
+        public void RpcUpdateScenarioGametype()
+        {
+            Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.scenarioGametype;
         }
 
         #endregion

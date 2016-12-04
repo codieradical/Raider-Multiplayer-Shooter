@@ -31,6 +31,8 @@ namespace Raider.Game.Audio
         //Every time the a scene loads, check if it's a Ui scene.
         void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
         {
+            if (audioSource == null)
+                audioSource = GetComponent<AudioSource>();
             if (Scenario.instance.currentGametype == Scenario.Gametype.Ui)
                 audioSource.mute = false;
             else

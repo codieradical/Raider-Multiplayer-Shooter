@@ -41,6 +41,8 @@ namespace Raider.Game.GUI.Screens
 
         public Text usernameLabel;
         public Text gametypeLabel;
+        public Button leaveGameButton;
+        public Text leaveGameText;
 
         void Update()
         {
@@ -53,7 +55,6 @@ namespace Raider.Game.GUI.Screens
 
         public void OpenStartMenu()
         {
-            animatorInstance.SetBool("open", true);
             //If the user is not logged in, don't let them do this.
             if (Session.activeCharacter == null)
                 return;
@@ -61,12 +62,32 @@ namespace Raider.Game.GUI.Screens
             if (!Scenario.inLobby)
                 Player.Player.localPlayer.PausePlayer();
 
+            animatorInstance.SetBool("open", true);
+        }
+
+        void SetupStartMenuData()
+        {
             usernameLabel.text = Session.saveDataHandler.GetUsername();
 
+            leaveGameButton.onClick.RemoveAllListeners();
+            leaveGameButton.onClick.AddListener(CloseStartMenu);
+            leaveGameButton.onClick.AddListener(Scenario.instance.LeaveGame);
+
             if (Scenario.inLobby)
+            {
+                leaveGameButton.gameObject.SetActive(false);
                 gametypeLabel.text = "Mainmenu";
+            }
             else
+            {
                 gametypeLabel.text = NetworkManager.instance.lobbySetup.Gametype;
+                leaveGameButton.gameObject.SetActive(true);
+
+                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Client)
+                    leaveGameText.text = "Leave Game";
+                else
+                    leaveGameText.text = "End Game";
+            }
         }
 
         public void CloseStartMenu()
