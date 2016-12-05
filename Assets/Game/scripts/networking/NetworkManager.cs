@@ -99,6 +99,13 @@ namespace Raider.Game.Networking
             }
         }
 
+        public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+        {
+            gamePlayer.name = lobbyPlayer.GetComponent<LobbyPlayerData>().username;
+            gamePlayer.GetComponent<Player.Player>().character = lobbyPlayer.GetComponent<LobbyPlayerData>().character;
+            return true;
+        }
+
         #region Lobby Methods
 
         //Used to call SendReadyToBeginMessage on PlayerData from other classes.

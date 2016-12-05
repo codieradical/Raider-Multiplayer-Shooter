@@ -46,7 +46,7 @@ namespace Raider.Game.GUI.Screens
 
         void Update()
         {
-            if (Input.GetKey(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
                 if (!IsOpen)
                     OpenStartMenu();
                 else
@@ -58,6 +58,8 @@ namespace Raider.Game.GUI.Screens
             //If the user is not logged in, don't let them do this.
             if (Session.activeCharacter == null)
                 return;
+
+            SetupStartMenuData();
 
             if (!Scenario.inLobby)
                 Player.Player.localPlayer.PausePlayer();

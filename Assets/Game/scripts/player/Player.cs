@@ -2,12 +2,14 @@
 using Raider.Game.Networking;
 using UnityEngine.Networking;
 using Raider.Game.Cameras;
+using Raider.Game.Saves;
 
 namespace Raider.Game.Player
 {
     public class Player : NetworkBehaviour
     {
         public bool lockCursor = true;
+        public SaveDataStructure.Character character;
 
         public static Player localPlayer;
 
@@ -20,17 +22,16 @@ namespace Raider.Game.Player
                 Cursor.visible = false;
             }
 
-            gameObject.name = Session.saveDataHandler.GetUsername();
+            transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, character);
+
             //If the player is a client, or is playing alone, add the moving mechanics.
-            if(isLocalPlayer || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
+            if (isLocalPlayer || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
             {
                 localPlayer = this;
-
                 gameObject.AddComponent<MovementController>();
                 gameObject.AddComponent<PlayerAnimationController>();
                 CameraModeController.singleton.playerGameObject = gameObject;
                 CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.ThirdPerson);
-                //transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, Networking.NetworkManager.instance.GetMyLobbyPlayer().character);
             }
         }
 

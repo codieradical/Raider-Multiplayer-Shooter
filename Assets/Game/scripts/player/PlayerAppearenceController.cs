@@ -35,6 +35,13 @@ namespace Raider.Game.Player
 
         public void UpdatePlayerAppearence(string _name, SaveDataStructure.Character _character)
         {
+            //If primary renderer is null, try to get it again, failing that, return.
+            if (primaryRenderer == null)
+            {
+                Start();
+                if (primaryRenderer == null)
+                    return;
+            }
             primaryRenderer.material.color = _character.armourPrimaryColor.color;
             secondaryRenderer.material.color = _character.armourSecondaryColor.color;
             //tertiaryRenderer.material.color = _character.armourTertiaryColor.color;
