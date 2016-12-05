@@ -50,6 +50,15 @@ namespace Raider.Game.Networking
 
         #endregion
 
+        [System.Serializable]
+        public class RacePrefabs
+        {
+            public UnityEngine.Object xRacePrefab;
+            public UnityEngine.Object yRacePrefab;
+        }
+
+        public RacePrefabs racePrefabs;
+
         //This Queue is used to store function calls which will be processed next frame.
         //I really need to refactor this.
         public Queue<Action> actionQueue = new Queue<Action>();
@@ -97,6 +106,23 @@ namespace Raider.Game.Networking
                 else
                     return true;
             }
+        }
+
+        public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
+        {
+            foreach (LobbyPlayerData player in players)
+            {
+                if (player.connectionToClient == conn)
+                {
+                    if (player.character.race == Saves.SaveDataStructure.Character.Race.X)
+                        return Instantiate(racePrefabs.xRacePrefab) as GameObject;
+                    else
+                        return Instantiate(racePrefabs.yRacePrefab) as GameObject;
+                }
+            }
+
+            return Instantiate(racePrefabs.xRacePrefab) as GameObject;
+            //return base.OnLobbyServerCreateGamePlayer(conn, playerControllerId);
         }
 
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
