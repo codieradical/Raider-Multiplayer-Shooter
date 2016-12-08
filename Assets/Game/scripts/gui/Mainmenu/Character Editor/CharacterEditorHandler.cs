@@ -49,13 +49,16 @@ namespace Raider.Game.GUI.Screens
 
         public void NewCharacter()
         {
+            /*Setup the GUI*/
             titleText.text = "Create a Character";
+
+            /*Setup the Save Data Handler*/
             characterSlot = Session.saveDataHandler.characterCount;
             editingCharacter = new SaveDataStructure.Character();
 
+            /*Setup the UI data*/
             RandomiseCharacter();
             RandomiseEmblem();
-
             ResetFieldValues();
         }
 

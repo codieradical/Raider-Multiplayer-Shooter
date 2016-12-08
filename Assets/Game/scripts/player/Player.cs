@@ -38,7 +38,7 @@ namespace Raider.Game.Player
         void OnDestroy()
         {
             //If the player is being destroyed, save the camera!
-            CameraModeController.singleton.RemoveCameraParent();
+            CameraModeController.singleton.CameraParent = null;
             DontDestroyOnLoad(CameraModeController.singleton.camPoint);
         }
 

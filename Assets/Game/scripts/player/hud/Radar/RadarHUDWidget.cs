@@ -13,7 +13,7 @@ namespace Raider.Game.Player.HUD
 
             //if ping delay over
             //Physics.Raycast(Player)
-
+            //Physics.Cast
         }
     }
 }

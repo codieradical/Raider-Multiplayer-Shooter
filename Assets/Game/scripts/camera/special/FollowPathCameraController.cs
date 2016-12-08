@@ -23,8 +23,8 @@ namespace Raider.Game.Cameras
             {
                 pathObjects.Add(child.gameObject);
             }
-
-            CameraModeController.singleton.RemoveCameraParent();
+            //Remove the camera parent.
+            CameraModeController.singleton.CameraParent = null;
             camPoint.transform.rotation = pathObjects[0].transform.localRotation;
             camPoint.transform.position = pathObjects[0].transform.position;
             lastPointIndex = pathObjects.Count - 1;

@@ -245,16 +245,13 @@ namespace Raider.Game.Cameras
             }
         }
 
-        public void ChangeCameraParent(Transform _newParent)
+        //Usually a set parent method would be called,
+        //But each camera controller inherently updates the position on start.
+        public Transform CameraParent
         {
-            if (_newParent == null)
-                Debug.LogWarning("[CameraModeController] Attempted to switch camera parent to null.");
-            gameObject.transform.parent = _newParent;
+            set{ gameObject.transform.parent = value; }
+            get { return camPoint.transform.parent; }
         }
 
-        public void RemoveCameraParent()
-        {
-            gameObject.transform.parent = null;
-        }
     }
 }

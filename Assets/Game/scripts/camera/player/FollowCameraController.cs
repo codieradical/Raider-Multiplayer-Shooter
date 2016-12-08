@@ -32,14 +32,10 @@ namespace Raider.Game.Cameras
             if (_xRot != 0 || _yRot != 0 || walking)
             {
                 if (!allowYRotation || walking)
-                {
                     _yRot = 0;
-                }
 
                 if (CameraModeController.singleton.thirdPersonCamSettings.inverted)
-                {
                     _xRot = -_xRot;
-                }
 
                 Vector3 _camPointRotate = new Vector3(_xRot, _yRot, 0) * CameraModeController.singleton.thirdPersonCamSettings.lookSensitivity;
 

@@ -7,22 +7,25 @@ namespace Raider.Game.Cameras
     {
         //These values represent local positions and rotations!
         [Header("Camera Point")]
-        public Vector3 pointStartingPos = Vector3.zero;
-        public Vector3 pointStartingRot = Vector3.zero;
+        protected Vector3 pointStartingPos = Vector3.zero;
+        protected Vector3 pointStartingRot = Vector3.zero;
         [Header("Camera")]
-        public Vector3 camStartingPos = Vector3.zero;
-        public Vector3 camStartingRot = Vector3.zero;
+        protected Vector3 camStartingPos = Vector3.zero;
+        protected Vector3 camStartingRot = Vector3.zero;
 
         [SerializeField]
         public GameObject camPoint;
         public GameObject cam;
 
+        //Not sure why I have this, going to assume it's for execution order problems.
+        //I'll leave it for now.
         public Transform parent = null;
         public bool preventMovement = false;
 
+        //Called by the CameraModeController.
         public virtual void Setup()
         {
-            CameraModeController.singleton.ChangeCameraParent(parent);
+            CameraModeController.singleton.CameraParent = parent;
 
             camPoint = CameraModeController.singleton.camPoint;
 
@@ -37,7 +40,7 @@ namespace Raider.Game.Cameras
         }
 
         //Sets the position and rotation of the camera and camPoint to the starting values.
-        public void ResetCamAndCamPointPosAndRot()
+        protected void ResetCamAndCamPointPosAndRot()
         {
             cam.transform.localPosition = camStartingPos;
             cam.transform.localEulerAngles = camStartingRot;
@@ -46,21 +49,21 @@ namespace Raider.Game.Cameras
         }
 
         //Sets the z rotation of camPoint to 0.
-        public void LockCamPointZRotation()
+        protected void LockCamPointZRotation()
         {
             Vector3 _camPointCurrentRot = camPoint.transform.eulerAngles;
             camPoint.transform.eulerAngles = new Vector3(_camPointCurrentRot.x, _camPointCurrentRot.y, 0);
         }
 
         //Sets the z value of cam to 0.
-        public void LockCamZRotation()
+        protected void LockCamZRotation()
         {
             Vector3 _camCurrentRot = cam.transform.eulerAngles;
             cam.transform.eulerAngles = new Vector3(_camCurrentRot.x, _camCurrentRot.y, 0);
         }
 
         //Sets the y value of camPoint to 0.
-        public void LockCamPointYRotation()
+        protected void LockCamPointYRotation()
         {
             Vector3 _camPointCurrentRot = camPoint.transform.eulerAngles;
             camPoint.transform.localEulerAngles = new Vector3(_camPointCurrentRot.x, 0, _camPointCurrentRot.z);
@@ -72,16 +75,12 @@ namespace Raider.Game.Cameras
         /// <param name="_Rotation">The current rotation of the camera or point.</param>
         /// <param name="_Rotate">The proposed rotate of the camera or point.</param>
         /// <returns>Returns the corrected rotation.</returns>
-        public Vector3 ApplyXBufferToRotation(Vector3 _currentRotation, Vector3 _rotate)
+        protected Vector3 ApplyXBufferToRotation(Vector3 _currentRotation, Vector3 _rotate)
         {
             if (_currentRotation.x + _rotate.x > 90 - CameraModeController.singleton.xAxisBuffer && _currentRotation.x < 270)
-            {
                 _rotate.x = (90 - CameraModeController.singleton.xAxisBuffer) - _currentRotation.x;
-            }
             else if (_currentRotation.x + _rotate.x < 270 + CameraModeController.singleton.xAxisBuffer && _currentRotation.x > 90)
-            {
                 _rotate.x = (270 + CameraModeController.singleton.xAxisBuffer) - _currentRotation.x;
-            }
             return _rotate;
         }
     }

@@ -16,14 +16,15 @@ namespace Raider.Game.Cameras
             pointStartingRot = Vector3.zero;
             camStartingRot = Vector3.zero;
             overrideWalking = false;
+            parent = null;
         }
 
         public override void Setup()
         {
             base.Setup();
 
-            //I shouldn't have to change the camera parent here, I should change the parentTransform variable.
-            CameraModeController.singleton.RemoveCameraParent();
+            ////I shouldn't have to change the camera parent here, I should change the parentTransform variable.
+            //CameraModeController.singleton.CameraParent = null;
         }
 
         void Update()
