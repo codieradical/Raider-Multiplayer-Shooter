@@ -20,7 +20,7 @@ namespace Raider.Game.Player
         void Update()
         {
             //Only update the animator of the camera controller allows movement.
-            if (!CameraModeController.controllerInstance.preventMovement)
+            if (!CameraModeController.ControllerInstance.preventMovement)
             {
                 attachedAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
                 attachedAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));

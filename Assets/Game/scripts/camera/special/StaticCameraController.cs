@@ -6,8 +6,9 @@ namespace Raider.Game.Cameras
 
     public class StaticCameraController : ThirdPersonCameraController
     {
-        Vector3 cameraPosition;
-        Quaternion cameraRotation;
+        //Why are these here?
+        //Vector3 cameraPosition;
+        //Quaternion cameraRotation;
 
         StaticCameraController()
         {

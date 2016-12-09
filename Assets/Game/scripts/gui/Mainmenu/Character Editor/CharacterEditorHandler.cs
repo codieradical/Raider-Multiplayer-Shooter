@@ -53,7 +53,7 @@ namespace Raider.Game.GUI.Screens
             titleText.text = "Create a Character";
 
             /*Setup the Save Data Handler*/
-            characterSlot = Session.saveDataHandler.characterCount;
+            characterSlot = Session.saveDataHandler.CharacterCount;
             editingCharacter = new SaveDataStructure.Character();
 
             /*Setup the UI data*/
@@ -196,7 +196,7 @@ namespace Raider.Game.GUI.Screens
 
         public void Done()
         {
-            if (characterSlot == Session.saveDataHandler.characterCount)
+            if (characterSlot == Session.saveDataHandler.CharacterCount)
                 Session.saveDataHandler.NewCharacter(editingCharacter);
             else
                 Session.saveDataHandler.SaveCharacter(characterSlot, editingCharacter);

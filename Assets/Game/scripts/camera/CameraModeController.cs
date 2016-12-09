@@ -13,7 +13,7 @@ namespace Raider.Game.Cameras
         #region Singleton Setup
 
         public static CameraModeController singleton;
-        public static CameraController controllerInstance
+        public static CameraController ControllerInstance
         {
             get { return singleton.GetComponent<CameraController>(); }
         }
@@ -81,7 +81,7 @@ namespace Raider.Game.Cameras
             FollowPath = 9
         }
 
-        public CameraModes cameraMode
+        public CameraModes CameraMode
         {
             get
             {
@@ -172,7 +172,7 @@ namespace Raider.Game.Cameras
 
         public CameraController GetCameraController()
         {
-            if (cameraMode > 0)
+            if (CameraMode > 0)
                 return GetComponent<CameraController>();
             else
                 return null;
@@ -190,7 +190,7 @@ namespace Raider.Game.Cameras
         void Update()
         {
             if(cameraModeUpdates.Count > 0)
-                cameraMode = cameraModeUpdates.Dequeue();
+                CameraMode = cameraModeUpdates.Dequeue();
         }
 
         void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
@@ -198,7 +198,7 @@ namespace Raider.Game.Cameras
             //When the scene changes, we don't need the old updates anymore.
             cameraModeUpdates = new Queue<CameraModes>();
 
-            cameraMode = CameraModes.None;
+            CameraMode = CameraModes.None;
 
             SetupSceneCamera();
         }
@@ -207,11 +207,11 @@ namespace Raider.Game.Cameras
         {
             sceneOverviewGameObject = GameObject.Find("_SceneOverview");
             if (sceneOverviewGameObject != null)
-                cameraMode = CameraModes.SceneOverview;
+                CameraMode = CameraModes.SceneOverview;
             else
                 cameraPathGameObject = GameObject.Find("_CameraPath");
                 if(cameraPathGameObject != null)
-                    cameraMode = CameraModes.FollowPath;
+                    CameraMode = CameraModes.FollowPath;
         }
 
         void SetupCameraController()
@@ -234,14 +234,14 @@ namespace Raider.Game.Cameras
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                cameraMode++;
+                CameraMode++;
 
-                if ((int)cameraMode == Enum.GetNames(typeof(CameraModes)).Length)
+                if ((int)CameraMode == Enum.GetNames(typeof(CameraModes)).Length)
                 {
-                    cameraMode = 0;
+                    CameraMode = 0;
                 }
 
-                UserFeedback.LogError("Changed Camera Mode to " + cameraMode.ToString());
+                UserFeedback.LogError("Changed Camera Mode to " + CameraMode.ToString());
             }
         }
 

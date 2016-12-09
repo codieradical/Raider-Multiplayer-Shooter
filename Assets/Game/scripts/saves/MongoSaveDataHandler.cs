@@ -62,7 +62,7 @@ namespace Raider.Game.Saves
             throw new System.NotImplementedException();
         }
 
-        public int characterCount
+        public int CharacterCount
         {
             get { throw new System.NotImplementedException(); }
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Raider.Game.Saves {
 
     public class SQLSaveDataHandler : ISaveDataHandler {
-        public int characterCount
+        public int CharacterCount
         {
             get
             {

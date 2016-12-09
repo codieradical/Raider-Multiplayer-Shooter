@@ -50,15 +50,6 @@ namespace Raider.Game.Networking
 
         #endregion
 
-        [System.Serializable]
-        public class RacePrefabs
-        {
-            public UnityEngine.Object xRacePrefab;
-            public UnityEngine.Object yRacePrefab;
-        }
-
-        public RacePrefabs racePrefabs;
-
         //This Queue is used to store function calls which will be processed next frame.
         //I really need to refactor this.
         public Queue<Action> actionQueue = new Queue<Action>();
@@ -71,7 +62,7 @@ namespace Raider.Game.Networking
             }
         }
 
-        public List<LobbyPlayerData> players
+        public List<LobbyPlayerData> Players
         {
             get
             {
@@ -86,7 +77,7 @@ namespace Raider.Game.Networking
 
         public LobbyPlayerData GetMyLobbyPlayer()
         {
-            foreach(LobbyPlayerData player in players)
+            foreach(LobbyPlayerData player in Players)
             {
                 if (player.isLocalPlayer)
                     return player;
@@ -94,7 +85,7 @@ namespace Raider.Game.Networking
             return null;
         }
 
-        public bool isLeader
+        public bool IsLeader
         {
             get
             {
@@ -108,26 +99,9 @@ namespace Raider.Game.Networking
             }
         }
 
-        public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
-        {
-            foreach (LobbyPlayerData player in players)
-            {
-                if (player.connectionToClient == conn)
-                {
-                    if (player.character.race == Saves.SaveDataStructure.Character.Race.X)
-                        return Instantiate(racePrefabs.xRacePrefab) as GameObject;
-                    else
-                        return Instantiate(racePrefabs.yRacePrefab) as GameObject;
-                }
-            }
-
-            return Instantiate(racePrefabs.xRacePrefab) as GameObject;
-            //return base.OnLobbyServerCreateGamePlayer(conn, playerControllerId);
-        }
-
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
-            gamePlayer.name = lobbyPlayer.GetComponent<LobbyPlayerData>().username;
+            gamePlayer.name = lobbyPlayer.GetComponent<LobbyPlayerData>().Username;
             gamePlayer.GetComponent<Player.Player>().character = lobbyPlayer.GetComponent<LobbyPlayerData>().character;
             return true;
         }
@@ -137,7 +111,7 @@ namespace Raider.Game.Networking
         //Used to call SendReadyToBeginMessage on PlayerData from other classes.
         public void ReadyToBegin()
         {
-            if (currentNetworkState == NetworkState.Client || currentNetworkState == NetworkState.Host)
+            if (CurrentNetworkState == NetworkState.Client || CurrentNetworkState == NetworkState.Host)
                 GetMyLobbyPlayer().GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
@@ -181,14 +155,14 @@ namespace Raider.Game.Networking
         public void UpdateLobbyNameplates()
         {
             //If the player is in a lobby, use the player lobby objects to create nameplates.
-            if (currentNetworkState != NetworkState.Offline)
+            if (CurrentNetworkState != NetworkState.Offline)
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                foreach (LobbyPlayerData playerData in players)
+                foreach (LobbyPlayerData playerData in Players)
                 {
                     if (playerData.gotData)
-                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.username, playerData.isLeader, false, false, playerData.character));
+                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.Username, playerData.isLeader, false, false, playerData.character));
                     else
                         LobbyHandler.AddLoadingPlayer();
                 }
@@ -214,7 +188,7 @@ namespace Raider.Game.Networking
             //Matchmaking?
         }
 
-        public NetworkState currentNetworkState
+        public NetworkState CurrentNetworkState
         {
             get
             {
@@ -254,11 +228,11 @@ namespace Raider.Game.Networking
             //If the network is active, figure out what's running, and stop it.
             if (isNetworkActive)
             {
-                if (currentNetworkState == NetworkState.Client)
+                if (CurrentNetworkState == NetworkState.Client)
                     StopClient();
-                else if (currentNetworkState == NetworkState.Host)
+                else if (CurrentNetworkState == NetworkState.Host)
                     StopHost();
-                else if (currentNetworkState == NetworkState.Server)
+                else if (CurrentNetworkState == NetworkState.Server)
                     StopServer();
             }
         }

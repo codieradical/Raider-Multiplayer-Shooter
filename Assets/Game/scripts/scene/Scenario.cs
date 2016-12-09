@@ -16,7 +16,7 @@ namespace Raider.Game.Scene
         public string currentScene;
         public Gametype currentGametype = Gametype.None;
 
-        public static bool inLobby
+        public static bool InLobby
         {
             get
             {
@@ -29,18 +29,18 @@ namespace Raider.Game.Scene
 
         public void LeaveGame()
         {
-            if(inLobby)
+            if(InLobby)
             {
                 Debug.LogWarning("Can't leave game when in lobby!");
             }
             else
             {
-                if(NetworkManager.instance.currentNetworkState != NetworkManager.NetworkState.Offline)
+                if(NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
                 {
-                    if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Server)
+                    if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
                         NetworkManager.instance.ServerReturnToLobby();
                     else
-                        NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
+                        NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
                 }
                 LoadScene(NetworkManager.instance.lobbyScene, Gametype.Ui);
             }
@@ -49,9 +49,9 @@ namespace Raider.Game.Scene
         //A list of scenes by path.
         public List<string> scenes;
 
-        public List<string> getSceneNamesByGametype(Gametype gametype)
+        public List<string> GetSceneNamesByGametype(Gametype gametype)
         {
-            List<string> paths = getScenePathsByGametype(gametype);
+            List<string> paths = GetScenePathsByGametype(gametype);
             List<string> names = new List<string>();
 
             foreach (string path in paths)
@@ -62,7 +62,7 @@ namespace Raider.Game.Scene
             return names;
         }
 
-        public List<string> getScenePathsByGametype(Gametype gametype)
+        public List<string> GetScenePathsByGametype(Gametype gametype)
         {
             List<string> appropriateScenes = new List<string>();
 

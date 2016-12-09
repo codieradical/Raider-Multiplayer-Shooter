@@ -21,14 +21,14 @@ namespace Raider.Game.Networking
                 //If the player is hosting (if networkserver is active), isLeader will be true.
                 UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active);
 
-                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host)
-                    RpcRecieveUpdateFromServer(username, serializedCharacter, isLeader);
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host)
+                    RpcRecieveUpdateFromServer(Username, SerializedCharacter, isLeader);
                 else
-                    CmdUpdateServer(username, serializedCharacter, isLeader);
+                    CmdUpdateServer(Username, SerializedCharacter, isLeader);
 
                 //If the player is not the host, they're automatically set to ready.
                 //This means the host's ready flag starts the game.
-                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Client)
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
                 {
                     GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
                     Debug.LogError("Requesting Lobby Update.");
@@ -38,7 +38,7 @@ namespace Raider.Game.Networking
         }
 
         //Player DATA
-        public string username
+        public string Username
         {
             get { return gameObject.name; }
             set { gameObject.name = value; }
@@ -48,7 +48,7 @@ namespace Raider.Game.Networking
 
         #region serialization and player data syncing
 
-        public string serializedCharacter
+        public string SerializedCharacter
         {
             get { return Serialization.Serialize(character); }
             set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
@@ -56,7 +56,7 @@ namespace Raider.Game.Networking
 
         void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isLeader)
         {
-            this.username = _username;
+            this.Username = _username;
             this.character = _character;
             this.isLeader = _isLeader;
             this.gotData = true;
@@ -84,10 +84,10 @@ namespace Raider.Game.Networking
         [Server]
         public static void UpdateClientPlayerDataObjects()
         {
-            foreach (LobbyPlayerData player in NetworkManager.instance.players)
+            foreach (LobbyPlayerData player in NetworkManager.instance.Players)
             {
                 if (player.gotData)
-                    player.RpcRecieveUpdateFromServer(player.username, player.serializedCharacter, player.isLeader);
+                    player.RpcRecieveUpdateFromServer(player.Username, player.SerializedCharacter, player.isLeader);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Raider.Game.Networking
         void CmdRequestLobbySetupUpdate()
         {
             Debug.LogError("Sending Lobby Data.");
-            TargetSendLobbySetup(connectionToClient, NetworkManager.instance.lobbySetup.Gametype, NetworkManager.instance.lobbySetup.Network, NetworkManager.instance.lobbySetup.SelectedScene);
+            TargetSendLobbySetup(connectionToClient, NetworkManager.instance.lobbySetup.GametypeString, NetworkManager.instance.lobbySetup.Network, NetworkManager.instance.lobbySetup.SelectedScene);
         }
 
         //If a new player joins the lobby, this is used to send them the details.
@@ -116,7 +116,7 @@ namespace Raider.Game.Networking
         public void TargetSendLobbySetup(NetworkConnection conn, string gametype, string network, string selectedScene)
         {
             Debug.LogError("Recieved lobby data");
-            NetworkManager.instance.lobbySetup.Gametype = gametype;
+            NetworkManager.instance.lobbySetup.GametypeString = gametype;
             NetworkManager.instance.lobbySetup.Network = network;
             NetworkManager.instance.lobbySetup.SelectedScene = selectedScene;
         }
@@ -127,10 +127,10 @@ namespace Raider.Game.Networking
         {
             //Hosts have a client and a server, but they don't need updating.
             //NetworkState.Client represents clients only.
-            if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Client)
+            if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
             {
                 Debug.Log("Recieved lobby data");
-                NetworkManager.instance.lobbySetup.Gametype = gametype;
+                NetworkManager.instance.lobbySetup.GametypeString = gametype;
                 NetworkManager.instance.lobbySetup.Network = network;
                 NetworkManager.instance.lobbySetup.SelectedScene = selectedScene;
             }
@@ -139,7 +139,7 @@ namespace Raider.Game.Networking
         [ClientRpc]
         public void RpcUpdateScenarioGametype()
         {
-            Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.scenarioGametype;
+            Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.Gametype;
         }
 
         #endregion

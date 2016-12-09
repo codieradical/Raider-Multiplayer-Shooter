@@ -11,7 +11,7 @@ namespace Raider.Game.Networking
     public class LobbySetup : NetworkBehaviour
     {
         private string gametype;
-        public string Gametype
+        public string GametypeString
         {
             get { return gametype; }
             set
@@ -19,7 +19,7 @@ namespace Raider.Game.Networking
                 gametype = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Server)
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
                     NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
@@ -32,7 +32,7 @@ namespace Raider.Game.Networking
                 selectedScene = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Server)
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
                     NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
@@ -45,22 +45,22 @@ namespace Raider.Game.Networking
                 network = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Server)
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
                     NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
 
 
-        public Scenario.Gametype scenarioGametype
+        public Scenario.Gametype Gametype
         {
             get
             {
                 //Replace spaces in the string with underscores, parse.
-                return (Scenario.Gametype)(Enum.Parse(typeof(Scenario.Gametype), Gametype.Replace(" ", "_")));
+                return (Scenario.Gametype)(Enum.Parse(typeof(Scenario.Gametype), GametypeString.Replace(" ", "_")));
             }
             set
             {
-                Gametype = value.ToString().Replace("_", " ");
+                GametypeString = value.ToString().Replace("_", " ");
             }
         }
     }

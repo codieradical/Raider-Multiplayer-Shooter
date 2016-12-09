@@ -25,7 +25,7 @@ namespace Raider.Game.Player
             transform.Find("Graphics").GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, character);
 
             //If the player is a client, or is playing alone, add the moving mechanics.
-            if (isLocalPlayer || Networking.NetworkManager.instance.currentNetworkState == Networking.NetworkManager.NetworkState.Offline)
+            if (isLocalPlayer || Networking.NetworkManager.instance.CurrentNetworkState == Networking.NetworkManager.NetworkState.Offline)
             {
                 localPlayer = this;
                 gameObject.AddComponent<MovementController>();

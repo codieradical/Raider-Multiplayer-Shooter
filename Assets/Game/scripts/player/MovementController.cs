@@ -9,12 +9,12 @@ namespace Raider.Game.Player
     [RequireComponent(typeof(CharacterController))]
     public class MovementController : NetworkBehaviour
     {
-        public movementAndRotationSettings movSettings = new movementAndRotationSettings();
-        public jumpingAndFallingSettings jumpSettings = new jumpingAndFallingSettings();
+        public MovementAndRotationSettings movSettings = new MovementAndRotationSettings();
+        public JumpingAndFallingSettings jumpSettings = new JumpingAndFallingSettings();
         CameraController camController;
 
         [System.Serializable]
-        public class movementAndRotationSettings
+        public class MovementAndRotationSettings
         {
             public float walkSpeed = 6f;
             public float runSpeed = 10f;
@@ -26,7 +26,7 @@ namespace Raider.Game.Player
         }
 
         [System.Serializable]
-        public class jumpingAndFallingSettings
+        public class JumpingAndFallingSettings
         {
             public float jumpVelocity = 15f;
             public float gravity = 20f;

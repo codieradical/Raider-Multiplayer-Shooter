@@ -25,14 +25,14 @@ namespace Raider.Game.GUI.Screens
             {
                 Debug.LogWarning("User attempted to join a server with no character selected!");
             }
-            if(NetworkManager.instance.currentNetworkState != NetworkManager.NetworkState.Offline)
+            if(NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
             {
                 Debug.LogWarning("User attempted to join a server while already in a server!");
             }
             NetworkManager.instance.networkAddress = ipTxt.text;
-            NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Client;
+            NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Client;
             //If the player sucessfully joined a game...
-            if(NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Client)
+            if(NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
             {
                 //Grab the lobby details.
                 GametypeButtons.instance.HideButtons();
@@ -60,14 +60,14 @@ namespace Raider.Game.GUI.Screens
             //The user might be switching from host to server, so it's important to end communications first.
             if (option == "Online")
             {
-                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Host;
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Host;
             }
 
             if (option == "Online Server")
             {
-                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Server;
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Server;
             }
 
         }

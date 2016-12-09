@@ -11,7 +11,7 @@ namespace Raider.Game.Saves
     class LocalSerializedSaveDataHandler : ISaveDataHandler
     {
         [SerializeField]
-        public SaveDataStructure data { get; private set; }
+        public SaveDataStructure Data { get; private set; }
 
         private BinaryFormatter bf = new BinaryFormatter();
 
@@ -47,13 +47,13 @@ namespace Raider.Game.Saves
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");
                     file.Close(); // make sure to end the file stream.
                     NewData();
-                    return data;
+                    return Data;
                 }
             }
             else
             {
                 NewData();
-                return data;
+                return Data;
             }
         }
 
@@ -77,7 +77,7 @@ namespace Raider.Game.Saves
 
         public void DeleteData()
         {
-            data = null;
+            Data = null;
             File.Delete(dataPath);
         }
 
@@ -91,8 +91,8 @@ namespace Raider.Game.Saves
                     Directory.CreateDirectory(Path.GetDirectoryName(dataPath));
 
                 File.Create(dataPath).Dispose();
-                data = new SaveDataStructure();
-                SaveData(data);
+                Data = new SaveDataStructure();
+                SaveData(Data);
                 ReloadData();
             }
             catch(IOException)
@@ -105,58 +105,58 @@ namespace Raider.Game.Saves
 
         public void ReloadData()
         {
-            data = ReadData();
+            Data = ReadData();
         }
 
 
         public void NewCharacter(SaveDataStructure.Character character)
         {
-            data.characters.Add(character);
-            SaveData(data);
+            Data.characters.Add(character);
+            SaveData(Data);
         }
 
         public void SaveCharacter(int slot, SaveDataStructure.Character character)
         {
-            data.characters[slot] = character;
-            SaveData(data);
+            Data.characters[slot] = character;
+            SaveData(Data);
         }
 
         public SaveDataStructure.Character GetCharacter(int slot)
         {
-            return data.characters[slot];
+            return Data.characters[slot];
         }
 
         public string GetUsername()
         {
-            return data.username;
+            return Data.username;
         }
 
         public void SetUsername(string _username)
         {
-            data.username = _username;
-            SaveData(data);
+            Data.username = _username;
+            SaveData(Data);
         }
 
-        public int characterCount
+        public int CharacterCount
         {
             get
             {
-                if (data.characters == null)
+                if (Data.characters == null)
                     return 0;
                 else
-                    return data.characters.Count;
+                    return Data.characters.Count;
             }
         }
 
         public void DeleteCharacter(int slot)
         {
-            data.characters.RemoveAt(slot);
-            SaveData(data);
+            Data.characters.RemoveAt(slot);
+            SaveData(Data);
         }
 
         public List<SaveDataStructure.Character> GetAllCharacters()
         {
-            return data.characters;
+            return Data.characters;
         }
     }
 }

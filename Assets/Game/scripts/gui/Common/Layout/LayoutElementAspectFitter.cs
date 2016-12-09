@@ -20,7 +20,7 @@ namespace Raider.Game.GUI.Layout
         [System.NonSerialized]
         private RectTransform m_Rect;
 
-        private RectTransform rectTransform
+        private RectTransform AttachedRectTransform
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Raider.Game.GUI.Layout
             }
         }
 
-        private LayoutElement layoutElement
+        private LayoutElement AttachedLayoutElement
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Raider.Game.GUI.Layout
         protected override void OnDisable()
         {
             m_Tracker.Clear();
-            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            LayoutRebuilder.MarkLayoutForRebuild(AttachedRectTransform);
             base.OnDisable();
         }
 
@@ -75,35 +75,35 @@ namespace Raider.Game.GUI.Layout
                 case AspectMode.None:
                     {
                         if (!Application.isPlaying)
-                            m_AspectRatio = Mathf.Clamp(rectTransform.rect.width / rectTransform.rect.height, 0.001f, 1000f);
+                            m_AspectRatio = Mathf.Clamp(AttachedRectTransform.rect.width / AttachedRectTransform.rect.height, 0.001f, 1000f);
 
                         break;
                     }
 #endif
                 case AspectMode.HeightControlsWidth:
                     {
-                        m_Tracker.Add(this, rectTransform, DrivenTransformProperties.SizeDeltaX);
-                        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectTransform.rect.height * m_AspectRatio);
+                        m_Tracker.Add(this, AttachedRectTransform, DrivenTransformProperties.SizeDeltaX);
+                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, AttachedRectTransform.rect.height * m_AspectRatio);
                         break;
                     }
                 case AspectMode.WidthControlsHeight:
                     {
-                        m_Tracker.Add(this, rectTransform, DrivenTransformProperties.SizeDeltaY);
-                        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rectTransform.rect.width / m_AspectRatio);
+                        m_Tracker.Add(this, AttachedRectTransform, DrivenTransformProperties.SizeDeltaY);
+                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, AttachedRectTransform.rect.width / m_AspectRatio);
                         break;
                     }
                 case AspectMode.FitInParent:
                 case AspectMode.EnvelopeParent:
                     {
-                        m_Tracker.Add(this, rectTransform,
+                        m_Tracker.Add(this, AttachedRectTransform,
                             DrivenTransformProperties.Anchors |
                             DrivenTransformProperties.AnchoredPosition |
                             DrivenTransformProperties.SizeDeltaX |
                             DrivenTransformProperties.SizeDeltaY);
 
-                        rectTransform.anchorMin = Vector2.zero;
-                        rectTransform.anchorMax = Vector2.one;
-                        rectTransform.anchoredPosition = Vector2.zero;
+                        AttachedRectTransform.anchorMin = Vector2.zero;
+                        AttachedRectTransform.anchorMax = Vector2.one;
+                        AttachedRectTransform.anchoredPosition = Vector2.zero;
 
                         Vector2 sizeDelta = Vector2.zero;
                         Vector2 parentSize = GetParentSize();
@@ -115,7 +115,7 @@ namespace Raider.Game.GUI.Layout
                         {
                             sizeDelta.x = GetSizeDeltaToProduceSize(parentSize.y * aspectRatio, 0);
                         }
-                        rectTransform.sizeDelta = sizeDelta;
+                        AttachedRectTransform.sizeDelta = sizeDelta;
 
                         break;
                     }
@@ -124,12 +124,12 @@ namespace Raider.Game.GUI.Layout
 
         private float GetSizeDeltaToProduceSize(float size, int axis)
         {
-            return size - GetParentSize()[axis] * (rectTransform.anchorMax[axis] - rectTransform.anchorMin[axis]);
+            return size - GetParentSize()[axis] * (AttachedRectTransform.anchorMax[axis] - AttachedRectTransform.anchorMin[axis]);
         }
 
         private Vector2 GetParentSize()
         {
-            RectTransform parent = rectTransform.parent as RectTransform;
+            RectTransform parent = AttachedRectTransform.parent as RectTransform;
             if (!parent)
                 return Vector2.zero;
             return parent.rect.size;

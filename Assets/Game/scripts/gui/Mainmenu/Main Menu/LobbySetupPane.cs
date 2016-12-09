@@ -26,14 +26,14 @@ namespace Raider.Game.GUI.Components
         public void OpenPane(Scenario.Gametype gametype)
         {
             animatorInstance.SetBool("open", true);
-            NetworkManager.instance.lobbySetup.scenarioGametype = gametype;
+            NetworkManager.instance.lobbySetup.Gametype = gametype;
 
             NetworkManager.instance.lobbySetup.Network = "Offline";
 
-            if (Scenario.instance.getSceneNamesByGametype(gametype).Count < 1)
+            if (Scenario.instance.GetSceneNamesByGametype(gametype).Count < 1)
                 NetworkManager.instance.lobbySetup.SelectedScene = "No Scenes Found for " + gametype;
             else
-                NetworkManager.instance.lobbySetup.SelectedScene = Scenario.instance.getSceneNamesByGametype(gametype)[0];
+                NetworkManager.instance.lobbySetup.SelectedScene = Scenario.instance.GetSceneNamesByGametype(gametype)[0];
 
             UpdatePaneData();
         }
@@ -54,18 +54,18 @@ namespace Raider.Game.GUI.Components
             animatorInstance.SetBool("open", false);
             GametypeButtons.instance.ShowButtons();
 
-            if (NetworkManager.instance.currentNetworkState != NetworkManager.NetworkState.Offline)
-                NetworkManager.instance.currentNetworkState = NetworkManager.NetworkState.Offline;
+            if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
         }
 
         public void StartGame()
         {
-            if (NetworkManager.instance.currentNetworkState == NetworkManager.NetworkState.Offline)
-                Scenario.instance.LoadScene(NetworkManager.instance.lobbySetup.SelectedScene, NetworkManager.instance.lobbySetup.scenarioGametype);
+            if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Offline)
+                Scenario.instance.LoadScene(NetworkManager.instance.lobbySetup.SelectedScene, NetworkManager.instance.lobbySetup.Gametype);
             else
             {
                 Scenario.instance.currentScene = NetworkManager.instance.lobbySetup.SelectedScene;
-                Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.scenarioGametype;
+                Scenario.instance.currentGametype = NetworkManager.instance.lobbySetup.Gametype;
                 NetworkManager.instance.ReadyToBegin();
             }
             
@@ -92,19 +92,19 @@ namespace Raider.Game.GUI.Components
 
         public void UpdatePaneData()
         {
-            paneTitle.text = NetworkManager.instance.lobbySetup.Gametype;
+            paneTitle.text = NetworkManager.instance.lobbySetup.GametypeString;
             mapLabel.text = NetworkManager.instance.lobbySetup.SelectedScene;
             networkLabel.text = NetworkManager.instance.lobbySetup.Network;
             mapImage.sprite = Scenario.GetMapImage(NetworkManager.instance.lobbySetup.SelectedScene);
 
-            startGameButton.gameObject.SetActive(NetworkManager.instance.isLeader);
+            startGameButton.gameObject.SetActive(NetworkManager.instance.IsLeader);
         }
 
         public void OpenMapOptions()
         {
             List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
 
-            foreach(string scene in Scenario.instance.getSceneNamesByGametype(NetworkManager.instance.lobbySetup.scenarioGametype))
+            foreach(string scene in Scenario.instance.GetSceneNamesByGametype(NetworkManager.instance.lobbySetup.Gametype))
             {
                 options.Add(new OptionsPaneOption.OptionsPaneContents(scene, "This is the scene description", Scenario.GetMapImage(scene)));
             }

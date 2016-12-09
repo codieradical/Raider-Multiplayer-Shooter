@@ -20,7 +20,7 @@ namespace Raider.Game.Saves
         List<SaveDataStructure.Character> GetAllCharacters();
         string GetUsername();
         void SetUsername(string _username);
-        int characterCount { get; }
+        int CharacterCount { get; }
         void DeleteCharacter(int slot);
     }
 }

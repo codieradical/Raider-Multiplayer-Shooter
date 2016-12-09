@@ -104,7 +104,7 @@ namespace Raider.Game.Saves
             data.username = _username;
         }
 
-        public int characterCount
+        public int CharacterCount
         {
             get { return data.characters.Count; }
         }
