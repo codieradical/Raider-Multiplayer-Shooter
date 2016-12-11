@@ -13,7 +13,7 @@ namespace Raider.Game.Player
         // Use this for initialization
         void Start()
         {
-            attachedAnimator = GetComponent<Animator>();
+            attachedAnimator = GetComponent<Player>().graphicsObject.GetComponent<Animator>();
         }
 
         // Update is called once per frame
