@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Globalization;
 using Raider.Game.GUI.Components;
 using Raider.Game.Cameras;
+using Raider.Game.Networking;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -78,6 +79,14 @@ namespace Raider.Game.GUI.Screens
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
         }
 
+        public void Logout()
+        {
+            Session.Logout();
+            MenuManager.instance.ShowMenu(LoginScreen.GetComponent<Menu>());
+            LobbyHandler.DestroyAllPlayers(); //Make sure to remove the old character from the lobby.
+            //Maybe I should move this to the session handler.
+        }
+
         public void CloseCharacterEditor()
         {
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
@@ -98,6 +107,17 @@ namespace Raider.Game.GUI.Screens
 
             MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
             GametypeButtons.instance.ShowButtons();
+        }
+
+        public void ChangeCharacter()
+        {
+            Session.DeselectCharacter();
+            NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+            LobbyHandler.DestroyAllPlayers(); //Make sure to remove the old character from the lobby.
+            //Maybe I should move this to the session handler.
+            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+            MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+
         }
 
         public void CreateCharacter()

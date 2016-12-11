@@ -75,7 +75,16 @@ namespace Raider.Game.GUI.Screens
 
             if (Scenario.InLobby)
             {
-                leaveGameButton.gameObject.SetActive(false);
+                //leaveGameButton.gameObject.SetActive(false);
+
+                //DEBUG: Log Out // Change Character
+                leaveGameText.text = "Log Out";
+                //leaveGameText.text = "Change Character";
+                leaveGameButton.gameObject.SetActive(true);
+                leaveGameButton.onClick.RemoveAllListeners();
+                leaveGameButton.onClick.AddListener(CloseStartMenu);
+                leaveGameButton.onClick.AddListener(MainmenuHandler.instance.Logout);
+                //leaveGameButton.onClick.AddListener(MainmenuHandler.instance.ChangeCharacter);
                 gametypeLabel.text = "Mainmenu";
             }
             else

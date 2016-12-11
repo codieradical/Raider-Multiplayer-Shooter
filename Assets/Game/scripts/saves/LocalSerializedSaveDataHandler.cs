@@ -11,14 +11,14 @@ namespace Raider.Game.Saves
     class LocalSerializedSaveDataHandler : ISaveDataHandler
     {
         [SerializeField]
-        public SaveDataStructure Data { get; private set; }
+        private SaveDataStructure Data;
 
         private BinaryFormatter bf = new BinaryFormatter();
 
-        public const string fileName = "/saveData.dat";
+        const string fileName = "/saveData.dat";
 
 #if DEBUG
-        public readonly string dataPath =
+        readonly string dataPath =
         Application.dataPath.Replace("/Assets", "") + "/uploadData" + fileName;
 #else
     public readonly string dataPath = Application.persistentDataPath + fileName;
