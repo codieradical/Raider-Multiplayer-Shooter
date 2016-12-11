@@ -36,10 +36,12 @@ namespace Raider.Game.GUI.Screens
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
 
-                LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
-                playerNameplate.username = Session.saveDataHandler.GetUsername();
-                playerNameplate.leader = true;
-                playerNameplate.character = Session.activeCharacter;
+                LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+                {
+                    username = Session.saveDataHandler.GetUsername(),
+                    leader = true,
+                    character = Session.activeCharacter
+                };
                 LobbyHandler.AddPlayer(playerNameplate);
 
                 GametypeButtons.instance.ShowButtons();
@@ -83,11 +85,12 @@ namespace Raider.Game.GUI.Screens
         {
             Session.SelectCharacter(characterIndex);
 
-            LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate();
-            playerNameplate.username = Session.saveDataHandler.GetUsername();
-            playerNameplate.leader = true;
-            playerNameplate.character = Session.activeCharacter;
-
+            LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+            {
+                username = Session.saveDataHandler.GetUsername(),
+                leader = true,
+                character = Session.activeCharacter
+            };
             LobbyHandler.AddPlayer(playerNameplate);
 
             MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());

@@ -21,9 +21,9 @@ namespace Raider.Game.GUI.Screens
         public Image secondaryButton;
         public Image tertiaryButton;
 
-        public bool layer2value { get { return layer2field.isOn; } }
-        public int layer1value { get { return layer1field.value; } }
-        public int layer0value { get { return layer0field.value; } }
+        public bool Layer2value { get { return layer2field.isOn; } }
+        public int Layer1value { get { return layer1field.value; } }
+        public int Layer0value { get { return layer0field.value; } }
 
         private Color layer0color;
         private Color layer1color;
@@ -51,9 +51,9 @@ namespace Raider.Game.GUI.Screens
 
         void UpdateFields()
         {
-            layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.color;
-            layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.color;
-            layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.color;
+            layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.Color;
+            layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.Color;
+            layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.Color;
 
             layer0field.value = characterEditorHandler.editingCharacter.emblemLayer0;
             layer1field.value = characterEditorHandler.editingCharacter.emblemLayer1;
@@ -73,20 +73,20 @@ namespace Raider.Game.GUI.Screens
             layer2image.color = layer2color;
 
             //Update layer 2 toggle.
-            layer2image.gameObject.SetActive(layer2value);
+            layer2image.gameObject.SetActive(Layer2value);
 
             //Update layer images.
-            layer0image.sprite = layer0sprites[layer0value];
-            layer1image.sprite = layer1sprites[layer1value];
-            layer2image.sprite = layer2sprites[layer1value];
+            layer0image.sprite = layer0sprites[Layer0value];
+            layer1image.sprite = layer1sprites[Layer1value];
+            layer2image.sprite = layer2sprites[Layer1value];
         }
 
         public void Done()
         {
             //update the emblem images
-            characterEditorHandler.editingCharacter.emblemLayer0 = layer0value;
-            characterEditorHandler.editingCharacter.emblemLayer1 = layer1value;
-            characterEditorHandler.editingCharacter.emblemLayer2 = layer2value;
+            characterEditorHandler.editingCharacter.emblemLayer0 = Layer0value;
+            characterEditorHandler.editingCharacter.emblemLayer1 = Layer1value;
+            characterEditorHandler.editingCharacter.emblemLayer2 = Layer2value;
             //update the emblem colors
             characterEditorHandler.editingCharacter.emblemLayer0Color = new SaveDataStructure.SerializableColor(layer0color);
             characterEditorHandler.editingCharacter.emblemLayer1Color = new SaveDataStructure.SerializableColor(layer1color);

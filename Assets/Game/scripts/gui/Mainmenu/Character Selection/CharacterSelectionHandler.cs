@@ -65,7 +65,7 @@ namespace Raider.Game.GUI.Screens
             RawImage previewDisplay = newPlate.transform.FindChild("Image").GetComponent<RawImage>();
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay);
 
-            Color plateColor = character.armourPrimaryColor.color;
+            Color plateColor = character.armourPrimaryColor.Color;
             plateColor.a = 0.5f;
             newPlate.GetComponent<Image>().color = plateColor;
         }

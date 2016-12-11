@@ -42,8 +42,8 @@ namespace Raider.Game.Player
                 if (primaryRenderer == null)
                     return;
             }
-            primaryRenderer.material.color = _character.armourPrimaryColor.color;
-            secondaryRenderer.material.color = _character.armourSecondaryColor.color;
+            primaryRenderer.material.color = _character.armourPrimaryColor.Color;
+            secondaryRenderer.material.color = _character.armourSecondaryColor.Color;
             //tertiaryRenderer.material.color = _character.armourTertiaryColor.color;
 
             emblem.UpdateEmblem(_character);

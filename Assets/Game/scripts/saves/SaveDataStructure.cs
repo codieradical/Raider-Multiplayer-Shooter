@@ -20,7 +20,7 @@ namespace Raider.Game.Saves
                 g = color.g;
                 b = color.b;
             }
-            public Color color { get { return new Color(r, g, b); } set { r = value.r; g = value.g; b = value.b; } }
+            public Color Color { get { return new Color(r, g, b); } set { r = value.r; g = value.g; b = value.b; } }
             [SyncVar]
             float r;
             [SyncVar]

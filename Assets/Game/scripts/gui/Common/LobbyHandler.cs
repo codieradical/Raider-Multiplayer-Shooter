@@ -113,7 +113,7 @@ namespace Raider.Game.GUI.Components
                 newPlayer.transform.FindChild("level").GetComponent<Text>().text = player.character.level.ToString();
                 newPlayer.transform.FindChild("icons").FindChild("leader").gameObject.SetActive(player.leader);
 
-                Color plateColor = player.character.armourPrimaryColor.color;
+                Color plateColor = player.character.armourPrimaryColor.Color;
 
                 float _h, _s, _v;
                 Color.RGBToHSV(plateColor, out _h, out _s, out _v);

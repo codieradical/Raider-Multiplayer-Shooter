@@ -9,7 +9,7 @@ namespace Raider.Game.Player.HUD
     {
 
         public static PlayerHUD instance;
-        public HUDWidget[] widgets
+        public HUDWidget[] Widgets
         {
             get { return GetComponentsInChildren<HUDWidget>(true); }
         }

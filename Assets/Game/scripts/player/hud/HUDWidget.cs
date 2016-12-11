@@ -8,12 +8,12 @@ namespace Raider.Game.Player.HUD
         [HideInInspector]
         public HUDAnimationController animationController;
 
-        public bool widgetEnabled
+        public bool WidgetEnabled
         {
-            get { return widgetEnabled; }
+            get { return WidgetEnabled; }
             set
             {
-                widgetEnabled = value;
+                WidgetEnabled = value;
 
                 if (value)
                     ShowWidget();
@@ -26,7 +26,7 @@ namespace Raider.Game.Player.HUD
         void Start()
         {
             animationController = GetComponent<HUDAnimationController>();
-            widgetEnabled = widgetEnabled;
+            WidgetEnabled = WidgetEnabled;
         }
 
         void ShowWidget()

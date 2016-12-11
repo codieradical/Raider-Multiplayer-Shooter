@@ -9,6 +9,8 @@ using Raider.Game.GUI.CharacterPreviews;
 
 namespace Raider.Game.GUI.Screens
 {
+    //This class could use a little refactoring.
+    //An Update Form method should be added, taking some function from randomize and update previews.
     public class CharacterEditorHandler : MonoBehaviour
     {
         [Header("Objects")]
@@ -51,36 +53,42 @@ namespace Raider.Game.GUI.Screens
         {
             /*Setup the GUI*/
             titleText.text = "Create a Character";
+            usernameLabel.text = Session.saveDataHandler.GetUsername();
 
             /*Setup the Save Data Handler*/
             characterSlot = Session.saveDataHandler.CharacterCount;
             editingCharacter = new SaveDataStructure.Character();
 
+            CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
+
             /*Setup the UI data*/
+            ResetFormValues();
+
             RandomiseCharacter();
             RandomiseEmblem();
-            ResetFieldValues();
+
+            UpdateFormValues();
+            UpdatePreview();
         }
 
         public void EditCharacter(int _slot)
         {
             titleText.text = "Edit a Character";
+            usernameLabel.text = Session.saveDataHandler.GetUsername();
+
             characterSlot = _slot;
             editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
 
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
 
-            ResetFieldValues();
+            ResetFormValues();
+            UpdateFormValues();
             UpdatePreview();
         }
 
         public void UpdatePreview()
         {
             CharacterPreviewHandler.instance.EnqueuePreviewUpdate(PREVIEW_CHARACTER_NAME, editingCharacter);
-
-            primaryColorButton.color = editingCharacter.armourPrimaryColor.color;
-            secondaryColorButton.color = editingCharacter.armourSecondaryColor.color;
-            tertiaryColorButton.color = editingCharacter.armourTertiaryColor.color;
 
             emblemPreview.UpdateEmblem(editingCharacter);
         }
@@ -89,7 +97,7 @@ namespace Raider.Game.GUI.Screens
 
         #region data
 
-        public void ResetFieldValues()
+        public void ResetFormValues()
         {
             raceDropdown.options = new List<Dropdown.OptionData>();
             foreach (SaveDataStructure.Character.Race race in Enum.GetValues(typeof(SaveDataStructure.Character.Race)))
@@ -97,23 +105,37 @@ namespace Raider.Game.GUI.Screens
                 raceDropdown.options.Add(new Dropdown.OptionData(race.ToString()));
             }
             raceDropdown.value = (int)editingCharacter.race;
-
-            usernameLabel.text = Session.saveDataHandler.GetUsername();
             guildInput.text = editingCharacter.guild;
         }
 
+        public void UpdateFormValues()
+        {
+            raceDropdown.value = (int)editingCharacter.race; //This calls the onchange on the dropdown btw.
+            guildInput.text = editingCharacter.guild; //This calls edit guild, so make sure tha edit guild doesn't call this.
+            primaryColorButton.color = editingCharacter.armourPrimaryColor.Color;
+            secondaryColorButton.color = editingCharacter.armourSecondaryColor.Color;
+            tertiaryColorButton.color = editingCharacter.armourTertiaryColor.Color;
+        }
+
+
         public void EditGuild(string _guild)
         {
+            //This is called by the form, so nothing needs updating.
             editingCharacter.guild = _guild;
         }
 
-        public void EditRace(int _raceValue)
+        /// <summary>
+        /// Updates the model races and previews when the race dropdown is used.
+        /// </summary>
+        /// <param name="newRace">The int value provided by the form, cast to a race enum value.</param>
+        public void EditRace(int newRace)
         {
-            editingCharacter.race = (SaveDataStructure.Character.Race)_raceValue;
+            editingCharacter.race = (SaveDataStructure.Character.Race)newRace;
 
             try {
                 CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
             } catch { }
+
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
         }
 
@@ -127,9 +149,10 @@ namespace Raider.Game.GUI.Screens
 
             System.Random rand = new System.Random();
 
-            SaveDataStructure.Character.Race newRace = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
+            //Creates a random number between 0 and the amount of races available, parses that as a race.
+            editingCharacter.race = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
 
-            EditRace((int)newRace);
+            UpdateFormValues();
             UpdatePreview(); //Update the preview to make sure that the buttons are up to date.
         }
 
