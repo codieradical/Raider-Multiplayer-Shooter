@@ -40,6 +40,7 @@ namespace Raider.Game.Player
             //If the player is being destroyed, save the camera!
             CameraModeController.singleton.CameraParent = null;
             DontDestroyOnLoad(CameraModeController.singleton.camPoint);
+            CameraModeController.singleton.enabled = true;
         }
 
         public void PausePlayer()

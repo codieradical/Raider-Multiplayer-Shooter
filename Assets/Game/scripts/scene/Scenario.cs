@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Raider.Game.Networking;
+using System.Collections;
 
 namespace Raider.Game.Scene
 {
@@ -138,7 +139,7 @@ namespace Raider.Game.Scene
             currentScene = NetworkManager.networkSceneName;
 
             if ((int)currentGametype == 1)
-                SceneManager.LoadScene(gameuiScene, LoadSceneMode.Additive);
+                StartCoroutine(LoadGameUI());
         }
 
         public void LoadScene(string sceneName, Gametype gametype)
@@ -159,8 +160,22 @@ namespace Raider.Game.Scene
 
             //If this is a game scene, load the game UI scene additive.
             if ((int)gametype == 1)
-                SceneManager.LoadScene(gameuiScene, LoadSceneMode.Additive);
+                StartCoroutine(LoadGameUI());
 
+        }
+
+        //This is a kinda hacky solution to merging the next frame.
+        IEnumerator LoadGameUI()
+        {
+            //Load the GameUI scene.
+            SceneManager.LoadScene(gameuiScene, LoadSceneMode.Additive);
+
+            //Wait a frame...
+            yield return 0;
+
+            //Merge the GameUI scene into the Game scene, destroy the GameUI scene.
+            //This prevents on active scene changed being called too much.
+            SceneManager.MergeScenes(SceneManager.GetSceneByName(gameuiScene), SceneManager.GetSceneByName(currentScene));
         }
 
         public static Sprite GetMapImage(string mapName)

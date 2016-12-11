@@ -20,7 +20,7 @@ namespace Raider.Game.Cameras
 
         public void Awake()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.sceneLoaded += OnSceneLoaded;
             if (singleton != null)
                 Debug.LogAssertion("It seems that multiple Camera Mode Controllers are active, breaking the singleton instance.");
             singleton = this;
@@ -32,6 +32,9 @@ namespace Raider.Game.Cameras
         }
 
         #endregion
+
+        public const string SCENE_OVERVIEW_OBJECT_NAME = "_SceneOverview";
+        public const string CAMERA_PATH_OBJECT_NAME = "_CameraPath";
 
         public GameObject camPoint;
         public GameObject cam;
@@ -193,25 +196,29 @@ namespace Raider.Game.Cameras
                 CameraMode = cameraModeUpdates.Dequeue();
         }
 
-        void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
+        void OnSceneLoaded(UnityEngine.SceneManagement.Scene newScene, LoadSceneMode newSceneLoadMode)
         {
-            //When the scene changes, we don't need the old updates anymore.
-            cameraModeUpdates = new Queue<CameraModes>();
+            //If a new single scene has been loaded, setup the camera.
+            if (newSceneLoadMode == LoadSceneMode.Single)
+            {
+                //When the scene changes, we don't need the old updates anymore.
+                cameraModeUpdates = new Queue<CameraModes>();
 
-            CameraMode = CameraModes.None;
+                CameraMode = CameraModes.None;
 
-            SetupSceneCamera();
+                SetupSceneCamera();
+            }
         }
 
         void SetupSceneCamera()
         {
-            sceneOverviewGameObject = GameObject.Find("_SceneOverview");
+            sceneOverviewGameObject = GameObject.Find(SCENE_OVERVIEW_OBJECT_NAME);
             if (sceneOverviewGameObject != null)
-                CameraMode = CameraModes.SceneOverview;
+                cameraModeUpdates.Enqueue(CameraModes.SceneOverview);
             else
-                cameraPathGameObject = GameObject.Find("_CameraPath");
+                cameraPathGameObject = GameObject.Find(CAMERA_PATH_OBJECT_NAME);
                 if(cameraPathGameObject != null)
-                    CameraMode = CameraModes.FollowPath;
+                cameraModeUpdates.Enqueue(CameraModes.FollowPath);
         }
 
         void SetupCameraController()

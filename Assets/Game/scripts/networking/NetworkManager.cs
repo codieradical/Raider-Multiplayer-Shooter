@@ -44,7 +44,9 @@ namespace Raider.Game.Networking
 
         void OnDestroy()
         {
+#if !UNITY_EDITOR
             Debug.LogError("Something just destroyed the NetworkManager!");
+#endif
             instance = null;
         }
 

@@ -22,8 +22,6 @@ namespace Raider.Game.GUI.Screens
                 Debug.LogWarning("More than one StartMenuHandler instance");
             instance = this;
             animatorInstance = GetComponent<Animator>();
-
-            DontDestroyOnLoad(transform.parent);
         }
 
         void OnDestroy()
