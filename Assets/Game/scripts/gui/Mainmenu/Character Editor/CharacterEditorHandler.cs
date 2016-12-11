@@ -185,6 +185,7 @@ namespace Raider.Game.GUI.Screens
             else
                 Debug.Log("[GUI\\CharacterEditor] Invalid index provided for UpdateColor method.");
 
+            UpdateFormValues();
             UpdatePreview();
         }
 
