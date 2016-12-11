@@ -30,15 +30,15 @@ namespace Raider.Game.GUI.Components
 
         public void UpdateEmblem(SaveDataStructure.Character _character)
         {
-            layer0image.color = _character.emblemLayer0Color.Color;
-            layer1image.color = _character.emblemLayer1Color.Color;
-            layer2image.color = _character.emblemLayer2Color.Color;
+            layer0image.color = _character.emblem.layer0Color.Color;
+            layer1image.color = _character.emblem.layer1Color.Color;
+            layer2image.color = _character.emblem.layer2Color.Color;
 
-            layer2image.gameObject.SetActive(_character.emblemLayer2);
+            layer2image.gameObject.SetActive(_character.emblem.layer2);
 
-            layer0image.sprite = layer0sprites[_character.emblemLayer0];
-            layer1image.sprite = layer1sprites[_character.emblemLayer1];
-            layer2image.sprite = layer2sprites[_character.emblemLayer1];
+            layer0image.sprite = layer0sprites[_character.emblem.layer0];
+            layer1image.sprite = layer1sprites[_character.emblem.layer1];
+            layer2image.sprite = layer2sprites[_character.emblem.layer1];
         }
     }
 }

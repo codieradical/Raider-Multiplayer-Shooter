@@ -51,13 +51,13 @@ namespace Raider.Game.GUI.Screens
 
         void UpdateFields()
         {
-            layer0color = characterEditorHandler.editingCharacter.emblemLayer0Color.Color;
-            layer1color = characterEditorHandler.editingCharacter.emblemLayer1Color.Color;
-            layer2color = characterEditorHandler.editingCharacter.emblemLayer2Color.Color;
+            layer0color = characterEditorHandler.editingCharacter.emblem.layer0Color.Color;
+            layer1color = characterEditorHandler.editingCharacter.emblem.layer1Color.Color;
+            layer2color = characterEditorHandler.editingCharacter.emblem.layer2Color.Color;
 
-            layer0field.value = characterEditorHandler.editingCharacter.emblemLayer0;
-            layer1field.value = characterEditorHandler.editingCharacter.emblemLayer1;
-            layer2field.isOn = characterEditorHandler.editingCharacter.emblemLayer2;
+            layer0field.value = characterEditorHandler.editingCharacter.emblem.layer0;
+            layer1field.value = characterEditorHandler.editingCharacter.emblem.layer1;
+            layer2field.isOn = characterEditorHandler.editingCharacter.emblem.layer2;
         }
 
         public void UpdatePreview()
@@ -84,13 +84,13 @@ namespace Raider.Game.GUI.Screens
         public void Done()
         {
             //update the emblem images
-            characterEditorHandler.editingCharacter.emblemLayer0 = Layer0value;
-            characterEditorHandler.editingCharacter.emblemLayer1 = Layer1value;
-            characterEditorHandler.editingCharacter.emblemLayer2 = Layer2value;
+            characterEditorHandler.editingCharacter.emblem.layer0 = Layer0value;
+            characterEditorHandler.editingCharacter.emblem.layer1 = Layer1value;
+            characterEditorHandler.editingCharacter.emblem.layer2 = Layer2value;
             //update the emblem colors
-            characterEditorHandler.editingCharacter.emblemLayer0Color = new SaveDataStructure.SerializableColor(layer0color);
-            characterEditorHandler.editingCharacter.emblemLayer1Color = new SaveDataStructure.SerializableColor(layer1color);
-            characterEditorHandler.editingCharacter.emblemLayer2Color = new SaveDataStructure.SerializableColor(layer2color);
+            characterEditorHandler.editingCharacter.emblem.layer0Color = new SaveDataStructure.SerializableColor(layer0color);
+            characterEditorHandler.editingCharacter.emblem.layer1Color = new SaveDataStructure.SerializableColor(layer1color);
+            characterEditorHandler.editingCharacter.emblem.layer2Color = new SaveDataStructure.SerializableColor(layer2color);
             //update the preview
             characterEditorHandler.UpdatePreview();
 

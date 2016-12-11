@@ -158,14 +158,14 @@ namespace Raider.Game.GUI.Screens
 
         public void RandomiseEmblem()
         {
-            editingCharacter.emblemLayer0 = UnityEngine.Random.Range(0, emblemPreview.layer0sprites.Length - 1);
-            editingCharacter.emblemLayer1 = UnityEngine.Random.Range(0, emblemPreview.layer1sprites.Length - 1);
+            editingCharacter.emblem.layer0 = UnityEngine.Random.Range(0, emblemPreview.layer0sprites.Length - 1);
+            editingCharacter.emblem.layer1 = UnityEngine.Random.Range(0, emblemPreview.layer1sprites.Length - 1);
             System.Random rand = new System.Random();
-            editingCharacter.emblemLayer2 = Convert.ToBoolean(rand.Next(0, 2));
+            editingCharacter.emblem.layer2 = Convert.ToBoolean(rand.Next(0, 2));
 
-            editingCharacter.emblemLayer0Color = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.emblemLayer1Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.emblemLayer2Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer0Color = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer1Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer2Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
 
             UpdatePreview();
         }
