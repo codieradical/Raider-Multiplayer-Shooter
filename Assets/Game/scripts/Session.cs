@@ -16,9 +16,21 @@ namespace Raider
             saveDataHandler.SetUsername(_username);
         }
 
+        public static void Logout()
+        {
+            if (activeCharacter != null)
+                DeselectCharacter();
+            saveDataHandler = null;
+        }
+
         public static void SelectCharacter(int slot)
         {
             activeCharacter = saveDataHandler.GetCharacter(slot);
+        }
+
+        public static void DeselectCharacter()
+        {
+            activeCharacter = null;
         }
 
         public static void InitializeSaveDataHandler()
