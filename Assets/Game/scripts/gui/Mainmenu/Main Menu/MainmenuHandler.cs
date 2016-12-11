@@ -42,6 +42,9 @@ namespace Raider.Game.GUI.Screens
                     leader = true,
                     character = Session.activeCharacter
                 };
+
+                //Make sure the old player is gone.
+                LobbyHandler.DestroyAllPlayers();
                 LobbyHandler.AddPlayer(playerNameplate);
 
                 GametypeButtons.instance.ShowButtons();
