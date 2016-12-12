@@ -56,7 +56,7 @@ namespace Raider.Game.Player
         private Animator animatorInstance;
         public bool lockCursor = true;
         bool paused;
-        public int slot;
+        public int slot = -1;
         public SaveDataStructure.Character character;
 
         public static Player localPlayer;
@@ -83,13 +83,15 @@ namespace Raider.Game.Player
                 name = LobbyPlayerData.localPlayer.name;
                 slot = LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot;
                 gotSlot = true;
+
                 CmdUpdatePlayerSlot(slot);
 
                 UpdatePerspective(character.chosenPlayerPerspective);
             }
             else
             {
-                CmdRequestPlayerSlot();
+                if(localPlayer != null)
+                    localPlayer.CmdRequestSlots();
             }
         }
 
@@ -137,6 +139,7 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
         {
             localPlayer = this;
+            localPlayer.CmdRequestSlots(); //Now that authority is established, issue this command.
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
             CameraModeController.singleton.playerGameObject = gameObject;
@@ -175,34 +178,43 @@ namespace Raider.Game.Player
 
         #region slot sync
 
-        bool gotSlot = false;
+        public bool gotSlot;
 
         [Command]
         void CmdUpdatePlayerSlot(int newSlot)
         {
-            if (!isLocalPlayer)
-                RecievedSlotUpdate(newSlot);
+            Debug.Log("Client sent slot " + newSlot.ToString() + " for " + name);
+            if(!gotSlot)
+                UpdateLocalSlot(newSlot);
             RpcUpdatePlayerSlot(newSlot);
         }
 
         [Command]
-        void CmdRequestPlayerSlot()
+        void CmdRequestSlots()
         {
-            if (gotSlot)
-                RpcUpdatePlayerSlot(slot);
+            Debug.Log("Sending clients everything I've got!");
+            foreach (GameObject playerObj in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                Player player = playerObj.GetComponent<Player>();
+                if (gotSlot)
+                    player.RpcUpdatePlayerSlot(player.slot);
+            }
+            Debug.Log("Client requests slot for " + name);
         }
 
         [ClientRpc]
         void RpcUpdatePlayerSlot(int newSlot)
         {
-            if (!isLocalPlayer)
-            {
-                RecievedSlotUpdate(newSlot);
-            }
+            Debug.Log("Recieved rpc slot " + newSlot.ToString() + " for " + name);
+            UpdateLocalSlot(newSlot);
         }
 
-        void RecievedSlotUpdate(int value)
+        void UpdateLocalSlot(int value)
         {
+            //If the client already has the slot, don't need to update.
+            if (gotSlot)
+                return;
+
             if (isLocalPlayer)
                 return;
 
@@ -212,6 +224,8 @@ namespace Raider.Game.Player
             LobbyPlayerData lobbyPlayer = Networking.NetworkManager.instance.GetLobbyPlayerBySlot(slot);
             character = lobbyPlayer.character;
             name = lobbyPlayer.name;
+
+            Debug.Log("recieved slot " + value.ToString() + " for " + name);
 
             SetupGraphicsModel();
         }

@@ -91,11 +91,11 @@ namespace Raider.Game.Networking
             }
         }
 
-        //public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
-        //{
-        //    gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;
-        //    return true;
-        //}
+        public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+        {
+            gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;
+            return true;
+        }
 
         public LobbyPlayerData GetLobbyPlayerBySlot(int gamePlayerSlot)
         {

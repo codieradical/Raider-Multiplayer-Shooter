@@ -35,7 +35,7 @@ namespace Raider.Game.Networking
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
                 {
                     GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
-                    Debug.LogError("Requesting Lobby Update.");
+                    Debug.Log("Requesting Lobby Update.");
                     CmdRequestLobbySetupUpdate();
                 }
             }
@@ -109,7 +109,7 @@ namespace Raider.Game.Networking
         [Command]
         void CmdRequestLobbySetupUpdate()
         {
-            Debug.LogError("Sending Lobby Data.");
+            Debug.Log("Sending Lobby Data.");
             TargetSendLobbySetup(connectionToClient, NetworkManager.instance.lobbySetup.GametypeString, NetworkManager.instance.lobbySetup.Network, NetworkManager.instance.lobbySetup.SelectedScene);
         }
 
@@ -119,7 +119,7 @@ namespace Raider.Game.Networking
         [TargetRpc]
         public void TargetSendLobbySetup(NetworkConnection conn, string gametype, string network, string selectedScene)
         {
-            Debug.LogError("Recieved lobby data");
+            Debug.Log("Recieved lobby data");
             NetworkManager.instance.lobbySetup.GametypeString = gametype;
             NetworkManager.instance.lobbySetup.Network = network;
             NetworkManager.instance.lobbySetup.SelectedScene = selectedScene;
