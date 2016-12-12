@@ -93,7 +93,7 @@ namespace Raider.Game.GUI.Components
             RectTransform _selectedObjectRectTransform = sender.gameObject.GetComponent<RectTransform>();
             RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
 
-            if (sender.gameObject.transform.parent != gridObject)
+            if (sender.gameObject.transform.parent.gameObject != gridObject)
             {
                 Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object based on a button off the grid!");
                 return;
