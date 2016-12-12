@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.Networking;
+using Raider.Game.Cameras;
 
 namespace Raider.Game.Saves
 {
@@ -74,6 +75,7 @@ namespace Raider.Game.Saves
             public Character()
             {
                 emblem = new Emblem();
+                chosenPlayerPerspective = CameraModeController.CameraModes.FirstPerson;
                 armourPrimaryColor = new SerializableColor(Color.cyan);
                 armourSecondaryColor = new SerializableColor(Color.black);
                 armourTertiaryColor = new SerializableColor(Color.cyan);
@@ -82,8 +84,9 @@ namespace Raider.Game.Saves
                 //currentMission = "New Campaign";
             }
 
-            public Character(Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Race _race)
+            public Character(CameraModeController.CameraModes _chosenPlayerPerspective, Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Race _race)
             {
+                chosenPlayerPerspective = _chosenPlayerPerspective;
                 emblem = _emblem;
                 guild = _guild;
                 armourPrimaryColor = new SerializableColor(_armourPrimaryColor);
@@ -109,6 +112,8 @@ namespace Raider.Game.Saves
 
             //[SyncVar]
             //public string currentMission;
+            [SyncVar]
+            public CameraModeController.CameraModes chosenPlayerPerspective;
             [SyncVar]
             public Emblem emblem;
             [SyncVar]

@@ -88,7 +88,7 @@ namespace Raider.Game.Player
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.ThirdPerson);
+            CameraModeController.singleton.SetCameraMode(character.chosenPlayerPerspective);
         }
 
         void OnDestroy()
