@@ -91,6 +91,11 @@ namespace Raider.Game.Networking
             }
         }
 
+        public override void OnClientDisconnect(NetworkConnection conn)
+        {
+            base.OnClientDisconnect(conn);
+        }
+
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
             gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;

@@ -28,7 +28,7 @@ namespace Raider.Game.GUI.StartMenu
 
         protected abstract void SetupPaneData();
 
-        public void ClosePane()
+        public virtual void ClosePane()
         {
             IsOpen = false;
         }

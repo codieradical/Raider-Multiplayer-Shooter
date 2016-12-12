@@ -5,6 +5,7 @@ using System.Globalization;
 using Raider.Game.GUI.Components;
 using Raider.Game.Cameras;
 using Raider.Game.Networking;
+using Raider.Game.GUI.CharacterPreviews;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -123,6 +124,9 @@ namespace Raider.Game.GUI.Screens
                 character = Session.activeCharacter
             };
             LobbyHandler.AddPlayer(playerNameplate);
+
+            //We're done with the plate previews.
+            CharacterPreviewHandler.instance.DestroyPreviews();
 
             MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
             GametypeButtons.instance.ShowButtons();

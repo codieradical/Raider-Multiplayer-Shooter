@@ -5,6 +5,8 @@ using UnityEngine;
 using System;
 using Raider.Game.Scene;
 using Raider.Game.Networking;
+using Raider.Game.GUI.CharacterPreviews;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.StartMenu
 {
@@ -12,12 +14,23 @@ namespace Raider.Game.GUI.StartMenu
     {
         public GridSelectionSlider perspectiveSelection;
 
+        public GameObject characterPreviewImage;
+        RawImage characterPreviewRawImage;
+
+        const string PREVIEW_CHARACTER_NAME = "StartMenu";
+        const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full;
+
+        void Start()
+        {
+            characterPreviewRawImage = characterPreviewImage.GetComponent<RawImage>();
+        }
+
         protected override void SetupPaneData()
         {
             perspectiveSelection.onSelectionChanged = UpdatePerspectiveSelection;
             perspectiveSelection.title.text = "Perspective: " + Session.activeCharacter.chosenPlayerPerspective.ToString();
 
-            switch(Session.activeCharacter.chosenPlayerPerspective)
+            switch (Session.activeCharacter.chosenPlayerPerspective)
             {
                 case Cameras.CameraModeController.CameraModes.FirstPerson:
                     perspectiveSelection.SelectedObject = perspectiveSelection.gridLayout.transform.Find("FirstPerson").gameObject;
@@ -29,6 +42,14 @@ namespace Raider.Game.GUI.StartMenu
                     perspectiveSelection.SelectedObject = perspectiveSelection.gridLayout.transform.Find("Shoulder").gameObject;
                     break;
             }
+
+            StartCoroutine(SetupPlayerPreviewAfterAFrame());
+        }
+
+        IEnumerator SetupPlayerPreviewAfterAFrame()
+        {
+            yield return 0;
+            CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, Session.activeCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
         }
 
         void UpdatePerspectiveSelection(GameObject newObject)
@@ -52,6 +73,13 @@ namespace Raider.Game.GUI.StartMenu
 
             Session.SaveActiveCharacter();
             perspectiveSelection.title.text = "Perspective: " + Session.activeCharacter.chosenPlayerPerspective.ToString();
+        }
+
+        public override void ClosePane()
+        {
+            //Destroy the player preview...
+            CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
+            base.ClosePane();
         }
 
     }
