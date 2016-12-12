@@ -11,7 +11,6 @@ namespace Raider.Game.Player
     {
         public MovementAndRotationSettings movSettings = new MovementAndRotationSettings();
         public JumpingAndFallingSettings jumpSettings = new JumpingAndFallingSettings();
-        CameraController camController;
 
         [System.Serializable]
         public class MovementAndRotationSettings
@@ -28,10 +27,10 @@ namespace Raider.Game.Player
         [System.Serializable]
         public class JumpingAndFallingSettings
         {
-            public float jumpVelocity = 15f;
+            public float jumpVelocity = 9f;
             public float gravity = 20f;
             public int jumpCount = 3;
-            public float jumpCooldownSeconds = 1f;
+            public float jumpCooldownSeconds = 0.25f;
             public float fallDamageThreshold = 10f;
             public bool airControl = true;
         }
@@ -154,19 +153,18 @@ namespace Raider.Game.Player
             moveDirection.y -= jumpSettings.gravity * Time.deltaTime;
 
             //If the character is moving, center the camera and update rotation
-            camController = GameObject.FindGameObjectWithTag("cameraPoint").GetComponent<CameraController>();
 
-            if (camController is ThirdPersonCameraController && ((ThirdPersonCameraController)camController).overrideWalking)
+            if (CameraModeController.singleton.GetCameraController() is ThirdPersonCameraController && ((ThirdPersonCameraController)CameraModeController.singleton.GetCameraController()).overrideWalking)
             {
                 //Cast camController to ThirdPersonCamController.
-                ThirdPersonCameraController thirdPersonCamController = (ThirdPersonCameraController)camController;
+                ThirdPersonCameraController thirdPersonCamController = (ThirdPersonCameraController)CameraModeController.singleton.GetCameraController();;
 
                 if (inputX != 0 || inputY != 0)
                 {
                     if (!thirdPersonCamController.walking)
                     {
                         //Make the player face the camera.
-                        gameObject.transform.eulerAngles = new Vector3(0, camController.camPoint.gameObject.transform.eulerAngles.y, 0);
+                        gameObject.transform.eulerAngles = new Vector3(0, CameraModeController.singleton.GetCameraController().camPoint.gameObject.transform.eulerAngles.y, 0);
                     }
                     thirdPersonCamController.walking = true;
                     thirdPersonCamController.CenterCamPointAxisY();
@@ -179,7 +177,7 @@ namespace Raider.Game.Player
 
             // Move the controller, and set grounded true or false depending on whether we're standing on something
 
-            if (!camController.preventMovement)
+            if (!CameraModeController.singleton.GetCameraController().preventMovement)
             {
                 grounded = (characterController.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
             }

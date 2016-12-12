@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 namespace Raider.Game.GUI.Components
 {
@@ -10,7 +11,10 @@ namespace Raider.Game.GUI.Components
     [RequireComponent(typeof(RectTransform))]
     public class GridSelectionSlider : MonoBehaviour
     {
+        //Allow callbacks.
+        public Action<GameObject> onSelectionChanged;
 
+        public Text title;
         public GridLayoutGroup gridLayout; //The object with the GridLayoutGroup
         GameObject gridObject { get { return gridLayout.gameObject; } }
         List<GameObject> selectableObjects; //Objects within the GridLayoutGroup
@@ -33,7 +37,7 @@ namespace Raider.Game.GUI.Components
             }
             set
             {
-                if (value.transform.parent == gridObject)
+                if (value.transform.parent.gameObject == gridObject)
                     MoveSelection(value);
                 else
                     Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object off the grid!");
@@ -90,8 +94,8 @@ namespace Raider.Game.GUI.Components
 
         public void MoveSelection(Button sender)
         {
-            RectTransform _selectedObjectRectTransform = sender.gameObject.GetComponent<RectTransform>();
-            RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
+            RectTransform senderRectTransform = sender.gameObject.GetComponent<RectTransform>();
+            RectTransform gridRectTransform = gridObject.GetComponent<RectTransform>();
 
             if (sender.gameObject.transform.parent.gameObject != gridObject)
             {
@@ -99,15 +103,18 @@ namespace Raider.Game.GUI.Components
                 return;
             }
 
-            _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
+            if(onSelectionChanged != null)
+                onSelectionChanged(senderRectTransform.gameObject);
+
+            gridRectTransform.localPosition = -senderRectTransform.localPosition;
         }
 
-        void MoveSelection(GameObject selectedObject)
+        void MoveSelection(GameObject newSelectedObject)
         {
-            RectTransform _selectedObjectRectTransform = selectedObject.GetComponent<RectTransform>();
-            RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
+            RectTransform newSelectedObjectRectTransform = newSelectedObject.GetComponent<RectTransform>();
+            RectTransform gridRectTransform = gridObject.GetComponent<RectTransform>();
 
-            _gridObjectRectTransform.localPosition = -_selectedObjectRectTransform.localPosition;
+            gridRectTransform.localPosition = -newSelectedObjectRectTransform.localPosition;
         }
     }
 }

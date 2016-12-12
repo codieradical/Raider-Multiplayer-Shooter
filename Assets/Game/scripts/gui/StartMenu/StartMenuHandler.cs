@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Raider.Game.GUI.Screens
+namespace Raider.Game.GUI.StartMenu
 {
     [RequireComponent(typeof(Animator))]
     public class StartMenuHandler : MonoBehaviour
     {
         #region Singleton Setup
 
-        public StartMenuHandler instance;
+        public static StartMenuHandler instance;
         Animator animatorInstance;
 
         // Use this for initialization
@@ -37,10 +37,29 @@ namespace Raider.Game.GUI.Screens
             set { animatorInstance.SetBool("open", value); }
         }
 
+        [Header("Start Menu Panes")]
+        public StartMenuGame startMenuGame;
+        public StartMenuLobby startMenuLobby;
+        public StartMenuPlayer startMenuPlayer;
+        public StartMenuSettings startMenuSettings;
+
+        private StartMenuPane defaultPane
+        {
+            get
+            {
+                if (Scenario.InLobby)
+                {
+                    return startMenuPlayer;
+                }
+                else
+                    return startMenuGame;
+            }
+        }
+
+        private StartMenuPane activePane;
+
         public Text usernameLabel;
         public Text gametypeLabel;
-        public Button leaveGameButton;
-        public Text leaveGameText;
 
         void Update()
         {
@@ -49,6 +68,23 @@ namespace Raider.Game.GUI.Screens
                     OpenStartMenu();
                 else
                     CloseStartMenu();
+        }
+
+        void CloseActivePane()
+        {
+            if (activePane != null)
+            {
+                activePane.ClosePane();
+                activePane.enabled = false;
+            }
+        }
+
+        public void OpenAPane(StartMenuPane newPane)
+        {
+            CloseActivePane();
+            activePane = newPane;
+            newPane.enabled = true;
+            newPane.OpenPane();
         }
 
         public void OpenStartMenu()
@@ -62,41 +98,19 @@ namespace Raider.Game.GUI.Screens
             if (!Scenario.InLobby)
                 Player.Player.localPlayer.PausePlayer();
 
-            animatorInstance.SetBool("open", true);
+            OpenAPane(defaultPane);
+
+            IsOpen = true;
         }
 
         void SetupStartMenuData()
         {
             usernameLabel.text = Session.saveDataHandler.GetUsername();
 
-            leaveGameButton.onClick.RemoveAllListeners();
-            leaveGameButton.onClick.AddListener(CloseStartMenu);
-            leaveGameButton.onClick.AddListener(Scenario.instance.LeaveGame);
-
             if (Scenario.InLobby)
-            {
-                //leaveGameButton.gameObject.SetActive(false);
-
-                //DEBUG: Log Out // Change Character
-                leaveGameText.text = "Log Out";
-                //leaveGameText.text = "Change Character";
-                leaveGameButton.gameObject.SetActive(true);
-                leaveGameButton.onClick.RemoveAllListeners();
-                leaveGameButton.onClick.AddListener(CloseStartMenu);
-                leaveGameButton.onClick.AddListener(MainmenuHandler.instance.Logout);
-                //leaveGameButton.onClick.AddListener(MainmenuHandler.instance.ChangeCharacter);
                 gametypeLabel.text = "Mainmenu";
-            }
             else
-            {
                 gametypeLabel.text = NetworkManager.instance.lobbySetup.GametypeString;
-                leaveGameButton.gameObject.SetActive(true);
-
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
-                    leaveGameText.text = "Leave Game";
-                else
-                    leaveGameText.text = "End Game";
-            }
         }
 
         public void CloseStartMenu()
@@ -104,7 +118,9 @@ namespace Raider.Game.GUI.Screens
             if (!Scenario.InLobby)
                 Player.Player.localPlayer.UnpausePlayer();
 
-            animatorInstance.SetBool("open", false);
+            CloseActivePane();
+
+            IsOpen = false;
         }
     }
 }

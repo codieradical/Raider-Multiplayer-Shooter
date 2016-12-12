@@ -36,19 +36,31 @@ namespace Raider.Game.GUI.Screens
             if (Session.activeCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
-
-                LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+                if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
                 {
-                    username = Session.saveDataHandler.GetUsername(),
-                    leader = true,
-                    character = Session.activeCharacter
-                };
+                    NetworkManager.instance.UpdateLobbyNameplates();
+                    LobbySetupPane.instance.OpenPane();
+                }
+                else
+                {
+                    LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+                    {
+                        username = Session.saveDataHandler.GetUsername(),
+                        leader = true,
+                        character = Session.activeCharacter
+                    };
 
-                //Make sure the old player is gone.
-                LobbyHandler.DestroyAllPlayers();
-                LobbyHandler.AddPlayer(playerNameplate);
+                    //Make sure the old player is gone.
+                    LobbyHandler.DestroyAllPlayers();
+                    LobbyHandler.AddPlayer(playerNameplate);
 
-                GametypeButtons.instance.ShowButtons();
+                    GametypeButtons.instance.ShowButtons();
+                }
+            }
+            else if(Session.saveDataHandler != null)
+            {
+                MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+                ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
             }
         }
 
@@ -82,6 +94,13 @@ namespace Raider.Game.GUI.Screens
         public void Logout()
         {
             Session.Logout();
+
+            if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            {
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                return;
+            }
+
             MenuManager.instance.ShowMenu(LoginScreen.GetComponent<Menu>());
             LobbyHandler.DestroyAllPlayers(); //Make sure to remove the old character from the lobby.
             //Maybe I should move this to the session handler.
@@ -112,7 +131,13 @@ namespace Raider.Game.GUI.Screens
         public void ChangeCharacter()
         {
             Session.DeselectCharacter();
-            NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+
+            if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            {
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                return;
+            }
+
             LobbyHandler.DestroyAllPlayers(); //Make sure to remove the old character from the lobby.
             //Maybe I should move this to the session handler.
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();

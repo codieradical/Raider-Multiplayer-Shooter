@@ -13,7 +13,7 @@ namespace Raider.Game.Player
         // Use this for initialization
         void Start()
         {
-            attachedAnimator = GetComponent<Player>().graphicsObject.GetComponent<Animator>();
+            attachedAnimator = GetComponent<Animator>();
         }
 
         // Update is called once per frame
@@ -46,11 +46,12 @@ namespace Raider.Game.Player
             }
         }
 
-        void StopAnimations()
+        public void StopAnimations()
         {
             attachedAnimator.SetFloat("verticalSpeed", 0f);
             attachedAnimator.SetFloat("horizontalSpeed", 0f);
             attachedAnimator.SetBool("running", false);
+            attachedAnimator.SetBool("jumping", false);
         }
 
         void StopJumping()

@@ -41,7 +41,7 @@ namespace Raider.Game.Cameras
         public GameObject playerGameObject;
 
         //how close the camera can be to directly overhead or underfoot.
-        public float xAxisBuffer = 27f;
+        public float xAxisBuffer = 35f;
 
         public FirstPersonCameraSettings firstPersonCamSettings;
         public ThirdPersonCameraSettings thirdPersonCamSettings;
@@ -66,7 +66,7 @@ namespace Raider.Game.Cameras
             public float maxDistance = 15f;
             public float distanceMoveSpeed = 3f;
             public float cameraPaddingPercent = 0.3f;
-            public bool inverted = false;
+            public bool inverted = true;
         }
 
         public enum CameraModes

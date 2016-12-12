@@ -71,18 +71,21 @@ namespace Raider.Game.GUI.Components
             
         }
 
-        // Use this for initialization
-        void Start()
+        void Awake()
         {
             if (instance != null)
                 Debug.LogWarning("Multiple LobbySetupPanes instanced");
             instance = this;
 
+            animatorInstance = GetComponent<Animator>();
+        }
+
+        // Use this for initialization
+        void Start()
+        {
             //This could use tidying.
             if (paneTitle == null || mapLabel == null || networkLabel == null || gametypeLabel == null || mapImage == null)
                 Debug.LogWarning("The lobby setup pane is missing some important objects!");
-
-            animatorInstance = GetComponent<Animator>();
         }
 
         void OnDestroy()

@@ -3,9 +3,11 @@ using Raider.Game.Networking;
 using UnityEngine.Networking;
 using Raider.Game.Cameras;
 using Raider.Game.Saves;
+using System.Collections;
 
 namespace Raider.Game.Player
 {
+    [RequireComponent(typeof(Animator))]
     public class Player : NetworkBehaviour
     {
         [System.Serializable]
@@ -13,11 +15,13 @@ namespace Raider.Game.Player
         {
             public GameObject xRaceGraphics;
             public GameObject yRaceGraphics;
+            public Avatar xRaceAvatar;
+            public Avatar yRaceAvatar;
 
             public void CheckAllGraphicsPresent()
             {
-                if (xRaceGraphics == null || yRaceGraphics == null)
-                    Debug.LogError("The player is missing a model prefab!!!");
+                if (xRaceGraphics == null || yRaceGraphics == null || xRaceAvatar == null || yRaceAvatar == null)
+                    Debug.LogError("The player is missing a model prefab or avatar!!!");
             }
 
             public GameObject GetGraphicsByRace(SaveDataStructure.Character.Race race)
@@ -32,11 +36,26 @@ namespace Raider.Game.Player
                     return null;
                 }
             }
+
+            public Avatar GetAvatarByRace(SaveDataStructure.Character.Race race)
+            {
+                if (race == SaveDataStructure.Character.Race.X)
+                    return xRaceAvatar;
+                else if (race == SaveDataStructure.Character.Race.Y)
+                    return yRaceAvatar;
+                else
+                {
+                    Debug.LogError("Couldn't find avatar for race " + race.ToString());
+                    return null;
+                }
+            }
         }
 
         [SerializeField]
         private RaceGraphics raceGraphics;
+        private Animator animatorInstance;
         public bool lockCursor = true;
+        bool paused;
         public int slot;
         public SaveDataStructure.Character character;
 
@@ -46,6 +65,7 @@ namespace Raider.Game.Player
         // Use this for initialization
         void Start()
         {
+            animatorInstance = GetComponent<Animator>();
             raceGraphics.CheckAllGraphicsPresent();
 
             //If the player is a client, or is playing alone, add the moving mechanics.
@@ -64,7 +84,8 @@ namespace Raider.Game.Player
                 slot = LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot;
                 gotSlot = true;
                 CmdUpdatePlayerSlot(slot);
-                SetupGraphicsModel();
+
+                UpdatePerspective(character.chosenPlayerPerspective);
             }
             else
             {
@@ -72,14 +93,45 @@ namespace Raider.Game.Player
             }
         }
 
+        public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
+        {
+            character.chosenPlayerPerspective = newPerspective;
+            CameraModeController.singleton.SetCameraMode(newPerspective);
+
+            StartCoroutine(PauseNewCameraController());
+
+            if (newPerspective == CameraModeController.CameraModes.FirstPerson && graphicsObject != null)
+            {
+                Destroy(graphicsObject);
+                animatorInstance.avatar = null;
+            }
+            else if (newPerspective != CameraModeController.CameraModes.FirstPerson && graphicsObject == null)
+                SetupGraphicsModel();
+        }
+
+        IEnumerator PauseNewCameraController()
+        {
+            yield return 0;
+            yield return 0;
+            if(paused)
+                CameraModeController.singleton.GetCameraController().enabled = false;
+        }
+
         void SetupGraphicsModel()
         {
+            animatorInstance.enabled = false;
+
             //Spawn the graphics.
             graphicsObject = Instantiate(raceGraphics.GetGraphicsByRace(character.race)) as GameObject;
             graphicsObject.transform.SetParent(this.transform, false);
 
+            //Setup the animator
+            animatorInstance.avatar = raceGraphics.GetAvatarByRace(character.race);
+
             //Update the colors, emblem.
             graphicsObject.GetComponent<PlayerAppearenceController>().UpdatePlayerAppearence(transform.name, character);
+
+            animatorInstance.enabled = true;
         }
 
         void SetupLocalPlayer()
@@ -104,17 +156,24 @@ namespace Raider.Game.Player
 
         public void PausePlayer()
         {
+            paused = true;
             GetComponent<MovementController>().enabled = false;
+            GetComponent<PlayerAnimationController>().StopAnimations();
+            GetComponent<PlayerAnimationController>().enabled = false;
             CameraModeController.singleton.GetCameraController().enabled = false;
             Cursor.visible = true;
         }
 
         public void UnpausePlayer()
         {
+            paused = false;
             GetComponent<MovementController>().enabled = true;
+            GetComponent<PlayerAnimationController>().enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
             Cursor.visible = false;
         }
+
+        #region slot sync
 
         bool gotSlot = false;
 
@@ -156,5 +215,7 @@ namespace Raider.Game.Player
 
             SetupGraphicsModel();
         }
+
+        #endregion
     }
 }
