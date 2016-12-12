@@ -77,22 +77,12 @@ namespace Raider.Game.Networking
             }
         }
 
-        public LobbyPlayerData GetMyLobbyPlayer()
-        {
-            foreach(LobbyPlayerData player in Players)
-            {
-                if (player.isLocalPlayer)
-                    return player;
-            }
-            return null;
-        }
-
         public bool IsLeader
         {
             get
             {
-                if (GetMyLobbyPlayer() != null)
-                    if (GetMyLobbyPlayer().isLeader)
+                if (LobbyPlayerData.localPlayer != null)
+                    if (LobbyPlayerData.localPlayer.isLeader)
                         return true;
                     else
                         return false;
@@ -101,11 +91,20 @@ namespace Raider.Game.Networking
             }
         }
 
-        public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+        //public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+        //{
+        //    gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;
+        //    return true;
+        //}
+
+        public LobbyPlayerData GetLobbyPlayerBySlot(int gamePlayerSlot)
         {
-            gamePlayer.name = lobbyPlayer.GetComponent<LobbyPlayerData>().Username;
-            gamePlayer.GetComponent<Player.Player>().character = lobbyPlayer.GetComponent<LobbyPlayerData>().character;
-            return true;
+            foreach(LobbyPlayerData player in Players)
+            {
+                if (player.GetComponent<NetworkLobbyPlayer>().slot == gamePlayerSlot)
+                    return player;
+            }
+            return null;
         }
 
         #region Lobby Methods
@@ -114,12 +113,12 @@ namespace Raider.Game.Networking
         public void ReadyToBegin()
         {
             if (CurrentNetworkState == NetworkState.Client || CurrentNetworkState == NetworkState.Host)
-                GetMyLobbyPlayer().GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+                LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
         public override void OnLobbyServerPlayersReady()
         {
-            GetMyLobbyPlayer().RpcUpdateScenarioGametype();
+            LobbyPlayerData.localPlayer.RpcUpdateScenarioGametype();
             base.OnLobbyServerPlayersReady();
         }
 

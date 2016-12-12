@@ -12,12 +12,16 @@ namespace Raider.Game.Networking
         /// Is the PlayerData up to date?
         /// </summary>
         public bool gotData = false;
+
+        public static LobbyPlayerData localPlayer;
+
         void Start()
         {
             transform.SetParent(NetworkManager.instance.lobbyGameObject.transform);
 
             if (isLocalPlayer)
             {
+                localPlayer = this;
                 //If the player is hosting (if networkserver is active), isLeader will be true.
                 UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active);
 

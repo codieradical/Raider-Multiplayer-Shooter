@@ -37,6 +37,7 @@ namespace Raider.Game.Player
         [SerializeField]
         private RaceGraphics raceGraphics;
         public bool lockCursor = true;
+        public int slot;
         public SaveDataStructure.Character character;
 
         public static Player localPlayer;
@@ -47,18 +48,27 @@ namespace Raider.Game.Player
         {
             raceGraphics.CheckAllGraphicsPresent();
 
-            if (lockCursor)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-
-            SetupGraphicsModel();
-
             //If the player is a client, or is playing alone, add the moving mechanics.
             if (isLocalPlayer || Networking.NetworkManager.instance.CurrentNetworkState == Networking.NetworkManager.NetworkState.Offline)
             {
+                if (lockCursor)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+
                 SetupLocalPlayer();
+
+                character = LobbyPlayerData.localPlayer.character;
+                name = LobbyPlayerData.localPlayer.name;
+                slot = LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot;
+                gotSlot = true;
+                CmdUpdatePlayerSlot(slot);
+                SetupGraphicsModel();
+            }
+            else
+            {
+                CmdRequestPlayerSlot();
             }
         }
 
@@ -83,10 +93,13 @@ namespace Raider.Game.Player
 
         void OnDestroy()
         {
-            //If the player is being destroyed, save the camera!
-            CameraModeController.singleton.CameraParent = null;
-            DontDestroyOnLoad(CameraModeController.singleton.camPoint);
-            CameraModeController.singleton.enabled = true;
+            if (this == localPlayer)
+            {
+                //If the player is being destroyed, save the camera!
+                CameraModeController.singleton.CameraParent = null;
+                DontDestroyOnLoad(CameraModeController.singleton.camPoint);
+                CameraModeController.singleton.enabled = true;
+            }
         }
 
         public void PausePlayer()
@@ -101,6 +114,47 @@ namespace Raider.Game.Player
             GetComponent<MovementController>().enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
             Cursor.visible = false;
+        }
+
+        bool gotSlot = false;
+
+        [Command]
+        void CmdUpdatePlayerSlot(int newSlot)
+        {
+            if (!isLocalPlayer)
+                RecievedSlotUpdate(newSlot);
+            RpcUpdatePlayerSlot(newSlot);
+        }
+
+        [Command]
+        void CmdRequestPlayerSlot()
+        {
+            if (gotSlot)
+                RpcUpdatePlayerSlot(slot);
+        }
+
+        [ClientRpc]
+        void RpcUpdatePlayerSlot(int newSlot)
+        {
+            if (!isLocalPlayer)
+            {
+                RecievedSlotUpdate(newSlot);
+            }
+        }
+
+        void RecievedSlotUpdate(int value)
+        {
+            if (isLocalPlayer)
+                return;
+
+            slot = value;
+            gotSlot = true;
+
+            LobbyPlayerData lobbyPlayer = Networking.NetworkManager.instance.GetLobbyPlayerBySlot(slot);
+            character = lobbyPlayer.character;
+            name = lobbyPlayer.name;
+
+            SetupGraphicsModel();
         }
     }
 }

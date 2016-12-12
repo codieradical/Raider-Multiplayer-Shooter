@@ -20,7 +20,7 @@ namespace Raider.Game.Networking
                 LobbySetupPane.instance.UpdatePaneData();
 
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
+                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
         private string selectedScene;
@@ -33,7 +33,7 @@ namespace Raider.Game.Networking
                 LobbySetupPane.instance.UpdatePaneData();
 
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
+                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
         private string network;
@@ -46,7 +46,7 @@ namespace Raider.Game.Networking
                 LobbySetupPane.instance.UpdatePaneData();
 
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    NetworkManager.instance.GetMyLobbyPlayer().RpcSendLobbySetup(gametype, network, selectedScene);
+                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
 

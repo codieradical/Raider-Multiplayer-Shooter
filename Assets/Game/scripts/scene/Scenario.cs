@@ -131,7 +131,9 @@ namespace Raider.Game.Scene
         void OnDestroy()
         {
             instance = null;
+#if !UNITY_EDITOR
             Debug.LogWarning("Something just destroyed the scenario script!");
+#endif
         }
 
         public void NetworkLoadedScene()
@@ -161,6 +163,12 @@ namespace Raider.Game.Scene
             //If this is a game scene, load the game UI scene additive.
             if ((int)gametype == 1)
                 StartCoroutine(LoadGameUI());
+
+            if ((int)gametype == 2)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
 
         }
 
