@@ -17,6 +17,7 @@ namespace Raider.Game.Networking
         public static readonly int maxChatHistory = 150;
 
         private Stack<string> chatLog = new Stack<string>(maxChatHistory);
+        public readonly string messagePrefix = string.Format("<{0}>", Session.saveDataHandler.GetUsername());
 
         [Command]
         public void CmdSendMessage(string message)
