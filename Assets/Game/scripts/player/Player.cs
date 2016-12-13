@@ -164,6 +164,7 @@ namespace Raider.Game.Player
             GetComponent<PlayerAnimationController>().StopAnimations();
             GetComponent<PlayerAnimationController>().enabled = false;
             CameraModeController.singleton.GetCameraController().enabled = false;
+            Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
         }
 
@@ -173,6 +174,7 @@ namespace Raider.Game.Player
             GetComponent<MovementController>().enabled = true;
             GetComponent<PlayerAnimationController>().enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 

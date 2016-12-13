@@ -61,15 +61,6 @@ namespace Raider.Game.GUI.StartMenu
         public Text usernameLabel;
         public Text gametypeLabel;
 
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-                if (!IsOpen)
-                    OpenStartMenu();
-                else
-                    CloseStartMenu();
-        }
-
         void CloseActivePane()
         {
             if (activePane != null)

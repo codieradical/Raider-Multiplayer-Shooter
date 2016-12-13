@@ -5,6 +5,7 @@ using Raider.Game.Scene;
 
 namespace Raider.Game.Networking
 {
+    [RequireComponent(typeof(ChatManager))]
     [System.Serializable]
     public class LobbyPlayerData : NetworkBehaviour
     {
