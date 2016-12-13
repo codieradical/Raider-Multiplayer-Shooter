@@ -19,7 +19,7 @@ namespace Raider.Game.Networking
         private Stack<string> chatLog = new Stack<string>(maxChatHistory);
         public string messagePrefix
         {
-            get { return string.Format("<{0}>", Session.saveDataHandler.GetUsername()); }
+            get { return string.Format("<{0}> ", Session.saveDataHandler.GetUsername()); }
         }
 
         [Command]
