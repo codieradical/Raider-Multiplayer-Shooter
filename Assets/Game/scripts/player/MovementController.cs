@@ -72,6 +72,7 @@ namespace Raider.Game.Player
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && movSettings.limitDiagonalSpeed) ? .7071f : 1.0f;
+            CameraController cameraController = CameraModeController.singleton.GetCameraController();
 
             if (grounded)
             {
@@ -159,17 +160,17 @@ namespace Raider.Game.Player
 
             //If the character is moving, center the camera and update rotation
 
-            if (CameraModeController.singleton.GetCameraController() is ThirdPersonCameraController && ((ThirdPersonCameraController)CameraModeController.singleton.GetCameraController()).overrideWalking)
+            if (cameraController is ThirdPersonCameraController && ((ThirdPersonCameraController)cameraController).overrideWalking)
             {
                 //Cast camController to ThirdPersonCamController.
-                ThirdPersonCameraController thirdPersonCamController = (ThirdPersonCameraController)CameraModeController.singleton.GetCameraController();;
+                ThirdPersonCameraController thirdPersonCamController = (ThirdPersonCameraController)cameraController;
 
                 if (inputX != 0 || inputY != 0)
                 {
                     if (!thirdPersonCamController.walking)
                     {
                         //Make the player face the camera.
-                        gameObject.transform.eulerAngles = new Vector3(0, CameraModeController.singleton.GetCameraController().camPoint.gameObject.transform.eulerAngles.y, 0);
+                        gameObject.transform.eulerAngles = new Vector3(0, cameraController.camPoint.gameObject.transform.eulerAngles.y, 0);
                     }
                     thirdPersonCamController.walking = true;
                     thirdPersonCamController.CenterCamPointAxisY();
@@ -181,10 +182,12 @@ namespace Raider.Game.Player
             }
 
             // Move the controller, and set grounded true or false depending on whether we're standing on something
-
-            if (!CameraModeController.singleton.GetCameraController().preventMovement)
+            if (cameraController != null)
             {
-                grounded = (characterController.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
+                if (!cameraController.preventMovement)
+                {
+                    grounded = (characterController.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
+                }
             }
         }
 

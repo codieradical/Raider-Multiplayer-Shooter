@@ -76,6 +76,7 @@ namespace Raider.Game.GUI.StartMenu
             {
                 activePane.ClosePane();
                 activePane.enabled = false;
+                activePane = null;
             }
         }
 
