@@ -2,7 +2,6 @@
 using Raider.Game.Player;
 using Raider.Game.Scene;
 using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
@@ -46,7 +45,7 @@ namespace Raider.Game.GUI.Screens
         public Font font;
         public int fontSize;
         public Color outlineColor;
-        public AnimatorController fadeOutController;
+        public RuntimeAnimatorController fadeOutController;
 
         // Use this for initialization
         void Start()

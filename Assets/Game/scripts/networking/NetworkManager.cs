@@ -102,6 +102,13 @@ namespace Raider.Game.Networking
             return true;
         }
 
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            base.OnClientSceneChanged(conn);
+            //Make sure the lobby player is still active.
+            LobbyPlayerData.localPlayer.gameObject.SetActive(true);
+        }
+
         public LobbyPlayerData GetLobbyPlayerBySlot(int gamePlayerSlot)
         {
             foreach(LobbyPlayerData player in Players)
