@@ -81,14 +81,7 @@ namespace Raider.Game.GUI.Screens
                     Debug.LogError("Cant send message when no lobby player present!");
             }
 
-            input.text = "";
-            EventSystem.current.SetSelectedGameObject(null);
-
-            IsOpen = false;
-            if(!Scenario.InLobby)
-                Player.Player.localPlayer.UnpausePlayer();
-
-            IsOpen = false;
+            CloseChatInput();
         }
 
         public void OpenChatInput()
@@ -103,6 +96,17 @@ namespace Raider.Game.GUI.Screens
 
             EventSystem.current.SetSelectedGameObject(chatInputField.gameObject);
             chatInputField.OnPointerClick(new PointerEventData(EventSystem.current));
+        }
+
+        public void CloseChatInput()
+        {
+            chatInputField.text = "";
+            EventSystem.current.SetSelectedGameObject(null);
+
+            if (!Scenario.InLobby)
+                Player.Player.localPlayer.UnpausePlayer();
+
+            IsOpen = false;
         }
     }
 }

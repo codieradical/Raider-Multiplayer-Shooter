@@ -15,7 +15,7 @@ namespace Raider.Game.GUI {
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    ChatUiHandler.instance.IsOpen = false;
+                    ChatUiHandler.instance.CloseChatInput();
 
                     if (!Scenario.InLobby)
                         Player.Player.localPlayer.UnpausePlayer();
@@ -37,9 +37,12 @@ namespace Raider.Game.GUI {
 
                 if(Input.GetKeyDown(KeyCode.T))
                 {
-                    ChatUiHandler.instance.OpenChatInput();
-                    if(!Scenario.InLobby)
-                        Player.Player.localPlayer.PausePlayer();
+                    if (!StartMenuHandler.instance.IsOpen)
+                    {
+                        ChatUiHandler.instance.OpenChatInput();
+                        if (!Scenario.InLobby)
+                            Player.Player.localPlayer.PausePlayer();
+                    }
 
                     return;
                 }
