@@ -13,13 +13,24 @@ namespace Raider.Game.GUI.StartMenu
     public class StartMenuGame : StartMenuPane
     {
 
+        [Header("Option Buttons")]
         public Button leaveGameButton;
         public Button endGameButton;
         public Button changeCharacterButton;
         public Button logOutButton;
 
+        public Image optionImage;
+        public Text optionText;
+
+        public Sprite leaveGameSprite;
+        public Sprite endGameSprite;
+        public Sprite changeCharacterSprite;
+        public Sprite logOutSprite;
+
         protected override void SetupPaneData()
         {
+            NoHover();
+
             leaveGameButton.gameObject.SetActive(false);
             endGameButton.gameObject.SetActive(false);
             changeCharacterButton.gameObject.SetActive(false);
@@ -55,6 +66,40 @@ namespace Raider.Game.GUI.StartMenu
                 }
             }
 
+        }
+
+        public void NoHover()
+        {
+            optionImage.sprite = Scenario.GetMapImage(Scenario.instance.currentScene);
+            optionText.text = Scenario.instance.currentGametype + " on " + Scenario.instance.currentScene;
+        }
+
+        public void LeaveGameHover()
+        {
+            optionImage.sprite = leaveGameSprite;
+            optionText.text =
+                "Leave the game and return to the main menu.";
+        }
+
+        public void EndGameHover()
+        {
+            optionImage.sprite = endGameSprite;
+            optionText.text =
+                "End the game and take your lobby back to the main menu.";
+;        }
+
+        public void ChangeCharacterHover()
+        {
+            optionImage.sprite = changeCharacterSprite;
+            optionText.text =
+                "Go back to the character selection screen.";
+        }
+
+        public void LogOutHover()
+        {
+            optionImage.sprite = logOutSprite;
+            optionText.text =
+                "Return to the login screen.";
         }
     }
 }
