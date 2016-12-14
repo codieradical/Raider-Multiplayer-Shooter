@@ -1,6 +1,8 @@
 ﻿using Raider.Game.Networking;
 using Raider.Game.Player;
+using Raider.Game.Scene;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -12,6 +14,7 @@ namespace Raider.Game.GUI.Screens
 
         public static ChatUiHandler instance;
         Animator animatorInstance;
+        public InputField chatInputField;
 
         // Use this for initialization
         void Awake()
@@ -70,15 +73,22 @@ namespace Raider.Game.GUI.Screens
 
         public void SendNewMessage(InputField input)
         {
-            if (LobbyPlayerData.localPlayer != null)
-                LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(LobbyPlayerData.localPlayer.GetComponent<ChatManager>().messagePrefix + input.text);
-            else
-                Debug.LogError("Cant send message when no lobby player present!");
+            if (input.text != "")
+            {
+                if (LobbyPlayerData.localPlayer != null)
+                    LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(LobbyPlayerData.localPlayer.GetComponent<ChatManager>().messagePrefix + input.text);
+                else
+                    Debug.LogError("Cant send message when no lobby player present!");
+            }
 
             input.text = "";
+            EventSystem.current.SetSelectedGameObject(null);
 
             IsOpen = false;
-            Player.Player.localPlayer.UnpausePlayer();
+            if(!Scenario.InLobby)
+                Player.Player.localPlayer.UnpausePlayer();
+
+            IsOpen = false;
         }
 
         public void OpenChatInput()
@@ -90,6 +100,9 @@ namespace Raider.Game.GUI.Screens
             }
 
             IsOpen = true;
+
+            EventSystem.current.SetSelectedGameObject(chatInputField.gameObject);
+            chatInputField.OnPointerClick(new PointerEventData(EventSystem.current));
         }
     }
 }
