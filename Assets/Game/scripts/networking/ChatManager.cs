@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Raider.Game.Networking;
 using Raider.Game.GUI;
 using Raider.Game.GUI.Screens;
+using System;
 
 namespace Raider.Game.Networking
 {
@@ -17,16 +18,26 @@ namespace Raider.Game.Networking
         public static readonly int maxChatHistory = 150;
 
         private Stack<string> chatLog = new Stack<string>(maxChatHistory);
-        public string messagePrefix
-        {
-            get { return string.Format("<{0}> ", Session.saveDataHandler.GetUsername()); }
-        }
 
         [Command]
-        public void CmdSendMessage(string message)
+        public void CmdSendMessage(string message, int playerSlot)
         {
+            message = ParseCommands(message, playerSlot);
             chatLog.Push(message);
             RpcUpdateClientChat(message);
+        }
+
+        string ParseCommands(string input, int playerSlot)
+        {
+            if (input.StartsWith("/me"))
+                input = "* " + NetworkManager.instance.GetLobbyPlayerBySlot(playerSlot).name + input.Replace("/me","");
+            else if (input.StartsWith("/leave"))
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+            else if (input.StartsWith("/endgame") && NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
+                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+            else
+                input = String.Format("<{0}> ", NetworkManager.instance.GetLobbyPlayerBySlot(playerSlot).name) + input;
+            return input;
         }
 
         [ClientRpc]

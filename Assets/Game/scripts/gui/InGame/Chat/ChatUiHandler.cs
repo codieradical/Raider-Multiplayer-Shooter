@@ -1,6 +1,7 @@
 ﻿using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Scene;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
@@ -75,13 +76,27 @@ namespace Raider.Game.GUI.Screens
         {
             if (input.text != "")
             {
-                if (LobbyPlayerData.localPlayer != null)
-                    LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(LobbyPlayerData.localPlayer.GetComponent<ChatManager>().messagePrefix + input.text);
-                else
-                    Debug.LogError("Cant send message when no lobby player present!");
+                StartCoroutine(SendNewMessage(input.text));
             }
 
             CloseChatInput();
+        }
+
+        IEnumerator SelectInputObject()
+        {
+            yield return 0; //Wait a frame...
+            chatInputField.OnPointerClick(new PointerEventData(EventSystem.current));
+            EventSystem.current.SetSelectedGameObject(chatInputField.gameObject);
+        }
+
+        IEnumerator SendNewMessage(string message)
+        {
+            yield return 0; //Wait a frame...
+
+            if (LobbyPlayerData.localPlayer != null)
+                LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot);
+            else
+                Debug.LogError("Cant send message when no lobby player present!");
         }
 
         public void OpenChatInput()
@@ -94,14 +109,14 @@ namespace Raider.Game.GUI.Screens
 
             IsOpen = true;
 
-            EventSystem.current.SetSelectedGameObject(chatInputField.gameObject);
-            chatInputField.OnPointerClick(new PointerEventData(EventSystem.current));
+            StartCoroutine(SelectInputObject());
         }
 
         public void CloseChatInput()
         {
             chatInputField.text = "";
-            EventSystem.current.SetSelectedGameObject(null);
+            if(!EventSystem.current.alreadySelecting)
+                EventSystem.current.SetSelectedGameObject(null);
 
             if (!Scenario.InLobby)
                 Player.Player.localPlayer.UnpausePlayer();
