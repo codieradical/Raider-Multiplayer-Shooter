@@ -102,7 +102,6 @@ namespace Raider.Game.Networking
             base.OnNetworkDestroy();
             NetworkManager.instance.actionQueue.Enqueue(NetworkManager.instance.UpdateLobbyNameplates);
         }
-
         #endregion
 
         #region LobbySetup Syncing (Refactor Me!)

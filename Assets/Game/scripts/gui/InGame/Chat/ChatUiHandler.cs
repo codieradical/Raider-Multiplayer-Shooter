@@ -2,6 +2,7 @@
 using Raider.Game.Player;
 using Raider.Game.Scene;
 using System.Collections;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
@@ -39,34 +40,72 @@ namespace Raider.Game.GUI.Screens
             set { animatorInstance.SetBool("open", value); }
         }
 
-        public GameObject textContainer;
+        public GameObject fullLogContainer;
+        public GameObject shortLogContainer;
+        public int shortLogSize;
         public Font font;
         public int fontSize;
+        public Color outlineColor;
+        public AnimatorController fadeOutController;
 
         // Use this for initialization
         void Start()
         {
-            if (textContainer == null)
+            if (fullLogContainer == null)
                 Debug.LogError("The chat ui handler has no text container to add to!");
         }
 
-        public void AddMessage(string message)
+        public void AddMessageToFullLog(string message)
         {
             //If the chat container is full, get deleting.
-            if (textContainer.transform.childCount > ChatManager.maxChatHistory)
-                Destroy(textContainer.transform.GetChild(0));
+            if (fullLogContainer.transform.childCount >= ChatManager.maxChatHistory)
+                Destroy(fullLogContainer.transform.GetChild(0).gameObject);
 
             //Initialize the new message object.
             GameObject newLine = new GameObject();
             newLine.AddComponent<RectTransform>();
-            newLine.transform.SetParent(textContainer.transform, false);
+            newLine.transform.SetParent(fullLogContainer.transform, false);
 
             ContentSizeFitter newLineContentFitter = newLine.AddComponent<ContentSizeFitter>();
             newLineContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
+            newLine.AddComponent<Outline>().effectColor = outlineColor;
+
             Text newLineText = newLine.AddComponent<Text>();
             newLineText.fontSize = fontSize;
             newLineText.font = font;
+            newLineText.supportRichText = true;
+
+            //Give it the message.
+            newLineText.text = message;
+        }
+
+        public void AddMessageToShortLog(string message)
+        {
+            //If the chat container is full, get deleting.
+            if (fullLogContainer.transform.childCount >= shortLogSize)
+                Destroy(fullLogContainer.transform.GetChild(0).gameObject);
+
+            //Initialize the new message object.
+            GameObject newLine = new GameObject();
+            newLine.AddComponent<RectTransform>();
+            newLine.transform.SetParent(shortLogContainer.transform, false);
+
+            ContentSizeFitter newLineContentFitter = newLine.AddComponent<ContentSizeFitter>();
+            newLineContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            newLine.AddComponent<Outline>().effectColor = outlineColor;
+
+            CanvasGroup cg = newLine.AddComponent<CanvasGroup>();
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+
+            Text newLineText = newLine.AddComponent<Text>();
+            newLineText.fontSize = fontSize;
+            newLineText.font = font;
+            newLineText.supportRichText = true;
+
+            newLine.AddComponent<Animator>().runtimeAnimatorController = fadeOutController;
 
             //Give it the message.
             newLineText.text = message;
@@ -75,9 +114,7 @@ namespace Raider.Game.GUI.Screens
         public void SendNewMessage(InputField input)
         {
             if (input.text != "")
-            {
                 StartCoroutine(SendNewMessage(input.text));
-            }
 
             CloseChatInput();
         }
@@ -106,6 +143,11 @@ namespace Raider.Game.GUI.Screens
                 Debug.LogError("Unable to open chat, lobby player is null");
                 return;
             }
+
+            //Change the value of the text input to reset the size of the caret.
+            //This prevents the input height being too large after sending a multi-line message.
+            chatInputField.text = " ";
+            chatInputField.text = "";
 
             IsOpen = true;
 
