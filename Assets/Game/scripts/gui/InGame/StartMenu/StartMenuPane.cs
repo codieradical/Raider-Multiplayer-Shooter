@@ -14,7 +14,7 @@ namespace Raider.Game.GUI.StartMenu
 
         Animator animatorInstance;
 
-        void Awake()
+        protected virtual void Awake()
         {
             animatorInstance = GetComponent<Animator>();
             enabled = false;
