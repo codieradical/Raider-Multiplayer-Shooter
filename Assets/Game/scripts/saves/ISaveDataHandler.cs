@@ -16,6 +16,10 @@ namespace Raider.Game.Saves
         void NewCharacter(SaveDataStructure.Character character);
         void SaveCharacter(int slot, SaveDataStructure.Character character);
 
+		void DefaultSettings ();
+		void SaveSettings (SaveDataStructure.Settings settings);
+		SaveDataStructure.Settings GetSettings ();
+
         SaveDataStructure.Character GetCharacter(int slot);
         List<SaveDataStructure.Character> GetAllCharacters();
         string GetUsername();

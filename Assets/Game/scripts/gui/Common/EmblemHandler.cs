@@ -10,11 +10,11 @@ namespace Raider.Game.GUI.Components
     {
 
         [HideInInspector]
-        public Sprite[] layer0sprites;
+        public static Sprite[] layer0sprites;
         [HideInInspector]
-        public Sprite[] layer1sprites;
+		public static Sprite[] layer1sprites;
         [HideInInspector]
-        public Sprite[] layer2sprites;
+		public static Sprite[] layer2sprites;
 
         [Header("Images")]
         public Image layer0image;

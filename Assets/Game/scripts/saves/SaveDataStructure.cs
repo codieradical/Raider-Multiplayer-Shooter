@@ -30,10 +30,32 @@ namespace Raider.Game.Saves
             float b;
         }
 
+
+
         public string username;
         public string password;
 
         public List<Character> characters = new List<Character>();
+		public Settings settings;
+
+		[System.Serializable]
+		public class Settings
+		{
+			public Settings()
+			{
+				lobbyDisplay = LobbyDisplay.Scroll;
+				perspective = CameraModeController.CameraModes;
+			}
+
+			public enum LobbyDisplay
+			{
+				Scroll,
+				Split
+			}
+
+			public LobbyDisplay lobbyDisplay;
+			public CameraModeController.CameraModes perspective;
+		}
 
         [System.Serializable]
         public class Emblem
@@ -75,7 +97,6 @@ namespace Raider.Game.Saves
             public Character()
             {
                 emblem = new Emblem();
-                chosenPlayerPerspective = CameraModeController.CameraModes.FirstPerson;
                 armourPrimaryColor = new SerializableColor(Color.cyan);
                 armourSecondaryColor = new SerializableColor(Color.black);
                 armourTertiaryColor = new SerializableColor(Color.cyan);
@@ -84,9 +105,8 @@ namespace Raider.Game.Saves
                 //currentMission = "New Campaign";
             }
 
-            public Character(CameraModeController.CameraModes _chosenPlayerPerspective, Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Race _race)
+            public Character(Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Race _race)
             {
-                chosenPlayerPerspective = _chosenPlayerPerspective;
                 emblem = _emblem;
                 guild = _guild;
                 armourPrimaryColor = new SerializableColor(_armourPrimaryColor);
@@ -112,8 +132,6 @@ namespace Raider.Game.Saves
 
             //[SyncVar]
             //public string currentMission;
-            [SyncVar]
-            public CameraModeController.CameraModes chosenPlayerPerspective;
             [SyncVar]
             public Emblem emblem;
             [SyncVar]

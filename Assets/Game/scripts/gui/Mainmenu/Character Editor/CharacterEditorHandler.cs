@@ -158,8 +158,8 @@ namespace Raider.Game.GUI.Screens
 
         public void RandomiseEmblem()
         {
-            editingCharacter.emblem.layer0 = UnityEngine.Random.Range(0, emblemPreview.layer0sprites.Length - 1);
-            editingCharacter.emblem.layer1 = UnityEngine.Random.Range(0, emblemPreview.layer1sprites.Length - 1);
+			editingCharacter.emblem.layer0 = UnityEngine.Random.Range(0, EmblemHandler.layer0sprites.Length - 1);
+			editingCharacter.emblem.layer1 = UnityEngine.Random.Range(0, EmblemHandler.layer1sprites.Length - 1);
             System.Random rand = new System.Random();
             editingCharacter.emblem.layer2 = Convert.ToBoolean(rand.Next(0, 2));
 

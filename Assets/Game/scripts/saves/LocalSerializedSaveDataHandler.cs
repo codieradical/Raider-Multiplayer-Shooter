@@ -158,5 +158,22 @@ namespace Raider.Game.Saves
         {
             return Data.characters;
         }
+
+		public void DefaultSettings ()
+		{
+			Data.settings = new SaveDataStructure.Settings ();
+			SaveData (Data);
+		}
+
+		public void SaveSettings (SaveDataStructure.Settings settings)
+		{
+			Data.settings = settings;
+			SaveData (Data);
+		}
+
+		SaveDataStructure.Settings GetSettings ()
+		{
+			return Data.settings;
+		}
     }
 }
