@@ -129,6 +129,38 @@ namespace Raider.Game.Networking
                 LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
+        public override void OnServerDisconnect(NetworkConnection conn)
+        {
+            if (Scenario.InLobby)
+            {
+                foreach (PlayerController playerController in conn.playerControllers)
+                {
+                    NetworkLobbyPlayer lobbyPlayer = playerController.gameObject.GetComponent<NetworkLobbyPlayer>();
+
+                    if (lobbyPlayer != null)
+                    {
+                        LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendNotificationMessage("left the game.", lobbyPlayer.slot);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (PlayerController playerController in conn.playerControllers)
+                {
+                    Player.Player player = playerController.gameObject.GetComponent<Player.Player>();
+
+                    if (player != null)
+                    {
+                        LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendNotificationMessage("left the game.", player.slot);
+                        break;
+                    }
+                }
+            }
+
+            base.OnServerDisconnect(conn);
+        }
+
         public override void OnLobbyServerPlayersReady()
         {
             LobbyPlayerData.localPlayer.RpcUpdateScenarioGametype();

@@ -28,6 +28,31 @@ namespace Raider.Game.Networking
             RpcUpdateClientChat(message);
         }
 
+        /// <summary>
+        /// Sends a notification message, formatted in bold, to the server.
+        /// </summary>
+        /// <param name="message">The message to be sent.</param>
+        /// <param name="playerSlot">The slot containing the sender's data. Used for formatting.</param>
+        [Command]
+        public void CmdSendNotificationMessage(string message, int playerSlot)
+        {
+            message = GetFormattedUsername(playerSlot) + " " + AddBoldCode(message);
+            chatLog.Push(message);
+            RpcUpdateClientChat(message);
+        }
+
+        /// <summary>
+        /// Sends a local chat message that only the sender can see.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void SendLocalNotificationMessage(string message)
+        {
+            message = AddBoldCode(message);
+            chatLog.Push(message);
+            ChatUiHandler.instance.AddMessageToFullLog(message);
+            ChatUiHandler.instance.AddMessageToShortLog(message);
+        }
+
         string ParseCommands(string input, int playerSlot)
         {
             if (input.StartsWith("/me"))
@@ -44,7 +69,10 @@ namespace Raider.Game.Networking
         [ClientRpc]
         void RpcUpdateClientChat(string message)
         {
-            chatLog.Push(message);
+            //Hosts and servers already add the message to the log during the CMD.
+            if(NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
+                chatLog.Push(message);
+
             ChatUiHandler.instance.AddMessageToFullLog(message);
             ChatUiHandler.instance.AddMessageToShortLog(message);
         }

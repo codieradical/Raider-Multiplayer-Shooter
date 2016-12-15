@@ -26,6 +26,7 @@ namespace Raider.Game.Networking
                 //If the player is hosting (if networkserver is active), isLeader will be true.
                 UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active);
 
+                //I don't think this is necessary, I can probably just call the command.
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host)
                     RpcRecieveUpdateFromServer(Username, SerializedCharacter, isLeader);
                 else
@@ -51,6 +52,10 @@ namespace Raider.Game.Networking
         public SaveDataStructure.Character character;
         public bool isLeader;
         public LobbySetup.Teams team = LobbySetup.Teams.None;
+        public int slot
+        {
+            get { return GetComponent<NetworkLobbyPlayer>().slot; }
+        }
 
         #region serialization and player data syncing
 
@@ -74,6 +79,7 @@ namespace Raider.Game.Networking
         {
             RpcRecieveUpdateFromServer(_username, _serializedCharacter, _isHost);
             UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isHost);
+            GetComponent<ChatManager>().CmdSendNotificationMessage("joined the game.", slot);
 
             //If the client has sent their player data to the server, 
             //that means it's spawned and ready to recieve data regarding other players.

@@ -59,8 +59,14 @@ namespace Raider.Game.GUI.Screens
 
         void LoadChatHistory()
         {
-            foreach (string message in ChatManager.chatLog)
-                AddMessageToFullLog(message);
+            //This loads the log the wrong way around.
+            //foreach (string message in ChatManager.chatLog)
+            //    AddMessageToFullLog(message);
+
+            for(int index = ChatManager.chatLog.Count - 1; index > -1; --index)
+            {
+                AddMessageToFullLog(ChatManager.chatLog.ToArray()[index]);
+            }
         }
 
         public void AddMessageToFullLog(string message)
@@ -156,7 +162,7 @@ namespace Raider.Game.GUI.Screens
         {
             if (LobbyPlayerData.localPlayer == null)
             {
-                Debug.LogError("Unable to open chat, lobby player is null");
+                Debug.Log("Unable to open chat, lobby player is null");
                 return;
             }
 

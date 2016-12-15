@@ -81,7 +81,7 @@ namespace Raider.Game.Player
 
                 character = LobbyPlayerData.localPlayer.character;
                 name = LobbyPlayerData.localPlayer.name;
-                slot = LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot;
+                slot = LobbyPlayerData.localPlayer.slot;
                 gotSlot = true;
 
                 CmdUpdatePlayerSlot(slot);
@@ -194,21 +194,28 @@ namespace Raider.Game.Player
         [Command]
         void CmdRequestSlots()
         {
-            Debug.Log("Sending clients everything I've got!");
-            foreach (GameObject playerObj in GameObject.FindGameObjectsWithTag("Player"))
-            {
-                Player player = playerObj.GetComponent<Player>();
-                if (gotSlot)
-                    player.RpcUpdatePlayerSlot(player.slot);
-            }
             Debug.Log("Client requests slot for " + name);
+            if (gotSlot)
+            {
+                Debug.Log("Sending a client slot for" + name);
+                TargetUpdatePlayerSlot(connectionToClient, slot);
+            }
+            else
+                Debug.LogWarning("I don't have that slot!");
+        }
+
+        [TargetRpc]
+        void TargetUpdatePlayerSlot(NetworkConnection target, int newSlot)
+        {
+            UpdateLocalSlot(newSlot);
+            Debug.Log("Recieved rpc slot " + newSlot.ToString() + " for " + name);
         }
 
         [ClientRpc]
         void RpcUpdatePlayerSlot(int newSlot)
         {
-            Debug.Log("Recieved rpc slot " + newSlot.ToString() + " for " + name);
             UpdateLocalSlot(newSlot);
+            Debug.Log("Recieved rpc slot " + newSlot.ToString() + " for " + name);
         }
 
         void UpdateLocalSlot(int value)
