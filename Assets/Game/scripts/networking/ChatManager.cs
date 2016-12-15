@@ -17,7 +17,8 @@ namespace Raider.Game.Networking
         //Read by the ChatUIHandler.
         public static readonly int maxChatHistory = 150;
 
-        private Stack<string> chatLog = new Stack<string>(maxChatHistory);
+        //This should be public get.
+        public static Stack<string> chatLog = new Stack<string>(maxChatHistory);
 
         [Command]
         public void CmdSendMessage(string message, int playerSlot)

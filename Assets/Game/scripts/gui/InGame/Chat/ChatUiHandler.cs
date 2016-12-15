@@ -52,6 +52,15 @@ namespace Raider.Game.GUI.Screens
         {
             if (fullLogContainer == null)
                 Debug.LogError("The chat ui handler has no text container to add to!");
+
+            if(fullLogContainer.transform.childCount < 1)
+                LoadChatHistory();
+        }
+
+        void LoadChatHistory()
+        {
+            foreach (string message in ChatManager.chatLog)
+                AddMessageToFullLog(message);
         }
 
         public void AddMessageToFullLog(string message)
@@ -129,10 +138,18 @@ namespace Raider.Game.GUI.Screens
         {
             yield return 0; //Wait a frame...
 
-            if (LobbyPlayerData.localPlayer != null)
-                LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot);
+            if (Scenario.InLobby)
+            {
+                if (LobbyPlayerData.localPlayer != null)
+                    LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot);
+                else
+                    Debug.Log("Cant send message when no lobby player present!");
+            }
             else
-                Debug.LogError("Cant send message when no lobby player present!");
+            {
+                if (Player.Player.localPlayer != null)
+                    Player.Player.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, Player.Player.localPlayer.slot);
+            }
         }
 
         public void OpenChatInput()
