@@ -106,6 +106,7 @@ namespace Raider.Game.Networking
         {
             base.OnClientSceneChanged(conn);
             //Make sure the lobby player is still active.
+            lobbyGameObject.SetActive(true);
             LobbyPlayerData.localPlayer.gameObject.SetActive(true);
         }
 

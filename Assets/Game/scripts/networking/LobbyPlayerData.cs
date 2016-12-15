@@ -50,6 +50,7 @@ namespace Raider.Game.Networking
         }
         public SaveDataStructure.Character character;
         public bool isLeader;
+        public LobbySetup.Teams team = LobbySetup.Teams.None;
 
         #region serialization and player data syncing
 

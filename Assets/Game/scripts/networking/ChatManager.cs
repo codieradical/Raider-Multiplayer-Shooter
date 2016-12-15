@@ -33,7 +33,7 @@ namespace Raider.Game.Networking
                 input = "* " + GetFormattedUsername(playerSlot) + input.Replace("/me","");
             else if (input.StartsWith("/leave"))
                 NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-            else if (input.StartsWith("/endgame") && NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
+            else if (input.StartsWith("/endgame") && (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host))
                 NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
             else
                 input = string.Format("<{0}> {1}", GetFormattedUsername(playerSlot), input);

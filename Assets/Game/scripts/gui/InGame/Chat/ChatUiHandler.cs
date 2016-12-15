@@ -82,8 +82,8 @@ namespace Raider.Game.GUI.Screens
         public void AddMessageToShortLog(string message)
         {
             //If the chat container is full, get deleting.
-            if (fullLogContainer.transform.childCount >= shortLogSize)
-                Destroy(fullLogContainer.transform.GetChild(0).gameObject);
+            if (shortLogContainer.transform.childCount >= shortLogSize)
+                Destroy(shortLogContainer.transform.GetChild(0).gameObject);
 
             //Initialize the new message object.
             GameObject newLine = new GameObject();
