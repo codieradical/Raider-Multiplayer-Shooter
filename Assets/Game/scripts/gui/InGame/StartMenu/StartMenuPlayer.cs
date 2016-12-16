@@ -68,6 +68,8 @@ namespace Raider.Game.GUI.StartMenu
                     settings.perspective = Cameras.CameraModeController.CameraModes.Shoulder;
                     break;
             }
+            if (!Scenario.InLobby)
+                Player.Player.localPlayer.UpdatePerspective(settings.perspective);
 
             Session.saveDataHandler.SaveSettings(settings);
             perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();

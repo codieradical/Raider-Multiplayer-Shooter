@@ -115,13 +115,13 @@ namespace Raider.Game.GUI.StartMenu
         {
             optionImage.sprite = changeCharacterSprite;
             optionText.text =
-                "Add your player to the lobby again.";
+                "No Function.";
         }
 
         public void DebugClick()
         {
-            Components.LobbyHandler.PlayerNameplate newPlate = new Components.LobbyHandler.PlayerNameplate("Test Nameplate", false, false, false, Session.activeCharacter);
-            Components.LobbyHandler.AddPlayer(newPlate);
+            //Components.LobbyHandler.PlayerNameplate newPlate = new Components.LobbyHandler.PlayerNameplate("Test Nameplate", false, false, false, Session.activeCharacter);
+            //Components.LobbyHandler.AddPlayer(newPlate);
         }
 #endif
     }
