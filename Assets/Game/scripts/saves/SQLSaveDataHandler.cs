@@ -14,6 +14,11 @@ namespace Raider.Game.Saves {
             }
         }
 
+        public void DefaultSettings()
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteCharacter(int slot)
         {
             throw new NotImplementedException();
@@ -30,6 +35,11 @@ namespace Raider.Game.Saves {
         }
 
         public SaveDataStructure.Character GetCharacter(int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SaveDataStructure.Settings GetSettings()
         {
             throw new NotImplementedException();
         }
@@ -65,6 +75,11 @@ namespace Raider.Game.Saves {
         }
 
         public void SaveData(SaveDataStructure _data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveSettings(SaveDataStructure.Settings settings)
         {
             throw new NotImplementedException();
         }

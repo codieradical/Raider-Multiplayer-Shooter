@@ -36,7 +36,7 @@ namespace Raider.Game.Saves
         public string password;
 
         public List<Character> characters = new List<Character>();
-		public Settings settings;
+		public Settings settings = new Settings();
 
 		[System.Serializable]
 		public class Settings
@@ -44,7 +44,7 @@ namespace Raider.Game.Saves
 			public Settings()
 			{
 				lobbyDisplay = LobbyDisplay.Scroll;
-				perspective = CameraModeController.CameraModes;
+				perspective = CameraModeController.CameraModes.FirstPerson;
 			}
 
 			public enum LobbyDisplay

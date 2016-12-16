@@ -86,7 +86,7 @@ namespace Raider.Game.Player
 
                 CmdUpdatePlayerSlot(slot);
 
-                UpdatePerspective(character.chosenPlayerPerspective);
+                UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
             }
             else
             {
@@ -97,7 +97,9 @@ namespace Raider.Game.Player
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
         {
-            character.chosenPlayerPerspective = newPerspective;
+            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+            settings.perspective = newPerspective;
+            Session.saveDataHandler.SaveSettings(settings);
             CameraModeController.singleton.SetCameraMode(newPerspective);
 
             StartCoroutine(PauseNewCameraController());
@@ -143,7 +145,7 @@ namespace Raider.Game.Player
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(character.chosenPlayerPerspective);
+            CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
         }
 
         void OnDestroy()

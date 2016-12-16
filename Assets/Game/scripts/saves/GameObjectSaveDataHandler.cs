@@ -113,5 +113,20 @@ namespace Raider.Game.Saves
         {
             data.characters.RemoveAt(slot);
         }
+
+        public void DefaultSettings()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveSettings(SaveDataStructure.Settings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SaveDataStructure.Settings GetSettings()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

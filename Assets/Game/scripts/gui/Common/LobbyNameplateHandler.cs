@@ -27,15 +27,16 @@ namespace Raider.Game.GUI.Components
 			emblemHandler.UpdateEmblem (player.character);
 			usernameText.text = player.username;
 			guildText.text = player.character.guild;
-			levelText.text = player.character.level.ToString ();
+			levelText.text = player.character.level.ToString();
 			leaderIcon.SetActive (player.leader);
 
 			float h, s, v;
 			Color.RGBToHSV (player.character.armourPrimaryColor.Color, out h, out s, out v);
-			backgroundImage.color = Color.HSVToRGB (h, s, 0.5f); //maybe this 0.5 is wrong...
-			backgroundImage.color.a = 200f / 255f;
+			Color nameplateColor = Color.HSVToRGB (h, s, 0.5f); //maybe this 0.5 is wrong...
+			nameplateColor.a = 200f / 255f;
+            backgroundImage.color = nameplateColor;
 
-			transform.SetParent (parent, false);
+            transform.SetParent(parent.transform, false);
 		}
 	}
 }

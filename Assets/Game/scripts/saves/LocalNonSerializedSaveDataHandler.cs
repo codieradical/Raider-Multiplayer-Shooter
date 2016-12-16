@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using System;
 
 namespace Raider.Game.Saves
 {
@@ -71,6 +72,21 @@ namespace Raider.Game.Saves
         public void DeleteCharacter(int slot)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void DefaultSettings()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveSettings(SaveDataStructure.Settings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SaveDataStructure.Settings GetSettings()
+        {
+            throw new NotImplementedException();
         }
     }
 }

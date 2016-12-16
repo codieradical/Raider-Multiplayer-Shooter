@@ -7,6 +7,7 @@ using Raider.Game.Scene;
 using Raider.Game.Networking;
 using Raider.Game.GUI.CharacterPreviews;
 using UnityEngine.UI;
+using Raider.Game.Saves;
 
 namespace Raider.Game.GUI.StartMenu
 {
@@ -28,9 +29,9 @@ namespace Raider.Game.GUI.StartMenu
         protected override void SetupPaneData()
         {
             perspectiveSelection.onSelectionChanged = UpdatePerspectiveSelection;
-            perspectiveSelection.title.text = "Perspective: " + Session.activeCharacter.chosenPlayerPerspective.ToString();
+            perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();
 
-            switch (Session.activeCharacter.chosenPlayerPerspective)
+            switch (Session.saveDataHandler.GetSettings().perspective)
             {
                 case Cameras.CameraModeController.CameraModes.FirstPerson:
                     perspectiveSelection.SelectedObject = perspectiveSelection.gridLayout.transform.Find("FirstPerson").gameObject;
@@ -54,25 +55,22 @@ namespace Raider.Game.GUI.StartMenu
 
         void UpdatePerspectiveSelection(GameObject newObject)
         {
+            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
             switch(newObject.name)
             {
                 case "FirstPerson":
-                    Session.activeCharacter.chosenPlayerPerspective = Cameras.CameraModeController.CameraModes.FirstPerson;
+                    settings.perspective = Cameras.CameraModeController.CameraModes.FirstPerson;
                     break;
                 case "ThirdPerson":
-                    Session.activeCharacter.chosenPlayerPerspective = Cameras.CameraModeController.CameraModes.ThirdPerson;
+                    settings.perspective = Cameras.CameraModeController.CameraModes.ThirdPerson;
                     break;
                 case "Shoulder":
-                    Session.activeCharacter.chosenPlayerPerspective = Cameras.CameraModeController.CameraModes.Shoulder;
+                    settings.perspective = Cameras.CameraModeController.CameraModes.Shoulder;
                     break;
             }
-            if (!Scenario.InLobby)
-                Player.Player.localPlayer.UpdatePerspective(Session.activeCharacter.chosenPlayerPerspective);
-            else if (LobbyPlayerData.localPlayer != null)
-                LobbyPlayerData.localPlayer.character.chosenPlayerPerspective = Session.activeCharacter.chosenPlayerPerspective;
 
-            Session.SaveActiveCharacter();
-            perspectiveSelection.title.text = "Perspective: " + Session.activeCharacter.chosenPlayerPerspective.ToString();
+            Session.saveDataHandler.SaveSettings(settings);
+            perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();
         }
 
         public override void ClosePane()

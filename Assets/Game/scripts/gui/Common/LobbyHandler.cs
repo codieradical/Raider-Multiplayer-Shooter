@@ -79,22 +79,11 @@ namespace Raider.Game.GUI.Components
             public SaveDataStructure.Character character;
         }
 
-		void Start()
-		{
-			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
-				SwitchToSplitLobby ();
-			else
-				SwitchToScrollLobby ();
-		}
-
 		public void SwitchToScrollLobbyButton()
 		{
 			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings ();
 			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Scroll;
 			Session.saveDataHandler.SaveSettings(settings);
-
-			scrollButton.gameObject.SetActive (false);
-			splitButton.gameObject.SetActive (true);
 
 			SwitchToScrollLobby ();
 		}
@@ -105,9 +94,6 @@ namespace Raider.Game.GUI.Components
 			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Split;
 			Session.saveDataHandler.SaveSettings(settings);
 
-			scrollButton.gameObject.SetActive (true);
-			splitButton.gameObject.SetActive (false);
-
 			SwitchToSplitLobby ();
 		}
 
@@ -117,22 +103,27 @@ namespace Raider.Game.GUI.Components
 
             foreach(LobbyHandler instance in instances)
             {
-				foreach (Transform nameplate in instance.scrollLobbyPlayerContainer)
+				foreach (Transform nameplate in instance.scrollLobbyPlayerContainer.transform)
                 {
                     Destroy(nameplate.gameObject);
                 }
-				foreach (Transform nameplate in instance.sixteenPlayerLobbyPlayerContainer)
+				foreach (Transform nameplate in instance.sixteenPlayerLobbyPlayerContainer.transform)
 				{
 					Destroy(nameplate.gameObject);
 				}
-				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[0])
+				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[0].transform)
 				{
 					Destroy(nameplate.gameObject);
 				}
-				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[1])
+				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform)
 				{
 					Destroy(nameplate.gameObject);
 				}
+
+                if (players.Count == NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                else
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
             }
         }
 
@@ -152,13 +143,13 @@ namespace Raider.Game.GUI.Components
 				GameObject nameplate8 = Instantiate(instance.standardLoadingNameplatePrefab);
 				nameplate8.GetComponent<PreferredSizeOverride>().providedGameObject = instance.headerPanelGameObject;
 				nameplate8.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
-				nameplate8.transform.SetParent(instance.scrollLobbyPlayerContainer, false);
+				nameplate8.transform.SetParent(instance.scrollLobbyPlayerContainer.transform, false);
 
 				//16 players...
 				GameObject nameplate16 = Instantiate(instance.sixteenLoadingNameplatePrefab);
 				nameplate16.GetComponent<PreferredSizeOverride>().providedGameObject = instance.headerPanelGameObject;
 				nameplate16.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
-				nameplate16.transform.SetParent(instance.sixteenPlayerLobbyPlayerContainer, false);
+				nameplate16.transform.SetParent(instance.sixteenPlayerLobbyPlayerContainer.transform, false);
 
 				//32 players...
 				GameObject nameplate32 = Instantiate(instance.thirtyTwoLoadingNameplatePrefab);
@@ -166,9 +157,9 @@ namespace Raider.Game.GUI.Components
 				nameplate32.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
 
 				if (players.Count < 16)
-					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer [0], false);
+					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[0].transform, false);
 				else
-					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer [1], false);
+					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform, false);
             }
         }
 
@@ -196,6 +187,11 @@ namespace Raider.Game.GUI.Components
 					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[0]);
 				else
 					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[1]);
+
+                if (players.Count == NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                else
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
             }
 
 			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split) {
@@ -207,9 +203,11 @@ namespace Raider.Game.GUI.Components
 		public static void SwitchToScrollLobby()
 		{
 			foreach (LobbyHandler instance in instances) {
-				instance.sixteenPlayerLobbyContainer.SetActive (false);
-				instance.thirtyTwoPlayerLobbyContainer.SetActive (false);
-				instance.scrollLobbyContainer.SetActive (true);
+				instance.sixteenPlayerLobbyContainer.SetActive(false);
+				instance.thirtyTwoPlayerLobbyContainer.SetActive(false);
+				instance.scrollLobbyContainer.SetActive(true);
+                instance.splitButton.gameObject.SetActive(false);
+                instance.scrollButton.gameObject.SetActive(true);
 			}
 		}
 
@@ -219,8 +217,10 @@ namespace Raider.Game.GUI.Components
 				instance.scrollLobbyContainer.SetActive (false);
 				instance.sixteenPlayerLobbyContainer.SetActive(false);
 				instance.thirtyTwoPlayerLobbyContainer.SetActive (false);
+                instance.splitButton.gameObject.SetActive(true);
+                instance.scrollButton.gameObject.SetActive(false);
 
-				if (players.Count <= 8)
+                if (players.Count <= 8)
 					instance.scrollLobbyContainer.SetActive (true);
 				else if (players.Count <= 16)
 					instance.sixteenPlayerLobbyContainer.SetActive (true);
