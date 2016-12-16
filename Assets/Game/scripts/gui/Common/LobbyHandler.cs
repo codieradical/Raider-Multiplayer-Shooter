@@ -81,20 +81,20 @@ namespace Raider.Game.GUI.Components
 
 		public void SwitchToScrollLobbyButton()
 		{
-			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings ();
+			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
 			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Scroll;
 			Session.saveDataHandler.SaveSettings(settings);
 
-			SwitchToScrollLobby ();
+			SwitchToScrollLobby();
 		}
 
 		public void SwitchToSplitLobbyButton()
 		{
-			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings ();
+			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
 			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Split;
 			Session.saveDataHandler.SaveSettings(settings);
 
-			SwitchToSplitLobby ();
+			SwitchToSplitLobby();
 		}
 
         public static void DestroyAllPlayers()
@@ -191,7 +191,22 @@ namespace Raider.Game.GUI.Components
                 if (players.Count == NetworkManager.instance.maxPlayers)
                     instance.lobbyStateText.text = "full [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
                 else
-                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Offline)
+                    instance.lobbyOwnerText.text = Session.saveDataHandler.GetUsername() + "'s Lobby";
+                //I would like this to be the host's username.
+                else
+                {
+                    foreach (LobbyPlayerData lobbyPlayer in NetworkManager.instance.Players)
+                    {
+                        if (lobbyPlayer.isHost)
+                        {
+                            instance.lobbyOwnerText.text = lobbyPlayer.name + "'s Lobby";
+                            break;
+                        }
+                    }
+                }
             }
 
 			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split) {
@@ -206,8 +221,8 @@ namespace Raider.Game.GUI.Components
 				instance.sixteenPlayerLobbyContainer.SetActive(false);
 				instance.thirtyTwoPlayerLobbyContainer.SetActive(false);
 				instance.scrollLobbyContainer.SetActive(true);
-                instance.splitButton.gameObject.SetActive(false);
-                instance.scrollButton.gameObject.SetActive(true);
+                instance.splitButton.gameObject.SetActive(true);
+                instance.scrollButton.gameObject.SetActive(false);
 			}
 		}
 
@@ -217,8 +232,8 @@ namespace Raider.Game.GUI.Components
 				instance.scrollLobbyContainer.SetActive (false);
 				instance.sixteenPlayerLobbyContainer.SetActive(false);
 				instance.thirtyTwoPlayerLobbyContainer.SetActive (false);
-                instance.splitButton.gameObject.SetActive(true);
-                instance.scrollButton.gameObject.SetActive(false);
+                instance.splitButton.gameObject.SetActive(false);
+                instance.scrollButton.gameObject.SetActive(true);
 
                 if (players.Count <= 8)
 					instance.scrollLobbyContainer.SetActive (true);

@@ -37,6 +37,7 @@ namespace Raider.Game.GUI.Components
             backgroundImage.color = nameplateColor;
 
             transform.SetParent(parent.transform, false);
+            name = player.username;
 		}
 	}
 }

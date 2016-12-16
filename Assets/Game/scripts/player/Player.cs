@@ -91,8 +91,14 @@ namespace Raider.Game.Player
             else
             {
                 if(localPlayer != null)
-                    localPlayer.CmdRequestSlots();
+                    localPlayer.CmdRequestSlot();
             }
+        }
+
+        private void Update()
+        {
+            if (!gotSlot)
+                CmdRequestSlot();
         }
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
@@ -141,7 +147,7 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
         {
             localPlayer = this;
-            localPlayer.CmdRequestSlots(); //Now that authority is established, issue this command.
+            localPlayer.CmdRequestSlot(); //Now that authority is established, issue this command.
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
             CameraModeController.singleton.playerGameObject = gameObject;
@@ -194,7 +200,7 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        void CmdRequestSlots()
+        void CmdRequestSlot()
         {
             Debug.Log("Client requests slot for " + name);
             if (gotSlot)
