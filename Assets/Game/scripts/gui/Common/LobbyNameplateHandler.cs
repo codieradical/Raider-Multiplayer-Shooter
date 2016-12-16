@@ -32,8 +32,9 @@ namespace Raider.Game.GUI.Components
 
 			float h, s, v;
 			Color.RGBToHSV (player.character.armourPrimaryColor.Color, out h, out s, out v);
-			Color nameplateColor = Color.HSVToRGB (h, s, 0.5f); //maybe this 0.5 is wrong...
-			nameplateColor.a = 200f / 255f;
+            //Color nameplateColor = Color.HSVToRGB (h, s, 0.5f); //maybe this 0.5 is wrong...
+            Color nameplateColor = Color.HSVToRGB(h, s, v);
+            nameplateColor.a = 200f / 255f;
             backgroundImage.color = nameplateColor;
 
             transform.SetParent(parent.transform, false);

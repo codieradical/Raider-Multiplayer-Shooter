@@ -120,10 +120,10 @@ namespace Raider.Game.GUI.Components
 					Destroy(nameplate.gameObject);
 				}
 
-                if (players.Count == NetworkManager.instance.maxPlayers)
-                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                if (players.Count >= NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
                 else
-                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
             }
         }
 
@@ -161,6 +161,12 @@ namespace Raider.Game.GUI.Components
 				else
 					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform, false);
             }
+
+            if (Session.saveDataHandler.GetSettings().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
+            {
+                if (players.Count == 9 || players.Count == 17 || players.Count == 33)
+                    SwitchToSplitLobby();
+            }
         }
 
         public static void AddPlayer(PlayerNameplate player)
@@ -183,13 +189,13 @@ namespace Raider.Game.GUI.Components
 				nameplate16.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.sixteenPlayerLobbyPlayerContainer);
 
 				GameObject nameplate32 = Instantiate(instance.thirtyTwoPlayerNameplatePrefab);
-				if(players.Count < 16)
+				if(players.Count < 17)
 					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[0]);
 				else
 					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[1]);
 
-                if (players.Count == NetworkManager.instance.maxPlayers)
-                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "//" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                if (players.Count >= NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
                 else
                     instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
 
@@ -210,7 +216,7 @@ namespace Raider.Game.GUI.Components
             }
 
 			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split) {
-				if (players.Count == 9 || players.Count == 17)
+				if (players.Count == 9 || players.Count == 17 || players.Count == 33)
 					SwitchToSplitLobby ();
 			}
         }
@@ -236,11 +242,13 @@ namespace Raider.Game.GUI.Components
                 instance.scrollButton.gameObject.SetActive(true);
 
                 if (players.Count <= 8)
-					instance.scrollLobbyContainer.SetActive (true);
-				else if (players.Count <= 16)
-					instance.sixteenPlayerLobbyContainer.SetActive (true);
-				else
-					instance.thirtyTwoPlayerLobbyContainer.SetActive (true);
+                    instance.scrollLobbyContainer.SetActive(true);
+                else if (players.Count <= 16)
+                    instance.sixteenPlayerLobbyContainer.SetActive(true);
+                else if (players.Count <= 32)
+                    instance.thirtyTwoPlayerLobbyContainer.SetActive(true);
+                else
+                    instance.scrollLobbyContainer.SetActive(true);
 			}
 		}
     }
