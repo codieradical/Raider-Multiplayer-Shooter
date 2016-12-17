@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Raider.Game.GUI;
+using System;
 
 namespace Raider.Game.Saves
 {
@@ -157,6 +158,29 @@ namespace Raider.Game.Saves
         public List<SaveDataStructure.Character> GetAllCharacters()
         {
             return Data.characters;
+        }
+
+		public void DefaultSettings()
+		{
+			Data.settings = new SaveDataStructure.Settings();
+			SaveData (Data);
+		}
+
+		public void SaveSettings(SaveDataStructure.Settings settings)
+		{
+			Data.settings = settings;
+			SaveData (Data);
+		}
+
+        //Not sure what's going on here...
+		//SaveDataStructure.Settings GetSettings()
+		//{
+		//	return Data.settings;
+		//}
+
+        SaveDataStructure.Settings ISaveDataHandler.GetSettings()
+        {
+            return Data.settings;
         }
     }
 }

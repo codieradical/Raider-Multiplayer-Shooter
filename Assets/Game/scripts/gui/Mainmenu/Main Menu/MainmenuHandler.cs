@@ -6,6 +6,7 @@ using Raider.Game.GUI.Components;
 using Raider.Game.Cameras;
 using Raider.Game.Networking;
 using Raider.Game.GUI.CharacterPreviews;
+using Raider.Game.Saves;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -90,6 +91,11 @@ namespace Raider.Game.GUI.Screens
             Session.Login(_username);
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+
+            if (Session.saveDataHandler.GetSettings().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
+                LobbyHandler.SwitchToSplitLobby();
+            else
+                LobbyHandler.SwitchToScrollLobby();
         }
 
         public void Logout()
@@ -117,6 +123,12 @@ namespace Raider.Game.GUI.Screens
         {
             Session.SelectCharacter(characterIndex);
 
+            //We're done with the plate previews.
+            CharacterPreviewHandler.instance.DestroyPreviews();
+
+            MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
+            GametypeButtons.instance.ShowButtons();
+
             LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
             {
                 username = Session.saveDataHandler.GetUsername(),
@@ -124,12 +136,6 @@ namespace Raider.Game.GUI.Screens
                 character = Session.activeCharacter
             };
             LobbyHandler.AddPlayer(playerNameplate);
-
-            //We're done with the plate previews.
-            CharacterPreviewHandler.instance.DestroyPreviews();
-
-            MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
-            GametypeButtons.instance.ShowButtons();
         }
 
         public void ChangeCharacter()

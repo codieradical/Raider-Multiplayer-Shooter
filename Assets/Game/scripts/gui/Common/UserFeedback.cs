@@ -34,6 +34,12 @@ namespace Raider.Game.GUI
         public static void LogError(string message)
         {
             AddToLog(message);
+
+            //I need to think about this more but for now, these belong here.
+            if (Scene.Scenario.InLobby)
+                Networking.LobbyPlayerData.localPlayer.GetComponent<Networking.ChatManager>().SendLocalNotificationMessage(message);
+            else if (Player.Player.localPlayer != null)
+                Player.Player.localPlayer.GetComponent<Networking.ChatManager>().SendLocalNotificationMessage(message);
         }
 
         private static void AddToLog(string line)

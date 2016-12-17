@@ -23,14 +23,19 @@ namespace Raider.Game.Networking
             if (isLocalPlayer)
             {
                 localPlayer = this;
+
+                bool _isHost = false; //Update Local Data handles full assignment.
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
+                    _isHost = true;
+
                 //If the player is hosting (if networkserver is active), isLeader will be true.
-                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active);
+                UpdateLocalData(Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active, _isHost);
 
                 //I don't think this is necessary, I can probably just call the command.
                 if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host)
-                    RpcRecieveUpdateFromServer(Username, SerializedCharacter, isLeader);
+                    RpcRecieveUpdateFromServer(Username, SerializedCharacter, isLeader, isHost);
                 else
-                    CmdUpdateServer(Username, SerializedCharacter, isLeader);
+                    CmdUpdateServer(Username, SerializedCharacter, isLeader, isHost);
 
                 //If the player is not the host, they're automatically set to ready.
                 //This means the host's ready flag starts the game.
@@ -51,10 +56,18 @@ namespace Raider.Game.Networking
         }
         public SaveDataStructure.Character character;
         public bool isLeader;
+        public bool isHost;
         public LobbySetup.Teams team = LobbySetup.Teams.None;
         public int slot
         {
             get { return GetComponent<NetworkLobbyPlayer>().slot; }
+        }
+
+        //If a player is remove from the scene, update the lobby!
+        public override void OnNetworkDestroy()
+        {
+            base.OnNetworkDestroy();
+            NetworkManager.instance.actionQueue.Enqueue(NetworkManager.instance.UpdateLobbyNameplates);
         }
 
         #region serialization and player data syncing
@@ -65,20 +78,21 @@ namespace Raider.Game.Networking
             set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
         }
 
-        void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isLeader)
+        void UpdateLocalData(string _username, SaveDataStructure.Character _character, bool _isLeader, bool _isHost)
         {
-            this.Username = _username;
-            this.character = _character;
-            this.isLeader = _isLeader;
-            this.gotData = true;
+            Username = _username;
+            character = _character;
+            isLeader = _isLeader;
+            isHost = _isHost;
+            gotData = true;
             NetworkManager.instance.UpdateLobbyNameplates();
         }
 
         [Command]
-        void CmdUpdateServer(string _username, string _serializedCharacter, bool _isHost)
+        void CmdUpdateServer(string _username, string _serializedCharacter, bool _isLeader, bool _isHost)
         {
-            RpcRecieveUpdateFromServer(_username, _serializedCharacter, _isHost);
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isHost);
+            RpcRecieveUpdateFromServer(_username, _serializedCharacter, _isLeader, _isHost);
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
             GetComponent<ChatManager>().CmdSendNotificationMessage("joined the game.", slot);
 
             //If the client has sent their player data to the server, 
@@ -88,9 +102,9 @@ namespace Raider.Game.Networking
         }
 
         [ClientRpc]
-        public void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter, bool _isHost)
+        public void RpcRecieveUpdateFromServer(string _username, string _serializedCharacter, bool _isLeader, bool _isHost)
         {
-            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isHost);
+            UpdateLocalData(_username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
         }
 
         [Server]
@@ -99,15 +113,8 @@ namespace Raider.Game.Networking
             foreach (LobbyPlayerData player in NetworkManager.instance.Players)
             {
                 if (player.gotData)
-                    player.RpcRecieveUpdateFromServer(player.Username, player.SerializedCharacter, player.isLeader);
+                    player.RpcRecieveUpdateFromServer(player.Username, player.SerializedCharacter, player.isLeader, player.isHost);
             }
-        }
-
-        //If a player is remove from the scene, update the lobby!
-        public override void OnNetworkDestroy()
-        {
-            base.OnNetworkDestroy();
-            NetworkManager.instance.actionQueue.Enqueue(NetworkManager.instance.UpdateLobbyNameplates);
         }
         #endregion
 

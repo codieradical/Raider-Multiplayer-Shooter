@@ -32,8 +32,31 @@ namespace Raider.Game.GUI.Components
         /// <summary>
         /// This prefab needs to be available on at least one lobby handler per scene.
         /// </summary>
-        public UnityEngine.Object nameplatePrefab;
-        public UnityEngine.Object loadingNameplatePrefab;
+
+		[Header("Header Elements")]
+		public GameObject headerPanelGameObject;
+		public Text lobbyStateText;
+		public Text lobbyOwnerText;
+		public Button scrollButton;
+		public Button splitButton;
+
+		[Header("Nameplate Prefabs")]
+		public GameObject standardNameplatePrefab;
+		public GameObject sixteenPlayerNameplatePrefab;
+		public GameObject thirtyTwoPlayerNameplatePrefab;
+		public GameObject standardLoadingNameplatePrefab;
+		public GameObject sixteenLoadingNameplatePrefab;
+		public GameObject thirtyTwoLoadingNameplatePrefab;
+
+		[Header("Lobby Containers")]
+		public GameObject scrollLobbyContainer;
+		public GameObject sixteenPlayerLobbyContainer;
+		public GameObject thirtyTwoPlayerLobbyContainer;
+
+		[Header("Lobby Player Containers")]
+		public GameObject scrollLobbyPlayerContainer;
+		public GameObject sixteenPlayerLobbyPlayerContainer;
+		public GameObject[] thirtyTwoPlayerLobbyPlayerContainer;
 
         private static List<PlayerNameplate> players = new List<PlayerNameplate>();
 
@@ -56,16 +79,51 @@ namespace Raider.Game.GUI.Components
             public SaveDataStructure.Character character;
         }
 
+		public void SwitchToScrollLobbyButton()
+		{
+			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Scroll;
+			Session.saveDataHandler.SaveSettings(settings);
+
+			SwitchToScrollLobby();
+		}
+
+		public void SwitchToSplitLobbyButton()
+		{
+			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Split;
+			Session.saveDataHandler.SaveSettings(settings);
+
+			SwitchToSplitLobby();
+		}
+
         public static void DestroyAllPlayers()
         {
             players = new List<PlayerNameplate>();
 
             foreach(LobbyHandler instance in instances)
             {
-                foreach (Transform nameplate in instance.gameObject.transform.FindChild("Players"))
+				foreach (Transform nameplate in instance.scrollLobbyPlayerContainer.transform)
                 {
                     Destroy(nameplate.gameObject);
                 }
+				foreach (Transform nameplate in instance.sixteenPlayerLobbyPlayerContainer.transform)
+				{
+					Destroy(nameplate.gameObject);
+				}
+				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[0].transform)
+				{
+					Destroy(nameplate.gameObject);
+				}
+				foreach (Transform nameplate in instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform)
+				{
+					Destroy(nameplate.gameObject);
+				}
+
+                if (players.Count >= NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                else
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
             }
         }
 
@@ -73,17 +131,41 @@ namespace Raider.Game.GUI.Components
         {
             foreach(LobbyHandler instance in instances)
             {
-                if (instance.loadingNameplatePrefab == null)
+				//Check that loading prefabs are present.
+				if (instance.standardLoadingNameplatePrefab == null || instance.sixteenLoadingNameplatePrefab == null || instance.thirtyTwoLoadingNameplatePrefab == null)
                 {
                     Debug.Log("A lobby handler is missing a nameplate prefab.");
                     Debug.LogAssertion("Please add the prefab to any lobby in the scene.");
                     throw new MissingFieldException();
                 }
 
-                GameObject newPlayer = Instantiate(instance.loadingNameplatePrefab) as GameObject;
-                newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = instance.gameObject;
-                newPlayer.transform.SetParent(instance.gameObject.transform.FindChild("Players"), false);
-                UpdateSidebars();
+				//8 players...
+				GameObject nameplate8 = Instantiate(instance.standardLoadingNameplatePrefab);
+				nameplate8.GetComponent<PreferredSizeOverride>().providedGameObject = instance.headerPanelGameObject;
+				nameplate8.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
+				nameplate8.transform.SetParent(instance.scrollLobbyPlayerContainer.transform, false);
+
+				//16 players...
+				GameObject nameplate16 = Instantiate(instance.sixteenLoadingNameplatePrefab);
+				nameplate16.GetComponent<PreferredSizeOverride>().providedGameObject = instance.headerPanelGameObject;
+				nameplate16.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
+				nameplate16.transform.SetParent(instance.sixteenPlayerLobbyPlayerContainer.transform, false);
+
+				//32 players...
+				GameObject nameplate32 = Instantiate(instance.thirtyTwoLoadingNameplatePrefab);
+				nameplate32.GetComponent<PreferredSizeOverride>().providedGameObject = instance.headerPanelGameObject;
+				nameplate32.GetComponent<SizeOverride>().providedGameObject = instance.headerPanelGameObject;
+
+				if (players.Count < 16)
+					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[0].transform, false);
+				else
+					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform, false);
+            }
+
+            if (Session.saveDataHandler.GetSettings().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
+            {
+                if (players.Count == 9 || players.Count == 17 || players.Count == 33)
+                    SwitchToSplitLobby();
             }
         }
 
@@ -93,50 +175,81 @@ namespace Raider.Game.GUI.Components
 
             foreach (LobbyHandler instance in instances)
             {
-                if (instance.nameplatePrefab == null)
+				if (instance.standardNameplatePrefab == null || instance.sixteenPlayerNameplatePrefab == null || instance.thirtyTwoPlayerNameplatePrefab == null)
                 {
                     Debug.Log("A lobby handler is missing a nameplate prefab.");
                     Debug.LogAssertion("Please add the prefab to any lobby in the scene.");
                     throw new MissingFieldException();
                 }
 
-                GameObject newPlayer = Instantiate(instance.nameplatePrefab) as GameObject;
+				GameObject nameplate8 = Instantiate(instance.standardNameplatePrefab);
+				nameplate8.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.scrollLobbyPlayerContainer);
 
-                newPlayer.GetComponent<PreferredSizeOverride>().providedGameObject = instance.gameObject;
+				GameObject nameplate16 = Instantiate(instance.sixteenPlayerNameplatePrefab);
+				nameplate16.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.sixteenPlayerLobbyPlayerContainer);
 
-                newPlayer.name = player.username;
-                newPlayer.transform.FindChild("emblem").GetComponent<EmblemHandler>().UpdateEmblem(player.character);
+				GameObject nameplate32 = Instantiate(instance.thirtyTwoPlayerNameplatePrefab);
+				if(players.Count < 17)
+					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[0]);
+				else
+					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[1]);
 
-                newPlayer.transform.SetParent(instance.gameObject.transform.FindChild("Players"), false);
-                newPlayer.transform.FindChild("name").GetComponent<Text>().text = player.username;
-                newPlayer.transform.FindChild("guild").GetComponent<Text>().text = player.character.guild;
-                newPlayer.transform.FindChild("level").GetComponent<Text>().text = player.character.level.ToString();
-                newPlayer.transform.FindChild("icons").FindChild("leader").gameObject.SetActive(player.leader);
+                if (players.Count >= NetworkManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                else
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
 
-                Color plateColor = player.character.armourPrimaryColor.Color;
-
-                float _h, _s, _v;
-                Color.RGBToHSV(plateColor, out _h, out _s, out _v);
-
-                plateColor = Color.HSVToRGB(_h, _s, 0.5f);
-                plateColor.a = 200f / 255f;
-
-                //Color plateColor = character.armourPrimaryColor.color;
-                //plateColor.a = 0.5f;
-                //newPlate.GetComponent<Image>().color = plateColor;
-
-                newPlayer.GetComponent<Image>().color = plateColor;
-
-                UpdateSidebars();
+                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Offline)
+                    instance.lobbyOwnerText.text = Session.saveDataHandler.GetUsername() + "'s Lobby";
+                //I would like this to be the host's username.
+                else
+                {
+                    foreach (LobbyPlayerData lobbyPlayer in NetworkManager.instance.Players)
+                    {
+                        if (lobbyPlayer.isHost)
+                        {
+                            instance.lobbyOwnerText.text = lobbyPlayer.name + "'s Lobby";
+                            break;
+                        }
+                    }
+                }
             }
+
+			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split) {
+				if (players.Count == 9 || players.Count == 17 || players.Count == 33)
+					SwitchToSplitLobby ();
+			}
         }
 
-        static void UpdateSidebars()
-        {
-            foreach (LobbyHandler instance in instances)
-            {
-                instance.transform.FindChild("Sidebar").FindChild("Player Count").GetComponent<Text>().text = String.Format("{0}/{1}", players.Count.ToString(), NetworkManager.instance.maxPlayers);
-            }
-        }
+		public static void SwitchToScrollLobby()
+		{
+			foreach (LobbyHandler instance in instances) {
+				instance.sixteenPlayerLobbyContainer.SetActive(false);
+				instance.thirtyTwoPlayerLobbyContainer.SetActive(false);
+				instance.scrollLobbyContainer.SetActive(true);
+                instance.splitButton.gameObject.SetActive(true);
+                instance.scrollButton.gameObject.SetActive(false);
+			}
+		}
+
+		public static void SwitchToSplitLobby()
+		{
+			foreach (LobbyHandler instance in instances) {
+				instance.scrollLobbyContainer.SetActive (false);
+				instance.sixteenPlayerLobbyContainer.SetActive(false);
+				instance.thirtyTwoPlayerLobbyContainer.SetActive (false);
+                instance.splitButton.gameObject.SetActive(false);
+                instance.scrollButton.gameObject.SetActive(true);
+
+                if (players.Count <= 8)
+                    instance.scrollLobbyContainer.SetActive(true);
+                else if (players.Count <= 16)
+                    instance.sixteenPlayerLobbyContainer.SetActive(true);
+                else if (players.Count <= 32)
+                    instance.thirtyTwoPlayerLobbyContainer.SetActive(true);
+                else
+                    instance.scrollLobbyContainer.SetActive(true);
+			}
+		}
     }
 }

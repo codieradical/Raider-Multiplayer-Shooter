@@ -86,18 +86,26 @@ namespace Raider.Game.Player
 
                 CmdUpdatePlayerSlot(slot);
 
-                UpdatePerspective(character.chosenPlayerPerspective);
+                UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
             }
             else
             {
                 if(localPlayer != null)
-                    localPlayer.CmdRequestSlots();
+                    localPlayer.CmdRequestSlot();
             }
+        }
+
+        private void Update()
+        {
+            if (!gotSlot)
+                CmdRequestSlot();
         }
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
         {
-            character.chosenPlayerPerspective = newPerspective;
+            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+            settings.perspective = newPerspective;
+            Session.saveDataHandler.SaveSettings(settings);
             CameraModeController.singleton.SetCameraMode(newPerspective);
 
             StartCoroutine(PauseNewCameraController());
@@ -139,11 +147,11 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
         {
             localPlayer = this;
-            localPlayer.CmdRequestSlots(); //Now that authority is established, issue this command.
+            localPlayer.CmdRequestSlot(); //Now that authority is established, issue this command.
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(character.chosenPlayerPerspective);
+            CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
         }
 
         void OnDestroy()
@@ -192,7 +200,7 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        void CmdRequestSlots()
+        void CmdRequestSlot()
         {
             Debug.Log("Client requests slot for " + name);
             if (gotSlot)

@@ -12,12 +12,12 @@ namespace Raider.Game.GUI.StartMenu
 {
     public class StartMenuGame : StartMenuPane
     {
-
         [Header("Option Buttons")]
         public Button leaveGameButton;
         public Button endGameButton;
         public Button changeCharacterButton;
         public Button logOutButton;
+        public Button debugButton;
 
         public Image optionImage;
         public Text optionText;
@@ -101,5 +101,28 @@ namespace Raider.Game.GUI.StartMenu
             optionText.text =
                 "Return to the login screen.";
         }
+
+        //Debug Button
+
+#if !UNITY_EDITOR
+        private void Start()
+        {
+            debugButton.gameObject.SetActive(false);
+        }
+#else
+
+        public void DebugHover()
+        {
+            optionImage.sprite = changeCharacterSprite;
+            optionText.text =
+                "No Function.";
+        }
+
+        public void DebugClick()
+        {
+            //Components.LobbyHandler.PlayerNameplate newPlate = new Components.LobbyHandler.PlayerNameplate("Test Nameplate", false, false, false, Session.activeCharacter);
+            //Components.LobbyHandler.AddPlayer(newPlate);
+        }
+#endif
     }
 }
