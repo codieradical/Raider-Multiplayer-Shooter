@@ -16,7 +16,7 @@ namespace Raider.Game.Networking.VoIP
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
         static extern void SetupLogging(Action<string> logCallback);
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
-        static extern bool StartClient(string username, string ipAddr, int port, ClientUIFunctions callbacks, string path);
+        static extern bool StartClient(char[] username, char[] ipAddr, int port, ClientUIFunctions callbacks, char[] path);
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
         static extern bool StopClient();
 
@@ -43,14 +43,14 @@ namespace Raider.Game.Networking.VoIP
             Debug.LogError(SoundbackendsPath);
             ClientUIFunctions callbacks = new ClientUIFunctions();
             SetupLogging(TeamSpeakLogging);
-            StartClient("Alex231", "localhost", 9987, callbacks, SoundbackendsPath);
+            StartClient("Alex231".ToCharArray(), "localhost".ToCharArray(), 9987, callbacks, SoundbackendsPath.ToCharArray());
         }
 
-        // Update is called once per frame
-        void Update()
-        {
+        //// Update is called once per frame
+        //void Update()
+        //{
 
-        }
+        //}
 
         //This struct was taken from the TeamSpeak 3 C++ SDK and modified for C#.
         //Including source file would be very difficult.
