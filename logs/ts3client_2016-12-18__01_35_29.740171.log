@@ -1,0 +1,8 @@
+
+
+==================================================================================================================================
+
+2016-12-18 01:35:29.741171|WARNING |              |   |User-Logging enabled but onUserLoggingMessageEvent callback is NULL. No User-Logging will take place
+2016-12-18 01:35:29.741171|INFO    |              |   |TeamSpeak 3 Client 3.0.3.2 (2015-06-10 10:47:37) SDK
+2016-12-18 01:35:29.741171|INFO    |              |   |SystemInformation: Windows 9 8664 {10} {0} {14393}  (14393) x64 (AMD or Intel) Binary: 64bit
+2016-12-18 01:35:29.741671|INFO    |              |   |Using hardware aes
