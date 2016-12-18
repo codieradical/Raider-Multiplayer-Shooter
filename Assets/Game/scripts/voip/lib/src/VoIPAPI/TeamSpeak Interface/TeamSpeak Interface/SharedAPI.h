@@ -12,9 +12,9 @@
 
 extern "C"
 {
-	EXPORT void SetupLogging(void(*_logCallback)(char* message));
+	EXPORT void SetupLogging(void(*_logCallback)(std::string message));
 	//VoIPClient bool StartClient(char* username, char* ipAddr, void(*disconnectCallback)(int exitCode, char* exitDetails));
-	EXPORT bool StartClient(char * username, char * ipAddr, int port, ClientUIFunctions callbacks, char* path);
+	EXPORT bool StartClient(std::string username, std::string ipAddr, int port, ClientUIFunctions callbacks, std::string path);
 	EXPORT bool StopClient();
 	EXPORT bool StartServer();
 }
@@ -24,6 +24,6 @@ class SharedAPI
 public:
 	SharedAPI();
 	~SharedAPI();
-	static void(*SharedAPI::logCallback)(char* message);
+	static void(*SharedAPI::logCallback)(std::string message);
 };
 

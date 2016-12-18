@@ -1,3 +1,4 @@
+#include <string.h>
 #include "VoIPClient.h"
 #include "SharedAPI.h"
 #include <utility>
@@ -201,7 +202,9 @@ uint64 VoIPClient::scHandlerID;
 char* VoIPClient::version;
 char* VoIPClient::identity;
 
-bool VoIPClient::StartClient(char* username, char* ipAddr, int port, ClientUIFunctions callbacks, char* path)
+#include <string.h>
+
+bool VoIPClient::StartClient(std::string username, std::string ipAddr, int port, ClientUIFunctions callbacks, std::string path)
 {
 	/* Callback function pointers */
 	/* It is sufficient to only assign those callback functions you are using. When adding more callbacks, add those function pointers here. */
@@ -217,7 +220,7 @@ bool VoIPClient::StartClient(char* username, char* ipAddr, int port, ClientUIFun
 
 	/* Initialize client lib with callbacks */
 	/* Resource path points to the SDK\bin directory to locate the soundbackends*/
-	error = ts3client_initClientLib(&callbacks, NULL, LogType_FILE | LogType_CONSOLE | LogType_USERLOGGING, NULL, path);
+	error = ts3client_initClientLib(&callbacks, NULL, LogType_FILE | LogType_CONSOLE | LogType_USERLOGGING, NULL, path.c_str());
 
 	if (error != ERROR_ok) {
 		char* errormsg;
@@ -259,7 +262,7 @@ bool VoIPClient::StartClient(char* username, char* ipAddr, int port, ClientUIFun
 	}
 
 	/* Connect to server on localhost:9987 with nickname "client", no default channel, no default channel password and server password "secret" */
-	if ((error = ts3client_startConnection(scHandlerID, identity, ipAddr, port, username, NULL, "", "secret")) != ERROR_ok) {
+	if ((error = ts3client_startConnection(scHandlerID, identity, ipAddr.c_str(), port, username.c_str(), NULL, "", "secret")) != ERROR_ok) {
 		SharedAPI::logCallback("Error connecting to server:");
 		SharedAPI::logCallback((char*)(std::to_string(error)).c_str());
 		return false;
