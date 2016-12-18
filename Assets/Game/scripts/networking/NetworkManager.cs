@@ -122,6 +122,12 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
+        public override void OnLobbyClientDisconnect(NetworkConnection conn)
+        {
+            base.OnLobbyClientDisconnect(conn);
+            onNetworkStateClient();
+        }
+
         //Used to call SendReadyToBeginMessage on PlayerData from other classes.
         public void ReadyToBegin()
         {
@@ -234,6 +240,14 @@ namespace Raider.Game.Networking
             //Matchmaking?
         }
 
+        //In order to make sure these delegates are called when required,
+        //Lobby disconnect methods need to be overriden.
+        public delegate void OnNetworkStateSwitched();
+        public OnNetworkStateSwitched onNetworkStateOffline;
+        public OnNetworkStateSwitched onNetworkStateHost;
+        public OnNetworkStateSwitched onNetworkStateClient;
+        public OnNetworkStateSwitched onNetworkStateServer;
+
         public NetworkState CurrentNetworkState
         {
             get
@@ -254,13 +268,25 @@ namespace Raider.Game.Networking
             {
                 //Call methods to switch state by starting/stopping communications.
                 if (value == NetworkState.Client)
+                {
                     StartClient();
+                    onNetworkStateClient();
+                }
                 else if (value == NetworkState.Host)
+                {
                     StartHost();
+                    onNetworkStateHost();
+                }
                 else if (value == NetworkState.Server)
+                {
                     StartServer();
+                    onNetworkStateServer();
+                }
                 else if (value == NetworkState.Offline)
+                {
                     StopCommunications();
+                    onNetworkStateOffline();
+                }
 
                 //Sometimes this works now, sometimes it needs another frame.
                 UpdateLobbyNameplates();
