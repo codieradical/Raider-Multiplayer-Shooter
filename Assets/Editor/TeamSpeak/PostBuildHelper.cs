@@ -32,14 +32,14 @@ public static class PostBuildHelper
 		#endif
 		#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
 	        buildDataDir = targetdir.FullName + divider + buildname + dataMarker + divider;
-			Directory.CreateDirectory(buildDataDir + "VoIP" + divider + "soundbackends");
+			Directory.CreateDirectory(buildDataDir + "Plugins" + divider + "soundbackends");
 			#if UNITY_STANDALONE_WIN
-	        	File.Copy(Application.dataPath + divider + "VoIP" + divider + "soundbackends" + divider + "directsound_win32.dll",buildDataDir + "VoIP" + divider + "soundbackends" + divider + "directsound_win32.dll");
-				File.Copy(Application.dataPath + divider + "VoIP" + divider + "soundbackends" + divider + "directsound_win64.dll",buildDataDir + "VoIP" + divider + "soundbackends" + divider + "directsound_win64.dll");
-				File.Copy(Application.dataPath + divider + "VoIP" + divider + "soundbackends" + divider + "windowsaudiosession_win32.dll",buildDataDir + "VoIP" + divider + "soundbackends" + divider + "windowsaudiosession_win32.dll");
-				File.Copy(Application.dataPath + divider + "VoIP" + divider + "soundbackends" + divider + "windowsaudiosession_win64.dll",buildDataDir + "VoIP" + divider + "soundbackends" + divider + "windowsaudiosession_win64.dll");
+	        	File.Copy(Application.dataPath + divider + "Game/scripts/voip" + divider + "soundbackends" + divider + "directsound_win32.dll",buildDataDir + "Plugins" + divider + "soundbackends" + divider + "directsound_win32.dll");
+				File.Copy(Application.dataPath + divider + "Game/scripts/voip" + divider + "soundbackends" + divider + "directsound_win64.dll",buildDataDir + "Plugins" + divider + "soundbackends" + divider + "directsound_win64.dll");
+				File.Copy(Application.dataPath + divider + "Game/scripts/voip" + divider + "soundbackends" + divider + "windowsaudiosession_win32.dll",buildDataDir + "Plugins" + divider + "soundbackends" + divider + "windowsaudiosession_win32.dll");
+				File.Copy(Application.dataPath + divider + "Game/scripts/voip" + divider + "soundbackends" + divider + "windowsaudiosession_win64.dll",buildDataDir + "Plugins" + divider + "soundbackends" + divider + "windowsaudiosession_win64.dll");
 #elif UNITY_STANDALONE_OSX
-				File.Copy(Application.dataPath + divider + "VoIP" + divider + "soundbackends" + divider + "libcoreaudio_mac.dylib",buildDataDir + "VoIP" + divider + "soundbackends" + divider + "libcoreaudio_mac.dylib");
+				File.Copy(Application.dataPath + divider + "Game/scripts/voip" + divider + "soundbackends" + divider + "libcoreaudio_mac.dylib",buildDataDir + "Plugins" + divider + "soundbackends" + divider + "libcoreaudio_mac.dylib");
 #endif
 #endif
 

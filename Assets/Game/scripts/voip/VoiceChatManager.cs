@@ -37,16 +37,16 @@ namespace Raider.Game.Networking.VoIP
         void TeamSpeakLogging(string message)
         {
             Debug.Log(message);
-            Raider.Game.GUI.UserFeedback.LogError(message);
+            //Raider.Game.GUI.UserFeedback.LogError(message);
         }
 
         // Use this for initialization
         void Start()
         {
 #if UNITY_EDITOR
-            SoundbackendsPath = Application.dataPath + "/Game/scripts/voip";
+            SoundbackendsPath = Application.dataPath + "/Game/scripts/voip/";
 #else
-            SoundbackendsPath = Application.dataPath + "/VoIP";
+            SoundbackendsPath = Application.dataPath + "/Plugins/";
 #endif
             SetupLogging(TeamSpeakLogging);
 
