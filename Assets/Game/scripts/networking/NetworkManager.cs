@@ -118,6 +118,24 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
+        //Called on a server or host when the server starts.
+        public NetworkMessage onStartServer;
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            if (onStartServer != null)
+                onStartServer();
+        }
+
+        //Called on a client when they connect.
+        public NetworkMessage onClientConnect;
+        public override void OnClientConnect(NetworkConnection conn)
+        {
+            base.OnClientConnect(conn);
+            if (onClientConnect != null)
+                onClientConnect();
+        }
+
         //Called on a server or host when the server stops.
         public NetworkMessage onStopServer;
         public override void OnStopServer()
@@ -277,22 +295,26 @@ namespace Raider.Game.Networking
                 if (value == NetworkState.Client)
                 {
                     StartClient();
-                    onNetworkStateClient();
+                    if(onNetworkStateClient != null)
+                        onNetworkStateClient();
                 }
                 else if (value == NetworkState.Host)
                 {
                     StartHost();
-                    onNetworkStateHost();
+                    if (onNetworkStateHost != null)
+                        onNetworkStateHost();
                 }
                 else if (value == NetworkState.Server)
                 {
                     StartServer();
-                    onNetworkStateServer();
+                    if (onNetworkStateHost != null)
+                        onNetworkStateServer();
                 }
                 else if (value == NetworkState.Offline)
                 {
                     StopCommunications();
-                    onNetworkStateOffline();
+                    if (onNetworkStateOffline != null)
+                        onNetworkStateOffline();
                 }
 
                 //Sometimes this works now, sometimes it needs another frame.

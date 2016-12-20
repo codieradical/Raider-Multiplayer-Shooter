@@ -10,17 +10,27 @@ namespace Raider.Game.Networking.VoIP
     //This part contains all management functions.
     public partial class VoiceChatManager : MonoBehaviour
     {
-#if UNITY_64
-        const string INTERFACE_DLL_NAME = "TeamSpeakInterface64";
-#elif UNITY_32
-        const string INTERFACE_DLL_NAME = "TeamSpeakInterface32";
-#else
-        const string INTERFACE_DLL_NAME = "TeamSpeakInterface";
-#endif
+        #if UNITY_EDITOR
+            #if UNITY_64
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64_edi";
+            #elif UNITY_32
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32_edi";
+            #endif
+        #elif !UNITY_EDITOR
+            #if UNITY_64
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64";
+            #elif UNITY_32
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32";
+            #endif
+        #endif
+
         static string SoundbackendsPath;
 
+#region DLL Imports
+
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "SetupLogging")]
-        static extern void SetupLogging(Action<string> logCallback);
+        static extern void SetupLogging(
+            [MarshalAs(UnmanagedType.FunctionPtr)]Action<string> logCallback);
 
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartClient")]
         static extern bool StartClient(
@@ -33,12 +43,17 @@ namespace Raider.Game.Networking.VoIP
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StopClient")]
         static extern bool StopClient();
 
-        void OnClientDisconnect(int exitCode, string details)
-        {
-            Raider.Game.GUI.UserFeedback.LogError("VoIP ended with exit code " + exitCode.ToString());
-            Raider.Game.GUI.UserFeedback.LogError(details);
-            //ChatManager.
-        }
+        [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartServer")]
+        static extern bool StartServer(
+            [MarshalAs(UnmanagedType.LPStr)] string ipAddr,
+            int port,
+            [MarshalAs(UnmanagedType.LPStr)] string serverName,
+            ServerLibFunctions callbacks);
+
+        [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartServer")]
+        static extern bool StopServer();
+
+#endregion
 
         void TeamSpeakLogging(string message)
         {
@@ -46,23 +61,33 @@ namespace Raider.Game.Networking.VoIP
             //Raider.Game.GUI.UserFeedback.LogError(message);
         }
 
-        // Use this for initialization
+        //Setup sound backends,
+        //Setup logging,
+        //Setup delegates.
         void Start()
         {
 #if UNITY_EDITOR
-            SoundbackendsPath = Application.dataPath + "/Game/scripts/voip/";
+                SoundbackendsPath = Application.dataPath + "/Game/scripts/voip/";
 #else
-            SoundbackendsPath = Application.dataPath + "/Plugins/";
+                SoundbackendsPath = Application.dataPath + "/Plugins/";
 #endif
+
             SetupLogging(TeamSpeakLogging);
 
-            NetworkManager.instance.onNetworkStateClient += StartVoIPClient;
+            NetworkManager.instance.onClientConnect += StartVoIPClient;
+            NetworkManager.instance.onClientDisconnect += StopVoIPClient;
+            NetworkManager.instance.onStartServer += StartVoIPServer;
+            NetworkManager.instance.onStopServer += StopVoIPServer;
         }
 
+        //Make sure that teamspeak closes if the game is shut down.
         private void OnDestroy()
         {
+            StopServer();
             StopClient();
         }
+
+#region Client Functions
 
         void StartVoIPClient()
         {
@@ -70,5 +95,45 @@ namespace Raider.Game.Networking.VoIP
             //username should be replaced with slot number.
             StartClient(Session.saveDataHandler.GetUsername(), NetworkManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
         }
+
+        void StopVoIPClient()
+        {
+            StopClient();
+        }
+
+#endregion
+
+#region Server Functions
+
+        void StartVoIPServer()
+        {
+            ServerLibFunctions callbacks = new ServerLibFunctions();
+
+            if(NetworkManager.instance.networkAddress == "localhost" || NetworkManager.instance.networkAddress == "127.0.0.1")
+                StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
+            else
+                StartServer(NetworkManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
+        }
+
+        void StopVoIPServer()
+        {
+            StopServer();
+        }
+
+#endregion
+
+#region Client Callbacks
+
+        void OnClientDisconnect(int exitCode, string details)
+        {
+            TeamSpeakLogging("VoIP ended with exit code " + exitCode.ToString());
+            TeamSpeakLogging(details);
+        }
+
+#endregion
+
+#region Server Callbacks
+
+#endregion
     }
 }
