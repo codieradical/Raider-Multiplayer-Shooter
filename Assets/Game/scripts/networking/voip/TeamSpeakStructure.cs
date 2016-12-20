@@ -1,64 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Runtime.InteropServices;
-using System;
-using Raider.Game.Networking;
+﻿using UnityEngine;
+using System.Collections;
 
 namespace Raider.Game.Networking.VoIP
 {
-
-    public class VoiceChatManager : MonoBehaviour
+    //This part containes TeamSpeak structs.
+    //Referencing another class makes things complicated with the DLL imports.
+    //And this is clean too.
+    public partial class VoiceChatManager : MonoBehaviour
     {
-        const string INTERFACE_DLL_NAME = "TeamSpeak Interface";
-        static string SoundbackendsPath;
-
-        [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
-        static extern void SetupLogging(Action<string> logCallback);
-
-        [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
-        static extern bool StartClient(
-            [MarshalAs(UnmanagedType.LPStr)] string username,
-            [MarshalAs(UnmanagedType.LPStr)] string ipAddr, 
-            int port,
-            [MarshalAs(UnmanagedType.LPStr)] string path, 
-            ClientUIFunctions callbacks);
-
-        [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode)]
-        static extern bool StopClient();
-
-        void OnClientDisconnect(int exitCode, string details)
-        {
-            Raider.Game.GUI.UserFeedback.LogError("VoIP ended with exit code " + exitCode.ToString());
-            Raider.Game.GUI.UserFeedback.LogError(details);
-            //ChatManager.
-        }
-
-        void TeamSpeakLogging(string message)
-        {
-            Debug.Log(message);
-            //Raider.Game.GUI.UserFeedback.LogError(message);
-        }
-
-        // Use this for initialization
-        void Start()
-        {
-#if UNITY_EDITOR
-            SoundbackendsPath = Application.dataPath + "/Game/scripts/voip/";
-#else
-            SoundbackendsPath = Application.dataPath + "/Plugins/";
-#endif
-            SetupLogging(TeamSpeakLogging);
-
-            NetworkManager.instance.onNetworkStateClient += StartVoIPClient;
-        }
-
-        void StartVoIPClient()
-        {
-            ClientUIFunctions callbacks = new ClientUIFunctions();
-            //username should be replaced with slot number.
-            StartClient(Session.saveDataHandler.GetUsername(), NetworkManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
-        }
 
         //This struct was taken from the TeamSpeak 3 C++ SDK and modified for C#.
         //Including source file would be very difficult.
@@ -161,5 +110,6 @@ namespace Raider.Game.Networking.VoIP
             public delegate void OnFileListFinishedEvent(UInt64 serverConnectionHandlerID, UInt64 channelID, char[] path);
             public delegate void OnFileInfoEvent(UInt64 serverConnectionHandlerID, UInt64 channelID, char[] name, UInt64 size, UInt64 datetime);
         } //END OF ClientUIFunctions
+
     }
 }

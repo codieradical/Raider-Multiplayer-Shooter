@@ -1,0 +1,43 @@
+
+
+==================================================================================================================================
+
+2016-12-20 00:21:38.669009|WARNING |              |   |User-Logging enabled but onUserLoggingMessageEvent callback is NULL. No User-Logging will take place
+2016-12-20 00:21:38.669009|INFO    |              |   |TeamSpeak 3 Client 3.0.3.2 (2015-06-10 10:47:37) SDK
+2016-12-20 00:21:38.669009|INFO    |              |   |SystemInformation: Windows 9 8664 {10} {0} {14393}  (14393) x64 (AMD or Intel) Binary: 64bit
+2016-12-20 00:21:38.669508|INFO    |              |   |Using hardware aes
+2016-12-20 00:21:38.726549|DEBUG   |Direct Sound  |   |setting timer resolution to 1ms
+2016-12-20 00:21:38.749566|DEBUG   |Windows Audio Session|   |WAS::openDevice-enter
+2016-12-20 00:21:38.887162|DEBUG   |Windows Audio Session|   |WAS Buffer size: 1056
+2016-12-20 00:21:38.887664|DEBUG   |Windows Audio Session|   |WAS::openDevice-leave
+2016-12-20 00:21:38.911682|INFO    |PreProSpeex   |1  |Speex version: speex-1.2beta3
+2016-12-20 00:21:38.912182|DEBUG   |Windows Audio Session|   |WAS::startDevice-enter
+2016-12-20 00:21:38.917185|DEBUG   |Windows Audio Session|   |WAS::startDevice-leave
+2016-12-20 00:21:38.917185|DEBUG   |Windows Audio Session|   |WAS::openDevice-enter
+2016-12-20 00:21:38.934697|DEBUG   |Windows Audio Session|   |WAS Buffer size: 1056
+2016-12-20 00:21:38.935197|DEBUG   |Windows Audio Session|   |WAS::openDevice-leave
+2016-12-20 00:21:38.935197|DEBUG   |Windows Audio Session|   |WAS::startDevice-enter
+2016-12-20 00:21:38.936698|DEBUG   |Windows Audio Session|   |WAS::startDevice-leave
+2016-12-20 00:21:45.489366|DEBUG   |Windows Audio Session|   |WAS::stopDevice-enter
+2016-12-20 00:21:45.489366|DEBUG   |Windows Audio Session|   |WAS::stopDevice-leave
+2016-12-20 00:21:45.489366|DEBUG   |Windows Audio Session|   |WAS::closeDevice-enter
+2016-12-20 00:21:45.489366|DEVELOP |Windows Audio Session|   |DeviceDeleteList::queueDeviceDelete - enter
+2016-12-20 00:21:45.489366|DEVELOP |Windows Audio Session|   |DeviceDeleteList::queueDeviceDelete - leave
+2016-12-20 00:21:45.489366|DEBUG   |Windows Audio Session|   |WAS::closeDevice-leave
+2016-12-20 00:21:45.489366|DEVELOP |Windows Audio Session|   |DeviceDeleteList::clearQueue - enter
+2016-12-20 00:21:45.489366|DEVELOP |Windows Audio Session|   |DeviceDeleteList::waitForDeletes - enter
+2016-12-20 00:21:45.489366|DEVELOP |Windows Audio Session|   |Waiting for device to close 
+2016-12-20 00:21:45.696514|DEVELOP |Windows Audio Session|   |DeviceDeleteList::waitForDeletes - leave
+2016-12-20 00:21:45.696514|DEVELOP |Windows Audio Session|   |DeviceDeleteList::clearQueue - leave 
+2016-12-20 00:21:45.896656|DEBUG   |Windows Audio Session|   |WAS::stopDevice-enter
+2016-12-20 00:21:45.897156|DEBUG   |Windows Audio Session|   |WAS::stopDevice-leave
+2016-12-20 00:21:45.897156|DEBUG   |Windows Audio Session|   |WAS::closeDevice-enter
+2016-12-20 00:21:45.897156|DEVELOP |Windows Audio Session|   |DeviceDeleteList::queueDeviceDelete - enter
+2016-12-20 00:21:45.897156|DEVELOP |Windows Audio Session|   |DeviceDeleteList::queueDeviceDelete - leave
+2016-12-20 00:21:45.897156|DEVELOP |Windows Audio Session|   |DeviceDeleteList::clearQueue - enter
+2016-12-20 00:21:45.897156|DEBUG   |Windows Audio Session|   |WAS::closeDevice-leave
+2016-12-20 00:21:45.897156|DEVELOP |Windows Audio Session|   |DeviceDeleteList::waitForDeletes - enter
+2016-12-20 00:21:45.897156|DEVELOP |Windows Audio Session|   |Waiting for device to close 
+2016-12-20 00:21:45.899661|DEVELOP |Windows Audio Session|   |DeviceDeleteList::clearQueue - leave 
+2016-12-20 00:21:45.899661|DEVELOP |Windows Audio Session|   |DeviceDeleteList::waitForDeletes - leave
+2016-12-20 00:21:45.900659|DEVELOP |Windows Audio Session|   |DeviceDeleteList::clearQueue - enter

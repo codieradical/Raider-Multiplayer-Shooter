@@ -55,6 +55,7 @@ namespace Raider.Game.Networking
         //This Queue is used to store function calls which will be processed next frame.
         //I really need to refactor this.
         public Queue<Action> actionQueue = new Queue<Action>();
+        public delegate void NetworkMessage();
 
         void Update()
         {
@@ -91,11 +92,6 @@ namespace Raider.Game.Networking
             }
         }
 
-        public override void OnClientDisconnect(NetworkConnection conn)
-        {
-            base.OnClientDisconnect(conn);
-        }
-
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
             gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;
@@ -122,10 +118,22 @@ namespace Raider.Game.Networking
 
         #region Lobby Methods
 
-        public override void OnLobbyClientDisconnect(NetworkConnection conn)
+        //Called on a server or host when the server stops.
+        public NetworkMessage onStopServer;
+        public override void OnStopServer()
         {
-            base.OnLobbyClientDisconnect(conn);
-            onNetworkStateClient();
+            base.OnStopServer();
+            if(onStopServer != null)
+                onStopServer();
+        }
+
+        //Called on the client when they disconnect.
+        public NetworkMessage onClientDisconnect;
+        public override void OnClientDisconnect(NetworkConnection conn)
+        {
+            base.OnClientDisconnect(conn);
+            if(onClientDisconnect != null)
+                onClientDisconnect();
         }
 
         //Used to call SendReadyToBeginMessage on PlayerData from other classes.
@@ -242,11 +250,10 @@ namespace Raider.Game.Networking
 
         //In order to make sure these delegates are called when required,
         //Lobby disconnect methods need to be overriden.
-        public delegate void OnNetworkStateSwitched();
-        public OnNetworkStateSwitched onNetworkStateOffline;
-        public OnNetworkStateSwitched onNetworkStateHost;
-        public OnNetworkStateSwitched onNetworkStateClient;
-        public OnNetworkStateSwitched onNetworkStateServer;
+        public NetworkMessage onNetworkStateOffline;
+        public NetworkMessage onNetworkStateHost;
+        public NetworkMessage onNetworkStateClient;
+        public NetworkMessage onNetworkStateServer;
 
         public NetworkState CurrentNetworkState
         {
