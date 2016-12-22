@@ -1,4 +1,5 @@
 ﻿using Raider.Game.Networking;
+using Raider.Game.Player;
 using Raider.Game.Scene;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Raider.Game.GUI.StartMenu
         public StartMenuPlayer startMenuPlayer;
         public StartMenuSettings startMenuSettings;
 
-        private StartMenuPane defaultPane
+        private StartMenuPane DefaultPane
         {
             get
             {
@@ -88,9 +89,9 @@ namespace Raider.Game.GUI.StartMenu
             SetupStartMenuData();
 
             if (!Scenario.InLobby)
-                Player.Player.localPlayer.PausePlayer();
+                PlayerData.localPlayerData.playerManager.PausePlayer();
 
-            OpenAPane(defaultPane);
+            OpenAPane(DefaultPane);
 
             IsOpen = true;
         }
@@ -102,13 +103,13 @@ namespace Raider.Game.GUI.StartMenu
             if (Scenario.InLobby)
                 gametypeLabel.text = "Mainmenu";
             else
-                gametypeLabel.text = NetworkManager.instance.lobbySetup.GametypeString;
+                gametypeLabel.text = NetworkGameManager.instance.lobbySetup.GametypeString;
         }
 
         public void CloseStartMenu()
         {
             if (!Scenario.InLobby)
-                Player.Player.localPlayer.UnpausePlayer();
+                PlayerData.localPlayerData.playerManager.UnpausePlayer();
 
             CloseActivePane();
 

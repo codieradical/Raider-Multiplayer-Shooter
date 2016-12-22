@@ -7,17 +7,18 @@ using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 using System;
 using Raider.Game.Scene;
+using Raider.Game.Player;
 
 namespace Raider.Game.Networking
 {
 
-    public class NetworkManager : NetworkLobbyManager
+    public class NetworkGameManager : NetworkLobbyManager
     {
 
         #region singleton setup
 
         //This class already inherits a singleton...
-        public static NetworkManager instance;
+        public static NetworkGameManager instance;
         public GameObject lobbyGameObject;
         public LobbySetup lobbySetup;
 
@@ -65,16 +66,33 @@ namespace Raider.Game.Networking
             }
         }
 
-        public List<LobbyPlayerData> Players
+        public List<NetworkLobbyPlayerSetup> LobbyPlayers
         {
             get
             {
-                List<LobbyPlayerData> _players = new List<LobbyPlayerData>();
+                List<NetworkLobbyPlayerSetup> _players = new List<NetworkLobbyPlayerSetup>();
                 foreach (Transform playerObject in lobbyGameObject.transform)
                 {
-                    _players.Add(playerObject.GetComponent<LobbyPlayerData>());
+                    _players.Add(playerObject.GetComponent<NetworkLobbyPlayerSetup>());
                 }
                 return _players;
+            }
+        }
+
+        public PlayerData[] Players
+        {
+            get
+            {
+                if (Scenario.InLobby)
+                {
+                    List<PlayerData> players = new List<PlayerData>();
+                    foreach (NetworkLobbyPlayerSetup lobbyPlayer in LobbyPlayers)
+                    {
+                        players.Add(lobbyPlayer.GetComponent<PlayerData>());
+                    }
+                    return players.ToArray();
+                }
+                else return FindObjectsOfType<PlayerData>();
             }
         }
 
@@ -82,8 +100,8 @@ namespace Raider.Game.Networking
         {
             get
             {
-                if (LobbyPlayerData.localPlayer != null)
-                    if (LobbyPlayerData.localPlayer.isLeader)
+                if (PlayerData.localPlayerData != null)
+                    if (PlayerData.localPlayerData.isLeader)
                         return true;
                     else
                         return false;
@@ -94,23 +112,24 @@ namespace Raider.Game.Networking
 
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
-            gamePlayer.GetComponent<Player.Player>().slot = lobbyPlayer.GetComponent<NetworkLobbyPlayer>().slot;
+            gamePlayer.GetComponent<PlayerData>().slot = lobbyPlayer.GetComponent<PlayerData>().slot;
             return true;
         }
 
-        public override void OnClientSceneChanged(NetworkConnection conn)
+        /// <summary>
+        /// Get the slot number from the lobby or game player object.
+        /// </summary>
+        /// <returns>Returns the int slot.</returns>
+        public int GetMyPlayerSlot()
         {
-            base.OnClientSceneChanged(conn);
-            //Make sure the lobby player is still active.
-            lobbyGameObject.SetActive(true);
-            LobbyPlayerData.localPlayer.gameObject.SetActive(true);
+            return PlayerData.localPlayerData.slot;
         }
 
-        public LobbyPlayerData GetLobbyPlayerBySlot(int gamePlayerSlot)
+        public PlayerData GetPlayerDataBySlot(int gamePlayerSlot)
         {
-            foreach(LobbyPlayerData player in Players)
+            foreach(PlayerData player in Players)
             {
-                if (player.GetComponent<NetworkLobbyPlayer>().slot == gamePlayerSlot)
+                if (player.GetComponent<PlayerData>().slot == gamePlayerSlot)
                     return player;
             }
             return null;
@@ -158,35 +177,19 @@ namespace Raider.Game.Networking
         public void ReadyToBegin()
         {
             if (CurrentNetworkState == NetworkState.Client || CurrentNetworkState == NetworkState.Host)
-                LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+                NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
         public override void OnServerDisconnect(NetworkConnection conn)
         {
-            if (Scenario.InLobby)
+            foreach (PlayerController playerController in conn.playerControllers)
             {
-                foreach (PlayerController playerController in conn.playerControllers)
-                {
-                    NetworkLobbyPlayer lobbyPlayer = playerController.gameObject.GetComponent<NetworkLobbyPlayer>();
+                PlayerData playerData = playerController.gameObject.GetComponent<PlayerData>();
 
-                    if (lobbyPlayer != null)
-                    {
-                        LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendNotificationMessage("left the game.", lobbyPlayer.slot);
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                foreach (PlayerController playerController in conn.playerControllers)
+                if (playerData != null)
                 {
-                    Player.Player player = playerController.gameObject.GetComponent<Player.Player>();
-
-                    if (player != null)
-                    {
-                        LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendNotificationMessage("left the game.", player.slot);
-                        break;
-                    }
+                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.slot);
+                    break;
                 }
             }
 
@@ -195,7 +198,7 @@ namespace Raider.Game.Networking
 
         public override void OnLobbyServerPlayersReady()
         {
-            LobbyPlayerData.localPlayer.RpcUpdateScenarioGametype();
+            NetworkLobbyPlayerSetup.localPlayer.RpcUpdateScenarioGametype();
             base.OnLobbyServerPlayersReady();
         }
 
@@ -237,10 +240,10 @@ namespace Raider.Game.Networking
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                foreach (LobbyPlayerData playerData in Players)
+                foreach (PlayerData playerData in Players)
                 {
                     if (playerData.gotData)
-                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.Username, playerData.isLeader, false, false, playerData.character));
+                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.name, playerData.isLeader, false, false, playerData.character));
                     else
                         LobbyHandler.AddLoadingPlayer();
                 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using Raider.Game.Networking;
+using Raider.Game.Player;
 
 namespace Raider.Game.Networking.VoIP
 {
@@ -74,10 +75,10 @@ namespace Raider.Game.Networking.VoIP
 
             SetupLogging(TeamSpeakLogging);
 
-            NetworkManager.instance.onClientConnect += StartVoIPClient;
-            NetworkManager.instance.onClientDisconnect += StopVoIPClient;
-            NetworkManager.instance.onStartServer += StartVoIPServer;
-            NetworkManager.instance.onStopServer += StopVoIPServer;
+            NetworkLobbyPlayerSetup.onLocalLobbyPlayerStart += StartVoIPClient;
+            NetworkGameManager.instance.onClientDisconnect += StopVoIPClient;
+            NetworkGameManager.instance.onStartServer += StartVoIPServer;
+            NetworkGameManager.instance.onStopServer += StopVoIPServer;
         }
 
         //Make sure that teamspeak closes if the game is shut down.
@@ -93,7 +94,7 @@ namespace Raider.Game.Networking.VoIP
         {
             ClientUIFunctions callbacks = new ClientUIFunctions();
             //username should be replaced with slot number.
-            StartClient(Session.saveDataHandler.GetUsername(), NetworkManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
+            StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
         }
 
         void StopVoIPClient()
@@ -109,10 +110,10 @@ namespace Raider.Game.Networking.VoIP
         {
             ServerLibFunctions callbacks = new ServerLibFunctions();
 
-            if(NetworkManager.instance.networkAddress == "localhost" || NetworkManager.instance.networkAddress == "127.0.0.1")
+            if(NetworkGameManager.instance.networkAddress == "localhost" || NetworkGameManager.instance.networkAddress == "127.0.0.1")
                 StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
             else
-                StartServer(NetworkManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
+                StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
         }
 
         void StopVoIPServer()

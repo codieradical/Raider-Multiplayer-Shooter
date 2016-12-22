@@ -6,13 +6,14 @@ using Raider.Game.Networking;
 using Raider.Game.GUI;
 using Raider.Game.GUI.Screens;
 using System;
+using Raider.Game.Player;
 
-namespace Raider.Game.Networking
+namespace Raider.Game.Player
 {
     /// <summary>
     /// Chat manager, attaches to network lobby player.
     /// </summary>
-    public class ChatManager : NetworkBehaviour
+    public class PlayerChatManager : NetworkBehaviour
     {
         //Read by the ChatUIHandler.
         public static readonly int maxChatHistory = 150;
@@ -58,9 +59,9 @@ namespace Raider.Game.Networking
             if (input.StartsWith("/me"))
                 input = "* " + GetFormattedUsername(playerSlot) + input.Replace("/me","");
             else if (input.StartsWith("/leave"))
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-            else if (input.StartsWith("/endgame") && (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host))
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+            else if (input.StartsWith("/endgame") && (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host))
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
             else
                 input = string.Format("<{0}> {1}", GetFormattedUsername(playerSlot), input);
             return input;
@@ -70,7 +71,7 @@ namespace Raider.Game.Networking
         void RpcUpdateClientChat(string message)
         {
             //Hosts and servers already add the message to the log during the CMD.
-            if(NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
+            if(NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)
                 chatLog.Push(message);
 
             ChatUiHandler.instance.AddMessageToFullLog(message);
@@ -84,7 +85,7 @@ namespace Raider.Game.Networking
         /// <returns></returns>
         string GetFormattedUsername(int playerSlot)
         {
-            LobbyPlayerData playerData = NetworkManager.instance.GetLobbyPlayerBySlot(playerSlot);
+            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataBySlot(playerSlot);
             return AddBoldCode(AddColorCode(playerData.character.armourPrimaryColor.Color, playerData.name));
         }
 

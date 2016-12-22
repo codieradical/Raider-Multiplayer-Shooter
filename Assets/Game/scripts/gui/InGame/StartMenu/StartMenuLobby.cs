@@ -9,7 +9,7 @@ namespace Raider.Game.GUI.StartMenu
     {
         protected override void SetupPaneData()
         {
-            NetworkManager.instance.UpdateLobbyNameplates();
+            NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
     }

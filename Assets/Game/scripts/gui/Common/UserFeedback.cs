@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI
 {
@@ -36,10 +37,8 @@ namespace Raider.Game.GUI
             AddToLog(message);
 
             //I need to think about this more but for now, these belong here.
-            if (Scene.Scenario.InLobby)
-                Networking.LobbyPlayerData.localPlayer.GetComponent<Networking.ChatManager>().SendLocalNotificationMessage(message);
-            else if (Player.Player.localPlayer != null)
-                Player.Player.localPlayer.GetComponent<Networking.ChatManager>().SendLocalNotificationMessage(message);
+            if(Networking.NetworkGameManager.instance.CurrentNetworkState != Networking.NetworkGameManager.NetworkState.Offline)
+            PlayerData.localPlayerData.GetComponent<PlayerChatManager>().SendLocalNotificationMessage(message);
         }
 
         private static void AddToLog(string line)

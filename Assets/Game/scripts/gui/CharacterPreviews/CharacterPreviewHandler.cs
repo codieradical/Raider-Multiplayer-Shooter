@@ -175,7 +175,7 @@ namespace Raider.Game.GUI.CharacterPreviews
                 return;
 
             PlayerAppearenceController _appearenceController = _previewGraphics.GetComponent<PlayerAppearenceController>();
-            _appearenceController.UpdatePlayerAppearence(update.previewName, update.previewCharacter);
+            _appearenceController.UpdatePlayerAppearence(update.previewCharacter);
             
         }
 

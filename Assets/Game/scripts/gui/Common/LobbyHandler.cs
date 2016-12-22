@@ -6,6 +6,7 @@ using System;
 using Raider.Game.Saves;
 using Raider.Game.GUI.Layout;
 using Raider.Game.Networking;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI.Components
 {
@@ -120,10 +121,10 @@ namespace Raider.Game.GUI.Components
 					Destroy(nameplate.gameObject);
 				}
 
-                if (players.Count >= NetworkManager.instance.maxPlayers)
-                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                if (players.Count >= NetworkGameManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkGameManager.instance.maxPlayers.ToString() + "]";
                 else
-                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkGameManager.instance.maxPlayers.ToString() + "]";
             }
         }
 
@@ -194,21 +195,21 @@ namespace Raider.Game.GUI.Components
 				else
 					nameplate32.GetComponent<LobbyNameplateHandler> ().SetupNameplate (player, instance.headerPanelGameObject, instance.thirtyTwoPlayerLobbyPlayerContainer[1]);
 
-                if (players.Count >= NetworkManager.instance.maxPlayers)
-                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                if (players.Count >= NetworkGameManager.instance.maxPlayers)
+                    instance.lobbyStateText.text = "full [" + players.Count.ToString() + "/" + NetworkGameManager.instance.maxPlayers.ToString() + "]";
                 else
-                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkManager.instance.maxPlayers.ToString() + "]";
+                    instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkGameManager.instance.maxPlayers.ToString() + "]";
 
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Offline)
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Offline)
                     instance.lobbyOwnerText.text = Session.saveDataHandler.GetUsername() + "'s Lobby";
                 //I would like this to be the host's username.
                 else
                 {
-                    foreach (LobbyPlayerData lobbyPlayer in NetworkManager.instance.Players)
+                    foreach (PlayerData playerData in NetworkGameManager.instance.Players)
                     {
-                        if (lobbyPlayer.isHost)
+                        if (playerData.isHost)
                         {
-                            instance.lobbyOwnerText.text = lobbyPlayer.name + "'s Lobby";
+                            instance.lobbyOwnerText.text = playerData.name + " is the Leader.";
                             break;
                         }
                     }

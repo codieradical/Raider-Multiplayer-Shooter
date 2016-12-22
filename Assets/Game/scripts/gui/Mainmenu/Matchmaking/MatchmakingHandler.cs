@@ -25,14 +25,14 @@ namespace Raider.Game.GUI.Screens
             {
                 Debug.LogWarning("User attempted to join a server with no character selected!");
             }
-            if(NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
             {
                 Debug.LogWarning("User attempted to join a server while already in a server!");
             }
-            NetworkManager.instance.networkAddress = ipTxt.text;
-            NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Client;
+            NetworkGameManager.instance.networkAddress = ipTxt.text;
+            NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Client;
             //If the player sucessfully joined a game...
-            if(NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
+            if(NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)
             {
                 //Grab the lobby details.
                 GametypeButtons.instance.HideButtons();
@@ -56,18 +56,18 @@ namespace Raider.Game.GUI.Screens
 
         public void SelectNetwork(string option)
         {
-            NetworkManager.instance.lobbySetup.Network = option;
+            NetworkGameManager.instance.lobbySetup.Network = option;
             //The user might be switching from host to server, so it's important to end communications first.
             if (option == "Online")
             {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Host;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Host;
             }
 
             if (option == "Online Server")
             {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Server;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Server;
             }
 
         }

@@ -3,6 +3,7 @@ using System.Collections;
 using Raider.Game.GUI.Screens;
 using Raider.Game.GUI.StartMenu;
 using Raider.Game.Scene;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI {
 
@@ -18,7 +19,7 @@ namespace Raider.Game.GUI {
                     ChatUiHandler.instance.CloseChatInput();
 
                     if (!Scenario.InLobby)
-                        Player.Player.localPlayer.UnpausePlayer();
+                        PlayerData.localPlayerData.playerManager.UnpausePlayer();
                 }
 
                 return;
@@ -41,7 +42,7 @@ namespace Raider.Game.GUI {
                     {
                         ChatUiHandler.instance.OpenChatInput();
                         if (!Scenario.InLobby)
-                            Player.Player.localPlayer.PausePlayer();
+                            PlayerData.localPlayerData.playerManager.PausePlayer();
                     }
 
                     return;

@@ -21,7 +21,7 @@ namespace Raider.Game.Scene
         {
             get
             {
-                if (SceneManager.GetActiveScene().name == NetworkManager.instance.lobbyScene)
+                if (SceneManager.GetActiveScene().name == NetworkGameManager.instance.lobbyScene)
                     return true;
                 else
                     return false;
@@ -36,14 +36,14 @@ namespace Raider.Game.Scene
             }
             else
             {
-                if(NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+                if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
                 {
-                    if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                        NetworkManager.instance.ServerReturnToLobby();
+                    if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+                        NetworkGameManager.instance.ServerReturnToLobby();
                     else
-                        NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                        NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
                 }
-                LoadScene(NetworkManager.instance.lobbyScene, Gametype.Ui);
+                LoadScene(NetworkGameManager.instance.lobbyScene, Gametype.Ui);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Raider.Game.Scene
 
         public void NetworkLoadedScene()
         {
-            currentScene = NetworkManager.networkSceneName;
+            currentScene = NetworkGameManager.networkSceneName;
 
             if ((int)currentGametype == 1)
                 StartCoroutine(LoadGameUI());
