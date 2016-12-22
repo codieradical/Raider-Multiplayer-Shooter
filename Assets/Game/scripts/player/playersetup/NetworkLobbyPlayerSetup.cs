@@ -7,6 +7,8 @@ using System;
 
 namespace Raider.Game.Player
 {
+    [RequireComponent(typeof(PlayerData))]
+    [RequireComponent(typeof(PlayerChatManager))]
     [System.Serializable]
     public class NetworkLobbyPlayerSetup : NetworkBehaviour
     {
@@ -23,7 +25,6 @@ namespace Raider.Game.Player
 
             if (isLocalPlayer)
             {
-                gameObject.AddComponent<PlayerChatManager>();
                 localPlayer = this;
 
                 bool _isHost = false; //Update Local Data handles full assignment.

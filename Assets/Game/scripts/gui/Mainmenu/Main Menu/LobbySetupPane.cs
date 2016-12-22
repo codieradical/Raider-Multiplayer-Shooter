@@ -12,6 +12,12 @@ namespace Raider.Game.GUI.Components
     public class LobbySetupPane : MonoBehaviour
     {
 
+        public bool IsOpen
+        {
+            get { return animatorInstance.GetBool("open"); }
+            set { animatorInstance.SetBool("open", value); }
+        }
+
         public static LobbySetupPane instance;
 
         Animator animatorInstance;
@@ -25,7 +31,7 @@ namespace Raider.Game.GUI.Components
 
         public void OpenPane(Scenario.Gametype gametype)
         {
-            animatorInstance.SetBool("open", true);
+            IsOpen = true;
             NetworkGameManager.instance.lobbySetup.Gametype = gametype;
 
             NetworkGameManager.instance.lobbySetup.Network = "Offline";
@@ -41,7 +47,8 @@ namespace Raider.Game.GUI.Components
         //Used to open the pane before data has been send from the server...
         public void OpenPane()
         {
-            animatorInstance.SetBool("open", true);
+            IsOpen = true;
+
             paneTitle.text = "Loading Lobby...";
             mapLabel.text = "";
             networkLabel.text = "";
@@ -51,7 +58,7 @@ namespace Raider.Game.GUI.Components
 
         public void ClosePane()
         {
-            animatorInstance.SetBool("open", false);
+            IsOpen = false;
             GametypeButtons.instance.ShowButtons();
 
             if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
@@ -95,13 +102,6 @@ namespace Raider.Game.GUI.Components
 
         public void UpdatePaneData()
         {
-            //If the player is the leader, allow them to interact with options.
-            //Else, don't.
-            if (NetworkGameManager.instance.IsLeader)
-                GetComponent<CanvasGroup>().interactable = GetComponent<CanvasGroup>().blocksRaycasts = true;
-            else
-                GetComponent<CanvasGroup>().interactable = GetComponent<CanvasGroup>().blocksRaycasts = false;
-
             paneTitle.text = NetworkGameManager.instance.lobbySetup.GametypeString;
             mapLabel.text = NetworkGameManager.instance.lobbySetup.SelectedScene;
             networkLabel.text = NetworkGameManager.instance.lobbySetup.Network;
@@ -112,6 +112,9 @@ namespace Raider.Game.GUI.Components
 
         public void OpenMapOptions()
         {
+            if (!NetworkGameManager.instance.IsLeader)
+                return;
+
             List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
 
             foreach(string scene in Scenario.instance.GetSceneNamesByGametype(NetworkGameManager.instance.lobbySetup.Gametype))
@@ -125,6 +128,40 @@ namespace Raider.Game.GUI.Components
         public void SelectMap(string mapName)
         {
             NetworkGameManager.instance.lobbySetup.SelectedScene = mapName;
+        }
+
+        public void OpenNetworkOptions()
+        {
+            if (!NetworkGameManager.instance.IsLeader)
+                return;
+
+            List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
+
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Offline", "Splitscreen co-op. Not Yet Implemented."));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Local", "Host a Local Area Nework Lobby. Not Yet Implemented."));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Online", "Host an online lobby on your PC"));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Online Server", "Host an online server lobby on your PC"));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Matchmaker/Dedicated", "Not yet implemented."));
+
+            OptionsPaneHandler.instance.ShowOptions("Network", options, SelectNetwork);
+        }
+
+        public void SelectNetwork(string option)
+        {
+            NetworkGameManager.instance.lobbySetup.Network = option;
+            //The user might be switching from host to server, so it's important to end communications first.
+            if (option == "Online")
+            {
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Host;
+            }
+
+            if (option == "Online Server")
+            {
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Server;
+            }
+
         }
     }
 }

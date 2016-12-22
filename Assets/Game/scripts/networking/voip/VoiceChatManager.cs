@@ -54,7 +54,11 @@ namespace Raider.Game.Networking.VoIP
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartServer")]
         static extern bool StopServer();
 
-#endregion
+        #endregion
+
+        bool serverRunning = false;
+        bool clientRunning = false;
+
 
         void TeamSpeakLogging(string message)
         {
@@ -84,8 +88,10 @@ namespace Raider.Game.Networking.VoIP
         //Make sure that teamspeak closes if the game is shut down.
         private void OnDestroy()
         {
-            StopServer();
-            StopClient();
+            if(serverRunning)
+                StopServer();
+            if(clientRunning)
+                StopClient();
         }
 
 #region Client Functions
@@ -93,13 +99,29 @@ namespace Raider.Game.Networking.VoIP
         void StartVoIPClient()
         {
             ClientUIFunctions callbacks = new ClientUIFunctions();
+            callbacks.onServerErrorEvent += OnServerErrorEvent;
+            callbacks.onServerStopEvent += OnServerStopEvent;
             //username should be replaced with slot number.
             StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
+            clientRunning = true;
+        }
+
+        void OnServerErrorEvent(UInt64 serverConnectionHandlerID, char[] errorMessage, uint error, char[] returnCode, char[] extraMessage)
+        {
+            GUI.UserFeedback.LogError("A voice chat server error has occured. You have been disconnected.");
+            StopVoIPClient();
+        }
+
+        void OnServerStopEvent(UInt64 serverConnectionHandlerID, char[] shutdownMessage)
+        {
+            GUI.UserFeedback.LogError("The voice chat server has unexpectedly shut down with the message: " + shutdownMessage.ToString());
+            StopVoIPClient();
         }
 
         void StopVoIPClient()
         {
             StopClient();
+            clientRunning = false;
         }
 
 #endregion
@@ -114,11 +136,13 @@ namespace Raider.Game.Networking.VoIP
                 StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
             else
                 StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
+            serverRunning = true;
         }
 
         void StopVoIPServer()
         {
             StopServer();
+            serverRunning = false;
         }
 
 #endregion

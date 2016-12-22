@@ -40,36 +40,5 @@ namespace Raider.Game.GUI.Screens
                 LobbySetupPane.instance.OpenPane();
             }
         }
-
-        public void OpenNetworkOptions()
-        {
-            List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
-
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Offline", "Splitscreen co-op. Not Yet Implemented."));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Local", "Host a Local Area Nework Lobby. Not Yet Implemented."));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Online", "Host an online lobby on your PC"));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Online Server", "Host an online server lobby on your PC"));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Matchmaker/Dedicated", "Not yet implemented."));
-
-            OptionsPaneHandler.instance.ShowOptions("Network", options, SelectNetwork);
-        }
-
-        public void SelectNetwork(string option)
-        {
-            NetworkGameManager.instance.lobbySetup.Network = option;
-            //The user might be switching from host to server, so it's important to end communications first.
-            if (option == "Online")
-            {
-                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
-                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Host;
-            }
-
-            if (option == "Online Server")
-            {
-                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
-                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Server;
-            }
-
-        }
     }
 }

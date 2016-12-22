@@ -9,6 +9,7 @@ using Raider.Game.Networking;
 
 namespace Raider.Game.Player
 {
+    [RequireComponent(typeof(PlayerChatManager))]
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(Animator))]
     public class NetworkPlayerSetup : NetworkBehaviour
