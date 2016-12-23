@@ -65,10 +65,10 @@ namespace Raider.Game.Player
             localPlayer.CmdRequestSlot(); //Now that authority is established, issue this command.
             gameObject.AddComponent<MovementController>();
             gameObject.AddComponent<PlayerAnimationController>();
-            gameObject.AddComponent<PlayerManager>().UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
-            gameObject.AddComponent<PlayerChatManager>();
+            playerData.playerManager = gameObject.AddComponent<PlayerManager>();
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
+            //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
+            playerData.playerManager.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
         }
 
         #region slot sync

@@ -44,11 +44,11 @@ namespace Raider.Game.Player
         public bool isHost;
         public LobbySetup.Teams team = LobbySetup.Teams.None;
 
-        private void Start()
+        private void Awake()
         {
             animator = GetComponent<Animator>();
             appearenceController = GetComponent<PlayerAppearenceController>();
-            playerManager = GetComponent<PlayerManager>();
+            playerManager = GetComponent<PlayerManager>(); //Singleplayer assignment.
         }
     }
 }

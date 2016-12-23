@@ -66,13 +66,15 @@ namespace Raider.Game.Player
         Renderer secondaryRenderer;
         Renderer tertiaryRenderer;
 
-        // Use this for initialization
-        void Start()
+        private void Awake()
         {
             editorRaceGraphics.CheckAllGraphicsPresent();
             GetRaceGraphics = editorRaceGraphics;
-            
+        }
 
+        // Use this for initialization
+        void Start()
+        {   
             if (primaryMesh == null || secondaryMesh == null /*|| tertiaryMesh == null*/)
                 Debug.LogError("[Player/PlayerAppearenceController] Player appearence controller is missing a mesh.");
 

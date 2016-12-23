@@ -26,6 +26,7 @@ namespace Raider.Game.Player
             if (isLocalPlayer)
             {
                 localPlayer = this;
+                PlayerData.localPlayerData = playerData;
 
                 bool _isHost = false; //Update Local Data handles full assignment.
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
@@ -35,9 +36,9 @@ namespace Raider.Game.Player
                 UpdateLocalData(GetComponent<NetworkLobbyPlayer>().slot, Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active, _isHost);
 
                 //I don't think this is necessary, I can probably just call the command.
-                //if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
-                //    RpcRecieveUpdateFromServer(playerData.name, playerData.SerializedCharacter, playerData.isLeader, playerData.isHost);
-                //else
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
+                    RpcRecieveUpdateFromServer(playerData.slot, playerData.name, playerData.SerializedCharacter, playerData.isLeader, playerData.isHost);
+                else
                     CmdUpdateServer(playerData.slot, playerData.name, playerData.SerializedCharacter, playerData.isLeader, playerData.isHost);
 
                 //If the player is not the host, they're automatically set to ready.
@@ -65,6 +66,7 @@ namespace Raider.Game.Player
 
         void UpdateLocalData(int _slot, string _username, SaveDataStructure.Character _character, bool _isLeader, bool _isHost)
         {
+            Debug.Log("Network Lobby Player Setup: Updated Local Data. Slot: " + _slot + "username: " + _username);
             playerData.slot = _slot;
             playerData.name = _username;
             playerData.character = _character;
