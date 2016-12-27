@@ -70,7 +70,7 @@ namespace Raider.Game.GUI.StartMenu
                     break;
             }
             if (!Scenario.InLobby)
-                PlayerData.localPlayerData.playerManager.UpdatePerspective(settings.perspective);
+                PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(settings.perspective);
 
             Session.saveDataHandler.SaveSettings(settings);
             perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();

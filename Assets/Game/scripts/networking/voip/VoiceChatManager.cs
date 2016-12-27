@@ -3,10 +3,17 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using Raider.Game.Player;
+using System.Threading;
 
 namespace Raider.Game.Networking.VoIP
 {
     //This part contains all management functions.
+    /// <summary>
+    /// Responsible for everything VoIP.
+    /// Standalone, can be detached without breaking references, because it isn't referenced.
+    /// Debugging with an active TS thread can be difficult.
+    /// Deactivate if necessary.
+    /// </summary>
     public partial class VoiceChatManager : MonoBehaviour
     {
         #if UNITY_EDITOR
@@ -32,7 +39,7 @@ namespace Raider.Game.Networking.VoIP
             [MarshalAs(UnmanagedType.FunctionPtr)]Action<string> logCallback);
 
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartClient")]
-        static extern bool StartClient(
+        static extern void StartClient(
             [MarshalAs(UnmanagedType.LPStr)] string username,
             [MarshalAs(UnmanagedType.LPStr)] string ipAddr, 
             int port,
@@ -54,8 +61,13 @@ namespace Raider.Game.Networking.VoIP
 
         #endregion
 
-        bool serverRunning = false;
-        bool clientRunning = false;
+        //DLL interactions take place on another thread.
+        //This thread must not interact with the Unity Library.
+        //Also, it seems that breaking on another thread crashes the Unity Editor.
+        //So avoid that.
+        //Instead, debug ts threads and the ts interface on compiled builds.
+        Thread tsClientThread;
+        Thread tsServerThread;
 
 
         void TeamSpeakLogging(string message)
@@ -86,18 +98,30 @@ namespace Raider.Game.Networking.VoIP
         //Make sure that teamspeak closes if the game is shut down.
         private void OnDestroy()
         {
-            if(serverRunning)
-                StopServer();
-            if(clientRunning)
-                StopClient();
+            if (tsServerThread.IsAlive)
+            {
+                tsServerThread = new Thread(() => StopServer());
+                tsServerThread.Start();
+            }
+            if (tsClientThread.IsAlive)
+            {
+                tsClientThread = new Thread(() => StopClient());
+                tsClientThread.Start();
+            }
         }
 
         private void OnDisable()
         {
-            if (serverRunning)
-                StopServer();
-            if (clientRunning)
-                StopClient();
+            if (tsServerThread.IsAlive)
+            {
+                tsServerThread = new Thread(() => StopServer());
+                tsServerThread.Start();
+            }
+            if (tsClientThread.IsAlive)
+            {
+                tsClientThread = new Thread(() => StopClient());
+                tsClientThread.Start();
+            }
         }
 
         #region Client Functions
@@ -108,14 +132,23 @@ namespace Raider.Game.Networking.VoIP
             //callbacks.onServerErrorEvent += OnServerErrorEvent;
             //callbacks.onServerStopEvent += OnServerStopEvent;
             //username should be replaced with slot number.
-            StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
-            clientRunning = true;
+
+            if (tsClientThread != null && tsClientThread.IsAlive)
+                StopVoIPClient();
+
+            tsClientThread = new Thread(() => StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks));
+            tsClientThread.Start();
+            
+            //Old StartClient Method. //StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
         }
 
         void StopVoIPClient()
         {
-            StopClient();
-            clientRunning = false;
+            if (tsClientThread != null && !tsClientThread.IsAlive)
+                return;
+
+            tsClientThread = new Thread(() => StopClient());
+            tsClientThread.Start();
         }
 
 #endregion
@@ -126,18 +159,24 @@ namespace Raider.Game.Networking.VoIP
         {
             ServerLibFunctions callbacks = new ServerLibFunctions();
 
-            if(NetworkGameManager.instance.networkAddress == "localhost" || NetworkGameManager.instance.networkAddress == "127.0.0.1")
-                StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
-            else
-                StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks);
+            if (tsServerThread != null && tsServerThread.IsAlive)
+                StopVoIPServer();
 
-            serverRunning = true;
+            if (NetworkGameManager.instance.networkAddress == "localhost" || NetworkGameManager.instance.networkAddress == "127.0.0.1")
+                tsServerThread = new Thread(() => StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
+            else
+                tsServerThread = new Thread(() => StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
+
+            tsServerThread.Start();
         }
 
         void StopVoIPServer()
         {
-            StopServer();
-            serverRunning = false;
+            if (tsServerThread != null && !tsServerThread.IsAlive)
+                return;
+
+            tsServerThread = new Thread(() => StopServer());
+            tsServerThread.Start();
         }
 
 #endregion

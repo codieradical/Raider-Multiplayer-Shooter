@@ -10,6 +10,7 @@ namespace Raider.Game.Player
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(PlayerAnimationController))]
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(PlayerResourceReferences))]
     public class PlayerSetup : MonoBehaviour
     {
         // Use this for initialization
@@ -28,25 +29,7 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.isLeader = true;
             PlayerData.localPlayerData.gotData = true;
 
-            UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
-        }
-
-        public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
-        {
-            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
-            settings.perspective = newPerspective;
-            Session.saveDataHandler.SaveSettings(settings);
-            CameraModeController.singleton.SetCameraMode(newPerspective);
-
-            StartCoroutine(PauseNewCameraController());
-
-            if (newPerspective == CameraModeController.CameraModes.FirstPerson && PlayerData.localPlayerData.graphicsObject != null)
-            {
-                Destroy(PlayerData.localPlayerData.graphicsObject);
-                PlayerData.localPlayerData.animator.avatar = null;
-            }
-            else if (newPerspective != CameraModeController.CameraModes.FirstPerson && PlayerData.localPlayerData.graphicsObject == null)
-                PlayerAppearenceController.SetupGraphicsModel(PlayerData.localPlayerData);
+            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
         }
 
         IEnumerator PauseNewCameraController()

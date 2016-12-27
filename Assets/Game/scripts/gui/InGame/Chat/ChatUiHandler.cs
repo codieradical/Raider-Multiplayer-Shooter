@@ -173,7 +173,7 @@ namespace Raider.Game.GUI.Screens
                 EventSystem.current.SetSelectedGameObject(null);
 
             if (!Scenario.InLobby)
-                PlayerData.localPlayerData.playerManager.UnpausePlayer();
+                PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
 
             IsOpen = false;
         }

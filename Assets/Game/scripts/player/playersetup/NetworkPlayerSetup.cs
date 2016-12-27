@@ -12,6 +12,8 @@ namespace Raider.Game.Player
     [RequireComponent(typeof(PlayerChatManager))]
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(NetworkAnimator))]
+    [RequireComponent(typeof(PlayerResourceReferences))]
     public class NetworkPlayerSetup : NetworkBehaviour
     {
         public static NetworkPlayerSetup localPlayer;
@@ -32,14 +34,14 @@ namespace Raider.Game.Player
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
 
-                SetupLocalPlayer();
-
                 PlayerData lobbyPlayerData = NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerData>();
 
                 PlayerData.localPlayerData.character = lobbyPlayerData.character;
                 PlayerData.localPlayerData.name = lobbyPlayerData.name;
                 PlayerData.localPlayerData.slot = lobbyPlayerData.slot;
                 PlayerData.localPlayerData.gotData = true;
+
+                SetupLocalPlayer();
 
                 CmdUpdatePlayerSlot(PlayerData.localPlayerData.slot);
             }
@@ -57,18 +59,16 @@ namespace Raider.Game.Player
                 CmdRequestSlot();
         }
 
-
-
         void SetupLocalPlayer()
         {
             localPlayer = this;
             localPlayer.CmdRequestSlot(); //Now that authority is established, issue this command.
             gameObject.AddComponent<MovementController>();
-            gameObject.AddComponent<PlayerAnimationController>();
-            playerData.playerManager = gameObject.AddComponent<PlayerManager>();
+            playerData.animationController = gameObject.AddComponent<PlayerAnimationController>();
+            playerData.gamePlayerController = gameObject.AddComponent<GamePlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
-            playerData.playerManager.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
+            playerData.gamePlayerController.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
         }
 
         #region slot sync
@@ -130,7 +130,10 @@ namespace Raider.Game.Player
 
             Debug.Log("recieved slot " + value.ToString() + " for " + name);
 
-            PlayerAppearenceController.SetupGraphicsModel(playerData);
+            if (playerData.appearenceController == null)
+                playerData.appearenceController = GetComponentInChildren<PlayerAppearenceController>();
+
+            playerData.appearenceController.ReplaceGraphicsModel(playerData);
         }
 
         #endregion

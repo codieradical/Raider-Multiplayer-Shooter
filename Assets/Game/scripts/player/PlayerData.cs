@@ -24,8 +24,9 @@ namespace Raider.Game.Player
 
         public Animator animator;
 
+        public PlayerAnimationController animationController;
         public PlayerAppearenceController appearenceController;
-        public PlayerManager playerManager;
+        public GamePlayerController gamePlayerController;
 
         public bool paused;
         //Network Game Only.
@@ -48,7 +49,8 @@ namespace Raider.Game.Player
         {
             animator = GetComponent<Animator>();
             appearenceController = GetComponent<PlayerAppearenceController>();
-            playerManager = GetComponent<PlayerManager>(); //Singleplayer assignment.
+            gamePlayerController = GetComponent<GamePlayerController>(); //Singleplayer assignment.
+            animationController = GetComponent<PlayerAnimationController>(); //Singleplayer assignment.
         }
     }
 }

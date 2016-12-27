@@ -89,7 +89,7 @@ namespace Raider.Game.GUI.StartMenu
             SetupStartMenuData();
 
             if (!Scenario.InLobby)
-                PlayerData.localPlayerData.playerManager.PausePlayer();
+                PlayerData.localPlayerData.gamePlayerController.PausePlayer();
 
             OpenAPane(DefaultPane);
 
@@ -109,7 +109,7 @@ namespace Raider.Game.GUI.StartMenu
         public void CloseStartMenu()
         {
             if (!Scenario.InLobby)
-                PlayerData.localPlayerData.playerManager.UnpausePlayer();
+                PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
 
             CloseActivePane();
 

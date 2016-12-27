@@ -19,7 +19,7 @@ namespace Raider.Game.GUI {
                     ChatUiHandler.instance.CloseChatInput();
 
                     if (!Scenario.InLobby)
-                        PlayerData.localPlayerData.playerManager.UnpausePlayer();
+                        PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
                 }
 
                 return;
@@ -42,7 +42,7 @@ namespace Raider.Game.GUI {
                     {
                         ChatUiHandler.instance.OpenChatInput();
                         if (!Scenario.InLobby)
-                            PlayerData.localPlayerData.playerManager.PausePlayer();
+                            PlayerData.localPlayerData.gamePlayerController.PausePlayer();
                     }
 
                     return;
