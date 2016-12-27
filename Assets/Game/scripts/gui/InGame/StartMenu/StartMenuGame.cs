@@ -52,7 +52,7 @@ namespace Raider.Game.GUI.StartMenu
             }
             else
             {
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)
                 {
                     leaveGameButton.onClick.AddListener(() => StartMenuHandler.instance.CloseStartMenu());
                     leaveGameButton.onClick.AddListener(() => Scenario.instance.LeaveGame());

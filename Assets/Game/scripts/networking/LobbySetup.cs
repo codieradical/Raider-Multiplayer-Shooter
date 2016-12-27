@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Raider.Game.GUI.Components;
 using Raider.Game.Scene;
+using Raider.Game.Player;
 using System;
 
 namespace Raider.Game.Networking
@@ -19,8 +20,8 @@ namespace Raider.Game.Networking
                 gametype = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
         private string selectedScene;
@@ -32,8 +33,8 @@ namespace Raider.Game.Networking
                 selectedScene = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
         private string network;
@@ -45,8 +46,8 @@ namespace Raider.Game.Networking
                 network = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Host || NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Server)
-                    LobbyPlayerData.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
             }
         }
 

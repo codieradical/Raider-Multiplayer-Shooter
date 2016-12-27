@@ -8,6 +8,7 @@ using Raider.Game.Networking;
 using Raider.Game.GUI.CharacterPreviews;
 using UnityEngine.UI;
 using Raider.Game.Saves;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI.StartMenu
 {
@@ -69,7 +70,7 @@ namespace Raider.Game.GUI.StartMenu
                     break;
             }
             if (!Scenario.InLobby)
-                Player.Player.localPlayer.UpdatePerspective(settings.perspective);
+                PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(settings.perspective);
 
             Session.saveDataHandler.SaveSettings(settings);
             perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();

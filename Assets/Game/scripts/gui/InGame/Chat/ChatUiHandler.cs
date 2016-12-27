@@ -63,16 +63,16 @@ namespace Raider.Game.GUI.Screens
             //foreach (string message in ChatManager.chatLog)
             //    AddMessageToFullLog(message);
 
-            for(int index = ChatManager.chatLog.Count - 1; index > -1; --index)
+            for(int index = PlayerChatManager.chatLog.Count - 1; index > -1; --index)
             {
-                AddMessageToFullLog(ChatManager.chatLog.ToArray()[index]);
+                AddMessageToFullLog(PlayerChatManager.chatLog.ToArray()[index]);
             }
         }
 
         public void AddMessageToFullLog(string message)
         {
             //If the chat container is full, get deleting.
-            if (fullLogContainer.transform.childCount >= ChatManager.maxChatHistory)
+            if (fullLogContainer.transform.childCount >= PlayerChatManager.maxChatHistory)
                 Destroy(fullLogContainer.transform.GetChild(0).gameObject);
 
             //Initialize the new message object.
@@ -144,25 +144,15 @@ namespace Raider.Game.GUI.Screens
         {
             yield return 0; //Wait a frame...
 
-            if (Scenario.InLobby)
-            {
-                if (LobbyPlayerData.localPlayer != null)
-                    LobbyPlayerData.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, LobbyPlayerData.localPlayer.GetComponent<NetworkLobbyPlayer>().slot);
-                else
-                    Debug.Log("Cant send message when no lobby player present!");
-            }
-            else
-            {
-                if (Player.Player.localPlayer != null)
-                    Player.Player.localPlayer.GetComponent<ChatManager>().CmdSendMessage(message, Player.Player.localPlayer.slot);
-            }
+            if (PlayerData.localPlayerData != null)
+                PlayerData.localPlayerData.GetComponent<PlayerChatManager>().CmdSendMessage(message, PlayerData.localPlayerData.slot);
         }
 
         public void OpenChatInput()
         {
-            if (LobbyPlayerData.localPlayer == null)
+            if (PlayerData.localPlayerData == null)
             {
-                Debug.Log("Unable to open chat, lobby player is null");
+                Debug.Log("Unable to open chat, Player Data is null");
                 return;
             }
 
@@ -183,7 +173,7 @@ namespace Raider.Game.GUI.Screens
                 EventSystem.current.SetSelectedGameObject(null);
 
             if (!Scenario.InLobby)
-                Player.Player.localPlayer.UnpausePlayer();
+                PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
 
             IsOpen = false;
         }

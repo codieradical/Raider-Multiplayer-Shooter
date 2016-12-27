@@ -25,51 +25,20 @@ namespace Raider.Game.GUI.Screens
             {
                 Debug.LogWarning("User attempted to join a server with no character selected!");
             }
-            if(NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
             {
                 Debug.LogWarning("User attempted to join a server while already in a server!");
             }
-            NetworkManager.instance.networkAddress = ipTxt.text;
-            NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Client;
+            NetworkGameManager.instance.networkAddress = ipTxt.text;
+            NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Client;
             //If the player sucessfully joined a game...
-            if(NetworkManager.instance.CurrentNetworkState == NetworkManager.NetworkState.Client)
+            if(NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)
             {
                 //Grab the lobby details.
                 GametypeButtons.instance.HideButtons();
                 MenuManager.instance.ShowMenu(MainmenuHandler.instance.MainMenuScreen.GetComponent<Menu>());
                 LobbySetupPane.instance.OpenPane();
             }
-        }
-
-        public void OpenNetworkOptions()
-        {
-            List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
-
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Offline", "Splitscreen co-op. Not Yet Implemented."));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Local", "Host a Local Area Nework Lobby. Not Yet Implemented."));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Online", "Host an online lobby on your PC"));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Online Server", "Host an online server lobby on your PC"));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Matchmaker/Dedicated", "Not yet implemented."));
-
-            OptionsPaneHandler.instance.ShowOptions("Network", options, SelectNetwork);
-        }
-
-        public void SelectNetwork(string option)
-        {
-            NetworkManager.instance.lobbySetup.Network = option;
-            //The user might be switching from host to server, so it's important to end communications first.
-            if (option == "Online")
-            {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Host;
-            }
-
-            if (option == "Online Server")
-            {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Server;
-            }
-
         }
     }
 }

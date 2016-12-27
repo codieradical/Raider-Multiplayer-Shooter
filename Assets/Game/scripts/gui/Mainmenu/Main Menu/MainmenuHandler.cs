@@ -38,9 +38,9 @@ namespace Raider.Game.GUI.Screens
             if (Session.activeCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
-                if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+                if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
                 {
-                    NetworkManager.instance.UpdateLobbyNameplates();
+                    NetworkGameManager.instance.UpdateLobbyNameplates();
                     LobbySetupPane.instance.OpenPane();
                 }
                 else
@@ -102,9 +102,9 @@ namespace Raider.Game.GUI.Screens
         {
             Session.Logout();
 
-            if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
             {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
                 return;
             }
 
@@ -142,9 +142,9 @@ namespace Raider.Game.GUI.Screens
         {
             Session.DeselectCharacter();
 
-            if (NetworkManager.instance.CurrentNetworkState != NetworkManager.NetworkState.Offline)
+            if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
             {
-                NetworkManager.instance.CurrentNetworkState = NetworkManager.NetworkState.Offline;
+                NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
                 return;
             }
 

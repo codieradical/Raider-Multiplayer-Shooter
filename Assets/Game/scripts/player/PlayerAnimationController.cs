@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using Raider.Game.Cameras;
 using System.Collections;
+using UnityEditor.Animations;
+using Raider.Game.Saves;
 
 namespace Raider.Game.Player
 {
@@ -9,6 +11,12 @@ namespace Raider.Game.Player
     {
 
         private Animator attachedAnimator;
+
+        public void SetupAnimationControllerForPerspective(CameraModeController.CameraModes perspective)
+        {
+            attachedAnimator.runtimeAnimatorController = null;
+            attachedAnimator.runtimeAnimatorController = PlayerResourceReferences.instance.animatorControllers.GetControllerByPerspective(perspective);
+        }
 
         // Use this for initialization
         void Start()
