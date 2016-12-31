@@ -9,29 +9,14 @@ namespace Raider.Game.Player
 
     public class PlayerAnimationController : MonoBehaviour
     {
-
-        private Animator attachedAnimator;
-
-        public void SetupAnimationControllerForPerspective(CameraModeController.CameraModes perspective)
-        {
-            attachedAnimator.runtimeAnimatorController = null;
-            attachedAnimator.runtimeAnimatorController = PlayerResourceReferences.instance.animatorControllers.GetControllerByPerspective(perspective);
-        }
-
-        // Use this for initialization
-        void Start()
-        {
-            attachedAnimator = GetComponent<Animator>();
-        }
-
         // Update is called once per frame
         void Update()
         {
             //Only update the animator of the camera controller allows movement.
             if (!CameraModeController.ControllerInstance.preventMovement)
             {
-                attachedAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
-                attachedAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+                PlayerData.localPlayerData.animator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
+                PlayerData.localPlayerData.animator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
 
                 //if (Input.GetButton("Jump"))
                 //{
@@ -41,11 +26,11 @@ namespace Raider.Game.Player
 
                 if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
                 {
-                    attachedAnimator.SetBool("running", true);
+                    PlayerData.localPlayerData.animator.SetBool("running", true);
                 }
                 else
                 {
-                    attachedAnimator.SetBool("running", false);
+                    PlayerData.localPlayerData.animator.SetBool("running", false);
                 }
             }
             else
@@ -56,15 +41,33 @@ namespace Raider.Game.Player
 
         public void StopAnimations()
         {
-            attachedAnimator.SetFloat("verticalSpeed", 0f);
-            attachedAnimator.SetFloat("horizontalSpeed", 0f);
-            attachedAnimator.SetBool("running", false);
-            attachedAnimator.SetBool("jumping", false);
+            PlayerData.localPlayerData.animator.SetFloat("verticalSpeed", 0f);
+            PlayerData.localPlayerData.animator.SetFloat("horizontalSpeed", 0f);
+            PlayerData.localPlayerData.animator.SetBool("running", false);
+            PlayerData.localPlayerData.animator.SetBool("jumping", false);
         }
 
         void StopJumping()
         {
-            attachedAnimator.SetBool("jumping", false);
+            PlayerData.localPlayerData.animator.SetBool("jumping", false);
+        }
+
+        static void DestroyAnimator(PlayerData playerData)
+        {
+            Destroy(playerData.animator);
+        }
+
+        static void SetupNewAnimator(PlayerData playerData, CameraModeController.CameraModes perspective)
+        {
+            playerData.animator = playerData.gameObject.AddComponent<Animator>();
+            playerData.animator.runtimeAnimatorController = PlayerResourceReferences.instance.animatorControllers.GetControllerByPerspective(perspective);
+            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.race);
+        }
+
+        public static void RecreateAnimator(PlayerData playerData, CameraModeController.CameraModes perspective)
+        {
+            DestroyAnimator(playerData);
+            SetupNewAnimator(playerData, perspective);
         }
     }
 }
