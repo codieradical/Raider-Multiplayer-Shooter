@@ -1,0 +1,22 @@
+Halo Music
+Audio\Halo Music
+Used as a temporary mainmenu music theme.
+Last accessed 31/12/16.
+http://music.thefeeltra.in/
+
+TeamSpeak 3 SDK 3.0.3.2 (C++ Distribution)
+Audio\TeamSpeak 3 SDK
+Provides a basic Voice Communication client and server.
+Allows up to 32 unlisenced users.
+Implemented with a custom C++ interface.
+This folder contains TeamSpeak 3 SDK distribution binaries.
+Unlicensed. Non commercial.
+Last accessed 31/12/16.
+https://www.teamspeak.com/downloads#sdk
+
+TeamSpeak 3 SDK 3.0.3.2 (Unity Example (Post-Build Script))
+Editor\TeamSpeak 3 SDK
+Copies TeamSpeak 3 libraries from the project folder to compiled build folders.
+THIS ASSET HAS BEEN MODIFIED FOR RAIDER AND DOES NOT REPRESENT THE SOURCE DISTRIBUTION.
+Last accessed 31/12/16.
+http://www.teamspeak.com/downloads
