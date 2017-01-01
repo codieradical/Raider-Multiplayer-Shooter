@@ -15,7 +15,7 @@ namespace Raider.Game.GUI.CharacterPreviews
         public float minDistance = 1;
         public float maxDistance = 3;
 
-        float cameraDistance
+        float CameraDistance
         {
             get { return previewCamera.transform.localPosition.z; }
 
@@ -78,14 +78,14 @@ namespace Raider.Game.GUI.CharacterPreviews
         {
             float _movement = -Input.GetAxis("Mouse ScrollWheel");
 
-            if ((cameraDistance += _movement) > maxDistance)
-                cameraDistance = maxDistance;
+            if ((CameraDistance += _movement) > maxDistance)
+                CameraDistance = maxDistance;
 
-            else if ((cameraDistance += _movement) < minDistance)
-                cameraDistance = minDistance;
+            else if ((CameraDistance += _movement) < minDistance)
+                CameraDistance = minDistance;
 
             else
-                cameraDistance += _movement;
+                CameraDistance += _movement;
         }
     }
 }

@@ -10,67 +10,67 @@ namespace Raider.Game.Saves
     {
         public SaveDataStructure ReadData()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void SaveData(SaveDataStructure _data)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void ReloadData()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void DeleteData()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void NewData()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void NewCharacter(SaveDataStructure.Character character)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void SaveCharacter(int slot, SaveDataStructure.Character character)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public SaveDataStructure.Character GetCharacter(int slot)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public System.Collections.Generic.List<SaveDataStructure.Character> GetAllCharacters()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public string GetUsername()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void SetUsername(string _username)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public int CharacterCount
         {
-            get { throw new System.NotImplementedException(); }
+            get { throw new NotImplementedException(); }
         }
 
         public void DeleteCharacter(int slot)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void DefaultSettings()

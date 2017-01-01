@@ -116,17 +116,17 @@ namespace Raider.Game.Saves
 
         public void DefaultSettings()
         {
-            throw new NotImplementedException();
+            data.settings = new SaveDataStructure.Settings();
         }
 
         public void SaveSettings(SaveDataStructure.Settings settings)
         {
-            throw new NotImplementedException();
+            data.settings = settings;
         }
 
         public SaveDataStructure.Settings GetSettings()
         {
-            throw new NotImplementedException();
+            return data.settings;
         }
     }
 }

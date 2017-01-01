@@ -98,12 +98,12 @@ namespace Raider.Game.Networking.VoIP
         //Make sure that teamspeak closes if the game is shut down.
         private void OnDestroy()
         {
-            if (tsServerThread.IsAlive)
+            if (tsServerThread != null && tsServerThread.IsAlive)
             {
                 tsServerThread = new Thread(() => StopServer());
                 tsServerThread.Start();
             }
-            if (tsClientThread.IsAlive)
+            if (tsClientThread != null && tsClientThread.IsAlive)
             {
                 tsClientThread = new Thread(() => StopClient());
                 tsClientThread.Start();
@@ -112,12 +112,12 @@ namespace Raider.Game.Networking.VoIP
 
         private void OnDisable()
         {
-            if (tsServerThread.IsAlive)
+            if (tsServerThread != null && tsServerThread.IsAlive)
             {
                 tsServerThread = new Thread(() => StopServer());
                 tsServerThread.Start();
             }
-            if (tsClientThread.IsAlive)
+            if (tsClientThread != null && tsClientThread.IsAlive)
             {
                 tsClientThread = new Thread(() => StopClient());
                 tsClientThread.Start();
