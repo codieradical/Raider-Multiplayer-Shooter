@@ -7,6 +7,7 @@ using Raider.Game.Saves;
 using Raider.Game.GUI.Layout;
 using Raider.Game.Networking;
 using Raider.Game.Player;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Components
 {
@@ -63,7 +64,7 @@ namespace Raider.Game.GUI.Components
 
         public struct PlayerNameplate
         {
-            public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, SaveDataStructure.Character _character)
+            public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, UserSaveDataStructure.Character _character)
             {
                 username = _username;
                 leader = _leader;
@@ -77,26 +78,32 @@ namespace Raider.Game.GUI.Components
             public bool speaking;
             public bool canspeak;
 
-            public SaveDataStructure.Character character;
+            public UserSaveDataStructure.Character character;
         }
 
 		public void SwitchToScrollLobbyButton()
 		{
-			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
-			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Scroll;
-			Session.saveDataHandler.SaveSettings(settings);
+			UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
+			settings.lobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplay.Scroll;
+			Session.userSaveDataHandler.SaveSettings(settings, SaveLobbyDisplaySettingsCallback);
 
 			SwitchToScrollLobby();
 		}
 
 		public void SwitchToSplitLobbyButton()
 		{
-			SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
-			settings.lobbyDisplay = SaveDataStructure.Settings.LobbyDisplay.Split;
-			Session.saveDataHandler.SaveSettings(settings);
+			UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
+			settings.lobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplay.Split;
+			Session.userSaveDataHandler.SaveSettings(settings, SaveLobbyDisplaySettingsCallback);
 
 			SwitchToSplitLobby();
 		}
+
+        public void SaveLobbyDisplaySettingsCallback(bool success, string message)
+        {
+            if (!success)
+                Debug.Log("Failed to save user lobby display settings. " + message);
+        }
 
         public static void DestroyAllPlayers()
         {
@@ -163,7 +170,7 @@ namespace Raider.Game.GUI.Components
 					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform, false);
             }
 
-            if (Session.saveDataHandler.GetSettings().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
+            if (Session.userSaveDataHandler.GetSettings().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split)
             {
                 if (players.Count == 9 || players.Count == 17 || players.Count == 33)
                     SwitchToSplitLobby();
@@ -201,7 +208,7 @@ namespace Raider.Game.GUI.Components
                     instance.lobbyStateText.text = "joinable [" + players.Count.ToString() + "/" + NetworkGameManager.instance.maxPlayers.ToString() + "]";
 
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Offline)
-                    instance.lobbyOwnerText.text = Session.saveDataHandler.GetUsername() + "'s Lobby";
+                    instance.lobbyOwnerText.text = Session.userSaveDataHandler.GetUsername() + "'s Lobby";
                 //I would like this to be the host's username.
                 else
                 {
@@ -216,7 +223,7 @@ namespace Raider.Game.GUI.Components
                 }
             }
 
-			if (Session.saveDataHandler.GetSettings ().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split) {
+			if (Session.userSaveDataHandler.GetSettings ().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split) {
 				if (players.Count == 9 || players.Count == 17 || players.Count == 33)
 					SwitchToSplitLobby ();
 			}

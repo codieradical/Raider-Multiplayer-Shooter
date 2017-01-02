@@ -68,7 +68,7 @@ namespace Raider.Game.Player
             playerData.gamePlayerController = gameObject.AddComponent<GamePlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
-            playerData.gamePlayerController.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
+            playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
         }
 
         #region slot sync

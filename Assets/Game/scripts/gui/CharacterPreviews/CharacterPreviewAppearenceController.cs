@@ -2,6 +2,7 @@
 using System.Collections;
 using Raider.Game.GUI.Components;
 using Raider.Game.Saves;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
@@ -33,7 +34,7 @@ namespace Raider.Game.GUI.CharacterPreviews
             //tertiaryRenderer = tertiaryMesh.GetComponent<Renderer>();
         }
 
-        public void UpdatePlayerAppearence(SaveDataStructure.Character _character)
+        public void UpdatePlayerAppearence(UserSaveDataStructure.Character _character)
         {
             //If primary renderer is null, try to get it again, failing that, return.
             if (primaryRenderer == null)

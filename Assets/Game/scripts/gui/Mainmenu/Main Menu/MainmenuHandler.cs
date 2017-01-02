@@ -7,6 +7,7 @@ using Raider.Game.Cameras;
 using Raider.Game.Networking;
 using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.Saves;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -47,7 +48,7 @@ namespace Raider.Game.GUI.Screens
                 {
                     LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
                     {
-                        username = Session.saveDataHandler.GetUsername(),
+                        username = Session.userSaveDataHandler.GetUsername(),
                         leader = true,
                         character = Session.ActiveCharacter
                     };
@@ -59,7 +60,7 @@ namespace Raider.Game.GUI.Screens
                     GametypeButtons.instance.ShowButtons();
                 }
             }
-            else if(Session.saveDataHandler != null)
+            else if(Session.userSaveDataHandler != null)
             {
                 MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
                 ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
@@ -82,7 +83,7 @@ namespace Raider.Game.GUI.Screens
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
 
-            if (Session.saveDataHandler.GetSettings().lobbyDisplay == SaveDataStructure.Settings.LobbyDisplay.Split)
+            if (Session.userSaveDataHandler.GetSettings().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split)
                 LobbyHandler.SwitchToSplitLobby();
             else
                 LobbyHandler.SwitchToScrollLobby();
@@ -121,7 +122,7 @@ namespace Raider.Game.GUI.Screens
 
             LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
             {
-                username = Session.saveDataHandler.GetUsername(),
+                username = Session.userSaveDataHandler.GetUsername(),
                 leader = true,
                 character = Session.ActiveCharacter
             };

@@ -136,7 +136,7 @@ namespace Raider.Game.Networking.VoIP
             if (tsClientThread != null && tsClientThread.IsAlive)
                 StopVoIPClient();
 
-            tsClientThread = new Thread(() => StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks));
+            tsClientThread = new Thread(() => StartClient(Session.userSaveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks));
             tsClientThread.Start();
             
             //Old StartClient Method. //StartClient(Session.saveDataHandler.GetUsername(), NetworkGameManager.instance.networkAddress, 9987, SoundbackendsPath, callbacks);
@@ -163,9 +163,9 @@ namespace Raider.Game.Networking.VoIP
                 StopVoIPServer();
 
             if (NetworkGameManager.instance.networkAddress == "localhost" || NetworkGameManager.instance.networkAddress == "127.0.0.1")
-                tsServerThread = new Thread(() => StartServer("0.0.0.0", 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
+                tsServerThread = new Thread(() => StartServer("0.0.0.0", 9987, Session.userSaveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
             else
-                tsServerThread = new Thread(() => StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.saveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
+                tsServerThread = new Thread(() => StartServer(NetworkGameManager.instance.networkAddress, 9987, Session.userSaveDataHandler.GetUsername() + "'s Excavator VoIP Server", callbacks));
 
             tsServerThread.Start();
         }

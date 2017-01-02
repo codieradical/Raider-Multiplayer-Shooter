@@ -6,6 +6,7 @@ using System;
 using Raider.Game.Saves;
 using Raider.Game.GUI.Components;
 using Raider.Game.GUI.CharacterPreviews;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -32,7 +33,7 @@ namespace Raider.Game.GUI.Screens
         const string PREVIEW_CHARACTER_NAME = "EditingChar";
         const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Full;
 
-        public SaveDataStructure.Character editingCharacter;
+        public UserSaveDataStructure.Character editingCharacter;
 
         [HideInInspector]
         public int characterSlot;
@@ -53,11 +54,11 @@ namespace Raider.Game.GUI.Screens
         {
             /*Setup the GUI*/
             titleText.text = "Create a Character";
-            usernameLabel.text = Session.saveDataHandler.GetUsername();
+            usernameLabel.text = Session.userSaveDataHandler.GetUsername();
 
             /*Setup the Save Data Handler*/
-            characterSlot = Session.saveDataHandler.CharacterCount;
-            editingCharacter = new SaveDataStructure.Character();
+            characterSlot = Session.userSaveDataHandler.CharacterCount;
+            editingCharacter = new UserSaveDataStructure.Character();
 
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
 
@@ -74,10 +75,10 @@ namespace Raider.Game.GUI.Screens
         public void EditCharacter(int _slot)
         {
             titleText.text = "Edit a Character";
-            usernameLabel.text = Session.saveDataHandler.GetUsername();
+            usernameLabel.text = Session.userSaveDataHandler.GetUsername();
 
             characterSlot = _slot;
-            editingCharacter = Session.saveDataHandler.GetCharacter(_slot);
+            editingCharacter = Session.userSaveDataHandler.GetCharacter(_slot);
 
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, editingCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
 
@@ -100,17 +101,17 @@ namespace Raider.Game.GUI.Screens
         public void ResetFormValues()
         {
             raceDropdown.options = new List<Dropdown.OptionData>();
-            foreach (SaveDataStructure.Character.Race race in Enum.GetValues(typeof(SaveDataStructure.Character.Race)))
+            foreach (UserSaveDataStructure.Character.Races race in Enum.GetValues(typeof(UserSaveDataStructure.Character.Races)))
             {
                 raceDropdown.options.Add(new Dropdown.OptionData(race.ToString()));
             }
-            raceDropdown.value = (int)editingCharacter.race;
+            raceDropdown.value = (int)editingCharacter.Race;
             guildInput.text = editingCharacter.guild;
         }
 
         public void UpdateFormValues()
         {
-            raceDropdown.value = (int)editingCharacter.race; //This calls the onchange on the dropdown btw.
+            raceDropdown.value = (int)editingCharacter.Race; //This calls the onchange on the dropdown btw.
             guildInput.text = editingCharacter.guild; //This calls edit guild, so make sure tha edit guild doesn't call this.
             primaryColorButton.color = editingCharacter.armourPrimaryColor.Color;
             secondaryColorButton.color = editingCharacter.armourSecondaryColor.Color;
@@ -130,7 +131,7 @@ namespace Raider.Game.GUI.Screens
         /// <param name="newRace">The int value provided by the form, cast to a race enum value.</param>
         public void EditRace(int newRace)
         {
-            editingCharacter.race = (SaveDataStructure.Character.Race)newRace;
+            editingCharacter.Race = (UserSaveDataStructure.Character.Races)newRace;
 
             try {
                 CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
@@ -141,16 +142,16 @@ namespace Raider.Game.GUI.Screens
 
         public void RandomiseCharacter()
         {
-            editingCharacter.armourPrimaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.armourSecondaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.armourTertiaryColor = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.armourTertiaryColor = new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
 
             //unity rand isn't good at certain things...
 
             System.Random rand = new System.Random();
 
             //Creates a random number between 0 and the amount of races available, parses that as a race.
-            editingCharacter.race = (SaveDataStructure.Character.Race)rand.Next(0, Enum.GetNames(typeof(SaveDataStructure.Character.Race)).Length);
+            editingCharacter.Race = (UserSaveDataStructure.Character.Races)rand.Next(0, Enum.GetNames(typeof(UserSaveDataStructure.Character.Races)).Length);
 
             UpdateFormValues();
             UpdatePreview(); //Update the preview to make sure that the buttons are up to date.
@@ -163,9 +164,9 @@ namespace Raider.Game.GUI.Screens
             System.Random rand = new System.Random();
             editingCharacter.emblem.layer2 = Convert.ToBoolean(rand.Next(0, 2));
 
-            editingCharacter.emblem.layer0Color = new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.emblem.layer1Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
-            editingCharacter.emblem.layer2Color =  new SaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer0Color = new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer1Color =  new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
+            editingCharacter.emblem.layer2Color =  new CommonSaveDataStructure.SerializableColor(UnityEngine.Random.ColorHSV());
 
             UpdatePreview();
         }
@@ -177,11 +178,11 @@ namespace Raider.Game.GUI.Screens
         public void UpdateColor(Color color, int index)
         {
             if (index == 1)
-                editingCharacter.armourPrimaryColor = new SaveDataStructure.SerializableColor(color);
+                editingCharacter.armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(color);
             else if (index == 2)
-                editingCharacter.armourSecondaryColor = new SaveDataStructure.SerializableColor(color);
+                editingCharacter.armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(color);
             else if (index == 3)
-                editingCharacter.armourTertiaryColor = new SaveDataStructure.SerializableColor(color);
+                editingCharacter.armourTertiaryColor = new CommonSaveDataStructure.SerializableColor(color);
             else
                 Debug.Log("[GUI\\CharacterEditor] Invalid index provided for UpdateColor method.");
 
@@ -220,10 +221,10 @@ namespace Raider.Game.GUI.Screens
 
         public void Done()
         {
-            if (characterSlot == Session.saveDataHandler.CharacterCount)
-                Session.saveDataHandler.NewCharacter(editingCharacter);
+            if (characterSlot == Session.userSaveDataHandler.CharacterCount)
+                Session.userSaveDataHandler.NewCharacter(editingCharacter, null);
             else
-                Session.saveDataHandler.SaveCharacter(characterSlot, editingCharacter);
+                Session.userSaveDataHandler.SaveCharacter(characterSlot, editingCharacter, null);
 
             //Delete the preview.
             CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);

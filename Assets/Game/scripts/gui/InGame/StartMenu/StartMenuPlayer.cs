@@ -9,6 +9,7 @@ using Raider.Game.GUI.CharacterPreviews;
 using UnityEngine.UI;
 using Raider.Game.Saves;
 using Raider.Game.Player;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.StartMenu
 {
@@ -30,9 +31,9 @@ namespace Raider.Game.GUI.StartMenu
         protected override void SetupPaneData()
         {
             perspectiveSelection.onSelectionChanged = UpdatePerspectiveSelection;
-            perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();
+            perspectiveSelection.title.text = "Perspective: " + Session.userSaveDataHandler.GetSettings().perspective.ToString();
 
-            switch (Session.saveDataHandler.GetSettings().perspective)
+            switch (Session.userSaveDataHandler.GetSettings().perspective)
             {
                 case Cameras.CameraModeController.CameraModes.FirstPerson:
                     perspectiveSelection.SelectedObject = perspectiveSelection.gridLayout.transform.Find("FirstPerson").gameObject;
@@ -56,7 +57,7 @@ namespace Raider.Game.GUI.StartMenu
 
         void UpdatePerspectiveSelection(GameObject newObject)
         {
-            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+            UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
             switch(newObject.name)
             {
                 case "FirstPerson":
@@ -72,8 +73,8 @@ namespace Raider.Game.GUI.StartMenu
             if (!Scenario.InLobby)
                 PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(settings.perspective);
 
-            Session.saveDataHandler.SaveSettings(settings);
-            perspectiveSelection.title.text = "Perspective: " + Session.saveDataHandler.GetSettings().perspective.ToString();
+            Session.userSaveDataHandler.SaveSettings(settings, null);
+            perspectiveSelection.title.text = "Perspective: " + Session.userSaveDataHandler.GetSettings().perspective.ToString();
         }
 
         public override void ClosePane()

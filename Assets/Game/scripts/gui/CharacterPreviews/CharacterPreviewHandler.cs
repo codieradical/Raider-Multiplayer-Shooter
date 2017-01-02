@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Raider.Game.Saves;
 using Raider.Game.Player;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
@@ -50,16 +51,16 @@ namespace Raider.Game.GUI.CharacterPreviews
             Plate
         }
 
-        Object GetRacePreviewPrefab(SaveDataStructure.Character.Race _race, PreviewType _previewType)
+        Object GetRacePreviewPrefab(UserSaveDataStructure.Character.Races _race, PreviewType _previewType)
         {
             switch (_race)
             {
-                case SaveDataStructure.Character.Race.X:
+                case UserSaveDataStructure.Character.Races.X:
                     if (_previewType == PreviewType.Full)
                         return XPreviewPrefab;
                     else
                         return XPlatePreviewPrefab;
-                case SaveDataStructure.Character.Race.Y:
+                case UserSaveDataStructure.Character.Races.Y:
                     if (_previewType == PreviewType.Full)
                         return YPreviewPrefab;
                     else
@@ -71,27 +72,27 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         #region create and setup previews
 
-        public void NewPreview(string _previewName, SaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage)
+        public void NewPreview(string _previewName, UserSaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage)
         {
             Camera previewCamera;
             GameObject newPreviewGraphics; //This isn't actually used, I just don't want too many different overloads.
-            InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out previewCamera);
+            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewGraphics, out previewCamera);
             SetupPreviewDisplay(previewCamera, _previewType, _rawImage);
             EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
 
         //Character Display Handler Overload.
-        public void NewPreview(string _previewName, SaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage, CharacterPreviewDisplayHandler _displayHandler)
+        public void NewPreview(string _previewName, UserSaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage, CharacterPreviewDisplayHandler _displayHandler)
         {
             Camera newPreviewCamera;
             GameObject newPreviewGraphics;
-            InstanceNewPreviewObject(_previewName, _previewCharacter.race, _previewType, out newPreviewGraphics, out newPreviewCamera);
+            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewGraphics, out newPreviewCamera);
             SetupPreviewDisplay(newPreviewCamera, _previewType, _rawImage);
             SetupPreviewDisplayHandler(_displayHandler, newPreviewGraphics, newPreviewCamera);
             EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
 
-        void InstanceNewPreviewObject(string _previewName, SaveDataStructure.Character.Race _race, PreviewType _previewType, out GameObject newPreviewGraphics, out Camera newPreviewCamera)
+        void InstanceNewPreviewObject(string _previewName, UserSaveDataStructure.Character.Races _race, PreviewType _previewType, out GameObject newPreviewGraphics, out Camera newPreviewCamera)
         {
             Object prefab = GetRacePreviewPrefab(_race, _previewType);
 
@@ -142,14 +143,14 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         private struct PreviewAppearenceUpdate
         {
-            public PreviewAppearenceUpdate(string _previewName, SaveDataStructure.Character _previewCharacter)
+            public PreviewAppearenceUpdate(string _previewName, UserSaveDataStructure.Character _previewCharacter)
             {
                 previewName = _previewName;
                 previewCharacter = _previewCharacter;
             }
 
             public string previewName;
-            public SaveDataStructure.Character previewCharacter;
+            public UserSaveDataStructure.Character previewCharacter;
         }
 
         void LateUpdate()
@@ -160,7 +161,7 @@ namespace Raider.Game.GUI.CharacterPreviews
             }
         }
 
-        public void EnqueuePreviewUpdate(string _previewName, SaveDataStructure.Character _character)
+        public void EnqueuePreviewUpdate(string _previewName, UserSaveDataStructure.Character _character)
         {
             appearenceUpdates.Enqueue(new PreviewAppearenceUpdate(_previewName, _character));
         }

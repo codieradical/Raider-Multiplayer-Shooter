@@ -61,7 +61,7 @@ namespace Raider.Game.Player
         {
             playerData.animator = playerData.gameObject.AddComponent<Animator>();
             playerData.animator.runtimeAnimatorController = PlayerResourceReferences.instance.animatorControllers.GetControllerByPerspective(perspective);
-            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.race);
+            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.Race);
         }
 
         public static void RecreateAnimator(PlayerData playerData, CameraModeController.CameraModes perspective)

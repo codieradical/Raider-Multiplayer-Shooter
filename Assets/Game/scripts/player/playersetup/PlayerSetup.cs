@@ -25,11 +25,11 @@ namespace Raider.Game.Player
             SetupLocalPlayer();
 
             PlayerData.localPlayerData.character = Session.ActiveCharacter;
-            PlayerData.localPlayerData.name = Session.saveDataHandler.GetUsername();
+            PlayerData.localPlayerData.name = Session.userSaveDataHandler.GetUsername();
             PlayerData.localPlayerData.isLeader = true;
             PlayerData.localPlayerData.gotData = true;
 
-            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.saveDataHandler.GetSettings().perspective);
+            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
         }
 
         IEnumerator PauseNewCameraController()
@@ -43,7 +43,7 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
         {
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
+            CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().perspective);
         }
 
         void OnDestroy()

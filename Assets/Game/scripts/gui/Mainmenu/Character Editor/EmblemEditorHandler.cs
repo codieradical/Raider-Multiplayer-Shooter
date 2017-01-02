@@ -88,9 +88,9 @@ namespace Raider.Game.GUI.Screens
             characterEditorHandler.editingCharacter.emblem.layer1 = Layer1value;
             characterEditorHandler.editingCharacter.emblem.layer2 = Layer2value;
             //update the emblem colors
-            characterEditorHandler.editingCharacter.emblem.layer0Color = new SaveDataStructure.SerializableColor(layer0color);
-            characterEditorHandler.editingCharacter.emblem.layer1Color = new SaveDataStructure.SerializableColor(layer1color);
-            characterEditorHandler.editingCharacter.emblem.layer2Color = new SaveDataStructure.SerializableColor(layer2color);
+            characterEditorHandler.editingCharacter.emblem.layer0Color = new CommonSaveDataStructure.SerializableColor(layer0color);
+            characterEditorHandler.editingCharacter.emblem.layer1Color = new CommonSaveDataStructure.SerializableColor(layer1color);
+            characterEditorHandler.editingCharacter.emblem.layer2Color = new CommonSaveDataStructure.SerializableColor(layer2color);
             //update the preview
             characterEditorHandler.UpdatePreview();
 

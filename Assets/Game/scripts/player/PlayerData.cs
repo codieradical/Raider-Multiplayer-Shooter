@@ -2,6 +2,7 @@
 using System.Collections;
 using Raider.Game.Saves;
 using Raider.Game.Networking;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.Player
 {
@@ -32,12 +33,12 @@ namespace Raider.Game.Player
         //Network Game Only.
         public int slot = -1;
         //Review accessors on this character.
-        public SaveDataStructure.Character character;
+        public UserSaveDataStructure.Character character;
 
         public string SerializedCharacter
         {
             get { return Serialization.Serialize(character); }
-            set { character = Serialization.Deserialize<SaveDataStructure.Character>(value); }
+            set { character = Serialization.Deserialize<UserSaveDataStructure.Character>(value); }
         }
 
         public bool gotData;

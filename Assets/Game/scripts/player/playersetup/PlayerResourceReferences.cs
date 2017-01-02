@@ -3,6 +3,7 @@ using System.Collections;
 using Raider.Game.Saves;
 using UnityEditor.Animations;
 using Raider.Game.Cameras;
+using Raider.Game.Saves.User;
 
 /// <summary>
 /// Anything the player needs that's assigned in inspector.
@@ -43,11 +44,11 @@ public class PlayerResourceReferences : MonoBehaviour
                 Debug.LogError("The player is missing a model prefab or avatar!!!");
         }
 
-        public GameObject GetGraphicsByRace(SaveDataStructure.Character.Race race)
+        public GameObject GetGraphicsByRace(UserSaveDataStructure.Character.Races race)
         {
-            if (race == SaveDataStructure.Character.Race.X)
+            if (race == UserSaveDataStructure.Character.Races.X)
                 return xRaceGraphics;
-            else if (race == SaveDataStructure.Character.Race.Y)
+            else if (race == UserSaveDataStructure.Character.Races.Y)
                 return yRaceGraphics;
             else
             {
@@ -56,11 +57,11 @@ public class PlayerResourceReferences : MonoBehaviour
             }
         }
 
-        public Avatar GetAvatarByRace(SaveDataStructure.Character.Race race)
+        public Avatar GetAvatarByRace(UserSaveDataStructure.Character.Races race)
         {
-            if (race == SaveDataStructure.Character.Race.X)
+            if (race == UserSaveDataStructure.Character.Races.X)
                 return xRaceAvatar;
-            else if (race == SaveDataStructure.Character.Race.Y)
+            else if (race == UserSaveDataStructure.Character.Races.Y)
                 return yRaceAvatar;
             else
             {

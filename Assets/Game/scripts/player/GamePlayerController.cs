@@ -2,6 +2,7 @@
 using System.Collections;
 using Raider.Game.Cameras;
 using Raider.Game.Saves;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.Player
 {
@@ -22,9 +23,9 @@ namespace Raider.Game.Player
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
         {
-            SaveDataStructure.Settings settings = Session.saveDataHandler.GetSettings();
+            UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
             settings.perspective = newPerspective;
-            Session.saveDataHandler.SaveSettings(settings);
+            Session.userSaveDataHandler.SaveSettings(settings, null);
             CameraModeController.singleton.SetCameraMode(newPerspective);
 
             StartCoroutine(PauseNewCameraController());

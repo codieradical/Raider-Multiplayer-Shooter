@@ -26,7 +26,7 @@ namespace Raider.Game.Player
             playerData.animator.enabled = false;
 
             //Spawn the graphics.
-            playerData.graphicsObject = Instantiate(PlayerResourceReferences.instance.raceGraphics.GetGraphicsByRace(playerData.character.race)) as GameObject;
+            playerData.graphicsObject = Instantiate(PlayerResourceReferences.instance.raceGraphics.GetGraphicsByRace(playerData.character.Race)) as GameObject;
             playerData.graphicsObject.transform.SetParent(playerData.gameObject.transform, false);
             playerData.graphicsObject.name = "Graphics"; //Prevents infinate (clone) appends.
 
@@ -36,7 +36,7 @@ namespace Raider.Game.Player
 
             //Setup the animator
             playerData.animator.enabled = true;
-            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.race);
+            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.Race);
 
             //This old appearence controller and graphics object is no longer needed.
             Destroy(gameObject);

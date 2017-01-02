@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-namespace Raider.Game.Saves
+namespace Raider.Game.Saves.User
 {
 
     /// <summary>
@@ -12,7 +12,7 @@ namespace Raider.Game.Saves
     /// 
     /// A plugin should be built to help with save data.
     /// </summary>
-    public class GameObjectSaveDataHandler : MonoBehaviour, ISaveDataHandler
+    public class GameObjectUserSaveDataHandler : MonoBehaviour, IUserSaveDataHandler
     {
         #region Singleton Setup
 
@@ -20,15 +20,15 @@ namespace Raider.Game.Saves
         //because MonoBehaviours can't be constructed,
         //I've had to make a kinda fake constructor method.
         //Maybe an instanciatable inheriting class would work.
-        public static GameObjectSaveDataHandler CreateGameObjectSaveDataHandler()
+        public static GameObjectUserSaveDataHandler CreateGameObjectSaveDataHandler()
         {
             GameObject hostObject = new GameObject();
-            hostObject.AddComponent<GameObjectSaveDataHandler>();
-            instance.data = new SaveDataStructure();
+            hostObject.AddComponent<GameObjectUserSaveDataHandler>();
+            instance.data = new UserSaveDataStructure();
             return instance;
         }
 
-        public static GameObjectSaveDataHandler instance;
+        public static GameObjectUserSaveDataHandler instance;
 
         public void Awake()
         {
@@ -46,20 +46,20 @@ namespace Raider.Game.Saves
 
         #endregion
 
-        public SaveDataStructure data;
+        public UserSaveDataStructure data;
         public GameObject parentObject;
 
-        public SaveDataStructure ReadData()
+        public UserSaveDataStructure ReadData()
         {
             return data;
         }
 
-        public void SaveData(SaveDataStructure _data)
+        public void SaveData(UserSaveDataStructure _data, Action<bool, string> messageCallback)
         {
             //Game object data is non-persistant.
         }
 
-        public void ReloadData()
+        public void ReloadData(Action<bool, string> messageCallback)
         {
             //Game object data is non-persistant.
         }
@@ -71,25 +71,25 @@ namespace Raider.Game.Saves
 
         public void NewData()
         {
-            data = new SaveDataStructure();
+            data = new UserSaveDataStructure();
         }
 
-        public void NewCharacter(SaveDataStructure.Character character)
+        public void NewCharacter(UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
         {
             data.characters.Add(character);
         }
 
-        public void SaveCharacter(int slot, SaveDataStructure.Character character)
+        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
         {
             data.characters[slot] = character;
         }
 
-        public SaveDataStructure.Character GetCharacter(int slot)
+        public UserSaveDataStructure.Character GetCharacter(int slot)
         {
             return data.characters[slot];
         }
 
-        public List<SaveDataStructure.Character> GetAllCharacters()
+        public List<UserSaveDataStructure.Character> GetAllCharacters()
         {
             return data.characters;
         }
@@ -99,7 +99,7 @@ namespace Raider.Game.Saves
             return data.username;
         }
 
-        public void SetUsername(string _username)
+        public void SetUsername(string _username, Action<bool, string> messageCallback)
         {
             data.username = _username;
         }
@@ -109,24 +109,30 @@ namespace Raider.Game.Saves
             get { return data.characters.Count; }
         }
 
-        public void DeleteCharacter(int slot)
+        public void DeleteCharacter(int slot, Action<bool, string> messageCallback)
         {
             data.characters.RemoveAt(slot);
         }
 
-        public void DefaultSettings()
+        public void DefaultSettings(Action<bool, string> messageCallback)
         {
-            data.settings = new SaveDataStructure.Settings();
+            data.userSettings = new UserSaveDataStructure.UserSettings();
         }
 
-        public void SaveSettings(SaveDataStructure.Settings settings)
+        public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<bool, string> messageCallback)
         {
-            data.settings = settings;
+            data.userSettings = settings;
         }
 
-        public SaveDataStructure.Settings GetSettings()
+        public UserSaveDataStructure.UserSettings GetSettings()
         {
-            return data.settings;
+            return data.userSettings;
+        }
+
+        public void Login(string username, string password, Action<bool, string> messageCallback)
+        {
+            CreateGameObjectSaveDataHandler();
+            SetUsername(username, messageCallback);
         }
     }
 }

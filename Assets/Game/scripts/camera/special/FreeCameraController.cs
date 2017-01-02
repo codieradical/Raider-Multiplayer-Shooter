@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Raider.Game.Cameras
 {
@@ -21,7 +20,7 @@ namespace Raider.Game.Cameras
         }
 
         bool controllingPlayer = false;
-        bool controllingCamera { get { return !controllingPlayer; } set { controllingPlayer = !value; } }
+        bool ControllingCamera { get { return !controllingPlayer; } set { controllingPlayer = !value; } }
 
         // Update is called once per frame
         void Update()
@@ -32,7 +31,7 @@ namespace Raider.Game.Cameras
                 GUI.UserFeedback.LogError("FreeCam: Switched Controls.");
             }
 
-            if (controllingCamera)
+            if (ControllingCamera)
             {
                 MoveCamera();
                 RotateCamera();

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using Raider.Game.Saves;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Components
 {
@@ -28,7 +27,7 @@ namespace Raider.Game.GUI.Components
             layer2sprites = Resources.LoadAll<Sprite>("gui/emblems/layer2");
         }
 
-        public void UpdateEmblem(SaveDataStructure.Character _character)
+        public void UpdateEmblem(UserSaveDataStructure.Character _character)
         {
             layer0image.color = _character.emblem.layer0Color.Color;
             layer1image.color = _character.emblem.layer1Color.Color;

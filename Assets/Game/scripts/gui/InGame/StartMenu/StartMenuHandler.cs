@@ -98,7 +98,7 @@ namespace Raider.Game.GUI.StartMenu
 
         void SetupStartMenuData()
         {
-            usernameLabel.text = Session.saveDataHandler.GetUsername();
+            usernameLabel.text = Session.userSaveDataHandler.GetUsername();
 
             if (Scenario.InLobby)
                 gametypeLabel.text = "Mainmenu";

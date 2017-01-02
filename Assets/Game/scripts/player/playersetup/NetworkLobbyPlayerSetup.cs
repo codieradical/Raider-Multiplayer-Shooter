@@ -1,9 +1,8 @@
-﻿using Raider.Game.Saves;
-using UnityEngine.Networking;
+﻿using UnityEngine.Networking;
 using UnityEngine;
 using Raider.Game.Scene;
 using Raider.Game.Networking;
-using System;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.Player
 {
@@ -33,7 +32,7 @@ namespace Raider.Game.Player
                     _isHost = true;
 
                 //If the player is hosting (if networkserver is active), isLeader will be true.
-                UpdateLocalData(GetComponent<NetworkLobbyPlayer>().slot, Session.saveDataHandler.GetUsername(), Session.ActiveCharacter, NetworkServer.active, _isHost);
+                UpdateLocalData(GetComponent<NetworkLobbyPlayer>().slot, Session.userSaveDataHandler.GetUsername(), Session.ActiveCharacter, NetworkServer.active, _isHost);
 
                 //I don't think this is necessary, I can probably just call the command.
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
@@ -64,7 +63,7 @@ namespace Raider.Game.Player
 
         #region player data syncing
 
-        void UpdateLocalData(int _slot, string _username, SaveDataStructure.Character _character, bool _isLeader, bool _isHost)
+        void UpdateLocalData(int _slot, string _username, UserSaveDataStructure.Character _character, bool _isLeader, bool _isHost)
         {
             Debug.Log("Network Lobby Player Setup: Updated Local Data. Slot: " + _slot + "username: " + _username);
             playerData.slot = _slot;
@@ -80,7 +79,7 @@ namespace Raider.Game.Player
         void CmdUpdateServer(int _slot, string _username, string _serializedCharacter, bool _isLeader, bool _isHost)
         {
             RpcRecieveUpdateFromServer(_slot, _username, _serializedCharacter, _isLeader, _isHost);
-            UpdateLocalData(_slot, _username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
+            UpdateLocalData(_slot, _username, Serialization.Deserialize<UserSaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
             GetComponent<PlayerChatManager>().CmdSendNotificationMessage("joined the game.", playerData.slot);
 
             //If the client has sent their player data to the server, 
@@ -92,7 +91,7 @@ namespace Raider.Game.Player
         [ClientRpc]
         public void RpcRecieveUpdateFromServer(int _slot, string _username, string _serializedCharacter, bool _isLeader, bool _isHost)
         {
-            UpdateLocalData(_slot, _username, Serialization.Deserialize<SaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
+            UpdateLocalData(_slot, _username, Serialization.Deserialize<UserSaveDataStructure.Character>(_serializedCharacter), _isLeader, _isHost);
         }
 
         [Server]

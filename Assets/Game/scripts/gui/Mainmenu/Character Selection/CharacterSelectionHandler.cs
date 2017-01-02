@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Raider.Game.Saves;
+using Raider.Game.Saves.User;
 using Raider.Game.GUI.Components;
 using Raider.Game.GUI.CharacterPreviews;
 
@@ -33,7 +33,7 @@ namespace Raider.Game.GUI.Screens
             CharacterPreviewHandler.instance.DestroyPreviews();
 
             //If no characters have been created go straight to the editor.
-            if (Session.saveDataHandler.GetAllCharacters().Count < 1 && !platesPreviouslyExisted)
+            if (Session.userSaveDataHandler.GetAllCharacters().Count < 1 && !platesPreviouslyExisted)
             {
                 MainmenuHandler.instance.CreateCharacter();
                 return;
@@ -42,7 +42,7 @@ namespace Raider.Game.GUI.Screens
             //Create new plates
             int slot = 0;
 
-            foreach (SaveDataStructure.Character character in Session.saveDataHandler.GetAllCharacters())
+            foreach (UserSaveDataStructure.Character character in Session.userSaveDataHandler.GetAllCharacters())
             {
                 CreatePlate(character, slot);
                 slot++;
@@ -51,7 +51,7 @@ namespace Raider.Game.GUI.Screens
             InstanceNewCharacterPlate();
         }
 
-        void CreatePlate(SaveDataStructure.Character character, int slot)
+        void CreatePlate(UserSaveDataStructure.Character character, int slot)
         {
             GameObject newPlate = Instantiate(characterPlatePrefab) as GameObject;
 
@@ -92,9 +92,18 @@ namespace Raider.Game.GUI.Screens
 
         public void DeleteCharacter(int slot)
         {
-            Session.saveDataHandler.DeleteCharacter(slot);
+            Session.userSaveDataHandler.DeleteCharacter(slot, DeleteCharacterCallback);
             CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString());
             LoadCharacterPlates();
+        }
+
+        public void DeleteCharacterCallback(bool success, string message)
+        {
+            if(!success)
+            {
+                UserFeedback.LogError(message);
+                LoadCharacterPlates();
+            }
         }
     }
 }

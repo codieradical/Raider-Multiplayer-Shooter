@@ -3,16 +3,21 @@ using System;
 using Raider.Game.Scene;
 using UnityEngine.UI;
 using Raider.Game.GUI.Screens;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Screens
 {
     public class LoginHandler : MonoBehaviour
     {
         [SerializeField]
-        private Text usernameTextBox;
-        private Text passwordTextBox;
+        private InputField usernameTextBox;
+        [SerializeField]
+        private InputField passwordTextBox;
+        [SerializeField]
         private Toggle rememberMeBox;
+        [SerializeField]
         private RectTransform LoginPanel;
+        [SerializeField]
         private RectTransform loadingPanel;
 
         //Sends username and password to session class to login.
@@ -25,7 +30,7 @@ namespace Raider.Game.GUI.Screens
                 return;
             }
 
-            if(string.IsNullOrEmpty(passwordTextBox.text) && Session.onlineMode)
+            if(string.IsNullOrEmpty(passwordTextBox.text) && BuildConfig.ONLINE_MODE)
             {
                 UserFeedback.LogError("No password provided.");
                 //Display info.
@@ -34,14 +39,29 @@ namespace Raider.Game.GUI.Screens
 
             Session.rememberMe = rememberMeBox.isOn;
             Session.Login(usernameTextBox.text, passwordTextBox.text, LoginCallback);
+
+            LoginPanel.gameObject.SetActive(false);
+            loadingPanel.gameObject.SetActive(true);
         }
 
-        public void LoginCallback(bool success, string error)
+        public void LoginCallback(bool success, string message)
+        {
+            if (success)
+                Session.userSaveDataHandler.ReloadData(LoadPlayerCallback);
+            else
+            {
+                UserFeedback.LogError(message);
+                loadingPanel.gameObject.SetActive(false);
+                LoginPanel.gameObject.SetActive(true);
+            }
+        }
+
+        public void LoadPlayerCallback(bool success, string message)
         {
             if (success)
                 MainmenuHandler.instance.Login();
             else
-                UserFeedback.LogError(error);
+                UserFeedback.LogError(message);
 
             loadingPanel.gameObject.SetActive(false);
             LoginPanel.gameObject.SetActive(true);

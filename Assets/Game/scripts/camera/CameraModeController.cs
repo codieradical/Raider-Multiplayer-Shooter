@@ -2,7 +2,6 @@
 using System;
 using Raider.Game.GUI;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Raider.Game.Cameras
