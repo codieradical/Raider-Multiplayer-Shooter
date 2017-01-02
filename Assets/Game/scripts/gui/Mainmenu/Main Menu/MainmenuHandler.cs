@@ -35,7 +35,7 @@ namespace Raider.Game.GUI.Screens
 
         public void Start()
         {
-            if (Session.activeCharacter != null)
+            if (Session.ActiveCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
                 if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
@@ -49,7 +49,7 @@ namespace Raider.Game.GUI.Screens
                     {
                         username = Session.saveDataHandler.GetUsername(),
                         leader = true,
-                        character = Session.activeCharacter
+                        character = Session.ActiveCharacter
                     };
 
                     //Make sure the old player is gone.
@@ -77,18 +77,8 @@ namespace Raider.Game.GUI.Screens
         public GameObject EmblemEditorScreen;
         public GameObject MatchmakingScreen;
 
-        public void Login(Text _textComponent)
+        public void Login()
         {
-            string _username = _textComponent.text;
-
-            if (string.IsNullOrEmpty(_username))
-            {
-                UserFeedback.LogError("No username provided.");
-                //Display info.
-                return;
-            }
-
-            Session.Login(_username);
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
 
@@ -133,7 +123,7 @@ namespace Raider.Game.GUI.Screens
             {
                 username = Session.saveDataHandler.GetUsername(),
                 leader = true,
-                character = Session.activeCharacter
+                character = Session.ActiveCharacter
             };
             LobbyHandler.AddPlayer(playerNameplate);
         }

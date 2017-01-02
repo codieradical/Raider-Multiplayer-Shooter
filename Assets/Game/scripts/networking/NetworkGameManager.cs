@@ -252,7 +252,7 @@ namespace Raider.Game.Networking
             else
             {
                 LobbyHandler.DestroyAllPlayers();
-                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.saveDataHandler.GetUsername(), true, false, false, Session.activeCharacter));
+                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.saveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
             }
         }
 

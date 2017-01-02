@@ -24,7 +24,7 @@ namespace Raider.Game.Player
 
             SetupLocalPlayer();
 
-            PlayerData.localPlayerData.character = Session.activeCharacter;
+            PlayerData.localPlayerData.character = Session.ActiveCharacter;
             PlayerData.localPlayerData.name = Session.saveDataHandler.GetUsername();
             PlayerData.localPlayerData.isLeader = true;
             PlayerData.localPlayerData.gotData = true;

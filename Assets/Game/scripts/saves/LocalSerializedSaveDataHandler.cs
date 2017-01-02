@@ -26,9 +26,12 @@ namespace Raider.Game.Saves
 #endif
 
 
-        public LocalSerializedSaveDataHandler()
+        public LocalSerializedSaveDataHandler(string username, string password, Action<bool, string> callback)
         {
             ReloadData();
+            SetUsername(username);
+
+            callback(true, "success");
         }
 
         public SaveDataStructure ReadData()

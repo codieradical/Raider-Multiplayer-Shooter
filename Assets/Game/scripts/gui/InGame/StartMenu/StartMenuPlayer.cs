@@ -51,7 +51,7 @@ namespace Raider.Game.GUI.StartMenu
         IEnumerator SetupPlayerPreviewAfterAFrame()
         {
             yield return 0;
-            CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, Session.activeCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
+            CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME, Session.ActiveCharacter, PREVIEW_TYPE, characterPreviewRawImage, characterPreviewImage.GetComponent<CharacterPreviewDisplayHandler>());
         }
 
         void UpdatePerspectiveSelection(GameObject newObject)

@@ -33,7 +33,7 @@ namespace Raider.Game.Player
                     _isHost = true;
 
                 //If the player is hosting (if networkserver is active), isLeader will be true.
-                UpdateLocalData(GetComponent<NetworkLobbyPlayer>().slot, Session.saveDataHandler.GetUsername(), Session.activeCharacter, NetworkServer.active, _isHost);
+                UpdateLocalData(GetComponent<NetworkLobbyPlayer>().slot, Session.saveDataHandler.GetUsername(), Session.ActiveCharacter, NetworkServer.active, _isHost);
 
                 //I don't think this is necessary, I can probably just call the command.
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)

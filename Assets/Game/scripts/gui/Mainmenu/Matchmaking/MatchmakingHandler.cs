@@ -21,7 +21,7 @@ namespace Raider.Game.GUI.Screens
 
         public void JoinGame(Text ipTxt)
         {
-            if(Session.activeCharacter == null)
+            if(Session.ActiveCharacter == null)
             {
                 Debug.LogWarning("User attempted to join a server with no character selected!");
             }

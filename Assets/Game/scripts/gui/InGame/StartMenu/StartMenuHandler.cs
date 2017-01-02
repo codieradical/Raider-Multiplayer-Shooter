@@ -83,7 +83,7 @@ namespace Raider.Game.GUI.StartMenu
         public void OpenStartMenu()
         {
             //If the user is not logged in, don't let them do this.
-            if (Session.activeCharacter == null)
+            if (Session.ActiveCharacter == null)
                 return;
 
             SetupStartMenuData();
