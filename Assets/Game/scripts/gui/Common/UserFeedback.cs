@@ -58,7 +58,7 @@ namespace Raider.Game.GUI
 
         void OnGUI()
         {
-            UnityEngine.GUI.Label(new Rect(0, 0, Screen.width, 30), "Project Raider, 2016 Private Alpha // User Feedback");
+            UnityEngine.GUI.Label(new Rect(0, 0, Screen.width, 30), "Project Raider, 2017 Private Alpha, v" + BuildConfig.VERSION_NUMBER.ToString() + " // User Feedback");
 
             if (messageLog.Count > 0)
                 for (int i = messageLog.Count - 1; i >= 0; i--)
