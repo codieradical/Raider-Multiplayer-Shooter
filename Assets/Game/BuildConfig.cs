@@ -21,7 +21,7 @@ namespace Raider.Game
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.
         /// </summary>
-        public const bool ONLINE_MODE = true;
+        public const bool ONLINE_MODE = false;
         /// <summary>
         /// If set to true, serialized save data handlers will be instanced.
         /// If set to false, data will be stored in JSON.
@@ -36,7 +36,7 @@ namespace Raider.Game
         /// The base path for local save data files.
         /// Modified on debug builds so that saves used in testing are committed to the repo.
         /// </summary>
-#if DEBUG
+#if UNITY_EDITOR
         public readonly static string LOCAL_SAVE_PATH = Application.dataPath.Replace("/Assets", "") + "/uploadData";
 #else
         public readonly static string LOCAL_SAVE_PATH = Application.persistentDataPath;
@@ -45,6 +45,7 @@ namespace Raider.Game
         /// Where the API can be found.
         /// localhost:3000/api/ for local testing.
         /// </summary>
+        /// 
         public const string API_URL = "http://localhost:3000/api";
         /// <summary>
         /// Where the Web front end can be located.

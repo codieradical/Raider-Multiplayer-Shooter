@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Raider.Game.Saves;
-using UnityEditor.Animations;
 using Raider.Game.Cameras;
 using Raider.Game.Saves.User;
 
@@ -77,10 +76,10 @@ public class PlayerResourceReferences : MonoBehaviour
     [System.Serializable]
     public class PlayerAnimatorControllers
     {
-        public AnimatorController firstPerson;
-        public AnimatorController thirdPerson;
+        public RuntimeAnimatorController firstPerson;
+        public RuntimeAnimatorController thirdPerson;
 
-        public AnimatorController GetControllerByPerspective(CameraModeController.CameraModes perspective)
+        public RuntimeAnimatorController GetControllerByPerspective(CameraModeController.CameraModes perspective)
         {
             if (perspective == CameraModeController.CameraModes.FirstPerson)
                 return firstPerson;

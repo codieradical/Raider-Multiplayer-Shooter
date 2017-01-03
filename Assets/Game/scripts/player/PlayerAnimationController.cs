@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Raider.Game.Cameras;
 using System.Collections;
-using UnityEditor.Animations;
 using Raider.Game.Saves;
 
 namespace Raider.Game.Player
