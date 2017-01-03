@@ -53,14 +53,16 @@ namespace Raider.Game.Saves.User
             try
             {
                 File.WriteAllText(dataPath, JsonUtility.ToJson(data));
-                messageCallback(true, "success.");
+                if (messageCallback != null)
+                    messageCallback(true, "success.");
             }
             catch (Exception ex)
             {
                 //College sharing violations are hard to avoid so, this is necessary for now.
                 UserFeedback.LogError("IO Exception! This may be due to a sharing violation.");
                 Debug.LogException(ex);
-                messageCallback(false, "Unhandled exception saving user data.");
+                if (messageCallback != null)
+                    messageCallback(false, "Unhandled exception saving user data.");
                 throw new FileLoadException();
             }
 
@@ -103,14 +105,16 @@ namespace Raider.Game.Saves.User
                 {
                     UserSaveDataStructure _data = JsonUtility.FromJson<UserSaveDataStructure>(File.ReadAllText(dataPath));
                     data = _data;
-                    messageCallback(true, "successfully read user data");
+                    if(messageCallback != null)
+                        messageCallback(true, "successfully read user data");
                 }
                 catch (SerializationException)
                 {
                     UserFeedback.LogError("Failed to deserialize saveData.");
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");
                     NewData();
-                    messageCallback(true, "User data was corrupted, created new data.");
+                    if (messageCallback != null)
+                        messageCallback(true, "User data was corrupted, created new data.");
                 }
             }
             else
