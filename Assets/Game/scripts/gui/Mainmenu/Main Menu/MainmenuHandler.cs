@@ -83,7 +83,7 @@ namespace Raider.Game.GUI.Screens
             MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
             ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
 
-            if (Session.userSaveDataHandler.GetSettings().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split)
+            if (Session.userSaveDataHandler.GetSettings().LobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplays.Split)
                 LobbyHandler.SwitchToSplitLobby();
             else
                 LobbyHandler.SwitchToScrollLobby();

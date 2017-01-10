@@ -15,13 +15,10 @@ namespace Raider.Game.Saves.User
 
         readonly string dataPath = BuildConfig.LOCAL_SAVE_PATH + "/userSaveData.json";
 
-        public void Login(string username, string password, Action<bool, string> messageCallback)
+        public void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
-            ReloadData(null);
-            SetUsername(username,null);
-
-            if(messageCallback != null)
-                messageCallback(true, "success");
+            ReloadData(null, null);
+            SetUsername(username, successCallback, failureCallback);
         }
 
         public UserSaveDataStructure ReadData()
@@ -48,25 +45,21 @@ namespace Raider.Game.Saves.User
             }
         }
 
-        public void SaveData(UserSaveDataStructure _data, Action<bool, string> messageCallback)
+        public void SaveData(UserSaveDataStructure _data, Action<string> successCallback, Action<string> failureCallback)
         {
             try
             {
                 File.WriteAllText(dataPath, JsonUtility.ToJson(data));
-                if (messageCallback != null)
-                    messageCallback(true, "success.");
             }
             catch (Exception ex)
             {
                 //College sharing violations are hard to avoid so, this is necessary for now.
                 UserFeedback.LogError("IO Exception! This may be due to a sharing violation.");
                 Debug.LogException(ex);
-                if (messageCallback != null)
-                    messageCallback(false, "Unhandled exception saving user data.");
                 throw new FileLoadException();
             }
 
-            ReloadData(messageCallback);
+            ReloadData(successCallback, failureCallback);
         }
 
         public void DeleteData()
@@ -86,8 +79,8 @@ namespace Raider.Game.Saves.User
 
                 File.Create(dataPath).Dispose();
                 data = new UserSaveDataStructure();
-                SaveData(data,null);
-                ReloadData(null);
+                SaveData(data,null, null);
+                ReloadData(null, null);
             }
             catch(IOException)
             {
@@ -97,7 +90,7 @@ namespace Raider.Game.Saves.User
         }
 
 
-        public void ReloadData(Action<bool,string> messageCallback)
+        public void ReloadData(Action<string> successCallback, Action<string> failureCallback)
         {
             if (File.Exists(dataPath))
             {
@@ -105,36 +98,37 @@ namespace Raider.Game.Saves.User
                 {
                     UserSaveDataStructure _data = JsonUtility.FromJson<UserSaveDataStructure>(File.ReadAllText(dataPath));
                     data = _data;
-                    if(messageCallback != null)
-                        messageCallback(true, "successfully read user data");
+                    if(successCallback != null)
+                        successCallback("successfully read user data");
                 }
                 catch (SerializationException)
                 {
                     UserFeedback.LogError("Failed to deserialize saveData.");
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");
                     NewData();
-                    if (messageCallback != null)
-                        messageCallback(true, "User data was corrupted, created new data.");
+                    if (successCallback != null)
+                        successCallback("User data was corrupted, created new data.");
                 }
             }
             else
             {
                 NewData();
-                messageCallback(true, "No user data found, created new data");
+                if (successCallback != null)
+                    successCallback("No user data found, created new data");
             }
         }
 
 
-        public void NewCharacter(UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void NewCharacter(UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters.Add(character);
-            SaveData(data, messageCallback);
+            SaveData(data, successCallback, failureCallback);
         }
 
-        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters[slot] = character;
-            SaveData(data, messageCallback);
+            SaveData(data, successCallback, failureCallback);
         }
 
         public UserSaveDataStructure.Character GetCharacter(int slot)
@@ -147,10 +141,10 @@ namespace Raider.Game.Saves.User
             return data.username;
         }
 
-        public void SetUsername(string _username, Action<bool, string> messageCallback)
+        public void SetUsername(string _username, Action<string> successCallback, Action<string> failureCallback)
         {
             data.username = _username;
-            SaveData(data, messageCallback);
+            SaveData(data, successCallback, failureCallback);
         }
 
         public int CharacterCount
@@ -164,10 +158,10 @@ namespace Raider.Game.Saves.User
             }
         }
 
-        public void DeleteCharacter(int slot, Action<bool, string> messageCallback)
+        public void DeleteCharacter(int slot, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters.RemoveAt(slot);
-            SaveData(data, messageCallback);
+            SaveData(data, successCallback, failureCallback);
         }
 
         public List<UserSaveDataStructure.Character> GetAllCharacters()
@@ -175,15 +169,15 @@ namespace Raider.Game.Saves.User
             return data.characters;
         }
 
-		public void DefaultSettings(Action<bool, string> messageCallback)
+		public void DefaultSettings(Action<string> successCallback, Action<string> failureCallback)
 		{
-            SaveSettings(new UserSaveDataStructure.UserSettings(), messageCallback);
+            SaveSettings(new UserSaveDataStructure.UserSettings(), successCallback, failureCallback);
 		}
 
-		public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<bool, string> messageCallback)
+		public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<string> successCallback, Action<string> failureCallback)
 		{
 			data.userSettings = settings;
-			SaveData(data, messageCallback);
+			SaveData(data, successCallback, failureCallback);
 		}
 
         public UserSaveDataStructure.UserSettings GetSettings()

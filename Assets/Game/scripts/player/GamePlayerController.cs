@@ -25,7 +25,7 @@ namespace Raider.Game.Player
         {
             UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
             settings.perspective = newPerspective;
-            Session.userSaveDataHandler.SaveSettings(settings, null);
+            Session.userSaveDataHandler.SaveSettings(settings, null, null);
             CameraModeController.singleton.SetCameraMode(newPerspective);
 
             StartCoroutine(PauseNewCameraController());

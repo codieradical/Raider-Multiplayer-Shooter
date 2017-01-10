@@ -38,30 +38,36 @@ namespace Raider.Game.GUI.Screens
             }
 
             Session.rememberMe = rememberMeBox.isOn;
-            Session.Login(usernameTextBox.text, passwordTextBox.text, LoginCallback);
+            Session.Login(usernameTextBox.text, passwordTextBox.text, LoginSuccessCallback, LoginFailedCallback);
 
             LoginPanel.gameObject.SetActive(false);
             loadingPanel.gameObject.SetActive(true);
         }
 
-        public void LoginCallback(bool success, string message)
+        public void LoginSuccessCallback(string message)
         {
-            if (success)
-                Session.userSaveDataHandler.ReloadData(LoadPlayerCallback);
-            else
-            {
-                UserFeedback.LogError(message);
-                loadingPanel.gameObject.SetActive(false);
-                LoginPanel.gameObject.SetActive(true);
-            }
+            Session.userSaveDataHandler.ReloadData(LoginSuccessCallback, LoginFailedCallback);
+            UserFeedback.LogError(message);
         }
 
-        public void LoadPlayerCallback(bool success, string message)
+        public void LoginFailedCallback(string error)
         {
-            if (success)
-                MainmenuHandler.instance.Login();
-            else
-                UserFeedback.LogError(message);
+            UserFeedback.LogError(error);
+            loadingPanel.gameObject.SetActive(false);
+            LoginPanel.gameObject.SetActive(true);
+        }
+
+        public void LoadPlayerSuccessCallback(string message)
+        {
+            MainmenuHandler.instance.Login();
+
+            loadingPanel.gameObject.SetActive(false);
+            LoginPanel.gameObject.SetActive(true);
+        }
+
+        public void LoadPlayerFailedCallback(string error)
+        {
+            UserFeedback.LogError(error);
 
             loadingPanel.gameObject.SetActive(false);
             LoginPanel.gameObject.SetActive(true);

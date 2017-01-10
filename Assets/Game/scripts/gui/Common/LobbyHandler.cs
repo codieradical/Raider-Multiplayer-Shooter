@@ -84,8 +84,8 @@ namespace Raider.Game.GUI.Components
 		public void SwitchToScrollLobbyButton()
 		{
 			UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
-			settings.lobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplay.Scroll;
-			Session.userSaveDataHandler.SaveSettings(settings, SaveLobbyDisplaySettingsCallback);
+			settings.LobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplays.Scroll;
+			Session.userSaveDataHandler.SaveSettings(settings, null, FailedToSaveSettingsCallback);
 
 			SwitchToScrollLobby();
 		}
@@ -93,16 +93,15 @@ namespace Raider.Game.GUI.Components
 		public void SwitchToSplitLobbyButton()
 		{
 			UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
-			settings.lobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplay.Split;
-			Session.userSaveDataHandler.SaveSettings(settings, SaveLobbyDisplaySettingsCallback);
+			settings.LobbyDisplay = UserSaveDataStructure.UserSettings.LobbyDisplays.Split;
+			Session.userSaveDataHandler.SaveSettings(settings, null, FailedToSaveSettingsCallback);
 
 			SwitchToSplitLobby();
 		}
 
-        public void SaveLobbyDisplaySettingsCallback(bool success, string message)
+        public void FailedToSaveSettingsCallback(string error)
         {
-            if (!success)
-                Debug.Log("Failed to save user lobby display settings. " + message);
+            Debug.Log("Failed to save user lobby display settings. \n" + error);
         }
 
         public static void DestroyAllPlayers()
@@ -170,7 +169,7 @@ namespace Raider.Game.GUI.Components
 					nameplate32.transform.SetParent (instance.thirtyTwoPlayerLobbyPlayerContainer[1].transform, false);
             }
 
-            if (Session.userSaveDataHandler.GetSettings().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split)
+            if (Session.userSaveDataHandler.GetSettings().LobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplays.Split)
             {
                 if (players.Count == 9 || players.Count == 17 || players.Count == 33)
                     SwitchToSplitLobby();
@@ -223,7 +222,7 @@ namespace Raider.Game.GUI.Components
                 }
             }
 
-			if (Session.userSaveDataHandler.GetSettings ().lobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplay.Split) {
+			if (Session.userSaveDataHandler.GetSettings ().LobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplays.Split) {
 				if (players.Count == 9 || players.Count == 17 || players.Count == 33)
 					SwitchToSplitLobby ();
 			}

@@ -8,26 +8,25 @@ namespace Raider.Game.Saves.User
 
     public interface IUserSaveDataHandler
     {
-        void Login(string username, string password, Action<bool, string> messageCallback);
+        void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback);
 
         UserSaveDataStructure ReadData();
-        void SaveData(UserSaveDataStructure _data, Action<bool, string> messageCallback);
-        void ReloadData(Action<bool, string> messageCallback);
+        void ReloadData(Action<string> successCallback, Action<string> failureCallback);
         void DeleteData();
         void NewData();
 
-        void NewCharacter(UserSaveDataStructure.Character character, Action<bool, string> messageCallback);
-        void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<bool, string> messageCallback);
+        void NewCharacter(UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback);
+        void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback);
 
-		void DefaultSettings(Action<bool, string> messageCallback);
-		void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<bool, string> messageCallback);
+		void DefaultSettings(Action<string> successCallback, Action<string> failureCallback);
+		void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<string> successCallback, Action<string> failureCallback);
 		UserSaveDataStructure.UserSettings GetSettings();
 
         UserSaveDataStructure.Character GetCharacter(int slot);
         List<UserSaveDataStructure.Character> GetAllCharacters();
         string GetUsername();
-        void SetUsername(string _username, Action<bool, string> messageCallback);
+        void SetUsername(string _username, Action<string> successCallback, Action<string> failureCallback);
         int CharacterCount { get; }
-        void DeleteCharacter(int slot, Action<bool, string> messageCallback);
+        void DeleteCharacter(int slot, Action<string> successCallback, Action<string> failureCallback);
     }
 }

@@ -222,9 +222,9 @@ namespace Raider.Game.GUI.Screens
         public void Done()
         {
             if (characterSlot == Session.userSaveDataHandler.CharacterCount)
-                Session.userSaveDataHandler.NewCharacter(editingCharacter, null);
+                Session.userSaveDataHandler.NewCharacter(editingCharacter, null, EditCharacterSaveFailure);
             else
-                Session.userSaveDataHandler.SaveCharacter(characterSlot, editingCharacter, null);
+                Session.userSaveDataHandler.SaveCharacter(characterSlot, editingCharacter, null, EditCharacterSaveFailure);
 
             //Delete the preview.
             CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
@@ -234,6 +234,11 @@ namespace Raider.Game.GUI.Screens
 
             //Dispose of any unneeded values
             editingCharacter = null;
+        }
+
+        private void EditCharacterSaveFailure(string error)
+        {
+            UserFeedback.LogError(error);
         }
     }
 }

@@ -92,18 +92,15 @@ namespace Raider.Game.GUI.Screens
 
         public void DeleteCharacter(int slot)
         {
-            Session.userSaveDataHandler.DeleteCharacter(slot, DeleteCharacterCallback);
+            Session.userSaveDataHandler.DeleteCharacter(slot, null, FailedToDeleteCharacterCallback);
             CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME + slot.ToString());
             LoadCharacterPlates();
         }
 
-        public void DeleteCharacterCallback(bool success, string message)
+        public void FailedToDeleteCharacterCallback(string error)
         {
-            if(!success)
-            {
-                UserFeedback.LogError(message);
-                LoadCharacterPlates();
-            }
+            UserFeedback.LogError(error);
+            LoadCharacterPlates();
         }
     }
 }

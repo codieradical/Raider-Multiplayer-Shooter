@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Net;
 using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Threading;
 using Raider.Game.Networking;
+using System.Text;
 
 namespace Raider.Game.Saves.User
 {
@@ -15,7 +17,10 @@ namespace Raider.Game.Saves.User
         private string accessToken;
         private UserSaveDataStructure data;
 
-        public void Login(string username, string password, Action<bool, string> messageCallback)
+        public static ManualResetEvent allDone = new ManualResetEvent(false);
+        const int BUFFER_SIZE = 1024;
+
+        public void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
             //if (String.IsNullOrEmpty(accessToken))
             //{
@@ -26,7 +31,7 @@ namespace Raider.Game.Saves.User
             //    }
             //    else
                 //{
-                    GetNewAccessToken(username, password, messageCallback);
+                    GetNewAccessToken(username, password, successCallback, failureCallback);
             //    }
             //}
             //else
@@ -35,29 +40,21 @@ namespace Raider.Game.Saves.User
             //}
         }
 
-        public void GetNewAccessToken(string username, string password, Action<bool,string> messageCallback)
+        public void GetNewAccessToken(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
-            SendTokenRequest(username, password, messageCallback);
-        }
-        private void SendTokenRequest(string username, string password, Action<bool, string> messageCallback)
-        {
-            WWWForm requestTokenForm = new WWWForm();
-            requestTokenForm.AddField("username", username);
-            requestTokenForm.AddField("password", password);
+            WWWForm requestForm = new WWWForm();
+            requestForm.AddField("username", username);
+            requestForm.AddField("password", password);
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/auth/login", "POST", RecieveTokenResponse, successCallback, failureCallback, null, requestForm);
 
-            ApiWebRequestHandler.RequestHandler requestHandler = new ApiWebRequestHandler.RequestHandler(requestTokenForm);
-            ApiWebRequestHandler.ResponseHandler responseHandler = new ApiWebRequestHandler.ResponseHandler(RecieveTokenResponse, messageCallback);
-            UnityWebRequest requestToken = new UnityWebRequest(BuildConfig.API_URL + "/auth/login", "POST", responseHandler, requestHandler.uploadHandler);
-            requestToken.Send();
         }
-        private void RecieveTokenResponse(ApiWebRequestHandler.ResponseObject response)
+        private void RecieveTokenResponse(HTTPClient.ResponseData responseData)
         {
-            if(response.success)
-            {
-                accessToken = response.token;
-                if (Session.rememberMe)
-                    Session.systemSaveDataHandler.SetToken(response.token);
-            }
+            accessToken = responseData.token;
+            if (Session.rememberMe)
+                Session.systemSaveDataHandler.SetToken(responseData.token);
+            else
+                Session.systemSaveDataHandler.DeleteToken();
         }
 
         public UserSaveDataStructure ReadData()
@@ -65,51 +62,14 @@ namespace Raider.Game.Saves.User
             return data;
         }
 
-        //requestToken.SetRequestHeader("Authorization")
-
-        public void SaveData(UserSaveDataStructure _data, Action<bool, string> messageCallback)
+        public void ReloadData(Action<string> successCallback, Action<string> failureCallback)
         {
-            SendSaveDataRequest(_data, messageCallback);
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/", "GET", RecieveReloadDataResponse, successCallback, failureCallback, accessToken, null);
         }
-        private void SendSaveDataRequest(UserSaveDataStructure user, Action<bool, string> messageCallback)
-        {
-            WWWForm postUserForm = new WWWForm();
-            postUserForm.AddField("user", JsonUtility.ToJson(user));
-
-            Debug.Log(JsonUtility.ToJson(user));
-
-            ApiWebRequestHandler.ResponseHandler responseHandler = new ApiWebRequestHandler.ResponseHandler(RecieveSaveDataResponse, messageCallback);
-            ApiWebRequestHandler.RequestHandler requestHandler = new ApiWebRequestHandler.RequestHandler(postUserForm);
-            UnityWebRequest requestToken = new UnityWebRequest(BuildConfig.API_URL + "/user", "PUT", responseHandler, requestHandler.uploadHandler);
-            requestToken.SetRequestHeader("Authorization", accessToken);
-            requestToken.Send();
-        }
-        private void RecieveSaveDataResponse(ApiWebRequestHandler.ResponseObject response)
+        private void RecieveReloadDataResponse(HTTPClient.ResponseData response)
         {
             if (response.success)
-            {
-                ReloadData(null);
-            }
-        }
-
-        public void ReloadData(Action<bool, string> messageCallback)
-        {
-            SendReloadDataRequest(messageCallback);
-        }
-        private void SendReloadDataRequest(Action<bool, string> messageCallback)
-        {
-            ApiWebRequestHandler.ResponseHandler responseHandler = new ApiWebRequestHandler.ResponseHandler(RecieveReloadDataResponse, messageCallback);
-            UnityWebRequest requestToken = new UnityWebRequest(BuildConfig.API_URL + "/user", "GET");
-            requestToken.downloadHandler = responseHandler;
-            requestToken.SetRequestHeader("Authorization", accessToken);
-            requestToken.Send();
-        }
-        private void RecieveReloadDataResponse(ApiWebRequestHandler.ResponseObject response)
-        {
-            if (response.success)
-            {
                 data = response.user;
-            }
         }
 
         public void DeleteData()
@@ -124,16 +84,23 @@ namespace Raider.Game.Saves.User
             
         }
 
-        public void NewCharacter(UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void NewCharacter(UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
-            data.characters.Add(new UserSaveDataStructure.Character());
-            SaveData(data, messageCallback);
+            WWWForm requestForm = new WWWForm();
+            requestForm.AddField("character", JsonUtility.ToJson(character));
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/characters/new", "POST", RecieveSaveCharacterResponse, successCallback, failureCallback, accessToken, requestForm);
         }
 
-        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
-            data.characters[slot] = character;
-            SaveData(data, messageCallback);
+            WWWForm requestForm = new WWWForm();
+            requestForm.AddField("character", JsonUtility.ToJson(character));
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/characters/" + slot, "PUT", RecieveSaveCharacterResponse, successCallback, failureCallback, accessToken, requestForm);
+        }
+        private void RecieveSaveCharacterResponse(HTTPClient.ResponseData response)
+        {
+            if (response.success)
+                ReloadData(null, null);
         }
 
         public UserSaveDataStructure.Character GetCharacter(int slot)
@@ -151,10 +118,16 @@ namespace Raider.Game.Saves.User
             return data.username;
         }
 
-        public void SetUsername(string _username, Action<bool, string> messageCallback)
+        public void SetUsername(string _username, Action<string> successCallback, Action<string> failureCallback)
         {
-            data.username = _username;
-            SaveData(data, messageCallback);
+            WWWForm requestForm = new WWWForm();
+            requestForm.AddField("username", _username);
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/username", "PUT", RecieveSetUsernameResponse, successCallback, failureCallback, accessToken, requestForm);
+        }
+        private void RecieveSetUsernameResponse(HTTPClient.ResponseData response)
+        {
+            if (response.success)
+                ReloadData(null, null);
         }
 
         public int CharacterCount
@@ -162,22 +135,31 @@ namespace Raider.Game.Saves.User
             get { return data.characters.Count; }
         }
 
-        public void DeleteCharacter(int slot, Action<bool, string> messageCallback)
+        public void DeleteCharacter(int slot, Action<string> successCallback, Action<string> failureCallback)
         {
-            data.characters.RemoveAt(slot);
-            SaveData(data, messageCallback);
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/characters/" + slot, "DEL", RecieveDeleteCharacterResponse, successCallback, failureCallback, accessToken, null);
+        }
+        private void RecieveDeleteCharacterResponse(HTTPClient.ResponseData response)
+        {
+            if (response.success)
+                ReloadData(null, null);
         }
 
-        public void DefaultSettings(Action<bool, string> messageCallback)
+        public void DefaultSettings(Action<string> successCallback, Action<string> failureCallback)
         {
-            data.userSettings = new UserSaveDataStructure.UserSettings();
-            SaveData(data, messageCallback);
+            SaveSettings(new UserSaveDataStructure.UserSettings(), successCallback, failureCallback);
         }
 
-        public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<bool, string> messageCallback)
+        public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<string> successCallback, Action<string> failureCallback)
         {
-            data.userSettings = settings;
-            SaveData(data, messageCallback);
+            WWWForm requestForm = new WWWForm();
+            requestForm.AddField("settings", JsonUtility.ToJson(settings));
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/settings", "PUT", RecieveSaveSettingsResponse, successCallback, failureCallback, accessToken, requestForm);
+        }
+        private void RecieveSaveSettingsResponse(HTTPClient.ResponseData response)
+        {
+            if (response.success)
+                ReloadData(null, null);
         }
 
         public UserSaveDataStructure.UserSettings GetSettings()

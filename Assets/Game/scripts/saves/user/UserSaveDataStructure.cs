@@ -16,8 +16,6 @@ namespace Raider.Game.Saves.User
     public class UserSaveDataStructure
     {
         public string username;
-        public string password;
-        public string email;
 
         public List<Character> characters = new List<Character>();
         public UserSettings userSettings = new UserSettings();
@@ -27,11 +25,11 @@ namespace Raider.Game.Saves.User
         {
             public UserSettings()
             {
-                lobbyDisplay = LobbyDisplay.Scroll;
+                LobbyDisplay = LobbyDisplays.Scroll;
                 perspective = CameraModeController.CameraModes.FirstPerson;
             }
 
-            public enum LobbyDisplay
+            public enum LobbyDisplays
             {
                 Scroll,
                 Split
@@ -40,9 +38,9 @@ namespace Raider.Game.Saves.User
             public string lobbyDisplayString;
             public string perspectiveString;
 
-            public LobbyDisplay lobbyDisplay
+            public LobbyDisplays LobbyDisplay
             {
-                get { return (LobbyDisplay)Enum.Parse(typeof(LobbyDisplay), lobbyDisplayString); }
+                get { return (LobbyDisplays)Enum.Parse(typeof(LobbyDisplays), lobbyDisplayString); }
                 set { lobbyDisplayString = value.ToString(); }
             }
 
@@ -97,9 +95,9 @@ namespace Raider.Game.Saves.User
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(Color.black);
                 armourTertiaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
                 Race = Races.X;
-                HelmetArmour = AvailableArmours.X;
-                ShoulderArmour = AvailableArmours.X;
-                ChestArmour = AvailableArmours.X;
+                HelmetArmour = Armours.X;
+                ShoulderArmour = Armours.X;
+                ChestArmour = Armours.X;
                 guild = "";
                 //currentMission = "New Campaign";
             }
@@ -117,7 +115,7 @@ namespace Raider.Game.Saves.User
                 //currentMission = _currentMission;
             }
 
-            public enum AvailableArmours
+            public enum Armours
             {
                 X,
                 Y
@@ -154,19 +152,19 @@ namespace Raider.Game.Saves.User
                 get { return (Races)Enum.Parse(typeof(Races), raceString); }
                 set { raceString = value.ToString(); }
             }
-            public AvailableArmours ShoulderArmour
+            public Armours ShoulderArmour
             {
-                get { return (AvailableArmours)Enum.Parse(typeof(AvailableArmours), shoulderArmourString); }
+                get { return (Armours)Enum.Parse(typeof(Armours), shoulderArmourString); }
                 set { shoulderArmourString = value.ToString(); }
             }
-            public AvailableArmours HelmetArmour
+            public Armours HelmetArmour
             {
-                get { return (AvailableArmours)Enum.Parse(typeof(AvailableArmours), helmetArmourString); }
+                get { return (Armours)Enum.Parse(typeof(Armours), helmetArmourString); }
                 set { helmetArmourString = value.ToString(); }
             }
-            public AvailableArmours ChestArmour
+            public Armours ChestArmour
             {
-                get { return (AvailableArmours)Enum.Parse(typeof(AvailableArmours), chestArmourString); }
+                get { return (Armours)Enum.Parse(typeof(Armours), chestArmourString); }
                 set { chestArmourString = value.ToString(); }
             }
         }

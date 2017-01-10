@@ -73,8 +73,13 @@ namespace Raider.Game.GUI.StartMenu
             if (!Scenario.InLobby)
                 PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(settings.perspective);
 
-            Session.userSaveDataHandler.SaveSettings(settings, null);
+            Session.userSaveDataHandler.SaveSettings(settings, null, FailedToSaveSettingsCallback);
             perspectiveSelection.title.text = "Perspective: " + Session.userSaveDataHandler.GetSettings().perspective.ToString();
+        }
+
+        public void FailedToSaveSettingsCallback(string error)
+        {
+            Debug.Log("Failed to save user perspective settings. \n" + error);
         }
 
         public override void ClosePane()

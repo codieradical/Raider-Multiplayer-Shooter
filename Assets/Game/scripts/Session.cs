@@ -34,7 +34,7 @@ namespace Raider
         /// <param name="password"></param>
         /// <param name="success"></param>
         /// <param name="error"></param>
-        public static void Login(string username, string password, Action<bool, string> callback)
+        public static void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
             //Initialize userSaveDataHandler
             if (BuildConfig.ONLINE_MODE)
@@ -44,26 +44,22 @@ namespace Raider
             else
                 userSaveDataHandler = new LocalJsonUserSaveDataHandler();
 
-            userSaveDataHandler.Login(username, password, callback);
-            //userSaveDataHandler.lo
+            userSaveDataHandler.Login(username, password, successCallback, failureCallback);
         }
 
         public static void Logout()
         {
             if (ActiveCharacter != null)
             {
-                userSaveDataHandler.SaveCharacter(activeCharacterSlot, ActiveCharacter, LogoutSaveCallback);
+                userSaveDataHandler.SaveCharacter(activeCharacterSlot, ActiveCharacter, null, LogoutFailedToSaveCallback);
                 DeselectCharacter();
             }
             userSaveDataHandler = null;
         }
 
-        public static void LogoutSaveCallback(bool success, string message)
+        public static void LogoutFailedToSaveCallback(string error)
         {
-            if(!success)
-            {
-                Debug.LogError("Failed to save character!\n" + message);
-            }
+            Debug.LogError("Failed to save character!\n" + error);
         }
 
         public static void SelectCharacter(int slot)
@@ -78,9 +74,9 @@ namespace Raider
             activeCharacterSlot = -1;
         }
 
-        public static void SaveActiveCharacter(Action<bool, string> callback)
+        public static void SaveActiveCharacter(Action<string> successCallback, Action<string> failureCallback)
         {
-            userSaveDataHandler.SaveCharacter(activeCharacterSlot, ActiveCharacter, callback);
+            userSaveDataHandler.SaveCharacter(activeCharacterSlot, ActiveCharacter, successCallback, failureCallback);
         }
     }
 }

@@ -54,13 +54,17 @@ namespace Raider.Game.Saves.User
             return data;
         }
 
-        public void SaveData(UserSaveDataStructure _data, Action<bool, string> messageCallback)
+        public void SaveData(UserSaveDataStructure _data, Action<string> successCallback, Action<string> failureCallback)
         {
+            if (successCallback != null)
+                successCallback("Success");
             //Game object data is non-persistant.
         }
 
-        public void ReloadData(Action<bool, string> messageCallback)
+        public void ReloadData(Action<string> successCallback, Action<string> failureCallback)
         {
+            if (successCallback != null)
+                successCallback("Success");
             //Game object data is non-persistant.
         }
 
@@ -74,14 +78,18 @@ namespace Raider.Game.Saves.User
             data = new UserSaveDataStructure();
         }
 
-        public void NewCharacter(UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void NewCharacter(UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters.Add(character);
+            if (successCallback != null)
+                successCallback("Success");
         }
 
-        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<bool, string> messageCallback)
+        public void SaveCharacter(int slot, UserSaveDataStructure.Character character, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters[slot] = character;
+            if (successCallback != null)
+                successCallback("Success");
         }
 
         public UserSaveDataStructure.Character GetCharacter(int slot)
@@ -99,9 +107,11 @@ namespace Raider.Game.Saves.User
             return data.username;
         }
 
-        public void SetUsername(string _username, Action<bool, string> messageCallback)
+        public void SetUsername(string _username, Action<string> successCallback, Action<string> failureCallback)
         {
             data.username = _username;
+            if (successCallback != null)
+                successCallback("Success");
         }
 
         public int CharacterCount
@@ -109,19 +119,25 @@ namespace Raider.Game.Saves.User
             get { return data.characters.Count; }
         }
 
-        public void DeleteCharacter(int slot, Action<bool, string> messageCallback)
+        public void DeleteCharacter(int slot, Action<string> successCallback, Action<string> failureCallback)
         {
             data.characters.RemoveAt(slot);
+            if (successCallback != null)
+                successCallback("Success");
         }
 
-        public void DefaultSettings(Action<bool, string> messageCallback)
+        public void DefaultSettings(Action<string> successCallback, Action<string> failureCallback)
         {
             data.userSettings = new UserSaveDataStructure.UserSettings();
+            if (successCallback != null)
+                successCallback("Success");
         }
 
-        public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<bool, string> messageCallback)
+        public void SaveSettings(UserSaveDataStructure.UserSettings settings, Action<string> successCallback, Action<string> failureCallback)
         {
             data.userSettings = settings;
+            if (successCallback != null)
+                successCallback("Success");
         }
 
         public UserSaveDataStructure.UserSettings GetSettings()
@@ -129,10 +145,10 @@ namespace Raider.Game.Saves.User
             return data.userSettings;
         }
 
-        public void Login(string username, string password, Action<bool, string> messageCallback)
+        public void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
             CreateGameObjectSaveDataHandler();
-            SetUsername(username, messageCallback);
+            SetUsername(username, successCallback, failureCallback);
         }
     }
 }
