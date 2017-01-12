@@ -17,27 +17,24 @@ namespace Raider.Game.Saves.User
         private string accessToken;
         private UserSaveDataStructure data;
 
-        public static ManualResetEvent allDone = new ManualResetEvent(false);
-        const int BUFFER_SIZE = 1024;
-
         public void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback)
         {
-            //if (String.IsNullOrEmpty(accessToken))
-            //{
-            //    if (!String.IsNullOrEmpty(Session.systemSaveDataHandler.GetToken()))
-            //    {
-            //        accessToken = Session.systemSaveDataHandler.GetToken();
-            //        ReloadData(messageCallback);
-            //    }
-            //    else
-                //{
+            if (String.IsNullOrEmpty(accessToken))
+            {
+                if (!String.IsNullOrEmpty(Session.systemSaveDataHandler.GetToken()))
+                {
+                    accessToken = Session.systemSaveDataHandler.GetToken();
+                    successCallback("Already logged in.");
+                }
+                else
+                {
                     GetNewAccessToken(username, password, successCallback, failureCallback);
-            //    }
-            //}
-            //else
-            //{
-            //    ReloadData(messageCallback);
-            //}
+                }
+            }
+            else
+            {
+                successCallback("Already logged in.");
+            }
         }
 
         public void GetNewAccessToken(string username, string password, Action<string> successCallback, Action<string> failureCallback)
@@ -50,11 +47,14 @@ namespace Raider.Game.Saves.User
         }
         private void RecieveTokenResponse(HTTPClient.ResponseData responseData)
         {
-            accessToken = responseData.token;
-            if (Session.rememberMe)
-                Session.systemSaveDataHandler.SetToken(responseData.token);
-            else
-                Session.systemSaveDataHandler.DeleteToken();
+            if (responseData.success)
+            {
+                accessToken = responseData.token;
+                if (Session.rememberMe)
+                    Session.systemSaveDataHandler.SetToken(responseData.token);
+                else
+                    Session.systemSaveDataHandler.DeleteToken();
+            }
         }
 
         public UserSaveDataStructure ReadData()
@@ -70,6 +70,14 @@ namespace Raider.Game.Saves.User
         {
             if (response.success)
                 data = response.user;
+
+            foreach (Action method in Session.dataReloadCallbacks)
+            {
+                if (method != null)
+                    method();
+                else
+                    Session.dataReloadCallbacks.Remove(method);
+            }
         }
 
         public void DeleteData()
@@ -137,7 +145,7 @@ namespace Raider.Game.Saves.User
 
         public void DeleteCharacter(int slot, Action<string> successCallback, Action<string> failureCallback)
         {
-            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/characters/" + slot, "DEL", RecieveDeleteCharacterResponse, successCallback, failureCallback, accessToken, null);
+            HTTPClient.BeginHTTPRequest(BuildConfig.API_URL + "/user/characters/" + slot, "DELETE", RecieveDeleteCharacterResponse, successCallback, failureCallback, accessToken, null);
         }
         private void RecieveDeleteCharacterResponse(HTTPClient.ResponseData response)
         {
