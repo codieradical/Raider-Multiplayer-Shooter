@@ -81,18 +81,27 @@ namespace Raider.Game.Networking.VoIP
         //Setup delegates.
         void Start()
         {
+            if (!BuildConfig.VOIP_ENABLED)
+            {
+                Destroy(this);
+            }
+            else
+            {
+
 #if UNITY_EDITOR
                 SoundbackendsPath = Application.dataPath + "/Game/scripts/voip/";
 #else
                 SoundbackendsPath = Application.dataPath + "/Plugins/";
 #endif
 
-            SetupLogging(TeamSpeakLogging);
+                SetupLogging(TeamSpeakLogging);
 
-            NetworkLobbyPlayerSetup.onLocalLobbyPlayerStart += StartVoIPClient;
-            NetworkGameManager.instance.onClientDisconnect += StopVoIPClient;
-            NetworkGameManager.instance.onStartServer += StartVoIPServer;
-            NetworkGameManager.instance.onStopServer += StopVoIPServer;
+                NetworkLobbyPlayerSetup.onLocalLobbyPlayerStart += StartVoIPClient;
+                NetworkGameManager.instance.onClientDisconnect += StopVoIPClient;
+                NetworkGameManager.instance.onStartServer += StartVoIPServer;
+                NetworkGameManager.instance.onStopServer += StopVoIPServer;
+
+            }
         }
 
         //Make sure that teamspeak closes if the game is shut down.

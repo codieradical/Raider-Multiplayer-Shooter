@@ -12,10 +12,10 @@ namespace Raider.Game.GUI.Layout
     public class LayoutElementAspectFitter : AspectRatioFitter
     {
         [SerializeField]
-        private AspectMode m_AspectMode = AspectMode.None;
+        private AspectMode m_AspectMode2 = AspectMode.None;
 
         [SerializeField]
-        private float m_AspectRatio = 1;
+        private float m_AspectRatio2 = 1;
 
         [System.NonSerialized]
         private RectTransform m_Rect;
@@ -69,13 +69,13 @@ namespace Raider.Game.GUI.Layout
 
             m_Tracker.Clear();
 
-            switch (m_AspectMode)
+            switch (m_AspectMode2)
             {
 #if UNITY_EDITOR
                 case AspectMode.None:
                     {
                         if (!Application.isPlaying)
-                            m_AspectRatio = Mathf.Clamp(AttachedRectTransform.rect.width / AttachedRectTransform.rect.height, 0.001f, 1000f);
+                            m_AspectRatio2 = Mathf.Clamp(AttachedRectTransform.rect.width / AttachedRectTransform.rect.height, 0.001f, 1000f);
 
                         break;
                     }
@@ -83,13 +83,13 @@ namespace Raider.Game.GUI.Layout
                 case AspectMode.HeightControlsWidth:
                     {
                         m_Tracker.Add(this, AttachedRectTransform, DrivenTransformProperties.SizeDeltaX);
-                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, AttachedRectTransform.rect.height * m_AspectRatio);
+                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, AttachedRectTransform.rect.height * m_AspectRatio2);
                         break;
                     }
                 case AspectMode.WidthControlsHeight:
                     {
                         m_Tracker.Add(this, AttachedRectTransform, DrivenTransformProperties.SizeDeltaY);
-                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, AttachedRectTransform.rect.width / m_AspectRatio);
+                        AttachedRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, AttachedRectTransform.rect.width / m_AspectRatio2);
                         break;
                     }
                 case AspectMode.FitInParent:
@@ -107,7 +107,7 @@ namespace Raider.Game.GUI.Layout
 
                         Vector2 sizeDelta = Vector2.zero;
                         Vector2 parentSize = GetParentSize();
-                        if ((parentSize.y * aspectRatio < parentSize.x) ^ (m_AspectMode == AspectMode.FitInParent))
+                        if ((parentSize.y * aspectRatio < parentSize.x) ^ (m_AspectMode2 == AspectMode.FitInParent))
                         {
                             sizeDelta.y = GetSizeDeltaToProduceSize(parentSize.x / aspectRatio, 1);
                         }
@@ -150,7 +150,7 @@ namespace Raider.Game.GUI.Layout
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
-            m_AspectRatio = Mathf.Clamp(m_AspectRatio, 0.001f, 1000f);
+            m_AspectRatio2 = Mathf.Clamp(m_AspectRatio2, 0.001f, 1000f);
             SetDirty();
         }
 

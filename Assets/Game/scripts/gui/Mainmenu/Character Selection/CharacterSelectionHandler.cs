@@ -19,18 +19,19 @@ namespace Raider.Game.GUI.Screens
         public const string PREVIEW_CHARACTER_NAME = "plate";
         const CharacterPreviewHandler.PreviewType PREVIEW_TYPE = CharacterPreviewHandler.PreviewType.Plate;
 
-        public void Start()
+        private void Start()
         {
             Session.AddReloadHook(UserReloadedHook);
         }
 
-        public void UserReloadedHook()
+        private void UserReloadedHook()
         {
             if(MenuManager.instance.CurrentMenu == GetComponent<Menu>())
             {
                 LoadCharacterPlates();
             }
         }
+
 
         public void LoadCharacterPlates()
         {

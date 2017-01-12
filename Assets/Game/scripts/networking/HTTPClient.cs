@@ -45,6 +45,44 @@ namespace Raider.Game.Networking
             public string token;
         }
 
+        private struct PendingDataCallback
+        {
+            public PendingDataCallback(ResponseData _data, Action<ResponseData> _callback)
+            {
+                data = _data;
+                dataCallback = _callback;
+            }
+            public ResponseData data;
+            public Action<ResponseData> dataCallback;
+        }
+        private struct PendingMessageCallback
+        {
+            public PendingMessageCallback(string _message, Action<string> _callback)
+            {
+                message = _message;
+                messageCallback = _callback;
+            }
+            public string message;
+            public Action<string> messageCallback;
+        }
+
+        private Queue<PendingDataCallback> pendingDataCallbacks = new Queue<PendingDataCallback>();
+        private Queue<PendingMessageCallback> pendingMessageCallbacks = new Queue<PendingMessageCallback>();
+
+        private void Update()
+        {
+            while (pendingDataCallbacks.Count > 0)
+            {
+                PendingDataCallback pendingCallback = pendingDataCallbacks.Dequeue();
+                pendingCallback.dataCallback(pendingCallback.data);
+            }
+            while (pendingMessageCallbacks.Count > 0)
+            {
+                PendingMessageCallback pendingCallback = pendingMessageCallbacks.Dequeue();
+                pendingCallback.messageCallback(pendingCallback.message);
+            }
+        }
+
         /// <summary>
         /// Passes parameters to a local coroutine and begins a web request.
         /// </summary>
@@ -57,12 +95,11 @@ namespace Raider.Game.Networking
         /// <param name="form">Optional, POST or PUT data.</param>
         public static void BeginHTTPRequest(string URL, string method, Action<ResponseData> dataCallback, Action<string> successCallback, Action<string> failureCallback, string authorization, WWWForm form)
         {
-            //Thread requestThread = new Thread(() => instance.HandleHTTPRequest(URL, method, successCallback, failureCallback, dataCallback, authorization, form));
-            //requestThread.Start();
-            instance.StartCoroutine(instance.HandleHTTPRequest(URL, method, successCallback, failureCallback, dataCallback, authorization, form));
+            Thread requestThread = new Thread(() => instance.HandleHTTPRequest(URL, method, successCallback, failureCallback, dataCallback, authorization, form));
+            requestThread.Start();
         }
 
-        private IEnumerator HandleHTTPRequest(string URL, string method, Action<string> successCallback, Action<string> failureCallback, Action<ResponseData> dataCallback, string authorization, WWWForm form)
+        private void HandleHTTPRequest(string URL, string method, Action<string> successCallback, Action<string> failureCallback, Action<ResponseData> dataCallback, string authorization, WWWForm form)
         {
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(URL);
 
@@ -93,16 +130,14 @@ namespace Raider.Game.Networking
                     postDataStream.Close();
                 }
             }
-            catch (SocketException ex)
+            catch (Exception ex) //A socket excaption can be thrown here, it can also be rethrown as a Web Exception.
             {
                 if (failureCallback != null)
-                    failureCallback(ex.Message);
-                yield break;
+                    pendingMessageCallbacks.Enqueue(new PendingMessageCallback(ex.Message, failureCallback));
+                return;
             }
 
             HttpWebResponse response;
-
-            yield return 0;
 
             try
             {
@@ -119,17 +154,18 @@ namespace Raider.Game.Networking
                 response.Close();
 
                 ResponseData responseData = JsonUtility.FromJson<ResponseData>(responseJSON);
-                dataCallback(responseData);
+
+                pendingDataCallbacks.Enqueue(new PendingDataCallback(responseData, dataCallback));
                 if (!responseData.success && failureCallback != null)
-                    failureCallback(responseData.message);
+                    pendingMessageCallbacks.Enqueue(new PendingMessageCallback(responseData.message, failureCallback));
                 if (responseData.success && successCallback != null)
-                    successCallback(responseData.message);
+                    pendingMessageCallbacks.Enqueue(new PendingMessageCallback(responseData.message, successCallback));
             }
             catch
-            (WebException ex)
+            (Exception ex)
             {
                 if(failureCallback != null)
-                    failureCallback(ex.Message);
+                    pendingMessageCallbacks.Enqueue(new PendingMessageCallback(ex.Message, failureCallback));
             }
         }
     }
