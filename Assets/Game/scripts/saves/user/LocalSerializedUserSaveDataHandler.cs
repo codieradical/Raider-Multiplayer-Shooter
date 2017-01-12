@@ -102,6 +102,14 @@ namespace Raider.Game.Saves.User
                 if (successCallback != null)
                     successCallback("Recreated.");
             }
+
+            foreach (Action method in Session.dataReloadCallbacks)
+            {
+                if (method != null)
+                    method();
+                else
+                    Session.dataReloadCallbacks.Remove(method);
+            }
         }
 
 

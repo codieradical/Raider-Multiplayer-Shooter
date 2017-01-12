@@ -15,7 +15,7 @@ namespace Raider.Game.GUI.Components
     {
         #region Singleton Setup
 
-        private static List<LobbyHandler> instances;
+        private static List<LobbyHandler> instances = new List<LobbyHandler>();
 
         void Awake()
         {

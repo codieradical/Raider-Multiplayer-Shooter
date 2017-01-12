@@ -66,6 +66,14 @@ namespace Raider.Game.Saves.User
             if (successCallback != null)
                 successCallback("Success");
             //Game object data is non-persistant.
+
+            foreach(Action method in Session.dataReloadCallbacks)
+            {
+                if (method != null)
+                    method();
+                else
+                    Session.dataReloadCallbacks.Remove(method);
+            }
         }
 
         public void DeleteData()

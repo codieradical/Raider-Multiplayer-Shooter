@@ -46,7 +46,7 @@ namespace Raider.Game.GUI.Screens
 
         public void LoginSuccessCallback(string message)
         {
-            Session.userSaveDataHandler.ReloadData(LoginSuccessCallback, LoginFailedCallback);
+            Session.userSaveDataHandler.ReloadData(LoadPlayerSuccessCallback, LoadPlayerFailedCallback);
             UserFeedback.LogError(message);
         }
 

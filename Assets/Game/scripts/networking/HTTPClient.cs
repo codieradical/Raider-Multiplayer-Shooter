@@ -7,6 +7,8 @@ using Raider.Game.Saves.User;
 using System.Collections;
 using System.Net;
 using System.IO;
+using System.Threading;
+using System.Net.Sockets;
 
 namespace Raider.Game.Networking
 {
@@ -55,12 +57,14 @@ namespace Raider.Game.Networking
         /// <param name="form">Optional, POST or PUT data.</param>
         public static void BeginHTTPRequest(string URL, string method, Action<ResponseData> dataCallback, Action<string> successCallback, Action<string> failureCallback, string authorization, WWWForm form)
         {
+            //Thread requestThread = new Thread(() => instance.HandleHTTPRequest(URL, method, successCallback, failureCallback, dataCallback, authorization, form));
+            //requestThread.Start();
             instance.StartCoroutine(instance.HandleHTTPRequest(URL, method, successCallback, failureCallback, dataCallback, authorization, form));
         }
 
         private IEnumerator HandleHTTPRequest(string URL, string method, Action<string> successCallback, Action<string> failureCallback, Action<ResponseData> dataCallback, string authorization, WWWForm form)
         {
-            WebRequest webRequest = WebRequest.Create(URL);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(URL);
 
             WebHeaderCollection headers = new WebHeaderCollection();
 
@@ -68,37 +72,65 @@ namespace Raider.Game.Networking
 
             //If a web token is provided, add it to the request header.
             if (authorization != null)
-                headers.Set(HttpRequestHeader.Authorization, authorization);
-
-            headers.Set(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
-
-            if (form != null)
             {
-                Stream postDataStream = webRequest.GetRequestStream();
-                postDataStream.Write(form.data, 0, form.data.Length);
-                postDataStream.Close();
+                //headers.Set(HttpRequestHeader.Authorization, authorization);
+                headers.Add("Authorization", authorization);
+                //webRequest.Credentials = new CredentialCache();
+                webRequest.PreAuthenticate = true;
+
             }
 
-            WebResponse response;
+            webRequest.Headers = headers;
 
-            yield return response = webRequest.GetResponse();
+            try
+            {
+                if (form != null)
+                {
+                    webRequest.ContentType = "application/x-www-form-urlencoded";
+                    webRequest.ContentLength = form.data.Length;
+                    Stream postDataStream = webRequest.GetRequestStream();
+                    postDataStream.Write(form.data, 0, form.data.Length);
+                    postDataStream.Close();
+                }
+            }
+            catch (SocketException ex)
+            {
+                if (failureCallback != null)
+                    failureCallback(ex.Message);
+                yield break;
+            }
 
-            Stream responseDataStream = response.GetResponseStream();
+            HttpWebResponse response;
 
-            StreamReader responseDataStreamReader = new StreamReader(responseDataStream);
+            yield return 0;
 
-            string responseJSON = responseDataStreamReader.ReadToEnd();
+            try
+            {
+                response = (HttpWebResponse)webRequest.GetResponse();
 
-            responseDataStream.Close();
-            responseDataStreamReader.Close();
-            response.Close();
+                Stream responseDataStream = response.GetResponseStream();
 
-            ResponseData responseData = JsonUtility.FromJson<ResponseData>(responseJSON);
-            if (!responseData.success && failureCallback != null)
-                failureCallback(responseData.message);
-            if (successCallback != null)
-                successCallback(responseData.message);
-            dataCallback(responseData);
+                StreamReader responseDataStreamReader = new StreamReader(responseDataStream);
+
+                string responseJSON = responseDataStreamReader.ReadToEnd();
+
+                responseDataStream.Close();
+                responseDataStreamReader.Close();
+                response.Close();
+
+                ResponseData responseData = JsonUtility.FromJson<ResponseData>(responseJSON);
+                dataCallback(responseData);
+                if (!responseData.success && failureCallback != null)
+                    failureCallback(responseData.message);
+                if (responseData.success && successCallback != null)
+                    successCallback(responseData.message);
+            }
+            catch
+            (WebException ex)
+            {
+                if(failureCallback != null)
+                    failureCallback(ex.Message);
+            }
         }
     }
 }

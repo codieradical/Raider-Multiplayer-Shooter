@@ -5,6 +5,7 @@ using Raider.Game;
 using Raider.Game.Saves.User;
 using System;
 using Raider.Game.Saves.System;
+using System.Collections.Generic;
 
 namespace Raider
 {
@@ -26,6 +27,14 @@ namespace Raider
         public static IUserSaveDataHandler userSaveDataHandler;
         public static UserSaveDataStructure.Character ActiveCharacter { get; private set; }
         private static int activeCharacterSlot = -1;
+
+        public static List<Action> dataReloadCallbacks = new List<Action>();
+        public static void AddReloadHook(Action method)
+        {
+            if (method == null)
+                return;
+            dataReloadCallbacks.Add(method);
+        }
 
         /// <summary>
         /// Initialized the SaveDataHandler.
