@@ -10,7 +10,8 @@ namespace Raider.Game.Player
     {
         private void Awake()
         {
-            PlayerResourceReferences.instance.raceGraphics.CheckAllGraphicsPresent();
+            if(PlayerResourceReferences.instance != null)
+                PlayerResourceReferences.instance.raceGraphics.CheckAllGraphicsPresent();
         }
 
         /// <summary>

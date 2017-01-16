@@ -47,7 +47,7 @@ namespace Raider.Game.Player
                 PlayerData.localPlayerData.appearenceController.ReplaceGraphicsModel(PlayerData.localPlayerData);
             }
 
-            PlayerAnimationController.RecreateAnimator(PlayerData.localPlayerData, newPerspective);
+            PlayerAnimationController.UpdateAnimationController(PlayerData.localPlayerData, newPerspective);
         }
 
         public void PausePlayer()

@@ -26,6 +26,9 @@ namespace Raider.Game.GUI.Screens
 
         private void UserReloadedHook()
         {
+            if (!Scene.Scenario.InLobby)
+                return;
+
             if(MenuManager.instance.CurrentMenu == GetComponent<Menu>())
             {
                 LoadCharacterPlates();

@@ -5,21 +5,14 @@ namespace Raider.Game.Cameras
 
     public class FirstPersonCameraController : PlayerCameraController
     {
+        //on construction, assign the local starting position.
         public FirstPersonCameraController()
         {
             pointStartingPos = new Vector3(0, 1.7f, 0);
         }
 
-        public override void Setup()
-        {
-            //if (CameraModeController.instance.firstPersonCamSettings.moveWithBody)
-            //{
-            //    base.parent = GameObject.FindGameObjectWithTag("localPlayer").transform.Find("Graphics");
-            //}
-            base.Setup();
-        }
-
         // Update is called once per frame
+        //Every frame, perform these tasks...
         void Update()
         {
             RotatePlayer();
