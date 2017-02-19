@@ -3,6 +3,7 @@ using System.Collections;
 using Raider.Game.GUI.Components;
 using Raider.Game.Saves;
 using Raider.Game.Saves.User;
+using System.Collections.Generic;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
@@ -10,42 +11,68 @@ namespace Raider.Game.GUI.CharacterPreviews
     {
         //Assigned in Editor.
         public EmblemHandler emblem;
-        public GameObject primaryMesh;
-        public GameObject secondaryMesh;
-        public GameObject tertiaryMesh;
+
+        //Also assigned in editor, so doesn't need instancing.
+        public List<GameObject> primaryMeshObjects;
+        public List<GameObject> secondaryMeshObjects;
+        public List<GameObject> tertiaryMeshObjects;
 
         //Nodes used for armour in the future.
-        public GameObject helmetNode;
-        public GameObject shoulderNode;
-        public GameObject bodyNode;
+        //public GameObject helmetNode;
+        //public GameObject shoulderNode;
+        //public GameObject bodyNode;
 
-        protected Renderer primaryRenderer;
-        protected Renderer secondaryRenderer;
-        protected Renderer tertiaryRenderer;
+        protected List<Renderer> primaryRenderers = new List<Renderer>();
+        protected List<Renderer> secondaryRenderers = new List<Renderer>();
+        protected List<Renderer> tertiaryRenderers = new List<Renderer>();
 
         // Use this for initialization
         void Start()
         {
-            if (primaryMesh == null || secondaryMesh == null /*|| tertiaryMesh == null*/)
+            if (primaryMeshObjects == null || secondaryMeshObjects == null /*|| tertiaryMesh == null*/)
                 Debug.LogError("[Player/PlayerAppearenceController] Player appearence controller is missing a mesh.");
 
-            primaryRenderer = primaryMesh.GetComponent<Renderer>();
-            secondaryRenderer = secondaryMesh.GetComponent<Renderer>();
-            //tertiaryRenderer = tertiaryMesh.GetComponent<Renderer>();
+            foreach(GameObject meshObject in primaryMeshObjects)
+            {
+                primaryRenderers.Add(meshObject.GetComponent<Renderer>());
+            }
+
+            foreach (GameObject meshObject in secondaryMeshObjects)
+            {
+                secondaryRenderers.Add(meshObject.GetComponent<Renderer>());
+            }
+
+            foreach (GameObject meshObject in tertiaryMeshObjects)
+            {
+                tertiaryRenderers.Add(meshObject.GetComponent<Renderer>());
+            }
         }
 
         public void UpdatePlayerAppearence(UserSaveDataStructure.Character _character)
         {
             //If primary renderer is null, try to get it again, failing that, return.
-            if (primaryRenderer == null)
+            //15/2/17 - Why?
+            if (primaryRenderers == null)
             {
                 Start();
-                if (primaryRenderer == null)
+                if (primaryRenderers == null)
                     return;
             }
-            primaryRenderer.material.color = _character.armourPrimaryColor.Color;
-            secondaryRenderer.material.color = _character.armourSecondaryColor.Color;
-            //tertiaryRenderer.material.color = _character.armourTertiaryColor.color;
+
+            foreach(Renderer primaryRenderer in primaryRenderers)
+            {
+                primaryRenderer.material.color = _character.armourPrimaryColor.Color;
+            }
+
+            foreach (Renderer secondaryRenderer in secondaryRenderers)
+            {
+                secondaryRenderer.material.color = _character.armourPrimaryColor.Color;
+            }
+
+            foreach (Renderer tertiaryRenderer in tertiaryRenderers)
+            {
+                tertiaryRenderer.material.color = _character.armourPrimaryColor.Color;
+            }
 
             emblem.UpdateEmblem(_character);
         }

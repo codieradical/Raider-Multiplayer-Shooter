@@ -21,7 +21,7 @@ namespace Raider.Game
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.
         /// </summary>
-        public const bool ONLINE_MODE = true;
+        public const bool ONLINE_MODE = false;
         /// <summary>
         /// If set to true, serialized save data handlers will be instanced.
         /// If set to false, data will be stored in JSON.
@@ -60,5 +60,16 @@ namespace Raider.Game
         /// Used when opening links to Register, that sort of stuff.
         /// </summary>
         public const string WEB_FRONT_URL = "";
+
+        /// <summary>
+        /// The name of this build.
+        /// </summary>
+        public readonly static string BUILD_STRING = VERSION_NUMBER.ToString();
+
+        static BuildConfig()
+        {
+            if (!ONLINE_MODE)
+                BUILD_STRING += "-Offline";
+        }
     }
 }

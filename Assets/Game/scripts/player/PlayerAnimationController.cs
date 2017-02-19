@@ -9,7 +9,7 @@ namespace Raider.Game.Player
     public class PlayerAnimationController : MonoBehaviour
     {
         [SerializeField]
-        public Animator animator;
+        public Animator animator { get { return GetComponent<PlayerData>().animator; } }
 
         // Update is called once per frame
         void Update()
