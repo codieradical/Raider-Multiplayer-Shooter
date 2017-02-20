@@ -1,0 +1,131 @@
+fileFormatVersion: 2
+guid: 3532aa6e1fd5d4e4f9295ce1f0815fe6
+timeCreated: 1487601757
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: flashlight
+    100002: ground_point
+    100004: gun
+    100006: left_hand
+    100008: left_hand_elite
+    100010: left_hand_mc
+    100012: primary_ejection
+    100014: primary_trigger
+    100016: pump
+    100018: right_hand
+    100020: standard:standard
+    100022: //RootNode
+    100024: weapon_stow_anchor
+    400000: flashlight
+    400002: ground_point
+    400004: gun
+    400006: left_hand
+    400008: left_hand_elite
+    400010: left_hand_mc
+    400012: primary_ejection
+    400014: primary_trigger
+    400016: pump
+    400018: right_hand
+    400020: standard:standard
+    400022: //RootNode
+    400024: weapon_stow_anchor
+    2300000: flashlight
+    2300002: ground_point
+    2300004: left_hand
+    2300006: left_hand_elite
+    2300008: left_hand_mc
+    2300010: primary_ejection
+    2300012: primary_trigger
+    2300014: right_hand
+    2300016: weapon_stow_anchor
+    3300000: flashlight
+    3300002: ground_point
+    3300004: left_hand
+    3300006: left_hand_elite
+    3300008: left_hand_mc
+    3300010: primary_ejection
+    3300012: primary_trigger
+    3300014: right_hand
+    3300016: weapon_stow_anchor
+    4300000: flashlight
+    4300002: ground_point
+    4300004: left_hand
+    4300006: left_hand_elite
+    4300008: left_hand_mc
+    4300010: right_hand
+    4300012: primary_ejection
+    4300014: primary_trigger
+    4300016: weapon_stow_anchor
+    4300018: standard:standard
+    9500000: //RootNode
+    13700000: standard:standard
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
