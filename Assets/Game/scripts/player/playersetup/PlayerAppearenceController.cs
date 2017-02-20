@@ -3,44 +3,87 @@ using Raider.Game.Saves;
 using System.Collections;
 using Raider.Game.GUI.Components;
 using Raider.Game.GUI.CharacterPreviews;
+using Raider.Game.Cameras;
+using System.Collections.Generic;
 
 namespace Raider.Game.Player
 {
     public class PlayerAppearenceController : CharacterPreviewAppearenceController
     {
+        public List<SkinnedMeshRenderer> firstPersonRenderers;
+        public List<SkinnedMeshRenderer> thirdPersonRenderers;
+
         private void Awake()
         {
             if(PlayerResourceReferences.instance != null)
-                PlayerResourceReferences.instance.raceGraphics.CheckAllGraphicsPresent();
+                PlayerResourceReferences.instance.raceModels.CheckAllModelsPresent();
         }
 
         /// <summary>
-        /// Creates a new graphics model, and deletes the existing instance.
+        /// Creates a new model, and deletes the existing instance.
         /// Returns the new PlayerAppearenceController.
         /// </summary>
-        /// <param name="playerData">The appearence data for the graphics model.</param>
-        public void ReplaceGraphicsModel(PlayerData playerData)
+        /// <param name="playerData">The appearence data for the model.</param>
+        public void ReplacePlayerModel(PlayerData playerData)
         {
-            //When switching graphics, the animator freezes.
-            //Nulling the animator, then assigning after graphics setup fixes this.
-            playerData.animator.avatar = null;
-            playerData.animator.enabled = false;
+            //Spawn the model.
+            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.raceModels.GetModelByRaceAndPerspective(playerData.character.Race)) as GameObject;
+            playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
+            playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 
-            //Spawn the graphics.
-            playerData.graphicsObject = Instantiate(PlayerResourceReferences.instance.raceGraphics.GetGraphicsByRace(playerData.character.Race)) as GameObject;
-            playerData.graphicsObject.transform.SetParent(playerData.gameObject.transform, false);
-            playerData.graphicsObject.name = "Graphics"; //Prevents infinate (clone) appends.
+            //Find the first person model, store a reference.
+            playerData.firstPersonPlayerModel = playerData.playerModel.transform.Find(PlayerData.firstPersonPlayerModelName).gameObject;
 
             //Update the colors, emblem.
-            PlayerAppearenceController newAppearenceController = playerData.graphicsObject.GetComponent<PlayerAppearenceController>();
-            newAppearenceController.UpdatePlayerAppearence(playerData.character);
+            playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
+            playerData.appearenceController.UpdatePlayerAppearence(playerData.character);
 
-            //Setup the animator
-            playerData.animator.enabled = true;
-            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.Race);
+            //The animator is done with this model, clear it up and get ready for the next one.
+            playerData.playerModelAnimator.enabled = false;
+            playerData.playerModelAnimator.avatar = null;
+            playerData.appearenceController.StartCoroutine(RenableTheAnimator(playerData));
+
+            if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
+                ChangePerspectiveModel(CameraModeController.singleton.CameraMode);
 
             //This old appearence controller and graphics object is no longer needed.
             Destroy(gameObject);
+        }
+        IEnumerator RenableTheAnimator(PlayerData playerData)
+        {
+            yield return 0;
+            yield return 0;
+            playerData.playerModelAnimator.enabled = true;
+            yield return 0;
+            playerData.playerModelAnimator.avatar = PlayerResourceReferences.instance.raceModels.GetAvatarByRace(playerData.character.Race);
+        }
+
+        public void ChangePerspectiveModel(CameraModeController.CameraModes perspective)
+        {
+            if(perspective == CameraModeController.CameraModes.FirstPerson)
+            {
+                foreach(SkinnedMeshRenderer renderer in firstPersonRenderers)
+                {
+                    renderer.enabled = true;
+                }
+                foreach (SkinnedMeshRenderer renderer in thirdPersonRenderers)
+                {
+                    renderer.enabled = false;
+                }
+                emblem.gameObject.SetActive(false);
+            }
+            else
+            {
+                foreach (SkinnedMeshRenderer renderer in firstPersonRenderers)
+                {
+                    renderer.enabled = false;
+                }
+                foreach (SkinnedMeshRenderer renderer in thirdPersonRenderers)
+                {
+                    renderer.enabled = true;
+                }
+                emblem.gameObject.SetActive(true);
+            }
         }
     }
 }

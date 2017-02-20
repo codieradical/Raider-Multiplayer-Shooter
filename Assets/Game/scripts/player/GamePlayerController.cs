@@ -30,24 +30,8 @@ namespace Raider.Game.Player
 
             StartCoroutine(PauseNewCameraController());
 
-            if (newPerspective == CameraModeController.CameraModes.FirstPerson)
-            {
-                //Destroy(PlayerData.localPlayerData.graphicsObject);
-                PlayerData.localPlayerData.graphicsObject.SetActive(false); //Don't destroy it, just hide it.
-                //Later on, first person will have it's own graphics model. So it won't be destroyed.
-                PlayerData.localPlayerData.animator.avatar = null;
-            }
-            else if (newPerspective != CameraModeController.CameraModes.FirstPerson)
-            {
-                PlayerData.localPlayerData.graphicsObject.SetActive(true);
-
-                if (PlayerData.localPlayerData.appearenceController == null)
-                    PlayerData.localPlayerData.appearenceController = GetComponentInChildren<PlayerAppearenceController>();
-
-                PlayerData.localPlayerData.appearenceController.ReplaceGraphicsModel(PlayerData.localPlayerData);
-            }
-
-            PlayerAnimationController.UpdateAnimationController(PlayerData.localPlayerData, newPerspective);
+            //Replace the player model to suit the new perspective.
+            PlayerData.localPlayerData.appearenceController.ChangePerspectiveModel(newPerspective);
         }
 
         public void PausePlayer()

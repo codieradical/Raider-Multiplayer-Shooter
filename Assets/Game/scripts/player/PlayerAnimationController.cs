@@ -8,17 +8,25 @@ namespace Raider.Game.Player
 
     public class PlayerAnimationController : MonoBehaviour
     {
-        [SerializeField]
-        public Animator animator { get { return GetComponent<PlayerData>().animator; } }
+        //A couple of properties to simplify references...
+        private Animator playerAnimator { get { return PlayerData.localPlayerData.playerModelAnimator; } }
+        private Animator weaponAnimator { get { return PlayerData.localPlayerData.weaponModelAnimator; } }
 
         // Update is called once per frame
         void Update()
         {
+
             //Only update the animator of the camera controller allows movement.
             if (!CameraModeController.ControllerInstance.preventMovement)
             {
-                animator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
-                animator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+                //Give all of the animators the movement speed on both axis.
+                playerAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
+                playerAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+                if (weaponAnimator != null)
+                {
+                    weaponAnimator.SetFloat("verticalSpeed", Input.GetAxis("Vertical"));
+                    weaponAnimator.SetFloat("horizontalSpeed", Input.GetAxis("Horizontal"));
+                }
 
                 //if (Input.GetButton("Jump"))
                 //{
@@ -26,38 +34,48 @@ namespace Raider.Game.Player
                 //    Invoke("StopJumping", 0.1f);
                 //}
 
+                //Tell all of the animators that the player is running.
                 if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
                 {
-                    animator.SetBool("running", true);
+                    playerAnimator.SetBool("running", true);
+                    if (weaponAnimator != null)
+                        weaponAnimator.SetBool("running", true);
                 }
                 else
                 {
-                    animator.SetBool("running", false);
+                    playerAnimator.SetBool("running", false);
+                    if (weaponAnimator != null)
+                        weaponAnimator.SetBool("running", false);
                 }
-        }
+            }
             else
             {
                 StopAnimations();
-    }
-}
+            }
+        }
 
         public void StopAnimations()
         {
-            animator.SetFloat("verticalSpeed", 0f);
-            animator.SetFloat("horizontalSpeed", 0f);
-            animator.SetBool("running", false);
-            animator.SetBool("jumping", false);
+            playerAnimator.SetFloat("verticalSpeed", 0f);
+            playerAnimator.SetFloat("horizontalSpeed", 0f);
+            playerAnimator.SetBool("running", false);
+            playerAnimator.SetBool("jumping", false);
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.SetFloat("verticalSpeed", 0f);
+                weaponAnimator.SetFloat("horizontalSpeed", 0f);
+                weaponAnimator.SetBool("running", false);
+                weaponAnimator.SetBool("jumping", false);
+            }
         }
 
         void StopJumping()
         {
-            animator.SetBool("jumping", false);
-        }
-
-        public static void UpdateAnimationController(PlayerData playerData, CameraModeController.CameraModes perspective)
-        {
-            //playerData.animator.runtimeAnimatorController = PlayerResourceReferences.instance.animatorControllers.GetControllerByPerspective(perspective);
-            //playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.Race);
+            playerAnimator.SetBool("jumping", false);
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.SetBool("jumping", false);
+            }
         }
     }
 }

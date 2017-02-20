@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Raider.Game.Saves.User;
 using System.Collections.Generic;
-using Raider.Game.Saves;
-using Raider.Game.Player;
-using Raider.Game.Saves.User;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
@@ -40,7 +38,7 @@ namespace Raider.Game.GUI.CharacterPreviews
         public Object YPreviewPrefab;
 
         const string CAMERA_OBJECT_NAME = "cam";
-        const string GRAPHICS_OBJECT_NAME = "Graphics";
+        const string PREVIEW_MODEL_NAME = "Model";
 
         //Stores the position of the next preview. Increments as previews are created to keep them seperated.
         int nextPreviewX = 0;
@@ -75,8 +73,8 @@ namespace Raider.Game.GUI.CharacterPreviews
         public void NewPreview(string _previewName, UserSaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage)
         {
             Camera previewCamera;
-            GameObject newPreviewGraphics; //This isn't actually used, I just don't want too many different overloads.
-            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewGraphics, out previewCamera);
+            GameObject newPreviewModel; //This isn't actually used, I just don't want too many different overloads.
+            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewModel, out previewCamera);
             SetupPreviewDisplay(previewCamera, _previewType, _rawImage);
             EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
@@ -85,14 +83,14 @@ namespace Raider.Game.GUI.CharacterPreviews
         public void NewPreview(string _previewName, UserSaveDataStructure.Character _previewCharacter, PreviewType _previewType, RawImage _rawImage, CharacterPreviewDisplayHandler _displayHandler)
         {
             Camera newPreviewCamera;
-            GameObject newPreviewGraphics;
-            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewGraphics, out newPreviewCamera);
+            GameObject newPreviewModel;
+            InstanceNewPreviewObject(_previewName, _previewCharacter.Race, _previewType, out newPreviewModel, out newPreviewCamera);
             SetupPreviewDisplay(newPreviewCamera, _previewType, _rawImage);
-            SetupPreviewDisplayHandler(_displayHandler, newPreviewGraphics, newPreviewCamera);
+            SetupPreviewDisplayHandler(_displayHandler, newPreviewModel, newPreviewCamera);
             EnqueuePreviewUpdate(_previewName, _previewCharacter);
         }
 
-        void InstanceNewPreviewObject(string _previewName, UserSaveDataStructure.Character.Races _race, PreviewType _previewType, out GameObject newPreviewGraphics, out Camera newPreviewCamera)
+        void InstanceNewPreviewObject(string _previewName, UserSaveDataStructure.Character.Races _race, PreviewType _previewType, out GameObject newPreviewModel, out Camera newPreviewCamera)
         {
             Object prefab = GetRacePreviewPrefab(_race, _previewType);
 
@@ -104,7 +102,7 @@ namespace Raider.Game.GUI.CharacterPreviews
             newPreviewObject.name = _previewName;
 
             //It's important to pass these objects on now, as the usual method of finding these is unavailable just after instance.
-            newPreviewGraphics = newPreviewObject.transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
+            newPreviewModel = newPreviewObject.transform.Find(PREVIEW_MODEL_NAME).gameObject;
             newPreviewCamera = newPreviewObject.transform.Find(CAMERA_OBJECT_NAME).gameObject.GetComponent<Camera>();
         }
 
@@ -128,10 +126,10 @@ namespace Raider.Game.GUI.CharacterPreviews
             _rawImage.texture = newPreviewTexture;
         }
 
-        void SetupPreviewDisplayHandler(CharacterPreviewDisplayHandler _displayHandler, GameObject newPreviewGraphics, Camera newPreviewCamera)
+        void SetupPreviewDisplayHandler(CharacterPreviewDisplayHandler _displayHandler, GameObject newPreviewModel, Camera newPreviewCamera)
         {
             _displayHandler.previewCamera = newPreviewCamera;
-            _displayHandler.previewCharacterGraphics = newPreviewGraphics;
+            _displayHandler.previewCharacterModel = newPreviewModel;
         }
 
         #endregion
@@ -168,14 +166,14 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         void UpdatePreviewAppearence(PreviewAppearenceUpdate update)
         {
-            //Find the graphics object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
-            GameObject _previewGraphics = GetPreviewObject(update.previewName).transform.Find(GRAPHICS_OBJECT_NAME).gameObject;
+            //Find the object, get the PlayerAppearenceController, call it's UpdatePlayerAppearence method.
+            GameObject previewModel = GetPreviewObject(update.previewName).transform.Find(PREVIEW_MODEL_NAME).gameObject;
 
             //If the preview was destored last frame, or earlier this frame.
-            if (_previewGraphics == null)
+            if (previewModel == null)
                 return;
 
-            CharacterPreviewAppearenceController _appearenceController = _previewGraphics.GetComponent<CharacterPreviewAppearenceController>();
+            CharacterPreviewAppearenceController _appearenceController = previewModel.GetComponent<CharacterPreviewAppearenceController>();
             _appearenceController.UpdatePlayerAppearence(update.previewCharacter);
             
         }
@@ -204,12 +202,12 @@ namespace Raider.Game.GUI.CharacterPreviews
             return _previewObject;
         }
 
-        public GameObject GetPreviewGraphics(string _previewName)
+        public GameObject GetPreviewModel(string _previewName)
         {
-            GameObject graphics = GetPreviewObject(_previewName).transform.Find(CAMERA_OBJECT_NAME).gameObject;
-            if (graphics == null)
-                Debug.LogError("Could not find graphics object on " + _previewName);
-            return graphics;
+            GameObject model = GetPreviewObject(_previewName).transform.Find(PREVIEW_MODEL_NAME).gameObject;
+            if (model == null)
+                Debug.LogError("Could not find model object on " + _previewName);
+            return model;
         }
 
         public void DestroyPreviewObject(string _previewName)

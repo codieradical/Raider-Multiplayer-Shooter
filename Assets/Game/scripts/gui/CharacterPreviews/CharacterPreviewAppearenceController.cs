@@ -74,7 +74,9 @@ namespace Raider.Game.GUI.CharacterPreviews
                 tertiaryRenderer.material.color = _character.armourPrimaryColor.Color;
             }
 
-            emblem.UpdateEmblem(_character);
+            //This method is also used by first person view models which currently don't have emblems.
+            if(emblem != null)
+                emblem.UpdateEmblem(_character);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Raider.Game.Player
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(PlayerAnimationController))]
-    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(PlayerResourceReferences))]
     public class PlayerSetup : MonoBehaviour
     {

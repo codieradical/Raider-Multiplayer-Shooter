@@ -11,13 +11,10 @@ namespace Raider.Game.Player
 {
     [RequireComponent(typeof(PlayerChatManager))]
     [RequireComponent(typeof(PlayerData))]
-    [RequireComponent(typeof(Animator))]
-    [RequireComponent(typeof(NetworkAnimator))]
     [RequireComponent(typeof(PlayerResourceReferences))]
     public class NetworkPlayerSetup : NetworkBehaviour
     {
         public static NetworkPlayerSetup localPlayer;
-        public GameObject graphicsObject;
         private PlayerData playerData;
 
         // Use this for initialization
@@ -133,7 +130,7 @@ namespace Raider.Game.Player
             if (playerData.appearenceController == null)
                 playerData.appearenceController = GetComponentInChildren<PlayerAppearenceController>();
 
-            playerData.appearenceController.ReplaceGraphicsModel(playerData);
+            playerData.appearenceController.ReplacePlayerModel(playerData);
         }
 
         #endregion

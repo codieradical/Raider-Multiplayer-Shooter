@@ -21,9 +21,19 @@ namespace Raider.Game.Player
             }
         }
 
+        //A reference to the root graphics object, assigned in editor.
         public GameObject graphicsObject;
 
-        public Animator animator;
+        //Store references to the animators.
+        public GameObject playerModel;
+        //Reference to the first person object for the first person camera to use.
+        public static string firstPersonPlayerModelName = "FirstPerson"; //Since this object is being found, keeping the name here helps.
+        public GameObject firstPersonPlayerModel;
+        //Also assigned in editor.
+        public Animator playerModelAnimator;
+        public Animator weaponModelAnimator;
+
+        //public Weapons.Weapon weapon;
 
         public PlayerAnimationController animationController;
         public PlayerAppearenceController appearenceController;
@@ -48,8 +58,8 @@ namespace Raider.Game.Player
 
         private void Awake()
         {
-            animator = GetComponent<Animator>();
-            appearenceController = GetComponent<PlayerAppearenceController>();
+            if(playerModel != null) //PlayerData is also used in lobby, where the player model is not assigned.
+                appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
             gamePlayerController = GetComponent<GamePlayerController>(); //Singleplayer assignment.
             animationController = GetComponent<PlayerAnimationController>(); //Singleplayer assignment.
         }
