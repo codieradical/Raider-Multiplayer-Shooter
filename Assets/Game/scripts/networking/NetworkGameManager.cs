@@ -92,7 +92,16 @@ namespace Raider.Game.Networking
                     }
                     return players.ToArray();
                 }
-                else return FindObjectsOfType<PlayerData>();
+                else
+                {
+                    GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+                    List<PlayerData> players = new List<PlayerData>();
+                    foreach(GameObject player in playerObjects)
+                    {
+                        players.Add(player.GetComponent<PlayerData>());
+                    }
+                    return players.ToArray();
+                }
             }
         }
 
