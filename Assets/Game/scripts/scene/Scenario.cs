@@ -189,11 +189,21 @@ namespace Raider.Game.Scene
         public static Sprite GetMapImage(string mapName)
         {
             //Load singular just wouldn't work!
-            Sprite image = Resources.Load<Sprite>("gui/mapImg/" + mapName);
+            Sprite image = Resources.Load<Sprite>("maps/" + mapName);
             if (image == null) //If no image was found, load the template.
-                return Resources.Load<Sprite>("gui/mapImg/template");
+                return Resources.Load<Sprite>("maps/notfound");
             else
                 return image;
+        }
+
+        public static string GetMapDescription(string mapName)
+        {
+            //Load singular just wouldn't work!
+            TextAsset description = Resources.Load<TextAsset>("maps/" + mapName);
+            if (description == null) //If no image was found, load the template.
+                return "";
+            else
+                return description.text;
         }
     }
 }

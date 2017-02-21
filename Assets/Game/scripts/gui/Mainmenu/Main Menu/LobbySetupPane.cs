@@ -119,7 +119,7 @@ namespace Raider.Game.GUI.Components
 
             foreach(string scene in Scenario.instance.GetSceneNamesByGametype(NetworkGameManager.instance.lobbySetup.Gametype))
             {
-                options.Add(new OptionsPaneOption.OptionsPaneContents(scene, "This is the scene description", Scenario.GetMapImage(scene)));
+                options.Add(new OptionsPaneOption.OptionsPaneContents(scene, Scenario.GetMapDescription(scene), Scenario.GetMapImage(scene)));
             }
 
             OptionsPaneHandler.instance.ShowOptions("Select Map...", options, SelectMap);
