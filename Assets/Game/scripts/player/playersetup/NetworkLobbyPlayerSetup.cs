@@ -124,9 +124,15 @@ namespace Raider.Game.Player
         public void TargetSendLobbySetup(NetworkConnection conn, string gametype, string network, string selectedScene)
         {
             Debug.Log("Recieved lobby data");
-            NetworkGameManager.instance.lobbySetup.GametypeString = gametype;
-            NetworkGameManager.instance.lobbySetup.Network = network;
-            NetworkGameManager.instance.lobbySetup.SelectedScene = selectedScene;
+            NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(gametype, network, selectedScene);
+        }
+
+        [Command]
+        public void CmdSendLobbySetup(string gametype, string network, string selectedScene)
+        {
+            //Allow the host to switch scene on the network manager.
+            NetworkGameManager.instance.playScene = selectedScene;
+            RpcSendLobbySetup(gametype, network, selectedScene);
         }
 
         //If the host changes the lobby setup, this sends the new details to the clients.
