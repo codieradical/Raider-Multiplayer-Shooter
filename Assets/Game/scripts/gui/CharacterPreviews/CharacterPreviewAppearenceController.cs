@@ -52,7 +52,10 @@ namespace Raider.Game.GUI.CharacterPreviews
         {
             //If primary renderer is null, try to get it again, failing that, return.
             //15/2/17 - Why?
-            if (primaryRenderers == null)
+            /*21/2/17 - If the renderers list is empty, this may be because this script has been instanced 
+            and this method has been used on the same frame, before the start method has been called.
+            Calling start attempts to find the renderers if a reference is not already present.*/
+            if (primaryRenderers == null  || primaryRenderers.Count < 1)
             {
                 Start();
                 if (primaryRenderers == null)
@@ -66,12 +69,12 @@ namespace Raider.Game.GUI.CharacterPreviews
 
             foreach (Renderer secondaryRenderer in secondaryRenderers)
             {
-                secondaryRenderer.material.color = _character.armourPrimaryColor.Color;
+                secondaryRenderer.material.color = _character.armourSecondaryColor.Color;
             }
 
             foreach (Renderer tertiaryRenderer in tertiaryRenderers)
             {
-                tertiaryRenderer.material.color = _character.armourPrimaryColor.Color;
+                tertiaryRenderer.material.color = _character.armourTertiaryColor.Color;
             }
 
             //This method is also used by first person view models which currently don't have emblems.
