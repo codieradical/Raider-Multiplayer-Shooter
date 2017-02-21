@@ -41,21 +41,12 @@ namespace Raider.Game.Player
             //The animator is done with this model, clear it up and get ready for the next one.
             playerData.playerModelAnimator.enabled = false;
             playerData.playerModelAnimator.avatar = null;
-            playerData.appearenceController.StartCoroutine(RenableTheAnimator(playerData));
 
             if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
                 ChangePerspectiveModel(CameraModeController.singleton.CameraMode);
 
             //This old appearence controller and graphics object is no longer needed.
             Destroy(gameObject);
-        }
-        IEnumerator RenableTheAnimator(PlayerData playerData)
-        {
-            yield return 0;
-            yield return 0;
-            playerData.playerModelAnimator.enabled = true;
-            yield return 0;
-            playerData.playerModelAnimator.avatar = PlayerResourceReferences.instance.raceModels.GetAvatarByRace(playerData.character.Race);
         }
 
         public void ChangePerspectiveModel(CameraModeController.CameraModes perspective)
