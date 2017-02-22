@@ -5,6 +5,7 @@ using Raider.Game.Scene;
 using System.Collections.Generic;
 using Raider.Game.Networking;
 using System;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI.Components
 {
@@ -73,6 +74,14 @@ namespace Raider.Game.GUI.Components
             {
                 Scenario.instance.currentScene = NetworkGameManager.instance.lobbySetup.SelectedScene;
                 Scenario.instance.currentGametype = NetworkGameManager.instance.lobbySetup.Gametype;
+                foreach (PlayerData player in NetworkGameManager.instance.Players)
+                {
+                    if (!player.syncData.GotData)
+                    {
+                        UserFeedback.LogError("A player is still connecting. Please wait until all players have joined.");
+                        return;
+                    }
+                }
                 NetworkGameManager.instance.ReadyToBegin();
             }
             

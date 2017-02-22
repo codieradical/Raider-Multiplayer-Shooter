@@ -27,7 +27,7 @@ namespace Raider.Game.Player
         public void ReplacePlayerModel(PlayerData playerData)
         {
             //Spawn the model.
-            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.raceModels.GetModelByRaceAndPerspective(playerData.character.Race)) as GameObject;
+            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.raceModels.GetModelByRaceAndPerspective(playerData.syncData.Character.Race)) as GameObject;
             playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
             playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 
@@ -36,7 +36,7 @@ namespace Raider.Game.Player
 
             //Update the colors, emblem.
             playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
-            playerData.appearenceController.UpdatePlayerAppearence(playerData.character);
+            playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData.Character);
 
             //The animator is done with this model, clear it up and get ready for the next one.
             playerData.playerModelAnimator.enabled = false;

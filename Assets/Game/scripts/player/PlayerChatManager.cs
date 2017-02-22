@@ -85,8 +85,8 @@ namespace Raider.Game.Player
         /// <returns></returns>
         string GetFormattedUsername(int playerSlot)
         {
-            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataBySlot(playerSlot);
-            return AddBoldCode(AddColorCode(playerData.character.armourPrimaryColor.Color, playerData.name));
+            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerSlot);
+            return AddBoldCode(AddColorCode(playerData.syncData.Character.armourPrimaryColor.Color, playerData.syncData.username));
         }
 
         static string AddColorCode(Color color, string message)

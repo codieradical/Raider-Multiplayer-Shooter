@@ -9,7 +9,7 @@ using System;
 
 namespace Raider.Game.Networking
 {
-    public class LobbySetup : NetworkBehaviour
+    public class LobbySetup : MonoBehaviour
     {
         private string gametype;
         public string GametypeString
@@ -66,7 +66,7 @@ namespace Raider.Game.Networking
         public void SendLobbySetupUpdate()
         {
             //If the player is offline, there's nowhere to send the data...
-            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline && NetworkLobbyPlayerSetup.localPlayer.playerData.isLeader)
+            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline && NetworkLobbyPlayerSetup.localPlayer.playerData.syncData.isLeader)
                 NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(gametype, network, selectedScene);
         }
 
