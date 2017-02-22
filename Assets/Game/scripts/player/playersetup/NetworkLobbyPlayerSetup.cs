@@ -124,7 +124,7 @@ namespace Raider.Game.Player
         public void TargetSendLobbySetup(NetworkConnection conn, string gametype, string network, string selectedScene)
         {
             Debug.Log("Recieved lobby data");
-            NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(gametype, network, selectedScene);
+            NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(gametype, selectedScene, network);
         }
 
         [Command]
