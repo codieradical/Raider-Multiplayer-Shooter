@@ -3,6 +3,7 @@ using UnityEngine;
 using Raider.Game.Scene;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
+using System.Collections;
 
 namespace Raider.Game.Player
 {
@@ -13,6 +14,7 @@ namespace Raider.Game.Player
     {
         public static NetworkLobbyPlayerSetup localPlayer;
         public PlayerData playerData;
+        [SyncVar] public bool serverGotPlayerData = false;
 
         public delegate void OnLobbyPlayer();
         public static OnLobbyPlayer onLocalLobbyPlayerStart;
@@ -20,6 +22,9 @@ namespace Raider.Game.Player
         public override void OnStartServer()
         {
             playerData = GetComponent<PlayerData>();
+
+            if (isLocalPlayer)
+                serverGotPlayerData = true;
         }
         public override void OnStartClient()
         {
@@ -78,7 +83,8 @@ namespace Raider.Game.Player
                 }
                 else if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client) // This elif isn't really necessary.
                 {
-                    localPlayer.CmdRequestAllSyncData(); //Called on the local player so the server knows who to target.
+                    if(serverGotPlayerData) //Be careful, when this method and the above method are called around the same time, the responses can loop.
+                        localPlayer.CmdRequestAllSyncData(); //Called on the local player so the server knows who to target.
                 }
             }
         }
@@ -87,7 +93,7 @@ namespace Raider.Game.Player
         public void TargetSendClientSyncData(NetworkConnection target, PlayerData.SyncData _syncData)
         {
             //If for some reason the local player is sent to itself (sometimes unavoidable), ignore it.
-            if (playerData.isLocalPlayer)
+            if (playerData.isLocalPlayer || playerData.syncData.GotData)
                 return;
 
             playerData.syncData = _syncData;
@@ -105,8 +111,12 @@ namespace Raider.Game.Player
         [Command]
         public void CmdRecieveSyncData(PlayerData.SyncData _syncData)
         {
+            if (playerData.syncData.GotData) //For some reason this can be called more than once.
+                return;
+
             playerData.syncData = _syncData;
             gameObject.name = playerData.syncData.username;
+            serverGotPlayerData = true;
             NetworkGameManager.instance.UpdateLobbyNameplates();
             GetComponent<PlayerChatManager>().CmdSendNotificationMessage("joined the game.", playerData.syncData.id);
 

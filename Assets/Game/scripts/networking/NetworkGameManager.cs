@@ -91,7 +91,8 @@ namespace Raider.Game.Networking
         {
             PlayerData gamePlayerData = gamePlayer.GetComponent<PlayerData>();
             PlayerData lobbyPlayerData = lobbyPlayer.GetComponent<PlayerData>();
-            lobbyPlayerData.syncData = gamePlayerData.syncData;
+            gamePlayerData.syncData = lobbyPlayerData.syncData;
+            gamePlayer.name = lobbyPlayerData.name;
             return true;
         }
 
