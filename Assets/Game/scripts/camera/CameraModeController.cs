@@ -235,7 +235,7 @@ namespace Raider.Game.Cameras
         }
 
 
-        //The method the player uses to change mode.
+        //Debug, throw me into update.
         void ChangeCameraMode()
         {
             if (Input.GetKeyDown(KeyCode.F))

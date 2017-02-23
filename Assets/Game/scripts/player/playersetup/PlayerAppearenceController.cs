@@ -3,44 +3,67 @@ using Raider.Game.Saves;
 using System.Collections;
 using Raider.Game.GUI.Components;
 using Raider.Game.GUI.CharacterPreviews;
+using Raider.Game.Cameras;
+using System.Collections.Generic;
 
 namespace Raider.Game.Player
 {
     public class PlayerAppearenceController : CharacterPreviewAppearenceController
     {
+        public GameObject firstPersonObject;
+
+        public List<SkinnedMeshRenderer> thirdPersonRenderers;
+
         private void Awake()
         {
             if(PlayerResourceReferences.instance != null)
-                PlayerResourceReferences.instance.raceGraphics.CheckAllGraphicsPresent();
+                PlayerResourceReferences.instance.raceModels.CheckAllModelsPresent();
         }
 
         /// <summary>
-        /// Creates a new graphics model, and deletes the existing instance.
+        /// Creates a new model, and deletes the existing instance.
         /// Returns the new PlayerAppearenceController.
         /// </summary>
-        /// <param name="playerData">The appearence data for the graphics model.</param>
-        public void ReplaceGraphicsModel(PlayerData playerData)
+        /// <param name="playerData">The appearence data for the model.</param>
+        public void ReplacePlayerModel(PlayerData playerData)
         {
-            //When switching graphics, the animator freezes.
-            //Nulling the animator, then assigning after graphics setup fixes this.
-            playerData.animator.avatar = null;
-            playerData.animator.enabled = false;
-
-            //Spawn the graphics.
-            playerData.graphicsObject = Instantiate(PlayerResourceReferences.instance.raceGraphics.GetGraphicsByRace(playerData.character.Race)) as GameObject;
-            playerData.graphicsObject.transform.SetParent(playerData.gameObject.transform, false);
-            playerData.graphicsObject.name = "Graphics"; //Prevents infinate (clone) appends.
+            //Spawn the model.
+            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.raceModels.GetModelByRaceAndPerspective(playerData.syncData.Character.Race)) as GameObject;
+            playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
+            playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 
             //Update the colors, emblem.
-            PlayerAppearenceController newAppearenceController = playerData.graphicsObject.GetComponent<PlayerAppearenceController>();
-            newAppearenceController.UpdatePlayerAppearence(playerData.character);
+            playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
+            playerData.firstPersonPlayerModel = playerData.appearenceController.firstPersonObject;
+            playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData.Character);
 
-            //Setup the animator
-            playerData.animator.enabled = true;
-            playerData.animator.avatar = PlayerResourceReferences.instance.raceGraphics.GetAvatarByRace(playerData.character.Race);
+            if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
+                ChangePerspectiveModel(CameraModeController.singleton.CameraMode);
 
             //This old appearence controller and graphics object is no longer needed.
             Destroy(gameObject);
+        }
+
+        public void ChangePerspectiveModel(CameraModeController.CameraModes perspective)
+        {
+            if(perspective == CameraModeController.CameraModes.FirstPerson)
+            {
+                firstPersonObject.SetActive(true);
+                foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
+                {
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                }
+                emblem.gameObject.SetActive(false);
+            }
+            else
+            {
+                firstPersonObject.SetActive(false);
+                foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
+                {
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                }
+                emblem.gameObject.SetActive(true);
+            }
         }
     }
 }

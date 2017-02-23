@@ -9,7 +9,7 @@ using System;
 
 namespace Raider.Game.Networking
 {
-    public class LobbySetup : NetworkBehaviour
+    public class LobbySetup : MonoBehaviour
     {
         private string gametype;
         public string GametypeString
@@ -20,8 +20,7 @@ namespace Raider.Game.Networking
                 gametype = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
-                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                SendLobbySetupUpdate();
             }
         }
         private string selectedScene;
@@ -33,8 +32,7 @@ namespace Raider.Game.Networking
                 selectedScene = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
-                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                SendLobbySetupUpdate();
             }
         }
         private string network;
@@ -46,8 +44,7 @@ namespace Raider.Game.Networking
                 network = value;
                 LobbySetupPane.instance.UpdatePaneData();
 
-                if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
-                    NetworkLobbyPlayerSetup.localPlayer.RpcSendLobbySetup(gametype, network, selectedScene);
+                SendLobbySetupUpdate();
             }
         }
 
@@ -63,6 +60,25 @@ namespace Raider.Game.Networking
             {
                 GametypeString = value.ToString().Replace("_", " ");
             }
+        }
+
+        //Used to send lobby setup changes over a network.
+        public void SendLobbySetupUpdate()
+        {
+            //If the player is offline, there's nowhere to send the data...
+            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline && NetworkLobbyPlayerSetup.localPlayer.playerData.syncData.isLeader)
+                NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(gametype, network, selectedScene);
+        }
+
+        //Used to recieve lobby setup changes without causing a syncing loop by changing private property backends.
+        public void RecieveLobbySetupUpdate(string _gametype, string _selectedScene, string _network)
+        {
+            gametype = _gametype;
+            selectedScene = _selectedScene;
+            network = _network;
+
+            if(LobbySetupPane.instance != null)
+                LobbySetupPane.instance.UpdatePaneData();
         }
 
         public enum Teams

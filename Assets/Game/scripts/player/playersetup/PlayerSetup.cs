@@ -8,8 +8,7 @@ namespace Raider.Game.Player
 {
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(MovementController))]
-    [RequireComponent(typeof(PlayerAnimationController))]
-    [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(AnimationParametersController))]
     [RequireComponent(typeof(PlayerResourceReferences))]
     public class PlayerSetup : MonoBehaviour
     {
@@ -24,10 +23,9 @@ namespace Raider.Game.Player
 
             SetupLocalPlayer();
 
-            PlayerData.localPlayerData.character = Session.ActiveCharacter;
-            PlayerData.localPlayerData.name = Session.userSaveDataHandler.GetUsername();
-            PlayerData.localPlayerData.isLeader = true;
-            PlayerData.localPlayerData.gotData = true;
+            PlayerData.localPlayerData.syncData.Character = Session.ActiveCharacter;
+            PlayerData.localPlayerData.syncData.username = Session.userSaveDataHandler.GetUsername();
+            PlayerData.localPlayerData.syncData.isLeader = true;
 
             PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
         }

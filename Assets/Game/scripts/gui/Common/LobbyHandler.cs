@@ -104,6 +104,19 @@ namespace Raider.Game.GUI.Components
             Debug.Log("Failed to save user lobby display settings. \n" + error);
         }
 
+        public void Start()
+        {
+            NetworkGameManager.instance.UpdateLobbyNameplates();
+
+            if (Session.userSaveDataHandler == null)
+                return;
+
+            if (Session.userSaveDataHandler.GetSettings().LobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplays.Split)
+                SwitchToSplitLobby();
+            else
+                SwitchToScrollLobby();
+        }
+
         public static void DestroyAllPlayers()
         {
             players = new List<PlayerNameplate>();
@@ -213,9 +226,9 @@ namespace Raider.Game.GUI.Components
                 {
                     foreach (PlayerData playerData in NetworkGameManager.instance.Players)
                     {
-                        if (playerData.isHost)
+                        if (playerData.syncData.isHost)
                         {
-                            instance.lobbyOwnerText.text = playerData.name + " is the Leader.";
+                            instance.lobbyOwnerText.text = playerData.syncData.username + " is the Leader.";
                             break;
                         }
                     }

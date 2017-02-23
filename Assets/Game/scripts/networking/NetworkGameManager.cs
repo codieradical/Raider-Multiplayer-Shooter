@@ -19,21 +19,16 @@ namespace Raider.Game.Networking
 
         //This class already inherits a singleton...
         public static NetworkGameManager instance;
-        public GameObject lobbyGameObject;
         public LobbySetup lobbySetup;
 
         void Start()
         {
-            GameObject lobby = new GameObject("_Lobby");
-            lobbyGameObject = lobby;
-
             //Although this functionality is built into the network lobby manager,
             //It only works on update.
             DontDestroyOnLoad(this);
-            lobbySetup = lobby.AddComponent<LobbySetup>();
-            DontDestroyOnLoad(lobby);
-            //For some reason it's not active...
-            lobby.SetActive(true);
+            lobbySetup = gameObject.AddComponent<LobbySetup>();
+
+            onClientDisconnect += UpdateLobbyNameplates;
         }
 
         void Awake()
@@ -66,33 +61,20 @@ namespace Raider.Game.Networking
             }
         }
 
-        public List<NetworkLobbyPlayerSetup> LobbyPlayers
+        public List<PlayerData> Players
         {
             get
             {
-                List<NetworkLobbyPlayerSetup> _players = new List<NetworkLobbyPlayerSetup>();
-                foreach (Transform playerObject in lobbyGameObject.transform)
+                GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+                List<PlayerData> players = new List<PlayerData>();
+                foreach(GameObject player in playerObjects)
                 {
-                    _players.Add(playerObject.GetComponent<NetworkLobbyPlayerSetup>());
+                    if(Scenario.InLobby && player.GetComponent<NetworkLobbyPlayer>())
+                        players.Add(player.GetComponent<PlayerData>());
+                    else if (!Scenario.InLobby && player.GetComponent<NetworkLobbyPlayer>() == null)
+                        players.Add(player.GetComponent<PlayerData>());
                 }
-                return _players;
-            }
-        }
-
-        public PlayerData[] Players
-        {
-            get
-            {
-                if (Scenario.InLobby)
-                {
-                    List<PlayerData> players = new List<PlayerData>();
-                    foreach (NetworkLobbyPlayerSetup lobbyPlayer in LobbyPlayers)
-                    {
-                        players.Add(lobbyPlayer.GetComponent<PlayerData>());
-                    }
-                    return players.ToArray();
-                }
-                else return FindObjectsOfType<PlayerData>();
+                return players;
             }
         }
 
@@ -101,7 +83,7 @@ namespace Raider.Game.Networking
             get
             {
                 if (PlayerData.localPlayerData != null)
-                    if (PlayerData.localPlayerData.isLeader)
+                    if (PlayerData.localPlayerData.syncData.isLeader)
                         return true;
                     else
                         return false;
@@ -112,7 +94,10 @@ namespace Raider.Game.Networking
 
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
-            gamePlayer.GetComponent<PlayerData>().slot = lobbyPlayer.GetComponent<PlayerData>().slot;
+            PlayerData gamePlayerData = gamePlayer.GetComponent<PlayerData>();
+            PlayerData lobbyPlayerData = lobbyPlayer.GetComponent<PlayerData>();
+            gamePlayerData.syncData = lobbyPlayerData.syncData;
+            gamePlayer.name = lobbyPlayerData.name;
             return true;
         }
 
@@ -120,16 +105,16 @@ namespace Raider.Game.Networking
         /// Get the slot number from the lobby or game player object.
         /// </summary>
         /// <returns>Returns the int slot.</returns>
-        public int GetMyPlayerSlot()
+        public int GetMyPlayerId()
         {
-            return PlayerData.localPlayerData.slot;
+            return PlayerData.localPlayerData.syncData.id;
         }
 
-        public PlayerData GetPlayerDataBySlot(int gamePlayerSlot)
+        public PlayerData GetPlayerDataById(int gamePlayerSlot)
         {
             foreach(PlayerData player in Players)
             {
-                if (player.GetComponent<PlayerData>().slot == gamePlayerSlot)
+                if (player.GetComponent<PlayerData>().syncData.id == gamePlayerSlot)
                     return player;
             }
             return null;
@@ -188,7 +173,7 @@ namespace Raider.Game.Networking
 
                 if (playerData != null)
                 {
-                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.slot);
+                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.syncData.id);
                     break;
                 }
             }
@@ -242,8 +227,8 @@ namespace Raider.Game.Networking
 
                 foreach (PlayerData playerData in Players)
                 {
-                    if (playerData.gotData)
-                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.name, playerData.isLeader, false, false, playerData.character));
+                    if (playerData.syncData.GotData)
+                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.syncData.username, playerData.syncData.isLeader, false, false, playerData.syncData.Character));
                     else
                         LobbyHandler.AddLoadingPlayer();
                 }
@@ -251,8 +236,11 @@ namespace Raider.Game.Networking
             //Otherwise, use their local data.
             else
             {
-                LobbyHandler.DestroyAllPlayers();
-                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.userSaveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
+                if (Session.ActiveCharacter != null)
+                {
+                    LobbyHandler.DestroyAllPlayers();
+                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.userSaveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
+                }
             }
         }
 
@@ -338,6 +326,8 @@ namespace Raider.Game.Networking
                     StopHost();
                 else if (CurrentNetworkState == NetworkState.Server)
                     StopServer();
+
+                UpdateLobbyNameplates();
             }
         }
 

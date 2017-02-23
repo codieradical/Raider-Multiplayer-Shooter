@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Player;
+using UnityEngine;
 
 namespace Raider.Game.Cameras
 {
@@ -19,6 +20,7 @@ namespace Raider.Game.Cameras
             RotateCamera();
             LockCamPointZRotation();
             LockCamPointYRotation();
+            UpdateFirstPersonViewModel();
         }
 
         void RotateCamera()
@@ -38,6 +40,16 @@ namespace Raider.Game.Cameras
 
             //Apply rotation
             camPoint.transform.Rotate(_rotation);
+        }
+
+        void UpdateFirstPersonViewModel()
+        {
+            Transform viewModel = characterController.gameObject.transform.GetComponent<PlayerData>().firstPersonPlayerModel.transform;
+            if (viewModel != null)
+            {
+                viewModel.rotation = cam.transform.rotation;
+                viewModel.position = cam.transform.position;
+            }
         }
     }
 }

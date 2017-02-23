@@ -30,64 +30,30 @@ public class PlayerResourceReferences : MonoBehaviour
 
     //Player Appearence Controller.
     [System.Serializable]
-    public class RaceGraphics
+    public class RaceModels
     {
-        public GameObject xRaceGraphics;
-        public GameObject yRaceGraphics;
-        public Avatar xRaceAvatar;
-        public Avatar yRaceAvatar;
+        public GameObject xRaceModel;
+        public GameObject yRaceModel;
 
-        public void CheckAllGraphicsPresent()
+        public void CheckAllModelsPresent()
         {
-            if (xRaceGraphics == null || yRaceGraphics == null || xRaceAvatar == null || yRaceAvatar == null)
+            if (xRaceModel == null || yRaceModel == null)
                 Debug.LogError("The player is missing a model prefab or avatar!!!");
         }
 
-        public GameObject GetGraphicsByRace(UserSaveDataStructure.Character.Races race)
+        public GameObject GetModelByRaceAndPerspective(UserSaveDataStructure.Character.Races race)
         {
             if (race == UserSaveDataStructure.Character.Races.X)
-                return xRaceGraphics;
+                    return xRaceModel;
             else if (race == UserSaveDataStructure.Character.Races.Y)
-                return yRaceGraphics;
+                    return yRaceModel;
             else
             {
-                Debug.LogError("Couldn't find graphics for race " + race.ToString());
-                return null;
-            }
-        }
-
-        public Avatar GetAvatarByRace(UserSaveDataStructure.Character.Races race)
-        {
-            if (race == UserSaveDataStructure.Character.Races.X)
-                return xRaceAvatar;
-            else if (race == UserSaveDataStructure.Character.Races.Y)
-                return yRaceAvatar;
-            else
-            {
-                Debug.LogError("Couldn't find avatar for race " + race.ToString());
+                Debug.LogError("Couldn't find model for race " + race.ToString());
                 return null;
             }
         }
     }
     [SerializeField] //For editing in the inspector.
-    public RaceGraphics raceGraphics;
-
-    //Player Animation Controller
-    [System.Serializable]
-    public class PlayerAnimatorControllers
-    {
-        public RuntimeAnimatorController firstPerson;
-        public RuntimeAnimatorController thirdPerson;
-
-        public RuntimeAnimatorController GetControllerByPerspective(CameraModeController.CameraModes perspective)
-        {
-            if (perspective == CameraModeController.CameraModes.FirstPerson)
-                return firstPerson;
-            else
-                return thirdPerson;
-        }
-    }
-    [SerializeField]
-    public PlayerAnimatorControllers animatorControllers;
-
+    public RaceModels raceModels;
 }

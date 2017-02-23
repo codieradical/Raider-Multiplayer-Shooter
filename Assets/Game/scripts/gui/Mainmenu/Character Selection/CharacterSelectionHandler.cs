@@ -29,7 +29,7 @@ namespace Raider.Game.GUI.Screens
             if (!Scene.Scenario.InLobby)
                 return;
 
-            if(MenuManager.instance.CurrentMenu == GetComponent<Menu>())
+            if(MenuManager.instance.CurrentMenu == MainmenuHandler.instance.ChooseCharacterScreen.GetComponent<Menu>())
             {
                 LoadCharacterPlates();
             }

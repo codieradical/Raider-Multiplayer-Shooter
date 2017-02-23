@@ -99,6 +99,7 @@ namespace Raider.Game.GUI.Screens
                 return;
             }
 
+            LoginScreen.GetComponent<LoginHandler>().ResetMenu();
             MenuManager.instance.ShowMenu(LoginScreen.GetComponent<Menu>());
             LobbyHandler.DestroyAllPlayers(); //Make sure to remove the old character from the lobby.
             //Maybe I should move this to the session handler.

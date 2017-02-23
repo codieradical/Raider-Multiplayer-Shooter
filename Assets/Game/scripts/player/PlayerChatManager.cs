@@ -85,8 +85,12 @@ namespace Raider.Game.Player
         /// <returns></returns>
         string GetFormattedUsername(int playerSlot)
         {
-            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataBySlot(playerSlot);
-            return AddBoldCode(AddColorCode(playerData.character.armourPrimaryColor.Color, playerData.name));
+            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerSlot);
+            Color usernameColor = playerData.syncData.Character.armourPrimaryColor.Color;
+            float H, S, V = 0f;
+            Color.RGBToHSV(usernameColor, out H, out S, out V);
+            usernameColor = Color.HSVToRGB(H, 0.75f, 0.75f);
+            return AddBoldCode(AddColorCode(usernameColor, playerData.syncData.username));
         }
 
         static string AddColorCode(Color color, string message)

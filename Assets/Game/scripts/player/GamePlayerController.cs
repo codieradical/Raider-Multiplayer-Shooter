@@ -8,17 +8,14 @@ namespace Raider.Game.Player
 {
     //Unity networking already uses PlayerController
     //And this class is specifically for players in game.
-    public class GamePlayerController : MonoBehaviour
+    public class LocalPlayerController : MonoBehaviour
     {
         void OnDestroy()
         {
-            if (GetComponent<PlayerData>().IsLocalPlayer)
-            {
                 //If the player is being destroyed, save the camera!
                 CameraModeController.singleton.CameraParent = null;
                 DontDestroyOnLoad(CameraModeController.singleton.camPoint);
                 CameraModeController.singleton.enabled = true;
-            }
         }
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
@@ -30,24 +27,8 @@ namespace Raider.Game.Player
 
             StartCoroutine(PauseNewCameraController());
 
-            if (newPerspective == CameraModeController.CameraModes.FirstPerson)
-            {
-                //Destroy(PlayerData.localPlayerData.graphicsObject);
-                PlayerData.localPlayerData.graphicsObject.SetActive(false); //Don't destroy it, just hide it.
-                //Later on, first person will have it's own graphics model. So it won't be destroyed.
-                PlayerData.localPlayerData.animator.avatar = null;
-            }
-            else if (newPerspective != CameraModeController.CameraModes.FirstPerson)
-            {
-                PlayerData.localPlayerData.graphicsObject.SetActive(true);
-
-                if (PlayerData.localPlayerData.appearenceController == null)
-                    PlayerData.localPlayerData.appearenceController = GetComponentInChildren<PlayerAppearenceController>();
-
-                PlayerData.localPlayerData.appearenceController.ReplaceGraphicsModel(PlayerData.localPlayerData);
-            }
-
-            PlayerAnimationController.UpdateAnimationController(PlayerData.localPlayerData, newPerspective);
+            //Replace the player model to suit the new perspective.
+            PlayerData.localPlayerData.appearenceController.ChangePerspectiveModel(newPerspective);
         }
 
         public void PausePlayer()
@@ -55,8 +36,8 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.paused = true;
 
             GetComponent<MovementController>().enabled = false;
-            GetComponent<PlayerAnimationController>().StopAnimations();
-            GetComponent<PlayerAnimationController>().enabled = false;
+            PlayerData.localPlayerData.animationController.StopAnimations();
+            PlayerData.localPlayerData.animationController.enabled = false;
             CameraModeController.singleton.GetCameraController().enabled = false;
 
             Cursor.lockState = CursorLockMode.Confined;
@@ -68,7 +49,7 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.paused = false;
 
             GetComponent<MovementController>().enabled = true;
-            GetComponent<PlayerAnimationController>().enabled = true;
+            PlayerData.localPlayerData.animationController.enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
 
             Cursor.lockState = CursorLockMode.Locked;

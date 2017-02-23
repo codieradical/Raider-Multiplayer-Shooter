@@ -3,10 +3,11 @@ using System.Collections;
 using Raider.Game.Saves;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    public class PlayerData : MonoBehaviour
+    public class PlayerData : NetworkBehaviour
     {
         public static PlayerData localPlayerData;
 
@@ -21,37 +22,67 @@ namespace Raider.Game.Player
             }
         }
 
+        //A reference to the root graphics object, assigned in editor.
         public GameObject graphicsObject;
+        public GameObject playerModel; // Assigned In Editor To Begin
+        public GameObject firstPersonPlayerModel; //Assigned in editor to begin.
+        public Animator sharedParametersAnimator; //Assigned in editor.
 
-        public Animator animator;
+        //public Weapons.Weapon weapon;
 
-        public PlayerAnimationController animationController;
-        public PlayerAppearenceController appearenceController;
-        public GamePlayerController gamePlayerController;
+        public AnimationParametersController animationController; //Assigned in editor or on creation.
+        public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
+        public LocalPlayerController gamePlayerController;
 
         public bool paused;
-        //Network Game Only.
-        public int slot = -1;
-        //Review accessors on this character.
-        public UserSaveDataStructure.Character character;
 
-        public string SerializedCharacter
+        [SyncVar(hook = "OnSyncDataSynced")] public SyncData syncData;
+
+        [System.Serializable]
+        public class SyncData
         {
-            get { return Serialization.Serialize(character); }
-            set { character = Serialization.Deserialize<UserSaveDataStructure.Character>(value); }
+            //Sync Fields
+            [SyncVar] public int id = -1;
+            [SyncVar] public string username;
+            [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
+            [SyncVar] public bool isLeader;
+            [SyncVar] public bool isHost;
+            //public LobbySetup.Teams team = LobbySetup.Teams.None;
+
+            //Properties
+            public bool GotData
+            {
+                get
+                {
+                    if (id == -1)
+                        return false;
+                    else
+                        return true;
+                }
+            }
+            public UserSaveDataStructure.Character Character
+            {
+                get { return Serialization.Deserialize<UserSaveDataStructure.Character>(character); }
+                set { character = Serialization.Serialize(value); }
+            }
+
         }
 
-        public bool gotData;
-        public bool isLeader;
-        public bool isHost;
-        public LobbySetup.Teams team = LobbySetup.Teams.None;
+        void OnSyncDataSynced(SyncData value)
+        {
+            syncData = value;
+            Debug.Log("Synced data for id " + syncData.id.ToString() + ", player " + syncData.username);
+            gameObject.name = syncData.username;
+
+            NetworkGameManager.instance.UpdateLobbyNameplates();
+        }
 
         private void Awake()
         {
-            animator = GetComponent<Animator>();
-            appearenceController = GetComponent<PlayerAppearenceController>();
-            gamePlayerController = GetComponent<GamePlayerController>(); //Singleplayer assignment.
-            animationController = GetComponent<PlayerAnimationController>(); //Singleplayer assignment.
+            if(playerModel != null) //PlayerData is also used in lobby, where the player model is not assigned.
+                appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
+            gamePlayerController = GetComponent<LocalPlayerController>(); //Singleplayer assignment.
+            animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
         }
     }
 }

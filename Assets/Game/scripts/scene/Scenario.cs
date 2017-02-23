@@ -140,8 +140,11 @@ namespace Raider.Game.Scene
         {
             currentScene = NetworkGameManager.networkSceneName;
 
-            if ((int)currentGametype == 1)
+            //Hacky, the currentgametype is unreliable at this point, and as a result a manual scene name check has been added.
+            if ((int)currentGametype == 1 && currentScene != NetworkGameManager.instance.lobbyScene)
                 StartCoroutine(LoadGameUI());
+
+            NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         public void LoadScene(string sceneName, Gametype gametype)
@@ -189,11 +192,21 @@ namespace Raider.Game.Scene
         public static Sprite GetMapImage(string mapName)
         {
             //Load singular just wouldn't work!
-            Sprite image = Resources.Load<Sprite>("gui/mapImg/" + mapName);
+            Sprite image = Resources.Load<Sprite>("maps/" + mapName);
             if (image == null) //If no image was found, load the template.
-                return Resources.Load<Sprite>("gui/mapImg/template");
+                return Resources.Load<Sprite>("maps/notfound");
             else
                 return image;
+        }
+
+        public static string GetMapDescription(string mapName)
+        {
+            //Load singular just wouldn't work!
+            TextAsset description = Resources.Load<TextAsset>("maps/" + mapName);
+            if (description == null) //If no image was found, load the template.
+                return "";
+            else
+                return description.text;
         }
     }
 }

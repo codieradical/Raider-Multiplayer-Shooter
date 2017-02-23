@@ -28,7 +28,7 @@ namespace Raider.Game.GUI.CharacterPreviews
         }
 
         [HideInInspector] //Assigned by CharacterPreviewHandler(?)
-        public GameObject previewCharacterGraphics;
+        public GameObject previewCharacterModel;
         [HideInInspector]
         public Camera previewCamera;
 
@@ -65,7 +65,7 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         public void RotatePreview(BaseEventData eventData)
         {
-            previewCharacterGraphics.transform.Rotate(Vector3.down * (Input.mousePosition.x - lastMouseX));
+            previewCharacterModel.transform.Rotate(Vector3.down * (Input.mousePosition.x - lastMouseX));
             UpdateLastX(eventData);
         }
 
