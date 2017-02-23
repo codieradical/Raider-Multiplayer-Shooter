@@ -4,6 +4,7 @@ using Raider.Game.Scene;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace Raider.Game.Player
 {

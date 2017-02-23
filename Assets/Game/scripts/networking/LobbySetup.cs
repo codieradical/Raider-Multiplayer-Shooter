@@ -77,7 +77,8 @@ namespace Raider.Game.Networking
             selectedScene = _selectedScene;
             network = _network;
 
-            LobbySetupPane.instance.UpdatePaneData();
+            if(LobbySetupPane.instance != null)
+                LobbySetupPane.instance.UpdatePaneData();
         }
 
         public enum Teams

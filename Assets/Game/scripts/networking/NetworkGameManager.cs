@@ -27,6 +27,8 @@ namespace Raider.Game.Networking
             //It only works on update.
             DontDestroyOnLoad(this);
             lobbySetup = gameObject.AddComponent<LobbySetup>();
+
+            onClientDisconnect += UpdateLobbyNameplates;
         }
 
         void Awake()
@@ -67,7 +69,10 @@ namespace Raider.Game.Networking
                 List<PlayerData> players = new List<PlayerData>();
                 foreach(GameObject player in playerObjects)
                 {
-                    players.Add(player.GetComponent<PlayerData>());
+                    if(Scenario.InLobby && player.GetComponent<NetworkLobbyPlayer>())
+                        players.Add(player.GetComponent<PlayerData>());
+                    else if (!Scenario.InLobby && player.GetComponent<NetworkLobbyPlayer>() == null)
+                        players.Add(player.GetComponent<PlayerData>());
                 }
                 return players;
             }
@@ -231,8 +236,11 @@ namespace Raider.Game.Networking
             //Otherwise, use their local data.
             else
             {
-                LobbyHandler.DestroyAllPlayers();
-                LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.userSaveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
+                if (Session.ActiveCharacter != null)
+                {
+                    LobbyHandler.DestroyAllPlayers();
+                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.userSaveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
+                }
             }
         }
 
@@ -318,6 +326,8 @@ namespace Raider.Game.Networking
                     StopHost();
                 else if (CurrentNetworkState == NetworkState.Server)
                     StopServer();
+
+                UpdateLobbyNameplates();
             }
         }
 

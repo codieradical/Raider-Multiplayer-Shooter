@@ -191,10 +191,6 @@ namespace Raider.Game.Cameras
         //Camera mode changes need to be performed frame by frame, to ensure that controllers have been initialized.
         void Update()
         {
-#if DEBUG
-            ChangeCameraMode(); //If debug is enabled, allow the user to increment the camera mode with the F key.
-#endif
-
             if(cameraModeUpdates.Count > 0)
                 CameraMode = cameraModeUpdates.Dequeue();
         }
@@ -239,7 +235,7 @@ namespace Raider.Game.Cameras
         }
 
 
-        //The method the player uses to change mode.
+        //Debug, throw me into update.
         void ChangeCameraMode()
         {
             if (Input.GetKeyDown(KeyCode.F))

@@ -16,7 +16,7 @@ namespace Raider.Game
         /// <summary>
         /// Used when checking the API for updates.
         /// </summary>
-        public readonly static Version VERSION_NUMBER = new Version(0, 4, 0, 0);
+        public readonly static Version VERSION_NUMBER = new Version(0, 4, 0, 1);
         /// <summary>
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.
@@ -50,11 +50,11 @@ namespace Raider.Game
         public const string API_URL = "http://raiderapi-alex231.rhcloud.com/api";
 
         //The following URL can be used for localhost API deployment.
-        //public const string API_URL = "http://localhost:8080/api";
+        //public const string API_URL = "http://localhost:3000/api";
 
         //The following URL can be used for Local Debugging via Fiddler.
         //Useful for finding out what exactly Unity is sending.
-        //public const string API_URL = "http://AlexN-Laptop:8080/api";
+        //public const string API_URL = "http://AlexN-Laptop:3000/api";
         /// <summary>
         /// Where the Web front end can be located.
         /// Used when opening links to Register, that sort of stuff.

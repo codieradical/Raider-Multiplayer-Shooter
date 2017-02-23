@@ -32,7 +32,7 @@ namespace Raider.Game.Player
 
         public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
-        public GamePlayerController gamePlayerController;
+        public LocalPlayerController gamePlayerController;
 
         public bool paused;
 
@@ -81,7 +81,7 @@ namespace Raider.Game.Player
         {
             if(playerModel != null) //PlayerData is also used in lobby, where the player model is not assigned.
                 appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
-            gamePlayerController = GetComponent<GamePlayerController>(); //Singleplayer assignment.
+            gamePlayerController = GetComponent<LocalPlayerController>(); //Singleplayer assignment.
             animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
         }
     }

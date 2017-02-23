@@ -140,8 +140,11 @@ namespace Raider.Game.Scene
         {
             currentScene = NetworkGameManager.networkSceneName;
 
-            if ((int)currentGametype == 1)
+            //Hacky, the currentgametype is unreliable at this point, and as a result a manual scene name check has been added.
+            if ((int)currentGametype == 1 && currentScene != NetworkGameManager.instance.lobbyScene)
                 StartCoroutine(LoadGameUI());
+
+            NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         public void LoadScene(string sceneName, Gametype gametype)

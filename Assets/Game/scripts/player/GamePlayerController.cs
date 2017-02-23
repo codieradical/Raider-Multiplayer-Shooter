@@ -8,17 +8,14 @@ namespace Raider.Game.Player
 {
     //Unity networking already uses PlayerController
     //And this class is specifically for players in game.
-    public class GamePlayerController : MonoBehaviour
+    public class LocalPlayerController : MonoBehaviour
     {
         void OnDestroy()
         {
-            if (GetComponent<PlayerData>().IsLocalPlayer)
-            {
                 //If the player is being destroyed, save the camera!
                 CameraModeController.singleton.CameraParent = null;
                 DontDestroyOnLoad(CameraModeController.singleton.camPoint);
                 CameraModeController.singleton.enabled = true;
-            }
         }
 
         public void UpdatePerspective(CameraModeController.CameraModes newPerspective)

@@ -89,7 +89,7 @@ namespace Raider.Game.Player
             Color usernameColor = playerData.syncData.Character.armourPrimaryColor.Color;
             float H, S, V = 0f;
             Color.RGBToHSV(usernameColor, out H, out S, out V);
-            usernameColor = Color.HSVToRGB(H, 0.5f, 0.5f);
+            usernameColor = Color.HSVToRGB(H, 0.75f, 0.75f);
             return AddBoldCode(AddColorCode(usernameColor, playerData.syncData.username));
         }
 

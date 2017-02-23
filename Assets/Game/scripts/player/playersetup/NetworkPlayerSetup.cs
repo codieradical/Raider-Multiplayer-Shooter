@@ -47,7 +47,7 @@ namespace Raider.Game.Player
             localPlayer = this;
             gameObject.AddComponent<MovementController>();
             playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
-            playerData.gamePlayerController = gameObject.AddComponent<GamePlayerController>();
+            playerData.gamePlayerController = gameObject.AddComponent<LocalPlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
             playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
