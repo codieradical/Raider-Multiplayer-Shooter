@@ -10,7 +10,8 @@ namespace Raider.Game.Player
 {
     public class PlayerAppearenceController : CharacterPreviewAppearenceController
     {
-        public List<SkinnedMeshRenderer> firstPersonRenderers;
+        public GameObject firstPersonObject;
+
         public List<SkinnedMeshRenderer> thirdPersonRenderers;
 
         private void Awake()
@@ -31,16 +32,10 @@ namespace Raider.Game.Player
             playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
             playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 
-            //Find the first person model, store a reference.
-            playerData.firstPersonPlayerModel = playerData.playerModel.transform.Find(PlayerData.firstPersonPlayerModelName).gameObject;
-
             //Update the colors, emblem.
             playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
+            playerData.firstPersonPlayerModel = playerData.appearenceController.firstPersonObject;
             playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData.Character);
-
-            //The animator is done with this model, clear it up and get ready for the next one.
-            playerData.playerModelAnimator.enabled = false;
-            playerData.playerModelAnimator.avatar = null;
 
             if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
                 ChangePerspectiveModel(CameraModeController.singleton.CameraMode);
@@ -53,25 +48,19 @@ namespace Raider.Game.Player
         {
             if(perspective == CameraModeController.CameraModes.FirstPerson)
             {
-                foreach(SkinnedMeshRenderer renderer in firstPersonRenderers)
+                firstPersonObject.SetActive(true);
+                foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
                 {
-                    renderer.enabled = true;
-                }
-                foreach (SkinnedMeshRenderer renderer in thirdPersonRenderers)
-                {
-                    renderer.enabled = false;
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
                 }
                 emblem.gameObject.SetActive(false);
             }
             else
             {
-                foreach (SkinnedMeshRenderer renderer in firstPersonRenderers)
+                firstPersonObject.SetActive(false);
+                foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
                 {
-                    renderer.enabled = false;
-                }
-                foreach (SkinnedMeshRenderer renderer in thirdPersonRenderers)
-                {
-                    renderer.enabled = true;
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 }
                 emblem.gameObject.SetActive(true);
             }

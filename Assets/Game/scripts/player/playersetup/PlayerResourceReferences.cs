@@ -34,12 +34,10 @@ public class PlayerResourceReferences : MonoBehaviour
     {
         public GameObject xRaceModel;
         public GameObject yRaceModel;
-        public Avatar xRaceAvatar;
-        public Avatar yRaceAvatar;
 
         public void CheckAllModelsPresent()
         {
-            if (xRaceModel == null || yRaceModel == null || xRaceAvatar == null || yRaceAvatar == null)
+            if (xRaceModel == null || yRaceModel == null)
                 Debug.LogError("The player is missing a model prefab or avatar!!!");
         }
 
@@ -52,19 +50,6 @@ public class PlayerResourceReferences : MonoBehaviour
             else
             {
                 Debug.LogError("Couldn't find model for race " + race.ToString());
-                return null;
-            }
-        }
-
-        public Avatar GetAvatarByRace(UserSaveDataStructure.Character.Races race)
-        {
-            if (race == UserSaveDataStructure.Character.Races.X)
-                return xRaceAvatar;
-            else if (race == UserSaveDataStructure.Character.Races.Y)
-                return yRaceAvatar;
-            else
-            {
-                Debug.LogError("Couldn't find avatar for race " + race.ToString());
                 return null;
             }
         }

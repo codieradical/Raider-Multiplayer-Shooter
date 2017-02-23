@@ -53,22 +53,25 @@ namespace Raider.Game.GUI.Screens
         public void LoginFailedCallback(string error)
         {
             UserFeedback.LogError(error);
-            loadingPanel.gameObject.SetActive(false);
-            LoginPanel.gameObject.SetActive(true);
+            ResetMenu();
         }
 
         public void LoadPlayerSuccessCallback(string message)
         {
             MainmenuHandler.instance.Login();
 
-            loadingPanel.gameObject.SetActive(false);
-            LoginPanel.gameObject.SetActive(true);
+            ResetMenu();
         }
 
         public void LoadPlayerFailedCallback(string error)
         {
             UserFeedback.LogError(error);
 
+            ResetMenu();
+        }
+
+        public void ResetMenu()
+        {
             loadingPanel.gameObject.SetActive(false);
             LoginPanel.gameObject.SetActive(true);
         }

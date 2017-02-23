@@ -39,8 +39,8 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.paused = true;
 
             GetComponent<MovementController>().enabled = false;
-            GetComponent<PlayerAnimationController>().StopAnimations();
-            GetComponent<PlayerAnimationController>().enabled = false;
+            PlayerData.localPlayerData.animationController.StopAnimations();
+            PlayerData.localPlayerData.animationController.enabled = false;
             CameraModeController.singleton.GetCameraController().enabled = false;
 
             Cursor.lockState = CursorLockMode.Confined;
@@ -52,7 +52,7 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.paused = false;
 
             GetComponent<MovementController>().enabled = true;
-            GetComponent<PlayerAnimationController>().enabled = true;
+            PlayerData.localPlayerData.animationController.enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
 
             Cursor.lockState = CursorLockMode.Locked;

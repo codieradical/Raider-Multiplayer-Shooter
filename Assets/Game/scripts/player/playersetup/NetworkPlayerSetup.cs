@@ -33,12 +33,20 @@ namespace Raider.Game.Player
 
                 SetupLocalPlayer();
             }
+
+            playerData.appearenceController.ReplacePlayerModel(playerData);
+
+            if(isLocalPlayer)
+            {
+                playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().perspective);
+            }
         }
 
         void SetupLocalPlayer()
         {
             localPlayer = this;
             gameObject.AddComponent<MovementController>();
+            playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
             playerData.gamePlayerController = gameObject.AddComponent<GamePlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);

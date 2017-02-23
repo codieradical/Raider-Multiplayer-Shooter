@@ -24,23 +24,19 @@ namespace Raider.Game.Player
 
         //A reference to the root graphics object, assigned in editor.
         public GameObject graphicsObject;
-
         public GameObject playerModel; // Assigned In Editor To Begin
-        //Reference to the first person object for the first person camera to use.
-        public static string firstPersonPlayerModelName = "FirstPerson"; //Since this object is being found, keeping the name here helps.
-        public GameObject firstPersonPlayerModel;
-        public Animator playerModelAnimator;
-        public Animator weaponModelAnimator;
+        public GameObject firstPersonPlayerModel; //Assigned in editor to begin.
+        public Animator sharedParametersAnimator; //Assigned in editor.
 
         //public Weapons.Weapon weapon;
 
-        public PlayerAnimationController animationController; //Assigned In Editor
+        public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
         public GamePlayerController gamePlayerController;
 
         public bool paused;
 
-        [SyncVar(hook = "OnSyncDataSync")] public SyncData syncData;
+        [SyncVar(hook = "OnSyncDataSynced")] public SyncData syncData;
 
         [System.Serializable]
         public class SyncData
@@ -72,14 +68,13 @@ namespace Raider.Game.Player
 
         }
 
-        void OnSyncDataSync(SyncData value)
+        void OnSyncDataSynced(SyncData value)
         {
             syncData = value;
             Debug.Log("Synced data for id " + syncData.id.ToString() + ", player " + syncData.username);
             gameObject.name = syncData.username;
 
             NetworkGameManager.instance.UpdateLobbyNameplates();
-
         }
 
         private void Awake()
@@ -87,7 +82,7 @@ namespace Raider.Game.Player
             if(playerModel != null) //PlayerData is also used in lobby, where the player model is not assigned.
                 appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
             gamePlayerController = GetComponent<GamePlayerController>(); //Singleplayer assignment.
-            animationController = GetComponent<PlayerAnimationController>(); //Singleplayer assignment.
+            animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
         }
     }
 }
