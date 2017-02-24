@@ -101,6 +101,17 @@ namespace Raider.Game.Networking
             return true;
         }
 
+        //If the host loads a map, and it's the mainmenu, we're ready for the next match.
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            base.OnClientSceneChanged(conn);
+
+            //if the newly loaded scene is the menu, and there's a lobby player already setup, and that player is not the host, send the ready up flag.
+            if (SceneManager.GetActiveScene().name == lobbyScene && NetworkLobbyPlayerSetup.localPlayer != null && CurrentNetworkState != NetworkState.Host && CurrentNetworkState != NetworkState.Server)
+                NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+
+        }
+
         /// <summary>
         /// Get the slot number from the lobby or game player object.
         /// </summary>
