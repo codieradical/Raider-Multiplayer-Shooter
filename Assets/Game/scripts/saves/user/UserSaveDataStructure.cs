@@ -124,8 +124,7 @@ namespace Raider.Game.Saves.User
             public enum Races
             {
                 X = 0,
-                Y = 1,
-                Spartan = 2
+                Y = 1
             }
 
 
