@@ -1,0 +1,164 @@
+fileFormatVersion: 2
+guid: 0c326254c2372ab469adf7406bab776f
+timeCreated: 1487897545
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: arms:base
+    100002: body:base
+    100004: chest:mp_bungie
+    100006: chest:mp_cobra
+    100008: chest:mp_intruder
+    100010: chest:mp_katana
+    100012: chest:mp_ninja
+    100014: chest:mp_regulator
+    100016: chest:mp_ryu
+    100018: chest:mp_scout
+    100020: decals:base
+    100022: flaming_ninja
+    100024: head
+    100026: helmet:base
+    100028: leftshoulder:base
+    100030: legs:base
+    100032: //RootNode
+    100034: rightshoulder:base
+    400000: arms:base
+    400002: body:base
+    400004: chest:mp_bungie
+    400006: chest:mp_cobra
+    400008: chest:mp_intruder
+    400010: chest:mp_katana
+    400012: chest:mp_ninja
+    400014: chest:mp_regulator
+    400016: chest:mp_ryu
+    400018: chest:mp_scout
+    400020: decals:base
+    400022: flaming_ninja
+    400024: head
+    400026: helmet:base
+    400028: leftshoulder:base
+    400030: legs:base
+    400032: //RootNode
+    400034: rightshoulder:base
+    2300000: arms:base
+    2300002: body:base
+    2300004: chest:mp_bungie
+    2300006: chest:mp_cobra
+    2300008: chest:mp_intruder
+    2300010: chest:mp_katana
+    2300012: chest:mp_ninja
+    2300014: chest:mp_regulator
+    2300016: chest:mp_ryu
+    2300018: chest:mp_scout
+    2300020: decals:base
+    2300022: flaming_ninja
+    2300024: head
+    2300026: helmet:base
+    2300028: leftshoulder:base
+    2300030: legs:base
+    2300032: rightshoulder:base
+    3300000: arms:base
+    3300002: body:base
+    3300004: chest:mp_bungie
+    3300006: chest:mp_cobra
+    3300008: chest:mp_intruder
+    3300010: chest:mp_katana
+    3300012: chest:mp_ninja
+    3300014: chest:mp_regulator
+    3300016: chest:mp_ryu
+    3300018: chest:mp_scout
+    3300020: decals:base
+    3300022: flaming_ninja
+    3300024: head
+    3300026: helmet:base
+    3300028: leftshoulder:base
+    3300030: legs:base
+    3300032: rightshoulder:base
+    4300000: arms:base
+    4300002: body:base
+    4300004: chest:mp_cobra
+    4300006: chest:mp_intruder
+    4300008: chest:mp_ninja
+    4300010: chest:mp_regulator
+    4300012: chest:mp_ryu
+    4300014: chest:mp_scout
+    4300016: chest:mp_katana
+    4300018: chest:mp_bungie
+    4300020: decals:base
+    4300022: helmet:base
+    4300024: leftshoulder:base
+    4300026: legs:base
+    4300028: rightshoulder:base
+    4300030: head
+    4300032: flaming_ninja
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,4 +1,6 @@
-﻿using Raider.Game.Saves.User;
+﻿using Raider.Game.Common.Types;
+using Raider.Game.Saves.User;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,8 +20,7 @@ namespace Raider.Game.GUI.CharacterPreviews
                 Debug.LogAssertion("It seems that multiple Character Preview Handlers are active, breaking the singleton instance.");
             instance = this;
 
-            if (XPlatePreviewPrefab == null || YPlatePreviewPrefab == null || XPreviewPrefab == null || YPreviewPrefab == null)
-                Debug.LogError("Character Preview Handler is missing a prefab!");
+            CheckAllPrefabsPresent();
         }
 
         public void OnDestroy()
@@ -29,13 +30,49 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         #endregion
 
-        [Header("Plate Preview Prefabs")]
-        public Object XPlatePreviewPrefab;
-        public Object YPlatePreviewPrefab;
+        public void CheckAllPrefabsPresent()
+        {
+            foreach(UserSaveDataStructure.Character.Races race in Enum.GetValues(typeof(UserSaveDataStructure.Character.Races)))
+            {
+                List<PreviewType> foundPreviewTypes = new List<PreviewType>();
+                foreach(PreviewRaceTypePrefab previewPrefab in previewPrefabs)
+                {
+                    if (previewPrefab.race == race)
+                        foundPreviewTypes.Add(previewPrefab.type);
+                }
+                
+                if(foundPreviewTypes.Count < 1)
+                    Debug.LogWarning("Warning, no previews found for Race " + race.ToString());
 
-        [Header("Preview Prefabs")]
-        public Object XPreviewPrefab;
-        public Object YPreviewPrefab;
+                foreach (PreviewType previewType in Enum.GetValues(typeof(PreviewType)))
+                {
+                    bool foundPreviewType = false;
+                    foreach(PreviewType foundType in foundPreviewTypes)
+                    {
+                        if (previewType == foundType)
+                        {
+                            if (foundPreviewType == true)
+                                Debug.LogWarning("Warning, found more than one preview for Race " + race.ToString() + ", type " + previewType.ToString());
+                            else
+                                foundPreviewType = true;
+                        }
+                    }
+                    if(!foundPreviewType)
+                        Debug.LogWarning("Warning, no preview found for Race " + race.ToString() + ", type " + previewType.ToString());
+                }
+            }
+        }
+
+        [System.Serializable]
+        private class PreviewRaceTypePrefab
+        {
+            [SerializeField] public UserSaveDataStructure.Character.Races race;
+            [SerializeField] public PreviewType type;
+            [SerializeField] public UnityEngine.Object prefab;
+        }
+
+        [SerializeField]
+        private List<PreviewRaceTypePrefab> previewPrefabs = new List<PreviewRaceTypePrefab>();
 
         const string CAMERA_OBJECT_NAME = "cam";
         const string PREVIEW_MODEL_NAME = "Model";
@@ -49,23 +86,15 @@ namespace Raider.Game.GUI.CharacterPreviews
             Plate
         }
 
-        Object GetRacePreviewPrefab(UserSaveDataStructure.Character.Races _race, PreviewType _previewType)
+        UnityEngine.Object GetRacePreviewPrefab(UserSaveDataStructure.Character.Races _race, PreviewType _previewType)
         {
-            switch (_race)
+            foreach(PreviewRaceTypePrefab previewPrefab in  previewPrefabs)
             {
-                case UserSaveDataStructure.Character.Races.X:
-                    if (_previewType == PreviewType.Full)
-                        return XPreviewPrefab;
-                    else
-                        return XPlatePreviewPrefab;
-                case UserSaveDataStructure.Character.Races.Y:
-                    if (_previewType == PreviewType.Full)
-                        return YPreviewPrefab;
-                    else
-                        return YPlatePreviewPrefab;
+                if (previewPrefab.race == _race && previewPrefab.type == _previewType)
+                    return previewPrefab.prefab;
             }
-            Debug.LogError("[GUI/CharacterPreviewHandler] Failed to get race prefab.");
-            return XPreviewPrefab;
+            Debug.LogError("[GUI/CharacterPreviewHandler] Failed to get preview prefab for " + _race.ToString() + ", " + _previewType.ToString());
+            return previewPrefabs[0].prefab;
         }
 
         #region create and setup previews
@@ -92,7 +121,7 @@ namespace Raider.Game.GUI.CharacterPreviews
 
         void InstanceNewPreviewObject(string _previewName, UserSaveDataStructure.Character.Races _race, PreviewType _previewType, out GameObject newPreviewModel, out Camera newPreviewCamera)
         {
-            Object prefab = GetRacePreviewPrefab(_race, _previewType);
+            UnityEngine.Object prefab = GetRacePreviewPrefab(_race, _previewType);
 
             GameObject newPreviewObject = Instantiate(prefab) as GameObject;
             newPreviewObject.transform.SetParent(transform, false);

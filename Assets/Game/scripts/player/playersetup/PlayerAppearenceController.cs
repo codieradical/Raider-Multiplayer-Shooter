@@ -17,7 +17,7 @@ namespace Raider.Game.Player
         private void Awake()
         {
             if(PlayerResourceReferences.instance != null)
-                PlayerResourceReferences.instance.raceModels.CheckAllModelsPresent();
+                PlayerResourceReferences.instance.CheckAllRaceModelsPresent();
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Raider.Game.Player
         public void ReplacePlayerModel(PlayerData playerData)
         {
             //Spawn the model.
-            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.raceModels.GetModelByRaceAndPerspective(playerData.syncData.Character.Race)) as GameObject;
+            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.GetModelByRace(playerData.syncData.Character.Race)) as GameObject;
             playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
             playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 

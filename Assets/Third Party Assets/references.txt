@@ -27,3 +27,10 @@ A blur shader used throughout Ui.
 Found on the Unity forums, free to use. Created by "Megagamefan100", modified by "pedroahpolonio".
 Last accessed 22/2/17
 https://forum.unity3d.com/threads/solved-dynamic-blurred-background-on-ui.345083/
+
+Tuple Type
+Types\Tuple.cs
+A common tuple type for use in scripting. Tuples are a part of .NET 4, but Unity uses 3.5.
+Found on StackOverflow, free to use, created by Tomas Jansson, expanded and modified since retrieval.
+Last accessed 24/2/17
+http://stackoverflow.com/questions/7120845/equivalent-of-tuple-net-4-for-net-framework-3-5
