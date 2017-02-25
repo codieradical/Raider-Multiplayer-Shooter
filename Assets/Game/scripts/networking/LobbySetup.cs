@@ -48,6 +48,8 @@ namespace Raider.Game.Networking
                     selectedScene = value;
                     LobbySetupPane.instance.UpdatePaneData();
 
+                    NetworkGameManager.instance.playScene = value;
+
                     NetworkGameManager.instance.lobbySetup.SendLobbySetupUpdate();
                 }
             }
