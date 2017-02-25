@@ -149,46 +149,44 @@ namespace Raider.Game.Player
         void CmdRequestLobbySetupUpdate()
         {
             Debug.Log("Sending Lobby Data.");
-            TargetSendLobbySetup(connectionToClient, NetworkGameManager.instance.lobbySetup.GametypeString, NetworkGameManager.instance.lobbySetup.Network, NetworkGameManager.instance.lobbySetup.SelectedScene);
+            TargetSendLobbySetup(connectionToClient, NetworkGameManager.instance.lobbySetup.syncData);
         }
 
         //If a new player joins the lobby, this is used to send them the details.
         //I can't get this to work so instead I'm just updating all clients.
         //This should be refactored.
         [TargetRpc]
-        public void TargetSendLobbySetup(NetworkConnection conn, string gametype, string network, string selectedScene)
+        public void TargetSendLobbySetup(NetworkConnection conn, LobbySetup.SyncData syncData)
         {
             Debug.Log("Recieved lobby data");
-            NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(gametype, selectedScene, network);
+            NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(syncData);
         }
 
         [Command]
-        public void CmdSendLobbySetup(string gametype, string network, string selectedScene)
+        public void CmdSendLobbySetup(LobbySetup.SyncData syncData)
         {
             //Allow the host to switch scene on the network manager.
-            NetworkGameManager.instance.playScene = selectedScene;
-            RpcSendLobbySetup(gametype, network, selectedScene);
+            NetworkGameManager.instance.playScene = syncData.SelectedScene;
+            RpcSendLobbySetup(syncData);
         }
 
         //If the host changes the lobby setup, this sends the new details to the clients.
         [ClientRpc]
-        public void RpcSendLobbySetup(string gametype, string network, string selectedScene)
+        public void RpcSendLobbySetup(LobbySetup.SyncData syncData)
         {
             //Hosts have a client and a server, but they don't need updating.
             //NetworkState.Client represents clients only.
             if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)
             {
                 Debug.Log("Recieved lobby data");
-                NetworkGameManager.instance.lobbySetup.GametypeString = gametype;
-                NetworkGameManager.instance.lobbySetup.Network = network;
-                NetworkGameManager.instance.lobbySetup.SelectedScene = selectedScene;
+                NetworkGameManager.instance.lobbySetup.syncData = syncData;
             }
         }
 
         [ClientRpc]
         public void RpcUpdateScenarioGametype()
         {
-            Scenario.instance.currentGametype = NetworkGameManager.instance.lobbySetup.Gametype;
+            Scenario.instance.currentGametype = NetworkGameManager.instance.lobbySetup.syncData.Gametype;
         }
 
         #endregion

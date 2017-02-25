@@ -103,7 +103,7 @@ namespace Raider.Game.GUI.StartMenu
             if (Scenario.InLobby)
                 gametypeLabel.text = "Mainmenu";
             else
-                gametypeLabel.text = NetworkGameManager.instance.lobbySetup.GametypeString;
+                gametypeLabel.text = NetworkGameManager.instance.lobbySetup.syncData.GametypeString;
         }
 
         public void CloseStartMenu()

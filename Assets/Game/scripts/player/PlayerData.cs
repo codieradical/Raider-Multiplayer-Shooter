@@ -47,7 +47,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            //public LobbySetup.Teams team = LobbySetup.Teams.None;
+            [SyncVar] public LobbySetup.Teams team;
 
             //Properties
             public bool GotData
