@@ -114,9 +114,21 @@ namespace Raider.Game.Player
 
                     if (appearenceController != null)
                         appearenceController.UpdatePlayerAppearence(syncData);
+
+                    //If the player is not in lobby, have the server update their lobby player for later.
+                    if(!Scenario.InLobby)
+                    {
+                        foreach(NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
+                        {
+                            if(lobbyPlayer.playerData.syncData.id == syncData.id)
+                            {
+                                lobbyPlayer.playerData.RpcChangeTeam(team);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-
         }
 
         [ClientRpc]

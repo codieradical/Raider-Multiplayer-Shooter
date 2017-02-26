@@ -3,9 +3,9 @@ using UnityEngine;
 using Raider.Game.Scene;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
-using System.Collections;
-using UnityEngine.SceneManagement;
 using Raider.Game.GUI.Components;
+using System;
+using Raider.Game.Gametypes;
 
 namespace Raider.Game.Player
 {
@@ -77,7 +77,7 @@ namespace Raider.Game.Player
 
         public void Update()
         {
-            if (!playerData.syncData.GotData && !isLocalPlayer)
+            if (playerData != null && playerData.syncData != null && !playerData.syncData.GotData && !isLocalPlayer)
             {
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
                 {
@@ -127,6 +127,32 @@ namespace Raider.Game.Player
             {
                 if (player.syncData.GotData && player != playerData)
                     player.GetComponent<NetworkLobbyPlayerSetup>().TargetSendClientSyncData(connectionToClient, player.syncData);
+            }
+
+            //If teams are enabled, assign the player a team.
+            if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+            {
+                Gametype.Teams smallestTeam = Gametype.Teams.Red;
+                int smallestTeamSize = 0;
+
+                int currentTeamSize;
+                foreach(Gametype.Teams team in Enum.GetValues(typeof(Gametype.Teams)))
+                {
+                    currentTeamSize = 0;
+                    foreach (PlayerData player in NetworkGameManager.instance.Players)
+                    {
+                        if (player.syncData.team == team)
+                            currentTeamSize++;
+                    }
+                    if(currentTeamSize < smallestTeamSize && currentTeamSize > 0)
+                    {
+                        smallestTeamSize = currentTeamSize;
+                        smallestTeam = team;
+                    }
+                }
+
+                playerData.syncData.team = smallestTeam;
+                playerData.RpcChangeTeam(smallestTeam);
             }
         }
 
@@ -178,13 +204,13 @@ namespace Raider.Game.Player
                 {
                     if ((i + 1) % 2 == 1)
                     {
-                        NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Red;
-                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametype.Teams.Red);
+                        NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Red;
+                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Red);
                     }
                     else
                     {
-                        NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Blue;
-                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametype.Teams.Blue);
+                        NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Blue;
+                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Blue);
                     }
                 }
             }
@@ -193,6 +219,7 @@ namespace Raider.Game.Player
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
                     player.syncData.team = Gametypes.Gametype.Teams.None;
+                    player.RpcChangeTeam(Gametypes.Gametype.Teams.None);
                 }
             }
 

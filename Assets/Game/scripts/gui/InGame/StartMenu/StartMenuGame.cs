@@ -91,7 +91,6 @@ namespace Raider.Game.GUI.StartMenu
 
         public void OpenChangeTeamMenu()
         {
-            StartMenuHandler.instance.CloseStartMenu();
 
             List<OptionsPaneOption.OptionsPaneContents> changeTeamOptions = new List<OptionsPaneOption.OptionsPaneContents>();
             Gametype.Teams[] teams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));

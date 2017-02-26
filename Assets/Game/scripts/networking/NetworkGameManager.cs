@@ -102,6 +102,8 @@ namespace Raider.Game.Networking
             return true;
         }
 
+        //public override onlobby
+
         //If the host loads a map, and it's the mainmenu, we're ready for the next match.
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
@@ -111,6 +113,21 @@ namespace Raider.Game.Networking
             if (SceneManager.GetActiveScene().name == lobbyScene && NetworkLobbyPlayerSetup.localPlayer != null && CurrentNetworkState != NetworkState.Host && CurrentNetworkState != NetworkState.Server)
                 NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
 
+        }
+
+        public override void OnLobbyServerSceneChanged(string sceneName)
+        {
+            base.OnLobbyServerSceneChanged(sceneName);
+
+            if(sceneName == lobbyScene)
+            {
+                foreach(PlayerData player in Players)
+                {
+                    //If players have changed their team in game, only the host updates the lobby object.
+                    //So now that the lobby is loaded again, update the other players.
+                    player.RpcChangeTeam(player.syncData.team);
+                }
+            }
         }
 
         /// <summary>
@@ -138,7 +155,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onStartServer;
         public override void OnStartServer()
         {
-            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
 
             base.OnStartServer();
             if (onStartServer != null)
@@ -158,7 +175,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onStopServer;
         public override void OnStopServer()
         {
-            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
 
             base.OnStopServer();
             if(onStopServer != null)
@@ -169,7 +186,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onClientDisconnect;
         public override void OnClientDisconnect(NetworkConnection conn)
         {
-            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
 
             base.OnClientDisconnect(conn);
             if(onClientDisconnect != null)
@@ -243,7 +260,7 @@ namespace Raider.Game.Networking
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                if (lobbySetup != null && lobbySetup.syncData.gameOptions.teamsEnabled)
+                if (lobbySetup != null && lobbySetup.syncData != null && lobbySetup.syncData.gameOptions != null && lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
                     foreach (Gametype.Teams team in Enum.GetValues(typeof(Gametype.Teams)))
                     {

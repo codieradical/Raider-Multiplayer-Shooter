@@ -58,6 +58,7 @@ namespace Raider.Game.GUI.Components
             mapLabel.text = "";
             networkLabel.text = "";
             mapImage.sprite = null;
+            NetworkGameManager.instance.actionQueue.Enqueue(UpdatePaneData);
         }
 
         public void ClosePane()
@@ -114,6 +115,9 @@ namespace Raider.Game.GUI.Components
 
         public void UpdatePaneData()
         {
+            if (NetworkGameManager.instance.lobbySetup == null || NetworkGameManager.instance.lobbySetup.syncData == null)
+                return;
+
             paneTitle.text = NetworkGameManager.instance.lobbySetup.syncData.GametypeString;
             mapLabel.text = NetworkGameManager.instance.lobbySetup.syncData.SelectedScene;
             networkLabel.text = NetworkGameManager.instance.lobbySetup.syncData.Network;
