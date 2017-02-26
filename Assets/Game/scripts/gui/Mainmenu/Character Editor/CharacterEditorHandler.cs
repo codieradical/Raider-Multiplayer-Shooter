@@ -230,7 +230,7 @@ namespace Raider.Game.GUI.Screens
             CharacterPreviewHandler.instance.DestroyPreviewObject(PREVIEW_CHARACTER_NAME);
 
             //Update active screen.
-            MainmenuHandler.instance.CloseCharacterEditor();
+            MainmenuController.instance.CloseCharacterEditor();
 
             //Dispose of any unneeded values
             editingCharacter = null;

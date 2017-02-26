@@ -9,6 +9,26 @@ namespace Raider.Game.GUI {
 
     public class GameUiHandler : MonoBehaviour
     {
+        #region Singleton Setup
+
+        public static GameUiHandler instance;
+
+        public void Awake()
+        {
+            if (instance != null)
+                Debug.LogAssertion("It seems that multiple Game UI Handlers are active, breaking the singleton instance.");
+            instance = this;
+        }
+
+        public void OnDestroy()
+        {
+            instance = null;
+        }
+
+        #endregion
+
+        public Object optionsPanePrefab;
+
         // Update is called once per frame
         void Update()
         {

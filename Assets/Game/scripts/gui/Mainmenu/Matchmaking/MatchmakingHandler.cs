@@ -15,7 +15,7 @@ namespace Raider.Game.GUI.Screens
 
         public void BackOut()
         {
-            MenuManager.instance.ShowMenu(MainmenuHandler.instance.MainMenuScreen.GetComponent<Menu>());
+            MenuManager.instance.ShowMenu(MainmenuController.instance.MainMenuScreen.GetComponent<Menu>());
             GametypeButtons.instance.ShowButtons();
         }
 
@@ -36,7 +36,7 @@ namespace Raider.Game.GUI.Screens
             {
                 //Grab the lobby details.
                 GametypeButtons.instance.HideButtons();
-                MenuManager.instance.ShowMenu(MainmenuHandler.instance.MainMenuScreen.GetComponent<Menu>());
+                MenuManager.instance.ShowMenu(MainmenuController.instance.MainMenuScreen.GetComponent<Menu>());
                 LobbySetupPane.instance.OpenPane();
             }
         }

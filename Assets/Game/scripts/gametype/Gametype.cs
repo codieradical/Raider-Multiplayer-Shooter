@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using Raider.Game.GUI.Parameters;
 using Raider.Game.Scene;
 
 namespace Raider.Game.Gametypes
@@ -10,7 +9,7 @@ namespace Raider.Game.Gametypes
         [Serializable]
         public class GameOptions
         {
-            public IntParameter scoreToWin = new IntParameter(25, 10, 1000);
+            public int scoreToWin = 50;
             public bool teamsEnabled;
             public GametypeOptions gametypeOptions;
             public TeamOptions teamOptions = new TeamOptions();
@@ -28,20 +27,19 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class TeamOptions
             {
-                public IntParameter maxTeams = new IntParameter( //The max amount of teams is the number of teams. The default value is the max. The minimum is 2.
-                    Enum.GetValues(typeof(Teams)).Length + 1, 2, Enum.GetValues(typeof(Teams)).Length + 1);
-                public bool clientTeamChangingLobby;
-                public bool clientTeamChangingGame;
-                public bool friendlyFire;
-                public bool betrayalKicking;
+                public int maxTeams = Enum.GetValues(typeof(Teams)).Length + 1;
+                public bool clientTeamChangingLobby = true;
+                public bool clientTeamChangingGame = true;
+                public bool friendlyFire = false;
+                public bool betrayalKicking = false;
             }
 
             [Serializable]
             public class GeneralOptions
             {
-                public IntParameter numberOfRounnds = new IntParameter(1, 1, 10);
-                public IntParameter timeLimitMinutes = new IntParameter(5, 1, 60);
-                public IntParameter respawnTimeSeconds = new IntParameter(3, 1, 30);
+                public int numberOfRounnds = 1;
+                public int timeLimitMinutes = 10;
+                public int respawnTimeSeconds = 3;
             }
 
         }
@@ -92,16 +90,16 @@ namespace Raider.Game.Gametypes
 
         public enum Teams
         {
-            None = -1,
-            Red = 0,
-            Blue = 1,
-            Green = 2,
-            Yellow = 3,
-            Pink = 4,
-            Brown = 5,
-            Purple = 6,
-            White = 7,
-            Black = 8
+            None = 0,
+            Red = 1,
+            Blue = 2,
+            Green = 3,
+            Yellow = 4,
+            Pink = 5,
+            Brown = 6,
+            Purple = 7,
+            White = 8,
+            Black = 9
         }
     }
 }

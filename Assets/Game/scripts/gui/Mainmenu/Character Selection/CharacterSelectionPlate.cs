@@ -26,7 +26,7 @@ namespace Raider.Game.GUI.Components
 
         public void EditCharacter()
         {
-            MainmenuHandler.instance.EditCharacter(slot);
+            MainmenuController.instance.EditCharacter(slot);
         }
 
         public void DeleteCharacter()

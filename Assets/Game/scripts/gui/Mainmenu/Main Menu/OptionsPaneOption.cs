@@ -9,6 +9,7 @@ namespace Raider.Game.GUI.Components
 
     public class OptionsPaneOption : EventTrigger
     {
+        OptionsPaneHandler optionsPaneHandler;
 
         public class OptionsPaneContents
         {
@@ -35,6 +36,8 @@ namespace Raider.Game.GUI.Components
 
         void Start()
         {
+            optionsPaneHandler = GetComponentInParent<OptionsPaneHandler>();
+
             if (optionData == null)
             {
                 Debug.Log("OptionPaneOption instanced with no OptionPaneContents!");
@@ -49,19 +52,19 @@ namespace Raider.Game.GUI.Components
 
         public override void OnPointerEnter(PointerEventData eventData)
         {
-            OptionsPaneHandler.instance.OptionHover(optionData);
+            optionsPaneHandler.OptionHover(optionData);
             base.OnPointerEnter(eventData);
         }
 
         public override void OnPointerExit(PointerEventData eventData)
         {
-            OptionsPaneHandler.instance.OptionStopHover();
+            optionsPaneHandler.OptionStopHover();
             base.OnPointerExit(eventData);
         }
 
         public void OnClick()
         {
-            OptionsPaneHandler.instance.OptionClicked(this.name);
+            optionsPaneHandler.OptionClicked(this.name);
         }
     }
 }

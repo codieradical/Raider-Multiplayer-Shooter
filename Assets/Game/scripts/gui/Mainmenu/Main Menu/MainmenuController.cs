@@ -14,12 +14,12 @@ namespace Raider.Game.GUI.Screens
 {
 
     [RequireComponent(typeof(MenuManager))]
-    public class MainmenuHandler : MonoBehaviour
+    public class MainmenuController : MonoBehaviour
     {
 
         #region Singleton Setup
 
-        public static MainmenuHandler instance;
+        public static MainmenuController instance;
 
         public void Awake()
         {
@@ -79,6 +79,9 @@ namespace Raider.Game.GUI.Screens
         public GameObject MainMenuScreen;
         public GameObject EmblemEditorScreen;
         public GameObject MatchmakingScreen;
+
+        [Header("Prefabs")]
+        public Object OptionsPanePrefab;
 
         public void Login()
         {

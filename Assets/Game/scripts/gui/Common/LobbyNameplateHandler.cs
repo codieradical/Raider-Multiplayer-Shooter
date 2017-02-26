@@ -34,15 +34,6 @@ namespace Raider.Game.GUI.Components
             instances.Remove(this);
         }
 
-        public static void UpdateUsersNameplateColor(int userId)
-        {
-            foreach(LobbyNameplateHandler nameplate in instances)
-            {
-                if (nameplate.playerData.id == userId)
-                    nameplate.UpdateColor();
-            }
-        }
-
         public void UpdateColor()
         {
             if (playerData.team == Gametype.Teams.None)
@@ -59,7 +50,6 @@ namespace Raider.Game.GUI.Components
                 nameplateColor.a = 200f / 255f;
                 backgroundImage.color = nameplateColor;
             }
-
         }
 
         // Use this for initialization
@@ -73,17 +63,12 @@ namespace Raider.Game.GUI.Components
 			levelText.text = player.Character.level.ToString();
 			leaderIcon.SetActive (player.isLeader);
 
-			float h, s, v;
-			Color.RGBToHSV (player.Character.armourPrimaryColor.Color, out h, out s, out v);
-            //Color nameplateColor = Color.HSVToRGB (h, s, 0.5f); //maybe this 0.5 is wrong...
-            Color nameplateColor = Color.HSVToRGB(h, s, v);
-            nameplateColor.a = 200f / 255f;
-            backgroundImage.color = nameplateColor;
-
             transform.SetParent(parent.transform, false);
             name = player.username;
 
             playerData = player;
-		}
+
+            UpdateColor();
+        }
 	}
 }

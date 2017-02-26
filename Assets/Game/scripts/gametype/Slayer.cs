@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using Raider.Game.GUI.Parameters;
 
 namespace Raider.Game.Gametypes
 {
@@ -12,14 +11,14 @@ namespace Raider.Game.Gametypes
         {
             public SlayerGameOptions()
             {
-                scoreToWin = new IntParameter(25, 10, 250);
+                scoreToWin = 50;
                 gametypeOptions = new SlayerGametypeOptions();
             }
 
             public class SlayerGametypeOptions : GametypeOptions
             {
                 public bool limitedLives = false;
-                public IntParameter playerLives = new IntParameter(1, 1, 25);
+                public int playerLives = 3;
             }
         }
     }

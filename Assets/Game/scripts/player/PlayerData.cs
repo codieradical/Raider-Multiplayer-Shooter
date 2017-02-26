@@ -51,7 +51,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public Gametype.Teams team;
+            [SyncVar] public Gametype.Teams team = Gametype.Teams.None;
 
             //Properties
             public bool GotData
@@ -102,14 +102,14 @@ namespace Raider.Game.Player
                 return;
 
             Gametype.Teams[] availableTeams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));
-            Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams.Value - 1);
+            Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
 
             foreach(Gametype.Teams team in availableTeams)
             {
                 if(team == newTeam)
                 {
                     syncData.team = team;
-                    LobbyNameplateHandler.UpdateUsersNameplateColor(syncData.id);
+                    NetworkGameManager.instance.UpdateLobbyNameplates();
                     RpcChangeTeam(team);
 
                     if (appearenceController != null)
@@ -123,7 +123,7 @@ namespace Raider.Game.Player
         public void RpcChangeTeam(Gametype.Teams team)
         {
             syncData.team = team;
-            LobbyNameplateHandler.UpdateUsersNameplateColor(syncData.id);
+            NetworkGameManager.instance.UpdateLobbyNameplates();
 
             if (appearenceController != null)
                 appearenceController.UpdatePlayerAppearence(syncData);

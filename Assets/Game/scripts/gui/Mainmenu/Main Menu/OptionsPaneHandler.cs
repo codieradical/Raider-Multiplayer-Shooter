@@ -1,4 +1,5 @@
-﻿using Raider.Game.Player;
+﻿using Raider.Game.GUI.Screens;
+using Raider.Game.Player;
 using Raider.Game.Scene;
 using System;
 using System.Collections;
@@ -12,27 +13,31 @@ namespace Raider.Game.GUI.Components
     public class OptionsPaneHandler : MonoBehaviour
     {
 
-        #region Singleton Setup
-
-        public static OptionsPaneHandler instance;
-        Animator animatorInstance;
-
-        void Start()
+        private void Update()
         {
-            if (instance == null)
-                instance = this;
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Destroy(gameObject);
+        }
+
+        public static OptionsPaneHandler[] GetOptionsPanes()
+        {
+            return FindObjectsOfType<OptionsPaneHandler>();
+        }
+
+        public static OptionsPaneHandler InstanceOpt1ionsPane(Transform parent)
+        {
+            OptionsPaneHandler newOptionsPane;
+            if(Scenario.InLobby)
+                newOptionsPane = ((GameObject)Instantiate(MainmenuController.instance.OptionsPanePrefab)).GetComponent<OptionsPaneHandler>();
             else
-                Debug.Log("Multiple OptionsPaneHandler Instances");
+                newOptionsPane = ((GameObject)Instantiate(GameUiHandler.instance.optionsPanePrefab)).GetComponent<OptionsPaneHandler>();
 
-            animatorInstance = GetComponent<Animator>();
+            newOptionsPane.transform.SetParent(parent, false);
+
+            return newOptionsPane;
         }
 
-        void OnDestroy()
-        {
-            instance = null;
-        }
-
-        #endregion
+        public Animator animatorInstance;
 
         public List<OptionsPaneOption> options = new List<OptionsPaneOption>();
 
@@ -43,10 +48,12 @@ namespace Raider.Game.GUI.Components
         public UnityEngine.Object paneSecondaryPrefab;
         public UnityEngine.Object paneTertiaryPrefab;
 
+        public bool closeOnSelect = true;
+
         public Action voidCallback;
         public Action<string> stringCallback;
 
-        public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action callback)
+        public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action callback, bool closeOnSelect)
         {
             ResetData();
 
@@ -54,9 +61,10 @@ namespace Raider.Game.GUI.Components
             voidCallback = callback;
             SetupOptionsObjects(_optionsContents);
             animatorInstance.SetBool("open", true);
+            this.closeOnSelect = closeOnSelect;
         }
 
-        public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action<string> callback)
+        public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action<string> callback, bool closeOnSelect)
         {
             ResetData();
 
@@ -64,6 +72,7 @@ namespace Raider.Game.GUI.Components
             stringCallback = callback;
             SetupOptionsObjects(_optionsContents);
             animatorInstance.SetBool("open", true);
+            this.closeOnSelect = closeOnSelect;
         }
 
         void SetupOptionsObjects(List<OptionsPaneOption.OptionsPaneContents> optionsData)
@@ -82,21 +91,24 @@ namespace Raider.Game.GUI.Components
                 stringCallback(optionName);
             else
                 voidCallback();
-            HideOptions();
-            ResetData();
+
+            if (closeOnSelect)
+            {
+                ResetData();
+                HideOptions();
+            }
         }
 
         public void HideOptions()
         {
             animatorInstance.SetBool("open", false);
 
-            if (!Scenario.InLobby)
-                PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
+            Destroy(gameObject);
         }
 
         void ResetData()
         {
-            paneTitle.text = "OPTIONS_PANE";
+            paneTitle.text = "";
             foreach (Transform child in paneSecondary.transform)
             {
                 Destroy(child.gameObject);

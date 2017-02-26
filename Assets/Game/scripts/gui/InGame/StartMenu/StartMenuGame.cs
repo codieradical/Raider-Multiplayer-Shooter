@@ -67,9 +67,9 @@ namespace Raider.Game.GUI.StartMenu
                 changeCharacterButton.gameObject.SetActive(true);
                 logOutButton.gameObject.SetActive(true);
                 changeCharacterButton.onClick.AddListener(() => StartMenuHandler.instance.CloseStartMenu());
-                changeCharacterButton.onClick.AddListener(() => MainmenuHandler.instance.ChangeCharacter());
+                changeCharacterButton.onClick.AddListener(() => MainmenuController.instance.ChangeCharacter());
                 logOutButton.onClick.AddListener(() => StartMenuHandler.instance.CloseStartMenu());
-                logOutButton.onClick.AddListener(() => MainmenuHandler.instance.Logout());
+                logOutButton.onClick.AddListener(() => MainmenuController.instance.Logout());
             }
             else
             {
@@ -92,8 +92,6 @@ namespace Raider.Game.GUI.StartMenu
         public void OpenChangeTeamMenu()
         {
             StartMenuHandler.instance.CloseStartMenu();
-            if (!Scenario.InLobby)
-                PlayerData.localPlayerData.gamePlayerController.PausePlayer();
 
             List<OptionsPaneOption.OptionsPaneContents> changeTeamOptions = new List<OptionsPaneOption.OptionsPaneContents>();
             Gametype.Teams[] teams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));
@@ -107,13 +105,13 @@ namespace Raider.Game.GUI.StartMenu
 
             }
 
-            Array.Resize(ref teams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams.Value - 1);
+            Array.Resize(ref teams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
             foreach(Gametype.Teams availableTeam in availableTeams)
             {
                 changeTeamOptions.Add(new OptionsPaneOption.OptionsPaneContents(availableTeam.ToString(), "Switch to the " + availableTeam.ToString() + " team"));
             }
 
-            OptionsPaneHandler.instance.ShowOptions("Change Team", changeTeamOptions, ChangeTeam);
+            OptionsPaneHandler.InstanceOpt1ionsPane(GetComponentInParent<Canvas>().gameObject.transform).ShowOptions("Change Team", changeTeamOptions, ChangeTeam, true);
         }
 
         public void ChangeTeam(string option)

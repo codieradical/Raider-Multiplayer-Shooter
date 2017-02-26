@@ -59,7 +59,7 @@ namespace Raider.Game.GUI.Components
         public void MatchmakingButtonClick()
         {
             HideButtons();
-            MenuManager.instance.ShowMenu(MainmenuHandler.instance.MatchmakingScreen.GetComponent<Menu>());
+            MenuManager.instance.ShowMenu(MainmenuController.instance.MatchmakingScreen.GetComponent<Menu>());
         }
     }
 }

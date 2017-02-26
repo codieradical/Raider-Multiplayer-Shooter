@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using System;
 using Raider.Game.Scene;
 using Raider.Game.Player;
+using Raider.Game.Gametypes;
 
 namespace Raider.Game.Networking
 {
@@ -137,6 +138,8 @@ namespace Raider.Game.Networking
         public NetworkMessage onStartServer;
         public override void OnStartServer()
         {
+            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+
             base.OnStartServer();
             if (onStartServer != null)
                 onStartServer();
@@ -155,6 +158,8 @@ namespace Raider.Game.Networking
         public NetworkMessage onStopServer;
         public override void OnStopServer()
         {
+            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+
             base.OnStopServer();
             if(onStopServer != null)
                 onStopServer();
@@ -164,6 +169,8 @@ namespace Raider.Game.Networking
         public NetworkMessage onClientDisconnect;
         public override void OnClientDisconnect(NetworkConnection conn)
         {
+            lobbySetup.syncData.gameOptions = new Gametypes.Gametype.GameOptions();
+
             base.OnClientDisconnect(conn);
             if(onClientDisconnect != null)
                 onClientDisconnect();
@@ -236,12 +243,31 @@ namespace Raider.Game.Networking
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                foreach (PlayerData playerData in Players)
+                if (lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
-                    if (playerData.syncData.GotData)
-                        LobbyHandler.AddPlayer(playerData.syncData);
-                    else
-                        LobbyHandler.AddLoadingPlayer();
+                    foreach (Gametype.Teams team in Enum.GetValues(typeof(Gametype.Teams)))
+                    {
+                        foreach (PlayerData playerData in Players)
+                        {
+                            if (playerData.syncData.GotData && playerData.syncData.team == team)
+                                LobbyHandler.AddPlayer(playerData.syncData);
+                        }
+                    }
+                    foreach (PlayerData playerData in Players)
+                    {
+                        if (!playerData.syncData.GotData)
+                            LobbyHandler.AddLoadingPlayer();
+                    }
+                }
+                else
+                {
+                    foreach (PlayerData playerData in Players)
+                    {
+                        if (playerData.syncData.GotData)
+                            LobbyHandler.AddPlayer(playerData.syncData);
+                        else
+                            LobbyHandler.AddLoadingPlayer();
+                    }
                 }
             }
             //Otherwise, use their local data.

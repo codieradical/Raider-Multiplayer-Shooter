@@ -58,7 +58,7 @@ namespace Raider.Game.GUI.Screens
 
         public void LoadPlayerSuccessCallback(string message)
         {
-            MainmenuHandler.instance.Login();
+            MainmenuController.instance.Login();
 
             ResetMenu();
         }

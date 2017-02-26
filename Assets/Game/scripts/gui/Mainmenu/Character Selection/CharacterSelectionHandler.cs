@@ -29,7 +29,7 @@ namespace Raider.Game.GUI.Screens
             if (!Scene.Scenario.InLobby)
                 return;
 
-            if(MenuManager.instance.CurrentMenu == MainmenuHandler.instance.ChooseCharacterScreen.GetComponent<Menu>())
+            if(MenuManager.instance.CurrentMenu == MainmenuController.instance.ChooseCharacterScreen.GetComponent<Menu>())
             {
                 LoadCharacterPlates();
             }
@@ -52,7 +52,7 @@ namespace Raider.Game.GUI.Screens
             //If no characters have been created go straight to the editor.
             if (Session.userSaveDataHandler.GetAllCharacters().Count < 1 && !platesPreviouslyExisted)
             {
-                MainmenuHandler.instance.CreateCharacter();
+                MainmenuController.instance.CreateCharacter();
                 return;
             }
 
@@ -92,7 +92,7 @@ namespace Raider.Game.GUI.Screens
             GameObject newPlate = Instantiate(newPlatePrefab) as GameObject;
             newPlate.transform.SetParent(plateContainer.transform, false);
 
-            newPlate.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(MainmenuHandler.instance.CreateCharacter));
+            newPlate.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(MainmenuController.instance.CreateCharacter));
         }
 
         public void ChooseCharacter(int slot)
@@ -104,7 +104,7 @@ namespace Raider.Game.GUI.Screens
                 return;
             }
             Session.SelectCharacter(slot);
-            MainmenuHandler.instance.ChooseCharacter(slot);
+            MainmenuController.instance.ChooseCharacter(slot);
         }
 
         public void DeleteCharacter(int slot)

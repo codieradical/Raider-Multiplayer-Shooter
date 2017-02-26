@@ -165,9 +165,34 @@ namespace Raider.Game.Player
         [Command]
         public void CmdSendLobbySetup(LobbySetup.SyncData syncData)
         {
+            if (!playerData.syncData.isLeader)
+                return;
+
+            //Update teams.
+            if(syncData.gameOptions.teamsEnabled)
+            {
+                for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
+                {
+                    if ((i + 1) % 2 == 1)
+                        NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Red;
+                    else
+                        NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Blue;
+                }
+            }
+            else
+            {
+                foreach(PlayerData player in NetworkGameManager.instance.Players)
+                {
+                    player.syncData.team = Gametypes.Gametype.Teams.None;
+                }
+            }
+
             //Allow the host to switch scene on the network manager.
             NetworkGameManager.instance.playScene = syncData.SelectedScene;
+            NetworkGameManager.instance.lobbySetup.syncData = syncData;
             RpcSendLobbySetup(syncData);
+
+            NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         //If the host changes the lobby setup, this sends the new details to the clients.
@@ -180,6 +205,7 @@ namespace Raider.Game.Player
             {
                 Debug.Log("Recieved lobby data");
                 NetworkGameManager.instance.lobbySetup.syncData = syncData;
+                NetworkGameManager.instance.UpdateLobbyNameplates();
             }
         }
 
