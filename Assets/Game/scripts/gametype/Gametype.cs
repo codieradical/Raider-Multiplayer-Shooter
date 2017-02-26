@@ -28,9 +28,8 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class TeamOptions
             {
-                public bool teamsEnabled;
                 public IntParameter maxTeams = new IntParameter( //The max amount of teams is the number of teams. The default value is the max. The minimum is 2.
-                    Enum.GetValues(typeof(Networking.LobbySetup.Teams)).Length + 1, 2, Enum.GetValues(typeof(Networking.LobbySetup.Teams)).Length + 1);
+                    Enum.GetValues(typeof(Teams)).Length + 1, 2, Enum.GetValues(typeof(Teams)).Length + 1);
                 public bool clientTeamChangingLobby;
                 public bool clientTeamChangingGame;
                 public bool friendlyFire;
@@ -61,6 +60,48 @@ namespace Raider.Game.Gametypes
                 return new Slayer.SlayerGameOptions();
 
             else return null;
+        }
+
+        public static Color GetTeamColor(Teams team)
+        {
+            switch(team)
+            {
+                case Teams.Blue:
+                    return Color.blue;
+                case Teams.Brown:
+                    return new Color(0.54f, 0.27f, 0.07f);
+                case Teams.Green:
+                    return Color.green;
+                case Teams.Pink:
+                    return new Color(0.97f, 1f, 0.86f);
+                case Teams.Purple:
+                    return Color.magenta;
+                case Teams.Red:
+                    return Color.red;
+                case Teams.White:
+                    return Color.white;
+                case Teams.Yellow:
+                    return Color.yellow;
+                case Teams.Black:
+                    return Color.black;
+            }
+
+            Debug.Log("Team color out of enum!"); // Could probably default case this.
+            return Color.black;
+        }
+
+        public enum Teams
+        {
+            None = -1,
+            Red = 0,
+            Blue = 1,
+            Green = 2,
+            Yellow = 3,
+            Pink = 4,
+            Brown = 5,
+            Purple = 6,
+            White = 7,
+            Black = 8
         }
     }
 }

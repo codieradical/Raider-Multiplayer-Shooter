@@ -4,6 +4,10 @@ using Raider.Game.Saves;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using UnityEngine.Networking;
+using Raider.Game.Gametypes;
+using Raider.Game.Scene;
+using System;
+using Raider.Game.GUI.Components;
 
 namespace Raider.Game.Player
 {
@@ -47,7 +51,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public LobbySetup.Teams team;
+            [SyncVar] public Gametype.Teams team;
 
             //Properties
             public bool GotData
@@ -83,6 +87,46 @@ namespace Raider.Game.Player
                 appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
             gamePlayerController = GetComponent<LocalPlayerController>(); //Singleplayer assignment.
             animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
+        }
+
+        [Command]
+        public void CmdChangeTeam(Gametype.Teams newTeam)
+        {
+            if (newTeam == Gametype.Teams.None)
+                return;
+            if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+                return;
+            if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && !Scenario.InLobby)
+                return;
+            if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && Scenario.InLobby)
+                return;
+
+            Gametype.Teams[] availableTeams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));
+            Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams.Value - 1);
+
+            foreach(Gametype.Teams team in availableTeams)
+            {
+                if(team == newTeam)
+                {
+                    syncData.team = team;
+                    LobbyNameplateHandler.UpdateUsersNameplateColor(syncData.id);
+                    RpcChangeTeam(team);
+
+                    if (appearenceController != null)
+                        appearenceController.UpdatePlayerAppearence(syncData);
+                }
+            }
+
+        }
+
+        [ClientRpc]
+        public void RpcChangeTeam(Gametype.Teams team)
+        {
+            syncData.team = team;
+            LobbyNameplateHandler.UpdateUsersNameplateColor(syncData.id);
+
+            if (appearenceController != null)
+                appearenceController.UpdatePlayerAppearence(syncData);
         }
     }
 }

@@ -87,16 +87,5 @@ namespace Raider.Game.Networking
             if(LobbySetupPane.instance != null)
                 LobbySetupPane.instance.UpdatePaneData();
         }
-
-        public enum Teams
-        {
-            None = -1,
-            Red = 0,
-            Blue = 1,
-            Green = 2,
-            Yellow = 3,
-            Pink = 4,
-            Brown = 5
-        }
     }
 }

@@ -239,7 +239,7 @@ namespace Raider.Game.Networking
                 foreach (PlayerData playerData in Players)
                 {
                     if (playerData.syncData.GotData)
-                        LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(playerData.syncData.username, playerData.syncData.isLeader, false, false, playerData.syncData.Character));
+                        LobbyHandler.AddPlayer(playerData.syncData);
                     else
                         LobbyHandler.AddLoadingPlayer();
                 }
@@ -250,7 +250,14 @@ namespace Raider.Game.Networking
                 if (Session.ActiveCharacter != null)
                 {
                     LobbyHandler.DestroyAllPlayers();
-                    LobbyHandler.AddPlayer(new LobbyHandler.PlayerNameplate(Session.userSaveDataHandler.GetUsername(), true, false, false, Session.ActiveCharacter));
+                    PlayerData.SyncData nameplateData = new PlayerData.SyncData()
+                    {
+                        username = Session.userSaveDataHandler.GetUsername(),
+                        isLeader = true,
+                        Character = Session.ActiveCharacter,
+                        id = 1
+                    };
+                    LobbyHandler.AddPlayer(nameplateData);
                 }
             }
         }

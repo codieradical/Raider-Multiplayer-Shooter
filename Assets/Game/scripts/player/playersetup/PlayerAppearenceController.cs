@@ -5,6 +5,9 @@ using Raider.Game.GUI.Components;
 using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.Cameras;
 using System.Collections.Generic;
+using Raider.Game.Saves.User;
+using System;
+using Raider.Game.Gametypes;
 
 namespace Raider.Game.Player
 {
@@ -35,7 +38,7 @@ namespace Raider.Game.Player
             //Update the colors, emblem.
             playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
             playerData.firstPersonPlayerModel = playerData.appearenceController.firstPersonObject;
-            playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData.Character);
+            playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData);
 
             if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
                 ChangePerspectiveModel(CameraModeController.singleton.CameraMode);
@@ -63,6 +66,19 @@ namespace Raider.Game.Player
                     meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 }
                 emblem.gameObject.SetActive(true);
+            }
+        }
+
+        public void UpdatePlayerAppearence(PlayerData.SyncData syncData)
+        {
+            base.UpdatePlayerAppearence(syncData.Character);
+
+            if(syncData.team != Gametype.Teams.None)
+            {
+                foreach (Renderer primaryRenderer in primaryRenderers)
+                {
+                    primaryRenderer.material.color = Gametype.GetTeamColor(syncData.team);
+                }
             }
         }
     }

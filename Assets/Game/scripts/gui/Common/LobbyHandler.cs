@@ -60,26 +60,7 @@ namespace Raider.Game.GUI.Components
 		public GameObject sixteenPlayerLobbyPlayerContainer;
 		public GameObject[] thirtyTwoPlayerLobbyPlayerContainer;
 
-        private static List<PlayerNameplate> players = new List<PlayerNameplate>();
-
-        public struct PlayerNameplate
-        {
-            public PlayerNameplate(string _username, bool _leader, bool _speaking, bool _canspeak, UserSaveDataStructure.Character _character)
-            {
-                username = _username;
-                leader = _leader;
-                speaking = _speaking;
-                canspeak = _canspeak;
-                character = _character;
-            }
-
-            public string username;
-            public bool leader;
-            public bool speaking;
-            public bool canspeak;
-
-            public UserSaveDataStructure.Character character;
-        }
+        private static List<PlayerData.SyncData> players = new List<PlayerData.SyncData>();
 
 		public void SwitchToScrollLobbyButton()
 		{
@@ -119,7 +100,7 @@ namespace Raider.Game.GUI.Components
 
         public static void DestroyAllPlayers()
         {
-            players = new List<PlayerNameplate>();
+            players = new List<PlayerData.SyncData>();
 
             foreach(LobbyHandler instance in instances)
             {
@@ -189,7 +170,7 @@ namespace Raider.Game.GUI.Components
             }
         }
 
-        public static void AddPlayer(PlayerNameplate player)
+        public static void AddPlayer(PlayerData.SyncData player)
         {
             players.Add(player);
 

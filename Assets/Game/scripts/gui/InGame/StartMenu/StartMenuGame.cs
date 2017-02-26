@@ -1,5 +1,8 @@
-﻿using Raider.Game.GUI.Screens;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Components;
+using Raider.Game.GUI.Screens;
 using Raider.Game.Networking;
+using Raider.Game.Player;
 using Raider.Game.Scene;
 using System;
 using System.Collections;
@@ -18,6 +21,7 @@ namespace Raider.Game.GUI.StartMenu
         public Button changeCharacterButton;
         public Button logOutButton;
         public Button debugButton;
+        public Button changeTeamButton;
 
         public Image optionImage;
         public Text optionText;
@@ -26,6 +30,7 @@ namespace Raider.Game.GUI.StartMenu
         public Sprite endGameSprite;
         public Sprite changeCharacterSprite;
         public Sprite logOutSprite;
+        public Sprite changeTeamSprite;
 
         protected override void SetupPaneData()
         {
@@ -35,11 +40,27 @@ namespace Raider.Game.GUI.StartMenu
             endGameButton.gameObject.SetActive(false);
             changeCharacterButton.gameObject.SetActive(false);
             logOutButton.gameObject.SetActive(false);
+            changeTeamButton.gameObject.SetActive(false);
+            
 
             leaveGameButton.onClick.RemoveAllListeners();
             endGameButton.onClick.RemoveAllListeners();
             changeCharacterButton.onClick.RemoveAllListeners();
             logOutButton.onClick.RemoveAllListeners();
+            changeTeamButton.onClick.RemoveAllListeners();
+
+            if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions != null && NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+            {
+                if(Scenario.InLobby && NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingLobby)
+                {
+                    changeTeamButton.gameObject.SetActive(true);
+                }
+                else if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame)
+                {
+                    changeTeamButton.gameObject.SetActive(true);
+                }
+
+            }
 
             if (Scenario.InLobby)
             {
@@ -66,6 +87,45 @@ namespace Raider.Game.GUI.StartMenu
                 }
             }
 
+        }
+
+        public void OpenChangeTeamMenu()
+        {
+            StartMenuHandler.instance.CloseStartMenu();
+            if (!Scenario.InLobby)
+                PlayerData.localPlayerData.gamePlayerController.PausePlayer();
+
+            List<OptionsPaneOption.OptionsPaneContents> changeTeamOptions = new List<OptionsPaneOption.OptionsPaneContents>();
+            Gametype.Teams[] teams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));
+
+            List<Gametype.Teams> availableTeams = new List<Gametype.Teams>();
+
+            foreach (Gametype.Teams team in teams)
+            {
+                if (team != Gametype.Teams.None)
+                    availableTeams.Add(team);
+
+            }
+
+            Array.Resize(ref teams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams.Value - 1);
+            foreach(Gametype.Teams availableTeam in availableTeams)
+            {
+                changeTeamOptions.Add(new OptionsPaneOption.OptionsPaneContents(availableTeam.ToString(), "Switch to the " + availableTeam.ToString() + " team"));
+            }
+
+            OptionsPaneHandler.instance.ShowOptions("Change Team", changeTeamOptions, ChangeTeam);
+        }
+
+        public void ChangeTeam(string option)
+        {
+            PlayerData.localPlayerData.CmdChangeTeam((Gametype.Teams)Enum.Parse(typeof(Gametype.Teams), option));
+        }
+
+        public void ChangeTeamHover()
+        {
+            optionImage.sprite = changeTeamSprite;
+            optionText.text =
+                "Change your team, fight for the other side.";
         }
 
         public void NoHover()

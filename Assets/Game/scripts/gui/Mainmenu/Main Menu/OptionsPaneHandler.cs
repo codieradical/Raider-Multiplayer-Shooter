@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Raider.Game.Player;
+using Raider.Game.Scene;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,6 +48,8 @@ namespace Raider.Game.GUI.Components
 
         public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action callback)
         {
+            ResetData();
+
             paneTitle.text = _paneTitle;
             voidCallback = callback;
             SetupOptionsObjects(_optionsContents);
@@ -54,6 +58,8 @@ namespace Raider.Game.GUI.Components
 
         public void ShowOptions(string _paneTitle, List<OptionsPaneOption.OptionsPaneContents> _optionsContents, Action<string> callback)
         {
+            ResetData();
+
             paneTitle.text = _paneTitle;
             stringCallback = callback;
             SetupOptionsObjects(_optionsContents);
@@ -83,6 +89,9 @@ namespace Raider.Game.GUI.Components
         public void HideOptions()
         {
             animatorInstance.SetBool("open", false);
+
+            if (!Scenario.InLobby)
+                PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
         }
 
         void ResetData()

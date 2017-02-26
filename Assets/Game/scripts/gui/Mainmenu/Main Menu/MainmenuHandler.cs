@@ -8,6 +8,7 @@ using Raider.Game.Networking;
 using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.Saves;
 using Raider.Game.Saves.User;
+using Raider.Game.Player;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -46,16 +47,17 @@ namespace Raider.Game.GUI.Screens
                 }
                 else
                 {
-                    LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+                    PlayerData.SyncData playerSyncData = new PlayerData.SyncData()
                     {
+                        Character = Session.ActiveCharacter,
                         username = Session.userSaveDataHandler.GetUsername(),
-                        leader = true,
-                        character = Session.ActiveCharacter
+                        isLeader = true,
+                        id = 0
                     };
 
                     //Make sure the old player is gone.
                     LobbyHandler.DestroyAllPlayers();
-                    LobbyHandler.AddPlayer(playerNameplate);
+                    LobbyHandler.AddPlayer(playerSyncData);
 
                     GametypeButtons.instance.ShowButtons();
                 }
@@ -121,13 +123,14 @@ namespace Raider.Game.GUI.Screens
             MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
             GametypeButtons.instance.ShowButtons();
 
-            LobbyHandler.PlayerNameplate playerNameplate = new LobbyHandler.PlayerNameplate()
+            PlayerData.SyncData playerSyncData = new PlayerData.SyncData()
             {
+                Character = Session.ActiveCharacter,
                 username = Session.userSaveDataHandler.GetUsername(),
-                leader = true,
-                character = Session.ActiveCharacter
+                isLeader = true,
+                id = 0
             };
-            LobbyHandler.AddPlayer(playerNameplate);
+            LobbyHandler.AddPlayer(playerSyncData);
         }
 
         public void ChangeCharacter()
