@@ -5,6 +5,7 @@ using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Raider.Game.GUI.Components;
 
 namespace Raider.Game.Player
 {
@@ -160,6 +161,8 @@ namespace Raider.Game.Player
         {
             Debug.Log("Recieved lobby data");
             NetworkGameManager.instance.lobbySetup.RecieveLobbySetupUpdate(syncData);
+            LobbySetupPane.instance.UpdatePaneData();
+            NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         [Command]
@@ -174,9 +177,15 @@ namespace Raider.Game.Player
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
                     if ((i + 1) % 2 == 1)
+                    {
                         NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Red;
+                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametype.Teams.Red);
+                    }
                     else
+                    {
                         NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametype.Teams.Blue;
+                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametype.Teams.Blue);
+                    }
                 }
             }
             else
@@ -205,6 +214,7 @@ namespace Raider.Game.Player
             {
                 Debug.Log("Recieved lobby data");
                 NetworkGameManager.instance.lobbySetup.syncData = syncData;
+                LobbySetupPane.instance.UpdatePaneData();
                 NetworkGameManager.instance.UpdateLobbyNameplates();
             }
         }

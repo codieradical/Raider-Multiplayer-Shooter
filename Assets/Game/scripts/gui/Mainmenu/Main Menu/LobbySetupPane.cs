@@ -58,7 +58,6 @@ namespace Raider.Game.GUI.Components
             mapLabel.text = "";
             networkLabel.text = "";
             mapImage.sprite = null;
-            NetworkGameManager.instance.actionQueue.Enqueue(UpdatePaneData);
         }
 
         public void ClosePane()

@@ -15,7 +15,7 @@ namespace Raider.Game.Networking
         [Serializable]
         public class SyncData
         {
-            private string gametype;
+            public string gametype;
             public string GametypeString
             {
                 get { return gametype; }
@@ -39,7 +39,7 @@ namespace Raider.Game.Networking
                     GametypeString = value.ToString().Replace("_", " ");
                 }
             }
-            private string selectedScene;
+            public string selectedScene;
             public string SelectedScene
             {
                 get { return selectedScene; }
@@ -53,7 +53,7 @@ namespace Raider.Game.Networking
                     NetworkGameManager.instance.lobbySetup.SendLobbySetupUpdate();
                 }
             }
-            private string network;
+            public string network;
             public string Network
             {
                 get { return network; }

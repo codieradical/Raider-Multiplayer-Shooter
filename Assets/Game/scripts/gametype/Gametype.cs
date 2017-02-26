@@ -27,7 +27,7 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class TeamOptions
             {
-                public int maxTeams = Enum.GetValues(typeof(Teams)).Length + 1;
+                public int maxTeams = Enum.GetValues(typeof(Teams)).Length - 1;
                 public bool clientTeamChangingLobby = true;
                 public bool clientTeamChangingGame = true;
                 public bool friendlyFire = false;

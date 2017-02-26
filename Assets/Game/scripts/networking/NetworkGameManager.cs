@@ -243,7 +243,7 @@ namespace Raider.Game.Networking
             {
                 LobbyHandler.DestroyAllPlayers();
 
-                if (lobbySetup.syncData.gameOptions.teamsEnabled)
+                if (lobbySetup != null && lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
                     foreach (Gametype.Teams team in Enum.GetValues(typeof(Gametype.Teams)))
                     {
