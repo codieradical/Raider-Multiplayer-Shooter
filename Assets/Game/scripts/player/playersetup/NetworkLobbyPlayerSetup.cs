@@ -159,7 +159,7 @@ namespace Raider.Game.Player
         [Command] //As a backup, if for some reason the player still lacks sync data, they can request an update on all.
         public void CmdRequestAllSyncData()
         {
-            Debug.LogWarning("A player (" + playerData.syncData.username + ")just requested all sync data.");
+            Debug.LogWarning("A player (" + playerData.syncData.username + ") just requested all sync data.");
             foreach(PlayerData player in NetworkGameManager.instance.Players)
             {
                 if (player.syncData.GotData && player.connectionToClient != connectionToClient) //If the server has data on the player and it's not the target player.
@@ -202,15 +202,18 @@ namespace Raider.Game.Player
             {
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
-                    if ((i + 1) % 2 == 1)
+                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametype.Teams.None)
                     {
-                        NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Red;
-                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Red);
-                    }
-                    else
-                    {
-                        NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Blue;
-                        NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Blue);
+                        if ((i + 1) % 2 == 1)
+                        {
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Red;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Red);
+                        }
+                        else
+                        {
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametype.Teams.Blue;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametype.Teams.Blue);
+                        }
                     }
                 }
             }
@@ -218,8 +221,11 @@ namespace Raider.Game.Player
             {
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    player.syncData.team = Gametypes.Gametype.Teams.None;
-                    player.RpcChangeTeam(Gametypes.Gametype.Teams.None);
+                    if (player.syncData.team != Gametype.Teams.None)
+                    {
+                        player.syncData.team = Gametype.Teams.None;
+                        player.RpcChangeTeam(Gametype.Teams.None);
+                    }
                 }
             }
 

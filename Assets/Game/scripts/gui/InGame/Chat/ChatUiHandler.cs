@@ -1,4 +1,6 @@
-﻿using Raider.Game.Networking;
+﻿using Raider.Game.GUI.Components;
+using Raider.Game.GUI.StartMenu;
+using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Scene;
 using System.Collections;
@@ -150,9 +152,8 @@ namespace Raider.Game.GUI.Screens
 
         public void OpenChatInput()
         {
-            if (PlayerData.localPlayerData == null)
+            if (PlayerData.localPlayerData == null && StartMenuHandler.instance != null && !StartMenuHandler.instance.IsOpen && OptionsPaneHandler.IsOpen())
             {
-                Debug.Log("Unable to open chat, Player Data is null");
                 return;
             }
 

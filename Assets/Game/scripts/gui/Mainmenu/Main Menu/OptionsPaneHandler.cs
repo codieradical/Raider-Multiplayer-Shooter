@@ -12,6 +12,13 @@ namespace Raider.Game.GUI.Components
     [RequireComponent(typeof(Animator))]
     public class OptionsPaneHandler : MonoBehaviour
     {
+        public static bool IsOpen()
+        {
+            if (FindObjectOfType<OptionsPaneHandler>() != null)
+                return true;
+            else
+                return false;
+        }
 
         private void Update()
         {
