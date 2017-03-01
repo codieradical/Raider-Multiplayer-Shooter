@@ -85,8 +85,16 @@ namespace Raider.Game.GUI.Screens
 
         public void Login()
         {
-            MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
-            ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+            //If the player has no characters, skip character selection, go straight to creation.
+            if(Session.userSaveDataHandler.GetAllCharacters().Count < 1)
+            {
+                CreateCharacter();
+            }
+            else
+            {
+                ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
+                MenuManager.instance.ShowMenu(ChooseCharacterScreen.GetComponent<Menu>());
+            }
 
             if (Session.userSaveDataHandler.GetSettings().LobbyDisplay == UserSaveDataStructure.UserSettings.LobbyDisplays.Split)
                 LobbyHandler.SwitchToSplitLobby();
