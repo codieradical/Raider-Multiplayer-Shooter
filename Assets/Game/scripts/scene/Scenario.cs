@@ -10,6 +10,8 @@ namespace Raider.Game.Scene
     public class Scenario : MonoBehaviour
     {
 
+        private const string COMMON_SCENES_PATH = "multi";
+
         [HideInInspector]
         public static Scenario instance;
 
@@ -70,7 +72,7 @@ namespace Raider.Game.Scene
 #if UNITY_EDITOR
             foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
             {
-                if (scene.path.Contains(gametype.ToString().ToLower()))
+                if (scene.path.Contains(gametype.ToString().ToLower()) || scene.path.Contains(COMMON_SCENES_PATH))
                     appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
             }
 #else
