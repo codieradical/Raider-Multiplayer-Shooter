@@ -13,6 +13,12 @@ namespace Raider.Game.GUI.Components
         //public Text currentMissionText;
         //public Text weeklyHopperText;
 
+        public bool IsOpen
+        {
+            get { return animatorInstance.GetBool("open"); }
+            private set { animatorInstance.SetBool("open", value); }
+        }
+
         public static GametypeButtons instance;
 
         Animator animatorInstance;
@@ -33,13 +39,13 @@ namespace Raider.Game.GUI.Components
 
         public void ShowButtons()
         {
-            animatorInstance.SetBool("open", true);
+            IsOpen = true;
             //currentMissionText.text = Session.activeCharacter.currentMission;
         }
 
         public void HideButtons()
         {
-            animatorInstance.SetBool("open", false);
+            IsOpen = false;
         }
 
         public void SelectGametype(string gametype)

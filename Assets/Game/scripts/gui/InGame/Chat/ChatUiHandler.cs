@@ -152,7 +152,14 @@ namespace Raider.Game.GUI.Screens
 
         public void OpenChatInput()
         {
+            //If the player is in an options menu, don't let them chat.
             if (PlayerData.localPlayerData == null && StartMenuHandler.instance != null && !StartMenuHandler.instance.IsOpen && OptionsPaneHandler.IsOpen())
+            {
+                return;
+            }
+
+            //If the player is on the mainmenu but not in lobby, don't let them chat.
+            if(Scenario.InLobby && MenuManager.instance.CurrentMenu != MainmenuController.instance.MainMenuScreen.GetComponent<Menu>() && GametypeButtons.instance.IsOpen)
             {
                 return;
             }
