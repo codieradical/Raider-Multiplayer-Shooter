@@ -31,7 +31,7 @@ namespace Raider.Game.Player
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
 
-                SetupLocalPlayer();
+                localPlayer = this;
             }
 
             playerData.appearenceController.ReplacePlayerModel(playerData);
@@ -42,15 +42,22 @@ namespace Raider.Game.Player
             }
         }
 
-        void SetupLocalPlayer()
+        [ClientRpc]
+        public void RpcSetupLocalControl()
         {
-            localPlayer = this;
             gameObject.AddComponent<MovementController>();
             playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
             playerData.gamePlayerController = gameObject.AddComponent<LocalPlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
             playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
+        }
+
+        //Detatch Camera, Prototype.
+        private void OnDestroy()
+        {
+            if (CameraModeController.singleton.GetCameraController() is PlayerCameraController)
+                CameraModeController.singleton.gameObject.transform.SetParent(null, false);
         }
     }
 }

@@ -119,7 +119,11 @@ namespace Raider.Game.Networking
         {
             base.OnLobbyServerSceneChanged(sceneName);
 
-            if(sceneName == lobbyScene)
+            if(sceneName != lobbyScene)
+            {
+                StartCoroutine(InitialSpawnPlayers());
+            }
+            else
             {
                 foreach(PlayerData player in Players)
                 {
@@ -127,6 +131,15 @@ namespace Raider.Game.Networking
                     //So now that the lobby is loaded again, update the other players.
                     player.RpcChangeTeam(player.syncData.team);
                 }
+            }
+        }
+
+        private IEnumerator InitialSpawnPlayers()
+        {
+            yield return new WaitForSeconds(10f);
+            foreach(PlayerData player in Players)
+            {
+                player.GetComponent<NetworkPlayerSetup>().RpcSetupLocalControl();
             }
         }
 
