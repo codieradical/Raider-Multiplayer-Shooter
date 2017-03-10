@@ -11,7 +11,7 @@ namespace Raider.Game.Weapons
 
     //Since weapons might have special abilities, they need seperate classes.
     //But all inherit some similarities, like the crosshair.
-    public abstract class Weapon : MonoBehaviour
+    public abstract class WeaponData : MonoBehaviour
     {
         public abstract string WEAPON_NAME { get; }
 

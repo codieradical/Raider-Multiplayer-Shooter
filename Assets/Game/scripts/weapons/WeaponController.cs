@@ -7,7 +7,7 @@ namespace Raider.Game.Weapons
 {
     public class WeaponController : MonoBehaviour
     {
-        Weapon weapon;
+        WeaponData weaponData;
 
 
         public virtual void Update()
@@ -22,27 +22,35 @@ namespace Raider.Game.Weapons
         float lastFired = 0;
         public virtual void Shoot()
         {
-            if (Time.time - lastFired >= weapon.chosenSettings.fireRate && !IsReloading)
+            if (Time.time - lastFired >= weaponData.chosenSettings.fireRate && !IsReloading)
             {
-                if (weapon.clipAmmo <= 0)
+                if (weaponData.clipAmmo <= 0)
                 {
                     Reload();
                     return;
                 }
 
-                Vector3 firePoint;
+                Vector3 firePointPosition;
+                Vector2 bulletSpread = Random.insideUnitCircle * weaponData.chosenSettings.bulletSpread;
+
 
                 RaycastHit raycastHit;
-                if (Physics.Raycast(CameraModeController.singleton.cam.transform.position, CameraModeController.singleton.cam.transform.forward, out raycastHit, weapon.chosenSettings.range))
+
+#if DEBUG
+                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponData.chosenSettings.range;
+                Debug.DrawLine(transform.position, firePointPosition, Color.red);
+#endif
+
+                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponData.chosenSettings.range + CameraModeController.singleton.cam.transform.right * bulletSpread.x + CameraModeController.singleton.cam.transform.up * bulletSpread.y;
+
+                if (Physics.Linecast(CameraModeController.singleton.cam.transform.position, firePointPosition, out raycastHit))
                 {
-                    firePoint = raycastHit.point;
-                }
-                else
-                {
-                    firePoint = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weapon.chosenSettings.range;
+                    firePointPosition = raycastHit.point;
                 }
 
-                Debug.DrawLine(transform.position, firePoint, Color.red, 100f);
+#if DEBUG
+                Debug.DrawLine(transform.position, firePointPosition, Color.magenta);
+#endif
 
                 lastFired = Time.time;
             }
@@ -56,7 +64,7 @@ namespace Raider.Game.Weapons
 
         bool IsReloading
         {
-            get { if (Time.time - lastReload >= weapon.chosenSettings.reloadTime) return false; else return true; }
+            get { if (Time.time - lastReload >= weaponData.chosenSettings.reloadTime) return false; else return true; }
         }
     }
 }
