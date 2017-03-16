@@ -139,7 +139,8 @@ namespace Raider.Game.Networking
             yield return new WaitForSeconds(10f);
             foreach(PlayerData player in Players)
             {
-                player.GetComponent<NetworkPlayerSetup>().RpcSetupLocalControl();
+                //Send an RPC to the client who owns this player. Tell them to spawn.
+                player.GetComponent<NetworkPlayerSetup>().TargetSetupLocalControl(player.connectionToClient);
             }
         }
 

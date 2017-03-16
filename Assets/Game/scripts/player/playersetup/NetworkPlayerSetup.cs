@@ -42,8 +42,8 @@ namespace Raider.Game.Player
             }
         }
 
-        [ClientRpc]
-        public void RpcSetupLocalControl()
+        [TargetRpc]
+        public void TargetSetupLocalControl(NetworkConnection conn)
         {
             gameObject.AddComponent<MovementController>();
             playerData.animationController = gameObject.AddComponent<AnimationParametersController>();

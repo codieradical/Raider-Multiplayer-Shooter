@@ -31,7 +31,7 @@ namespace Raider.Game
         /// If set to true, TeamSpeak 3 binaries will be distributed with builds.
         /// If set to false, no binaries will be distributed, and VoIP Chat Managers will self-destruct.
         /// </summary>
-        public const bool VOIP_ENABLED = true;
+        public const bool VOIP_ENABLED = false;
         /// <summary>
         /// The base path for local save data files.
         /// Modified on debug builds so that saves used in testing are committed to the repo.
