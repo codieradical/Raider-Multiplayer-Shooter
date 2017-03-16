@@ -17,8 +17,8 @@ namespace Raider.Game.GUI.Components
 
         public bool IsOpen
         {
-            get { return animatorInstance.GetBool("open"); }
-            set { animatorInstance.SetBool("open", value); }
+            get { if (animatorInstance != null) return animatorInstance.GetBool("open"); else return false; }
+            set { if(animatorInstance != null) animatorInstance.SetBool("open", value); }
         }
 
         public static LobbySetupPane instance;
@@ -70,6 +70,11 @@ namespace Raider.Game.GUI.Components
                 NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
         }
 
+        public void ClosePaneNextFrame()
+        {
+            NetworkGameManager.instance.actionQueue.Enqueue(ClosePane);
+        }
+
         public void StartGame()
         {
             if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Offline)
@@ -98,6 +103,8 @@ namespace Raider.Game.GUI.Components
             instance = this;
 
             animatorInstance = GetComponent<Animator>();
+
+            NetworkGameManager.instance.onClientDisconnect += ClosePaneNextFrame;
         }
 
         // Use this for initialization
