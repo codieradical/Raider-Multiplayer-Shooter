@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.Networking;
 using Raider.Game.Cameras;
 using Raider.Game.Saves;
+using Raider.Game.Weapons;
 
 namespace Raider.Game.Saves.User
 {
@@ -146,6 +147,10 @@ namespace Raider.Game.Saves.User
             [SyncVar] public string chestArmourString; //Armours Enum
             [SyncVar] public int level;
             [SyncVar] public int exp;
+            [SyncVar] public Armory.Weapons primaryWeapon;
+            [SyncVar] public Armory.Weapons secondaryWeapon;
+            [SyncVar] public Armory.Weapons tertiaryWeapon;
+            [SyncVar] public List<WeaponData.WeaponSettings> weaponCustomization;
 
             public Races Race
             {

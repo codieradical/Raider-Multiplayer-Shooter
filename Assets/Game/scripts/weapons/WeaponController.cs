@@ -5,10 +5,9 @@ using Raider.Game.Cameras;
 
 namespace Raider.Game.Weapons
 {
-    public class WeaponController : MonoBehaviour
+    public abstract class WeaponController : MonoBehaviour
     {
-        WeaponData weaponData;
-
+        WeaponData weaponData;  
 
         public virtual void Update()
         {
