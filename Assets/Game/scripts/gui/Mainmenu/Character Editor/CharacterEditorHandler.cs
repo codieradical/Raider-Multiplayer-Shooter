@@ -1,12 +1,11 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.UI;
-using System.Globalization;
-using System;
-using Raider.Game.Saves;
+﻿using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.GUI.Components;
-using Raider.Game.GUI.CharacterPreviews;
+using Raider.Game.Saves;
 using Raider.Game.Saves.User;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {

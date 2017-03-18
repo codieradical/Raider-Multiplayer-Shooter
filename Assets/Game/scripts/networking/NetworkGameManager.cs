@@ -1,14 +1,13 @@
-﻿using System.Collections;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Components;
+using Raider.Game.Player;
+using Raider.Game.Scene;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Raider.Game.GUI.Components;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
-using System;
-using Raider.Game.Scene;
-using Raider.Game.Player;
-using Raider.Game.Gametypes;
 
 namespace Raider.Game.Networking
 {

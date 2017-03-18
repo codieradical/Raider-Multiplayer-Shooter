@@ -1,5 +1,4 @@
-﻿using Raider.Game.Common.Types;
-using Raider.Game.Saves.User;
+﻿using Raider.Game.Saves.User;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

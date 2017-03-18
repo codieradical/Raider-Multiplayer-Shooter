@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Cameras;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Raider.Game.Player

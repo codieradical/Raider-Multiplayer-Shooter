@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using Raider.Game.GUI;
+using System;
 using System.IO;
 using System.Runtime.Serialization;
-using Raider.Game.GUI;
-using System;
+using UnityEngine;
 
 namespace Raider.Game.Saves.System
 {

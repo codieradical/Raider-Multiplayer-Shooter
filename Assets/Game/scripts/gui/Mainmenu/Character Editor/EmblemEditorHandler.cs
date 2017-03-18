@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Raider.Game.GUI.Components;
 using Raider.Game.Saves;
-using Raider.Game.GUI.Components;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
@@ -22,8 +22,8 @@ namespace Raider.Game.GUI.Screens
         public Image tertiaryButton;
 
         public bool Layer2value { get { return layer2field.isOn; } }
-        public int Layer1value { get { return layer1field.value; } }
-        public int Layer0value { get { return layer0field.value; } }
+        public int Layer1value { get { return layer1field.Value; } }
+        public int Layer0value { get { return layer0field.Value; } }
 
         private Color layer0color;
         private Color layer1color;
@@ -55,8 +55,8 @@ namespace Raider.Game.GUI.Screens
             layer1color = characterEditorHandler.editingCharacter.emblem.layer1Color.Color;
             layer2color = characterEditorHandler.editingCharacter.emblem.layer2Color.Color;
 
-            layer0field.value = characterEditorHandler.editingCharacter.emblem.layer0;
-            layer1field.value = characterEditorHandler.editingCharacter.emblem.layer1;
+            layer0field.Value = characterEditorHandler.editingCharacter.emblem.layer0;
+            layer1field.Value = characterEditorHandler.editingCharacter.emblem.layer1;
             layer2field.isOn = characterEditorHandler.editingCharacter.emblem.layer2;
         }
 
@@ -99,8 +99,8 @@ namespace Raider.Game.GUI.Screens
 
         public void RandomiseEmblem()
         {
-            layer0field.value = UnityEngine.Random.Range(0, layer0sprites.Length - 1);
-            layer1field.value = UnityEngine.Random.Range(0, layer1sprites.Length - 1);
+            layer0field.Value = UnityEngine.Random.Range(0, layer0sprites.Length - 1);
+            layer1field.Value = UnityEngine.Random.Range(0, layer1sprites.Length - 1);
             System.Random rand = new System.Random();
             layer2field.isOn = Convert.ToBoolean(rand.Next(0, 2));
 

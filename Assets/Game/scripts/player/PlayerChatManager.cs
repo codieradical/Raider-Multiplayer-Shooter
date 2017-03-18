@@ -1,12 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.Networking;
-using System.Collections.Generic;
+﻿using Raider.Game.GUI.Screens;
 using Raider.Game.Networking;
-using Raider.Game.GUI;
-using Raider.Game.GUI.Screens;
-using System;
-using Raider.Game.Player;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {

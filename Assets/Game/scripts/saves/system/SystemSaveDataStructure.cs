@@ -1,10 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine.Networking;
-using Raider.Game.Cameras;
+﻿using System;
 
 namespace Raider.Game.Saves.System
 {

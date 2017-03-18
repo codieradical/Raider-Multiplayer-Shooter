@@ -1,8 +1,5 @@
-﻿using UnityEngine;
-using Raider.Game.Cameras;
-using System.Collections;
-using Raider.Game.Saves;
-using UnityEngine.Networking;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 
 namespace Raider.Game.Player
 {
@@ -15,8 +12,8 @@ namespace Raider.Game.Player
         {
             set
             {
-                if (parameterAnimator != null)
-                    parameterAnimator.SetFloat("verticalSpeed", value);
+                if (ParameterAnimator != null)
+                    ParameterAnimator.SetFloat("verticalSpeed", value);
             }
         }
 
@@ -24,8 +21,8 @@ namespace Raider.Game.Player
         {
             set
             {
-                if (parameterAnimator != null)
-                    parameterAnimator.SetFloat("horizontalSpeed", value);
+                if (ParameterAnimator != null)
+                    ParameterAnimator.SetFloat("horizontalSpeed", value);
             }
         }
 
@@ -33,8 +30,8 @@ namespace Raider.Game.Player
         {
             set
             {
-                if (parameterAnimator != null)
-                    parameterAnimator.SetBool("running", value);
+                if (ParameterAnimator != null)
+                    ParameterAnimator.SetBool("running", value);
             }
         }
 
@@ -42,15 +39,15 @@ namespace Raider.Game.Player
         {
             set
             {
-                if (parameterAnimator != null)
-                    parameterAnimator.SetBool("jumping", value);
+                if (ParameterAnimator != null)
+                    ParameterAnimator.SetBool("jumping", value);
             }
         }
 
         #endregion
 
         //A couple of properties to simplify references...
-        private Animator parameterAnimator { get { return PlayerData.localPlayerData.sharedParametersAnimator; } }
+        private Animator ParameterAnimator { get { return PlayerData.localPlayerData.sharedParametersAnimator; } }
 
         // Update is called once per frame
         void Update()

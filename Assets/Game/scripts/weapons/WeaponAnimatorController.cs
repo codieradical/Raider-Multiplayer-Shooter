@@ -1,8 +1,4 @@
 ﻿using UnityEngine;
-using Raider.Game.Cameras;
-using System.Collections;
-using Raider.Game.Saves;
-using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
@@ -44,28 +40,28 @@ namespace Raider.Game.Player
         {
             get
             {
-                return parameterAnimator.GetFloat("verticalSpeed");
+                return ParameterAnimator.GetFloat("verticalSpeed");
             }
         }
         float SharedHorizontalSpeed
         {
             get
             {
-                return parameterAnimator.GetFloat("horizontalSpeed");
+                return ParameterAnimator.GetFloat("horizontalSpeed");
             }
         }
         bool SharedRunning
         {
             get
             {
-                return parameterAnimator.GetBool("running");
+                return ParameterAnimator.GetBool("running");
             }
         }
         bool SharedJumping
         {
             get
             {
-                return parameterAnimator.GetBool("jumping");
+                return ParameterAnimator.GetBool("jumping");
             }
         }
 
@@ -73,7 +69,7 @@ namespace Raider.Game.Player
         #endregion
 
         public Animator weaponAnimator; //Assigned in editor.
-        private Animator parameterAnimator { get { return PlayerData.localPlayerData.sharedParametersAnimator; } }
+        private Animator ParameterAnimator { get { return PlayerData.localPlayerData.sharedParametersAnimator; } }
 
         void Update()
         {

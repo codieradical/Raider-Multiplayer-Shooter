@@ -1,13 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.GUI.Screens;
+﻿using Raider.Game.GUI.Screens;
+using UnityEngine;
 
 namespace Raider.Game.GUI.Components
 {
     public class CharacterSelectionPlate : MonoBehaviour
     {
         public CharacterSelectionHandler selectionHandler;
-        int slot
+        int Slot
         {
             get
             {
@@ -26,17 +25,17 @@ namespace Raider.Game.GUI.Components
 
         public void EditCharacter()
         {
-            MainmenuController.instance.EditCharacter(slot);
+            MainmenuController.instance.EditCharacter(Slot);
         }
 
         public void DeleteCharacter()
         {
-            selectionHandler.DeleteCharacter(slot);
+            selectionHandler.DeleteCharacter(Slot);
         }
 
         public void SelectCharacter()
         {
-            selectionHandler.ChooseCharacter(slot);
+            selectionHandler.ChooseCharacter(Slot);
         }
     }
 }

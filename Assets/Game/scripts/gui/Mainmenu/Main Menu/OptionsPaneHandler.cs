@@ -1,8 +1,6 @@
 ﻿using Raider.Game.GUI.Screens;
-using Raider.Game.Player;
 using Raider.Game.Scene;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;

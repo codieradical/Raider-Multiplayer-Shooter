@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Saves.User;
+using UnityEngine;
 using UnityEngine.UI;
-using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Components
 {

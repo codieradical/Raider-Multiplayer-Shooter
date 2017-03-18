@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System;
+﻿using Raider.Game.GUI.Screens;
 using Raider.Game.Scene;
-using UnityEngine.UI;
-using Raider.Game.GUI.Screens;
+using System;
+using UnityEngine;
 
 namespace Raider.Game.GUI.Components
 {

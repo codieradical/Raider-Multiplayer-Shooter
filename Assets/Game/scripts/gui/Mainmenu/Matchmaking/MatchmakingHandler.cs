@@ -1,7 +1,5 @@
 ﻿using Raider.Game.GUI.Components;
 using Raider.Game.Networking;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 

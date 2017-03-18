@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Raider.Game.Scene;
+﻿using Raider.Game.Scene;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Raider.Game.Audio

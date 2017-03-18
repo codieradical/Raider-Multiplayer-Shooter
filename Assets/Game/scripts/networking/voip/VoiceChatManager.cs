@@ -1,9 +1,8 @@
-﻿# define UNITY_64 //DEBUG: Raider Test environment doesn't define this automatically.
-using UnityEngine;
-using System.Runtime.InteropServices;
+﻿using Raider.Game.Player;
 using System;
-using Raider.Game.Player;
+using System.Runtime.InteropServices;
 using System.Threading;
+using UnityEngine;
 
 namespace Raider.Game.Networking.VoIP
 {

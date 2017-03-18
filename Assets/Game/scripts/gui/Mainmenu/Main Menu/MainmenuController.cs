@@ -1,14 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System.Globalization;
+﻿using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.GUI.Components;
-using Raider.Game.Cameras;
 using Raider.Game.Networking;
-using Raider.Game.GUI.CharacterPreviews;
-using Raider.Game.Saves;
-using Raider.Game.Saves.User;
 using Raider.Game.Player;
+using Raider.Game.Saves.User;
+using UnityEngine;
 
 namespace Raider.Game.GUI.Screens
 {

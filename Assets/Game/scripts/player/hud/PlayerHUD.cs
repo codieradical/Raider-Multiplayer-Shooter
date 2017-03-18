@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using Raider.Game.GUI;
+﻿using Raider.Game.GUI;
+using UnityEngine;
 
 namespace Raider.Game.Player.HUD
 {

@@ -1,15 +1,13 @@
-﻿using System.Collections;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Layout;
+using Raider.Game.Player;
 using System.Collections.Generic;
 using UnityEngine;
-using Raider.Game.Saves;
-using Raider.Game.GUI.Layout;
 using UnityEngine.UI;
-using Raider.Game.Player;
-using Raider.Game.Gametypes;
 
 namespace Raider.Game.GUI.Components
 {
-	public class LobbyNameplateHandler : MonoBehaviour {
+    public class LobbyNameplateHandler : MonoBehaviour {
 
         public PlayerData.SyncData playerData;
 		public SizeOverride sizeOverride;

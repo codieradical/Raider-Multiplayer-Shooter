@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Weapons;
-using Raider.Game.Cameras;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 
 namespace Raider.Game.Weapons
 {
