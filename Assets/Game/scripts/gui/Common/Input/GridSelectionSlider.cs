@@ -1,9 +1,7 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
-using System.Text;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {
@@ -16,7 +14,7 @@ namespace Raider.Game.GUI.Components
 
         public Text title;
         public GridLayoutGroup gridLayout; //The object with the GridLayoutGroup
-        GameObject gridObject { get { return gridLayout.gameObject; } }
+        GameObject GridObject { get { return gridLayout.gameObject; } }
         List<GameObject> selectableObjects; //Objects within the GridLayoutGroup
         RectTransform rectTransform;
 
@@ -27,7 +25,7 @@ namespace Raider.Game.GUI.Components
                 foreach (GameObject selectableGameObject in selectableObjects)
                 {
                     RectTransform _selectedObjectRectTransform = selectableGameObject.GetComponent<RectTransform>();
-                    RectTransform _gridObjectRectTransform = gridObject.GetComponent<RectTransform>();
+                    RectTransform _gridObjectRectTransform = GridObject.GetComponent<RectTransform>();
 
                     if (_gridObjectRectTransform.localPosition == -_selectedObjectRectTransform.localPosition)
                         return selectableGameObject;
@@ -37,7 +35,7 @@ namespace Raider.Game.GUI.Components
             }
             set
             {
-                if (value.transform.parent.gameObject == gridObject)
+                if (value.transform.parent.gameObject == GridObject)
                     MoveSelection(value);
                 else
                     Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object off the grid!");
@@ -61,7 +59,7 @@ namespace Raider.Game.GUI.Components
                 if (gridLayout == null)
                     Debug.LogError("[GUI/GridSelectionSlider] No grid layout found.");
                 else
-                    Debug.LogAssertion("[GUI/GridSelectionSlider] Found a suitable GridLayoutGroup on" + gridObject.name + ".");
+                    Debug.LogAssertion("[GUI/GridSelectionSlider] Found a suitable GridLayoutGroup on" + GridObject.name + ".");
             }
 
             rectTransform = GetComponent<RectTransform>();
@@ -70,7 +68,7 @@ namespace Raider.Game.GUI.Components
             gridLayout.cellSize = rectTransform.rect.size;
 
             selectableObjects = new List<GameObject>();
-            foreach (Transform childTransform in gridObject.transform)
+            foreach (Transform childTransform in GridObject.transform)
             {
                 //Get the LayoutElement component. 
                 //Any child objects which ignore the layout group will be ignored.
@@ -95,9 +93,9 @@ namespace Raider.Game.GUI.Components
         public void MoveSelection(Button sender)
         {
             RectTransform senderRectTransform = sender.gameObject.GetComponent<RectTransform>();
-            RectTransform gridRectTransform = gridObject.GetComponent<RectTransform>();
+            RectTransform gridRectTransform = GridObject.GetComponent<RectTransform>();
 
-            if (sender.gameObject.transform.parent.gameObject != gridObject)
+            if (sender.gameObject.transform.parent.gameObject != GridObject)
             {
                 Debug.LogWarning("[GUI/GridSelectionSlider] Something just tried to select an object based on a button off the grid!");
                 return;
@@ -112,7 +110,7 @@ namespace Raider.Game.GUI.Components
         void MoveSelection(GameObject newSelectedObject)
         {
             RectTransform newSelectedObjectRectTransform = newSelectedObject.GetComponent<RectTransform>();
-            RectTransform gridRectTransform = gridObject.GetComponent<RectTransform>();
+            RectTransform gridRectTransform = GridObject.GetComponent<RectTransform>();
 
             gridRectTransform.localPosition = -newSelectedObjectRectTransform.localPosition;
         }

@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
-using System;
-using Raider.Game.Scene;
 using UnityEngine.UI;
-using Raider.Game.GUI.Screens;
-using Raider.Game.Saves.User;
 
 namespace Raider.Game.GUI.Screens
 {

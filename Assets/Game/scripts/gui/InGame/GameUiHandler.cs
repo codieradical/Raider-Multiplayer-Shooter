@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.GUI.Screens;
+﻿using Raider.Game.GUI.Screens;
 using Raider.Game.GUI.StartMenu;
-using Raider.Game.Scene;
 using Raider.Game.Player;
+using Raider.Game.Scene;
+using UnityEngine;
 
-namespace Raider.Game.GUI {
+namespace Raider.Game.GUI
+{
 
     public class GameUiHandler : MonoBehaviour
     {

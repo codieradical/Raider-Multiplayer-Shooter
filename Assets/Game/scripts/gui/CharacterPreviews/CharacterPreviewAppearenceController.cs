@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.GUI.Components;
-using Raider.Game.Saves;
+﻿using Raider.Game.GUI.Components;
 using Raider.Game.Saves.User;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {

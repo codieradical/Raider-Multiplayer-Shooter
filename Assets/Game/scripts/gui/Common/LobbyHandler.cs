@@ -1,13 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-using System;
-using Raider.Game.Saves;
-using Raider.Game.GUI.Layout;
+﻿using Raider.Game.GUI.Layout;
 using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Saves.User;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {

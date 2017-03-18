@@ -1,13 +1,8 @@
-﻿using UnityEngine;
-using Raider.Game.Saves;
-using System.Collections;
-using Raider.Game.GUI.Components;
-using Raider.Game.GUI.CharacterPreviews;
-using Raider.Game.Cameras;
-using System.Collections.Generic;
-using Raider.Game.Saves.User;
-using System;
+﻿using Raider.Game.Cameras;
 using Raider.Game.Gametypes;
+using Raider.Game.GUI.CharacterPreviews;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Raider.Game.Player
 {

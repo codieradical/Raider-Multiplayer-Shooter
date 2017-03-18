@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 namespace Raider.Game.GUI.Components
 {
@@ -12,7 +11,7 @@ namespace Raider.Game.GUI.Components
         InputField IF;
 
         [HideInInspector]
-        public int value
+        public int Value
         {
             get
             {
@@ -42,36 +41,36 @@ namespace Raider.Game.GUI.Components
 
         public void IncreaseValue()
         {
-            if (rangeMode == RangeMode.MinMax && (value + increaseStep) >= max)
+            if (rangeMode == RangeMode.MinMax && (Value + increaseStep) >= max)
             {
-                value = max;
+                Value = max;
                 return;
             }
 
-            if (rangeMode == RangeMode.Collection && (value + increaseStep) >= collection.Length)
+            if (rangeMode == RangeMode.Collection && (Value + increaseStep) >= collection.Length)
             {
-                value = max;
+                Value = max;
                 return;
             }
 
-            value += increaseStep;
+            Value += increaseStep;
         }
 
         public void DecreaseValue()
         {
-            if (rangeMode == RangeMode.MinMax && (value - decreaseStep) <= min)
+            if (rangeMode == RangeMode.MinMax && (Value - decreaseStep) <= min)
             {
-                value = min;
+                Value = min;
                 return;
             }
 
-            if (rangeMode == RangeMode.Collection && (value - decreaseStep) <= 0)
+            if (rangeMode == RangeMode.Collection && (Value - decreaseStep) <= 0)
             {
-                value = min;
+                Value = min;
                 return;
             }
 
-            value -= increaseStep;
+            Value -= increaseStep;
         }
 
         // Use this for initialization

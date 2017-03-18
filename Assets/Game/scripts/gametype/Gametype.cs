@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Scene;
 using System;
-using Raider.Game.Scene;
+using UnityEngine;
 
 namespace Raider.Game.Gametypes
 {

@@ -1,11 +1,11 @@
-﻿using UnityEngine.Networking;
-using UnityEngine;
-using Raider.Game.Scene;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Components;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
-using Raider.Game.GUI.Components;
+using Raider.Game.Scene;
 using System;
-using Raider.Game.Gametypes;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {

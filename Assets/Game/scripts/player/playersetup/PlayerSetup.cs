@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-using Raider.Game.Networking;
-using Raider.Game.Cameras;
-using Raider.Game.Saves;
+﻿using Raider.Game.Cameras;
 using System.Collections;
+using UnityEngine;
 
 namespace Raider.Game.Player
 {
@@ -27,7 +25,7 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.syncData.username = Session.userSaveDataHandler.GetUsername();
             PlayerData.localPlayerData.syncData.isLeader = true;
 
-            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
+            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
         }
 
         IEnumerator PauseNewCameraController()
@@ -41,7 +39,7 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
         {
             CameraModeController.singleton.playerGameObject = gameObject;
-            CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().perspective);
+            CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().Perspective);
         }
 
         void OnDestroy()

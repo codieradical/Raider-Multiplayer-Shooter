@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
-using Raider.Game.Networking;
+﻿using Raider.Game.Networking;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Raider.Game.Scene
 {

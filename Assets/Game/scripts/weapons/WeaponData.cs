@@ -1,5 +1,4 @@
-﻿using Raider.Game.Cameras;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Raider.Game.Weapons
 {

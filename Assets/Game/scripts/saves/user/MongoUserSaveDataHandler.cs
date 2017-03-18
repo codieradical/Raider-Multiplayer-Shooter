@@ -1,14 +1,7 @@
-﻿using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Net;
+﻿using Raider.Game.Networking;
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using UnityEngine.Networking;
-using System.Threading;
-using Raider.Game.Networking;
-using System.Text;
+using UnityEngine;
 
 namespace Raider.Game.Saves.User
 {

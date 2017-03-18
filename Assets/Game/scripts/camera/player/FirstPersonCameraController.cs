@@ -42,11 +42,15 @@ namespace Raider.Game.Cameras
             camPoint.transform.Rotate(_rotation);
         }
 
+        //The viewmodel needs to be positioned at the camera, but it needs to be a child of the player.
+        //So it's world position is set to the camera's world position on update.
         void UpdateFirstPersonViewModel()
         {
+            //The transform of the viewmodel
             Transform viewModel = characterController.gameObject.transform.GetComponent<PlayerData>().firstPersonPlayerModel.transform;
-            if (viewModel != null)
+            if (viewModel != null) //If a viewmodel was found...
             {
+                //Position and rotate it to match the camera.
                 viewModel.rotation = cam.transform.rotation;
                 viewModel.position = cam.transform.position;
             }

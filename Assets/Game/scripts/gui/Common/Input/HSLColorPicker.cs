@@ -1,7 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System;
 
 namespace Raider.Game.GUI.Components
 {
@@ -27,7 +26,7 @@ namespace Raider.Game.GUI.Components
 
         #endregion
 
-        int h
+        int H
         {
             get
             {
@@ -45,7 +44,7 @@ namespace Raider.Game.GUI.Components
             set { hInputField.text = value.ToString(); hSlider.value = value; }
         }
 
-        int s
+        int S
         {
             get
             {
@@ -63,7 +62,7 @@ namespace Raider.Game.GUI.Components
             set { sInputField.text = value.ToString(); sSlider.value = value; }
         }
 
-        int l
+        int L
         {
             get
             {
@@ -81,9 +80,9 @@ namespace Raider.Game.GUI.Components
             set { lInputField.text = value.ToString(); lSlider.value = value; }
         }
 
-        float hDec { get { return (float)h / 255; } }
-        float sDec { get { return (float)s / 255; } }
-        float lDec { get { return (float)l / 255; } }
+        float HDec { get { return (float)H / 255; } }
+        float SDec { get { return (float)S / 255; } }
+        float LDec { get { return (float)L / 255; } }
 
         public Slider hSlider;
         public Slider sSlider;
@@ -139,32 +138,32 @@ namespace Raider.Game.GUI.Components
 
         public void UpdateSliders()
         {
-            h = (int)hSlider.value;
-            s = (int)sSlider.value;
-            l = (int)lSlider.value;
+            H = (int)hSlider.value;
+            S = (int)sSlider.value;
+            L = (int)lSlider.value;
 
             UpdatePreviews();
         }
 
         public void UpdateInputFields()
         {
-            hSlider.value = h;
-            sSlider.value = s;
-            lSlider.value = l;
+            hSlider.value = H;
+            sSlider.value = S;
+            lSlider.value = L;
 
             UpdatePreviews();
         }
 
         public void UpdatePreviews()
         {
-            transform.FindChild("Background").FindChild("S").FindChild("STint").GetComponent<Image>().color = Color.HSVToRGB(hDec, 1, 1);
-            transform.FindChild("Background").FindChild("Preview").GetComponent<Image>().color = Color.HSVToRGB(hDec, sDec, lDec);
+            transform.FindChild("Background").FindChild("S").FindChild("STint").GetComponent<Image>().color = Color.HSVToRGB(HDec, 1, 1);
+            transform.FindChild("Background").FindChild("Preview").GetComponent<Image>().color = Color.HSVToRGB(HDec, SDec, LDec);
         }
 
         public void Done()
         {
             gameObject.SetActive(false);
-            callbackMethod(Color.HSVToRGB(hDec, sDec, lDec));
+            callbackMethod(Color.HSVToRGB(HDec, SDec, LDec));
         }
     }
 }

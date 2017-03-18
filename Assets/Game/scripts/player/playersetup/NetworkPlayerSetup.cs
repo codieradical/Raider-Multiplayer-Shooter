@@ -1,11 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.Player;
-using Raider.Game.Saves;
-using Raider;
-using Raider.Game.Cameras;
-using Raider.Game.Networking;
 
 namespace Raider.Game.Player
 {
@@ -38,7 +33,7 @@ namespace Raider.Game.Player
 
             if(isLocalPlayer)
             {
-                playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().perspective);
+                playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().Perspective);
             }
         }
 
@@ -50,7 +45,7 @@ namespace Raider.Game.Player
             playerData.gamePlayerController = gameObject.AddComponent<LocalPlayerController>();
             CameraModeController.singleton.playerGameObject = gameObject;
             //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
-            playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().perspective);
+            playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
         }
 
         //Detatch Camera, Prototype.

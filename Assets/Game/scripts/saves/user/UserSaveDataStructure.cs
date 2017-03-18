@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using Raider.Game.Cameras;
 using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.Cameras;
-using Raider.Game.Saves;
 
 namespace Raider.Game.Saves.User
 {
@@ -26,7 +23,7 @@ namespace Raider.Game.Saves.User
             public UserSettings()
             {
                 LobbyDisplay = LobbyDisplays.Scroll;
-                perspective = CameraModeController.CameraModes.FirstPerson;
+                Perspective = CameraModeController.CameraModes.FirstPerson;
             }
 
             public enum LobbyDisplays
@@ -44,7 +41,7 @@ namespace Raider.Game.Saves.User
                 set { lobbyDisplayString = value.ToString(); }
             }
 
-            public CameraModeController.CameraModes perspective
+            public CameraModeController.CameraModes Perspective
             {
                 get { return (CameraModeController.CameraModes)Enum.Parse(typeof(CameraModeController.CameraModes), perspectiveString); }
                 set { perspectiveString = value.ToString(); }

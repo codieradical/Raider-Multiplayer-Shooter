@@ -1,14 +1,10 @@
-﻿using System;
+﻿using Raider.Game.Saves.User;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using Raider.Game.Saves.User;
-using System.Collections;
-using System.Net;
 using System.IO;
+using System.Net;
 using System.Threading;
-using System.Net.Sockets;
+using UnityEngine;
 
 namespace Raider.Game.Networking
 {

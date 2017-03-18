@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System;
+﻿using Raider.Game.Player;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Raider.Game.Player;
+using UnityEngine;
 
 namespace Raider.Game.GUI
 {
