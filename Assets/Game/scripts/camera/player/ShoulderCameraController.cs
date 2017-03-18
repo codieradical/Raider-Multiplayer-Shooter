@@ -25,24 +25,24 @@ namespace Raider.Game.Cameras
             LockCamPointZRotation();
         }
 
-        public void ChangeCameraOffsetBasedOnCollision(Vector3 _CollisionPosition)
+        public void ChangeCameraOffsetBasedOnCollision(Vector3 collisionPosition)
         {
             //calculate the local position.
-            _CollisionPosition = camPoint.transform.InverseTransformPoint(_CollisionPosition);
+            collisionPosition = camPoint.transform.InverseTransformPoint(collisionPosition);
             //Apply padding percentage.
-            _CollisionPosition *= (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
+            collisionPosition *= (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
 
-            Vector3 newLocation = _CollisionPosition;
+            Vector3 newLocation = collisionPosition;
             cam.transform.localPosition = newLocation;
         }
 
-        public override void KeepCameraInsideWalls(Vector3 _castToPos)
+        public override void KeepCameraInsideWalls(Vector3 castToPos)
         {
             RaycastHit objectHitInfo = new RaycastHit();
-            float castDistance = Vector3.Distance(transform.position, _castToPos);
+            float castDistance = Vector3.Distance(transform.position, castToPos);
 
             //This cast checks if anything is inbetween transform.position and _castToPos (the camPoint and the _desiredCam).
-            bool hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
+            bool hitWall = Physics.Raycast(transform.position, (castToPos - transform.position).normalized, out objectHitInfo, castDistance, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
             float newCamDistance = (cam.transform.localPosition.z - (objectHitInfo.distance - castDistance)) * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
             if (hitWall)
             {
@@ -51,7 +51,7 @@ namespace Raider.Game.Cameras
             //If no collision is found, cast with infinate distance, to figure out where the camera can go.
             else
             {
-                hitWall = Physics.Raycast(transform.position, (_castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
+                hitWall = Physics.Raycast(transform.position, (castToPos - transform.position).normalized, out objectHitInfo, ~CameraModeController.singleton.thirdPersonCamSettings.transparent);
                 //Update the newCamDistance for the last raycast.
                 newCamDistance = -objectHitInfo.distance * (1 - CameraModeController.singleton.thirdPersonCamSettings.cameraPaddingPercent);
                 if (hitWall)
