@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Raider.Game.Scene
 {
-    public class Enviroment : MonoBehaviour
+    public class Environment : MonoBehaviour
     {
 
-        public static Enviroment instance;
+        public static Environment instance;
 
         void Awake()
         {
