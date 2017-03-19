@@ -22,13 +22,37 @@ namespace Raider.Game.Weapons
         }
 
         //public int scope;
+        /// <summary>
+        /// The weapon that this data is relevant to.
+        /// </summary>
         public Armory.Weapons weaponType;
+        /// <summary>
+        /// Bullet range, in meters.
+        /// </summary>
         public int range;
+        /// <summary>
+        /// Reload time in seconds.
+        /// </summary>
         public float reloadTime;
+        /// <summary>
+        /// Damage dealt per bullet.
+        /// </summary>
         public float damagePerShot;
+        /// <summary>
+        /// The maximum amount of ammo in a clip.
+        /// </summary>
         public int clipSize;
+        /// <summary>
+        /// The maximum amount of ammo in the mag.
+        /// </summary>
         public int maxAmmo;
+        /// <summary>
+        /// Seconds between shots.
+        /// </summary>
         public float fireRate;
+        /// <summary>
+        /// The amount a bullet can spread from the crosshair in any given direction, in units.
+        /// </summary>
         public float bulletSpread;
     }
 }
