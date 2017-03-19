@@ -26,6 +26,32 @@ namespace Raider
         public static UserSaveDataStructure.Character ActiveCharacter { get; private set; }
         private static int activeCharacterSlot = -1;
 
+        public static void UpdateActiveCharacter(UserSaveDataStructure.Character character)
+        {
+            if (activeCharacterSlot == -1)
+            {
+                Debug.Log("Attempted to UpdateActiveCharacter, but no character active...");
+                return;
+            }
+            userSaveDataHandler.SaveCharacter(activeCharacterSlot, character, UpdateActiveCharacterSaveSuccess, UpdateActiveCharacterSaveFailure);
+        }
+        private static void UpdateActiveCharacterSaveSuccess(string message)
+        {
+            userSaveDataHandler.ReloadData(UpdateActiveCharacterReloadSuccess, UpdateActiveCharacterReloadFailure);
+        }
+        private static void UpdateActiveCharacterSaveFailure(string message)
+        {
+            Debug.Log("UpdateActiveCharacter Save Failed");
+        }
+        private static void UpdateActiveCharacterReloadSuccess(string message)
+        {
+            ActiveCharacter = userSaveDataHandler.GetCharacter(activeCharacterSlot);
+        }
+        private static void UpdateActiveCharacterReloadFailure(string message)
+        {
+            Debug.LogError("WARNING: UpdateActiveCharacter saved changes but failed to reload!!!");
+        }
+
         public static List<Action> dataReloadCallbacks = new List<Action>();
         public static void AddReloadHook(Action method)
         {

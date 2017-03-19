@@ -2,6 +2,7 @@
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
+using Raider.Game.Weapons;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -27,9 +28,8 @@ namespace Raider.Game.Player
         public GameObject graphicsObject;
         public GameObject playerModel; // Assigned In Editor To Begin
         public GameObject firstPersonPlayerModel; //Assigned in editor to begin.
+        public NetworkPlayerController networkPlayerController; //Assigned in editor.
         public Animator sharedParametersAnimator; //Assigned in editor.
-
-        //public Weapons.Weapon weapon;
 
         public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin

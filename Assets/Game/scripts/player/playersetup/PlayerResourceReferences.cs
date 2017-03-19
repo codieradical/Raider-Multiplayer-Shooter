@@ -18,8 +18,6 @@ namespace Raider.Game.Player
 
         public void Awake()
         {
-            if (instance != null)
-                Debug.LogAssertion("It seems that multiple Menu Managers are active, breaking the singleton instance.");
             instance = this;
         }
 

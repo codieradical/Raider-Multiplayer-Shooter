@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Player;
+using UnityEngine;
 
-namespace Raider.Game.Player
+namespace Raider.Game.Weapons
 {
 
     public class WeaponAnimatorController : MonoBehaviour

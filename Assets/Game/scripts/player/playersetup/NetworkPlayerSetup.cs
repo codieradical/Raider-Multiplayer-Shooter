@@ -27,6 +27,8 @@ namespace Raider.Game.Player
                 Cursor.visible = false;
 
                 localPlayer = this;
+
+                playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.PrimaryWeapon);
             }
 
             playerData.appearenceController.ReplacePlayerModel(playerData);

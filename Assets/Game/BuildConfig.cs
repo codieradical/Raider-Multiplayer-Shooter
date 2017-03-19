@@ -13,7 +13,7 @@ namespace Raider.Game
         /// <summary>
         /// Used when checking the API for updates.
         /// </summary>
-        public readonly static Version VERSION_NUMBER = new Version(0, 4, 3, 1);
+        public readonly static Version VERSION_NUMBER = new Version(0, 4, 5, 0);
         /// <summary>
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.

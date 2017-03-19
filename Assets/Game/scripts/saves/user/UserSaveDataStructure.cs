@@ -27,7 +27,7 @@ namespace Raider.Game.Saves.User
             public UserSettings()
             {
                 LobbyDisplay = LobbyDisplays.Scroll;
-                perspective = CameraModeController.CameraModes.FirstPerson;
+                Perspective = CameraModeController.CameraModes.FirstPerson;
             }
 
             public enum LobbyDisplays
@@ -45,7 +45,7 @@ namespace Raider.Game.Saves.User
                 set { lobbyDisplayString = value.ToString(); }
             }
 
-            public CameraModeController.CameraModes perspective
+            public CameraModeController.CameraModes Perspective
             {
                 get { return (CameraModeController.CameraModes)Enum.Parse(typeof(CameraModeController.CameraModes), perspectiveString); }
                 set { perspectiveString = value.ToString(); }
@@ -92,6 +92,13 @@ namespace Raider.Game.Saves.User
             public Character()
             {
                 emblem = new Emblem();
+                PrimaryWeapon = Armory.DEFAULT_PRIMARY_WEAPON;
+                SecondaryWeapon = Armory.DEFAULT_SECONDARY_WEAPON;
+                TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
+                foreach(Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
+                {
+                    weaponCustomizations.Add(Armory.GetWeaponMidDefaultCustmization(weapon));
+                }
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(Color.black);
                 armourTertiaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
@@ -106,6 +113,13 @@ namespace Raider.Game.Saves.User
             public Character(Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Races _race)
             {
                 emblem = _emblem;
+                PrimaryWeapon = Armory.DEFAULT_PRIMARY_WEAPON;
+                SecondaryWeapon = Armory.DEFAULT_SECONDARY_WEAPON;
+                TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
+                foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
+                {
+                    weaponCustomizations.Add(Armory.GetWeaponMidDefaultCustmization(weapon));
+                }
                 guild = _guild;
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(_armourPrimaryColor);
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(_armourSecondaryColor);
@@ -129,7 +143,7 @@ namespace Raider.Game.Saves.User
             }
 
 
-            //Unity's JsonUtility doesn't understand enums, so im storing them as strings.
+            //Unity's JsonUtility doesn't understand enums, so I'm storing them as strings.
             //The strings are stored in the database and synced on networks.
             //However, the game reads the enum properties, which parse the strings.
             //The alternative would be parsing the number representations of the enums on the API,
@@ -147,10 +161,20 @@ namespace Raider.Game.Saves.User
             [SyncVar] public string chestArmourString; //Armours Enum
             [SyncVar] public int level;
             [SyncVar] public int exp;
-            [SyncVar] public Armory.Weapons primaryWeapon;
-            [SyncVar] public Armory.Weapons secondaryWeapon;
-            [SyncVar] public Armory.Weapons tertiaryWeapon;
-            [SyncVar] public List<WeaponData.WeaponSettings> weaponCustomization;
+            [SyncVar] public string primaryWeaponString;
+            [SyncVar] public string secondaryWeaponString;
+            [SyncVar] public string tertiaryWeaponString;
+            [SyncVar] public List<WeaponCustomization> weaponCustomizations = new List<WeaponCustomization>();
+
+            public WeaponCustomization GetWeaponCustomizationForWeapon(Armory.Weapons weapon)
+            {
+                foreach(WeaponCustomization weaponCustomization in weaponCustomizations)
+                {
+                    if (weaponCustomization.weaponType == weapon)
+                        return weaponCustomization;
+                }
+                return null;
+            }
 
             public Races Race
             {
@@ -171,6 +195,21 @@ namespace Raider.Game.Saves.User
             {
                 get { return (Armours)Enum.Parse(typeof(Armours), chestArmourString); }
                 set { chestArmourString = value.ToString(); }
+            }
+            public Armory.Weapons PrimaryWeapon
+            {
+                get { return (Armory.Weapons)Enum.Parse(typeof(Armory.Weapons), primaryWeaponString); }
+                set { primaryWeaponString = value.ToString(); }
+            }
+            public Armory.Weapons SecondaryWeapon
+            {
+                get { return (Armory.Weapons)Enum.Parse(typeof(Armory.Weapons), secondaryWeaponString); }
+                set { secondaryWeaponString = value.ToString(); }
+            }
+            public Armory.Weapons TertiaryWeapon
+            {
+                get { return (Armory.Weapons)Enum.Parse(typeof(Armory.Weapons), tertiaryWeaponString); }
+                set { tertiaryWeaponString = value.ToString(); }
             }
         }
     }

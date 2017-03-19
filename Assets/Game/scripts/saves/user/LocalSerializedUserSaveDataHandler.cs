@@ -34,7 +34,7 @@ namespace Raider.Game.Saves.User
                 binaryFormatter.Serialize(file, _data);
                 file.Close();
             }
-            catch (IOException)
+            catch (Exception)
             {
                 //College sharing violations are hard to avoid so, this is necessary for now.
                 UserFeedback.LogError("IO Exception! This may be due to a sharing violation.");
@@ -64,7 +64,7 @@ namespace Raider.Game.Saves.User
                 SaveData(data, null, null);
                 ReloadData(null, null);
             }
-            catch(IOException)
+            catch(Exception)
             {
                 UserFeedback.LogError("Unable to create new save data due to an IO Exception.");
                 UserFeedback.LogError("Sharing Violation?");
@@ -85,7 +85,7 @@ namespace Raider.Game.Saves.User
                     if(successCallback != null)
                         successCallback("Read data.");
                 }
-                catch (SerializationException)
+                catch (Exception)
                 {
                     UserFeedback.LogError("Failed to deserialize saveData.");
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");

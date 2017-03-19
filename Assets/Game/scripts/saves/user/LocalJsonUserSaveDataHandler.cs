@@ -29,7 +29,7 @@ namespace Raider.Game.Saves.User
                     UserSaveDataStructure _data = JsonUtility.FromJson<UserSaveDataStructure>(File.ReadAllText(dataPath));
                     return _data;
                 }
-                catch (SerializationException)
+                catch (Exception)
                 {
                     UserFeedback.LogError("Failed to deserialize saveData.");
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");
@@ -100,7 +100,7 @@ namespace Raider.Game.Saves.User
                     if(successCallback != null)
                         successCallback("successfully read user data");
                 }
-                catch (SerializationException)
+                catch (Exception)
                 {
                     UserFeedback.LogError("Failed to deserialize saveData.");
                     UserFeedback.LogError("Savedata is corrupted. Creating new file.");
