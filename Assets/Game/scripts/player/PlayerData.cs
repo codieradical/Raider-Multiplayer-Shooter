@@ -2,7 +2,6 @@
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
-using Raider.Game.Weapons;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;

@@ -16,6 +16,8 @@ namespace Raider.Game.Player
             PlayerData playerData = GetComponent<PlayerData>();
             PlayerData.localPlayerData = playerData;
 
+            gameObject.layer = LayerMask.NameToLayer("LocalPlayer");
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
