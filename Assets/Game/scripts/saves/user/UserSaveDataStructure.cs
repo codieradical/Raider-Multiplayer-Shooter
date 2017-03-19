@@ -95,9 +95,9 @@ namespace Raider.Game.Saves.User
                 PrimaryWeapon = Armory.DEFAULT_PRIMARY_WEAPON;
                 SecondaryWeapon = Armory.DEFAULT_SECONDARY_WEAPON;
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
-                foreach(Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
+                foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(Armory.GetWeaponMidSettings(weapon));
+                    weaponCustomizations.Add(new Armory.WeaponTypeAndVariation(weapon, Armory.WeaponVariation.Mid));
                 }
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(Color.black);
@@ -118,7 +118,7 @@ namespace Raider.Game.Saves.User
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
                 foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(Armory.GetWeaponMidSettings(weapon));
+                    weaponCustomizations.Add(new Armory.WeaponTypeAndVariation(weapon, Armory.WeaponVariation.Mid));
                 }
                 guild = _guild;
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(_armourPrimaryColor);

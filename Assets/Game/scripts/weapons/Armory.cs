@@ -47,6 +47,17 @@ namespace Raider.Game.Weapons
         [Serializable]
         public class WeaponTypeAndVariation
         {
+            public WeaponTypeAndVariation()
+            {
+
+            }
+
+            public WeaponTypeAndVariation(Weapons weapon, WeaponVariation variation)
+            {
+                Weapon = weapon;
+                Variation = variation;
+            }
+
             public string weaponString;
             public string variationString;
 
