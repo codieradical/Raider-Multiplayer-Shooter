@@ -37,6 +37,31 @@ namespace Raider.Game.Weapons
             MachineGun = 3
         }
 
+        public enum WeaponVariation
+        {
+            Slow = 1,
+            Mid = 2,
+            Fast = 3
+        }
+
+        [Serializable]
+        public class WeaponTypeAndVariation
+        {
+            public string weaponString;
+            public string variationString;
+
+            public Weapons Weapon
+            {
+                get { return (Weapons)Enum.Parse(typeof(Weapons), weaponString); }
+                set { weaponString = value.ToString(); }
+            }
+            public WeaponVariation Variation
+            {
+                get { return (WeaponVariation)Enum.Parse(typeof(WeaponVariation), variationString); }
+                set { variationString = value.ToString(); }
+            }
+        }
+
         public static List<Weapons> GetPrimaryWeapons()
         {
             List<Weapons> primaryWeapons = new List<Weapons>();
@@ -79,9 +104,9 @@ namespace Raider.Game.Weapons
         {
             public Weapons type;
             public GameObject prefab;
-            public WeaponCustomization slowWeaponCustomizationDefault = new WeaponCustomization();
-            public WeaponCustomization midWeaponCustomizationDefault = new WeaponCustomization();
-            public WeaponCustomization fastWeaponCustomizationDefault = new WeaponCustomization();
+            public WeaponSettings slowWeaponSettings = new WeaponSettings();
+            public WeaponSettings midWeaponSettings = new WeaponSettings();
+            public WeaponSettings fastWeaponSettings = new WeaponSettings();
         }
 
         public List<WeaponPrefabAndDefaults> weapons;
@@ -125,14 +150,58 @@ namespace Raider.Game.Weapons
             return null;
         }
 
-        public static WeaponCustomization GetWeaponMidDefaultCustmization(Weapons weaponType)
+        public static WeaponSettings GetWeaponSlowSettings(Weapons weaponType)
         {
             foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
             {
                 if (weapon.type == weaponType)
-                    return weapon.midWeaponCustomizationDefault;
+                    return weapon.slowWeaponSettings;
             }
-            Debug.LogError("Couldn't find mid defaults for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find slow settings for weapon " + weaponType.ToString());
+            return null;
+        }
+
+        public static WeaponSettings GetWeaponMidSettings(Weapons weaponType)
+        {
+            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            {
+                if (weapon.type == weaponType)
+                    return weapon.midWeaponSettings;
+            }
+            Debug.LogError("Couldn't find mid settings for weapon " + weaponType.ToString());
+            return null;
+        }
+
+        public static WeaponSettings GetWeaponFastSettings(Weapons weaponType)
+        {
+            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            {
+                if (weapon.type == weaponType)
+                    return weapon.fastWeaponSettings;
+            }
+            Debug.LogError("Couldn't find fast defaults for weapon " + weaponType.ToString());
+            return null;
+        }
+
+        public static WeaponSettings GetWeaponSettingsByWeaponAndVariation(Weapons weaponType, WeaponVariation variation)
+        {
+            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            {
+                if (weapon.type == weaponType)
+                {
+                    switch (variation)
+                    {
+                        case WeaponVariation.Fast:
+                            return weapon.fastWeaponSettings;
+                        case WeaponVariation.Mid:
+                            return weapon.midWeaponSettings;
+                        case WeaponVariation.Slow:
+                            return weapon.slowWeaponSettings;
+                    }
+                }
+            }
+
+            Debug.LogError("Couldn't find fast defaults for weapon " + weaponType.ToString());
             return null;
         }
 

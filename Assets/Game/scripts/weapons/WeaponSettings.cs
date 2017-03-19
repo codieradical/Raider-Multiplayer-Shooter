@@ -2,16 +2,15 @@
 namespace Raider.Game.Weapons
 {
     [System.Serializable]
-    public class WeaponCustomization
+    public class WeaponSettings
     {
-        public WeaponCustomization()
+        public WeaponSettings()
         {
              
         }
 
-        public WeaponCustomization(Armory.Weapons weaponType, int range, float reloadTime, float damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
+        public WeaponSettings(int range, float reloadTime, float damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
         {
-            this.weaponType = weaponType;
             this.range = range;
             this.reloadTime = reloadTime;
             this.damagePerShot = damagePerShot;
@@ -22,10 +21,6 @@ namespace Raider.Game.Weapons
         }
 
         //public int scope;
-        /// <summary>
-        /// The weapon that this data is relevant to.
-        /// </summary>
-        public Armory.Weapons weaponType;
         /// <summary>
         /// Bullet range, in meters.
         /// </summary>

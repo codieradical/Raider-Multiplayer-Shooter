@@ -97,7 +97,7 @@ namespace Raider.Game.Saves.User
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
                 foreach(Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(Armory.GetWeaponMidDefaultCustmization(weapon));
+                    weaponCustomizations.Add(Armory.GetWeaponMidSettings(weapon));
                 }
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(Color.black);
@@ -118,7 +118,7 @@ namespace Raider.Game.Saves.User
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
                 foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(Armory.GetWeaponMidDefaultCustmization(weapon));
+                    weaponCustomizations.Add(Armory.GetWeaponMidSettings(weapon));
                 }
                 guild = _guild;
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(_armourPrimaryColor);
@@ -164,16 +164,16 @@ namespace Raider.Game.Saves.User
             [SyncVar] public string primaryWeaponString;
             [SyncVar] public string secondaryWeaponString;
             [SyncVar] public string tertiaryWeaponString;
-            [SyncVar] public List<WeaponCustomization> weaponCustomizations = new List<WeaponCustomization>();
+            [SyncVar] public List<Armory.WeaponTypeAndVariation> weaponCustomizations = new List<Armory.WeaponTypeAndVariation>();
 
-            public WeaponCustomization GetWeaponCustomizationForWeapon(Armory.Weapons weapon)
+            public Armory.WeaponVariation GetWeaponChosenVariation(Armory.Weapons weapon)
             {
-                foreach(WeaponCustomization weaponCustomization in weaponCustomizations)
+                foreach(Armory.WeaponTypeAndVariation weaponCustomization in weaponCustomizations)
                 {
-                    if (weaponCustomization.weaponType == weapon)
-                        return weaponCustomization;
+                    if (weaponCustomization.Weapon == weapon)
+                        return weaponCustomization.Variation;
                 }
-                return null;
+                return Armory.WeaponVariation.Mid;
             }
 
             public Races Race

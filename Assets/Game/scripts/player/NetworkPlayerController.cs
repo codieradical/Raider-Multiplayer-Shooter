@@ -18,10 +18,10 @@ namespace Raider.Game.Player
 
             //GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon));
             //GameObject newWeapon = Armory.GetWeaponPrefab(weapon);
-            WeaponCustomization weaponCustomization = Session.ActiveCharacter.GetWeaponCustomizationForWeapon(weapon);
+            WeaponSettings weaponCustomization = Armory.GetWeaponSettingsByWeaponAndVariation(weapon, Session.ActiveCharacter.GetWeaponChosenVariation(weapon));
             if (weaponCustomization == null)
             {
-                weaponCustomization = Armory.GetWeaponMidDefaultCustmization(weapon);
+                weaponCustomization = Armory.GetWeaponMidSettings(weapon);
                 UserSaveDataStructure.Character character = Session.ActiveCharacter;
                 character.weaponCustomizations.Add(weaponCustomization);
                 Session.UpdateActiveCharacter(character);
@@ -30,7 +30,7 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        public void CmdSpawnWeapon(Armory.Weapons weapon, WeaponCustomization customization, int ownerID)
+        public void CmdSpawnWeapon(Armory.Weapons weapon, WeaponSettings customization, int ownerID)
         {
             GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon));
 

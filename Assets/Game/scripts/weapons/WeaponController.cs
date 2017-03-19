@@ -17,7 +17,7 @@ namespace Raider.Game.Weapons
             transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
         }
 
-        public WeaponCustomization weaponCustomization;
+        public WeaponSettings weaponCustomization;
 
         public GameObject weaponFirePoint; //Assigned in inspector, where the bullet raycast begins.
 
