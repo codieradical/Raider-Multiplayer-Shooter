@@ -1,13 +1,26 @@
 ﻿using Raider.Game.Cameras;
+using Raider.Game.Networking;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Weapons
 {
-    public abstract class WeaponController : MonoBehaviour
+    public class WeaponController : NetworkBehaviour
     {
-        WeaponData weaponData;  
+        [SyncVar]
+        public int ownerId;
 
-        public virtual void Update()
+        protected virtual void Start()
+        {
+            transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
+        }
+
+        public WeaponCustomization weaponCustomization;
+
+        public int clipAmmo; //The ammo in the clip.
+        public int totalAmmo; //Backpack ammo.
+
+        protected virtual void Update()
         {
             if (Input.GetKeyDown(KeyCode.R))
                 Reload();
@@ -19,26 +32,26 @@ namespace Raider.Game.Weapons
         float lastFired = 0;
         public virtual void Shoot()
         {
-            if (Time.time - lastFired >= weaponData.chosenSettings.fireRate && !IsReloading)
+            if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading)
             {
-                if (weaponData.clipAmmo <= 0)
+                if (clipAmmo <= 0)
                 {
                     Reload();
                     return;
                 }
 
                 Vector3 firePointPosition;
-                Vector2 bulletSpread = Random.insideUnitCircle * weaponData.chosenSettings.bulletSpread;
+                Vector2 bulletSpread = Random.insideUnitCircle * weaponCustomization.bulletSpread;
 
 
                 RaycastHit raycastHit;
 
 #if DEBUG
-                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponData.chosenSettings.range;
+                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponCustomization.range;
                 Debug.DrawLine(transform.position, firePointPosition, Color.red);
 #endif
 
-                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponData.chosenSettings.range + CameraModeController.singleton.cam.transform.right * bulletSpread.x + CameraModeController.singleton.cam.transform.up * bulletSpread.y;
+                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponCustomization.range + CameraModeController.singleton.cam.transform.right * bulletSpread.x + CameraModeController.singleton.cam.transform.up * bulletSpread.y;
 
                 if (Physics.Linecast(CameraModeController.singleton.cam.transform.position, firePointPosition, out raycastHit))
                 {
@@ -61,7 +74,7 @@ namespace Raider.Game.Weapons
 
         bool IsReloading
         {
-            get { if (Time.time - lastReload >= weaponData.chosenSettings.reloadTime) return false; else return true; }
+            get { if (Time.time - lastReload >= weaponCustomization.reloadTime) return false; else return true; }
         }
     }
 }
