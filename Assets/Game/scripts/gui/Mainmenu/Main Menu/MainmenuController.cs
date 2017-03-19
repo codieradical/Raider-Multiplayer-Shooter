@@ -32,9 +32,6 @@ namespace Raider.Game.GUI.Screens
 
         public void Start()
         {
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-
             if (Session.ActiveCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());

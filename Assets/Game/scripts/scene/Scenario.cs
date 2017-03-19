@@ -1,4 +1,5 @@
 ﻿using Raider.Game.Networking;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -128,6 +129,31 @@ namespace Raider.Game.Scene
 
             currentScene = SceneManager.GetActiveScene().name;
 
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+
+        }
+
+        //Every time the a scene loads, check if it's a Ui scene.
+        void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
+        {
+            currentScene = newScene.name;
+            if (currentScene == NetworkGameManager.instance.lobbyScene)
+            {
+                currentGametype = Gametype.Ui;
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
+        }
+
+        public void OnClientDisconnectSceneChange()
+        {
+            currentScene = SceneManager.GetActiveScene().name;
+            if(currentScene == NetworkGameManager.instance.lobbyScene)
+            {
+                currentGametype = Gametype.Ui;
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
         }
 
         void OnDestroy()
@@ -144,7 +170,17 @@ namespace Raider.Game.Scene
 
             //Hacky, the currentgametype is unreliable at this point, and as a result a manual scene name check has been added.
             if ((int)currentGametype == 1 && currentScene != NetworkGameManager.instance.lobbyScene)
+            {
                 StartCoroutine(LoadGameUI());
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            if ((int)currentGametype == 2 && currentScene == NetworkGameManager.instance.lobbyScene)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+            }
 
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
@@ -167,7 +203,11 @@ namespace Raider.Game.Scene
 
             //If this is a game scene, load the game UI scene additive.
             if ((int)gametype == 1)
+            {
                 StartCoroutine(LoadGameUI());
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
 
             if ((int)gametype == 2)
             {
@@ -205,10 +245,72 @@ namespace Raider.Game.Scene
         {
             //Load singular just wouldn't work!
             TextAsset description = Resources.Load<TextAsset>("maps/" + mapName);
-            if (description == null) //If no image was found, load the template.
+
+            if (description == null || description.text == null) //No description found!
+                return "";
+
+            List<string> descriptionLines = new List<string>(description.text.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None));
+            descriptionLines.RemoveAt(0);
+
+
+            if (descriptionLines.Count < 1) //No description found!
                 return "";
             else
-                return description.text;
+                return string.Join(System.Environment.NewLine, descriptionLines.ToArray());
+        }
+
+        public static string GetMapTitle(string mapName)
+        {
+            //Load singular just wouldn't work!
+            TextAsset description = Resources.Load<TextAsset>("maps/" + mapName);
+
+            if (description == null || description.text == null) //No title
+                return mapName;
+
+            List<string> descriptionLines = new List<string>(description.text.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None));
+
+            if (descriptionLines.Count < 1) //No description found!
+                return mapName;
+            else
+                return descriptionLines[0];
+        }
+
+        public static string GetMapNameFromTitle(string title)
+        {
+#if UNITY_EDITOR
+            foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
+            {
+                string sceneName = scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", "");
+                if (sceneName.Contains(title) || sceneName == title)
+                    return sceneName;
+            }
+#else
+            for(int i = SceneManager.sceneCountInBuildSettings - 1; i > -1; i--)
+            {
+                string sceneName = SceneUtility.GetScenePathByBuildIndex(i).Remove(0, SceneUtility.GetScenePathByBuildIndex(i).LastIndexOf("/") + 1);
+                if (sceneName.Contains(title) || sceneName == title)
+                    return sceneName;
+            }
+#endif
+
+            foreach (TextAsset sceneDescription in Resources.LoadAll<TextAsset>("maps/"))
+            {
+                if (sceneDescription == null || sceneDescription.text != null) //No title
+                {
+                    List<string> descriptionLines = new List<string>(sceneDescription.text.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None));
+
+                    if (descriptionLines.Count > 0) //No title found!
+                    {
+                        if (descriptionLines[0].Contains(title) || descriptionLines[0] == title)
+                        {
+                            return sceneDescription.name;
+                        }
+                    }
+                }
+            }
+
+            Debug.LogError("Unable to find scene with title " + title);
+            return "";
         }
     }
 }

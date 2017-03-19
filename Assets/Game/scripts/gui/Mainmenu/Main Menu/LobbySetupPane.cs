@@ -124,7 +124,7 @@ namespace Raider.Game.GUI.Components
                 return;
 
             paneTitle.text = NetworkGameManager.instance.lobbySetup.syncData.GametypeString;
-            mapLabel.text = NetworkGameManager.instance.lobbySetup.syncData.SelectedScene;
+            mapLabel.text = Scenario.GetMapTitle(NetworkGameManager.instance.lobbySetup.syncData.SelectedScene);
             networkLabel.text = NetworkGameManager.instance.lobbySetup.syncData.Network;
             mapImage.sprite = Scenario.GetMapImage(NetworkGameManager.instance.lobbySetup.syncData.SelectedScene);
 
@@ -228,15 +228,15 @@ namespace Raider.Game.GUI.Components
 
             foreach(string scene in Scenario.instance.GetSceneNamesByGametype(NetworkGameManager.instance.lobbySetup.syncData.Gametype))
             {
-                options.Add(new OptionsPaneOption.OptionsPaneContents(scene, Scenario.GetMapDescription(scene), Scenario.GetMapImage(scene)));
+                options.Add(new OptionsPaneOption.OptionsPaneContents(Scenario.GetMapTitle(scene), Scenario.GetMapDescription(scene), Scenario.GetMapImage(scene)));
             }
 
             OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Select Map...", options, SelectMap, true);
         }
 
-        public void SelectMap(string mapName)
+        public void SelectMap(string title)
         {
-            NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = mapName;
+            NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = Scenario.GetMapNameFromTitle(title);
         }
 
         public void OpenNetworkOptions()

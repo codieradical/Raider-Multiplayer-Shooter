@@ -1,0 +1,6 @@
+Network Game Test
+The first Scene capable of network games.
+Same environment at Player Controller Test.
+All scenes support multiplayer now anyway :)
+
+1-32 Players

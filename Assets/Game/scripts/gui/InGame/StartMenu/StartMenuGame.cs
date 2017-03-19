@@ -126,7 +126,10 @@ namespace Raider.Game.GUI.StartMenu
         public void NoHover()
         {
             optionImage.sprite = Scenario.GetMapImage(Scenario.instance.currentScene);
-            optionText.text = Scenario.instance.currentGametype + " on " + Scenario.instance.currentScene;
+            if(Scenario.instance.currentGametype == Scenario.Gametype.Ui)
+                optionText.text = Scenario.GetMapTitle(Scenario.instance.currentScene);
+            else
+                optionText.text = Scenario.instance.currentGametype + " on " + Scenario.GetMapTitle(Scenario.instance.currentScene);
         }
 
         public void LeaveGameHover()
