@@ -25,9 +25,6 @@ namespace Raider.Game.Player
 
                 gameObject.layer = LayerMask.NameToLayer("LocalPlayer");
 
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-
                 localPlayer = this;
 
                 playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.PrimaryWeapon);
@@ -55,8 +52,11 @@ namespace Raider.Game.Player
         //Detatch Camera, Prototype.
         private void OnDestroy()
         {
-            if (CameraModeController.singleton.GetCameraController() is PlayerCameraController)
-                CameraModeController.singleton.gameObject.transform.SetParent(null, false);
+            if (isLocalPlayer)
+            {
+                if (CameraModeController.singleton.GetCameraController() is PlayerCameraController)
+                    CameraModeController.singleton.gameObject.transform.SetParent(null, false);
+            }
         }
     }
 }
