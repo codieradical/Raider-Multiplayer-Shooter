@@ -16,8 +16,6 @@ namespace Raider.Game.Player
                 return;
             }
 
-            //GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon));
-            //GameObject newWeapon = Armory.GetWeaponPrefab(weapon);
             WeaponSettings weaponCustomization = Armory.GetWeaponSettingsByWeaponAndVariation(weapon, Session.ActiveCharacter.GetWeaponChosenVariation(weapon));
             if (weaponCustomization == null)
             {

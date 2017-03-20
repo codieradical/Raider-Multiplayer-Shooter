@@ -32,9 +32,18 @@ namespace Raider.Game.Weapons
         //3 = tertiary
         public enum Weapons
         {
-            ScoutRifle = 1,
+            ScoutRifle = 1, //BR, DMR, something like that.
+            AssaultRifle = 1, 
+            PulseRifle = 1, //Like the famas, or destiny's pulse rifle.
+            Pistol = 1, 
+            Shotgun = 2, 
+            PlasmaRifle = 2, //Like the beam rifle or focus rifle from Halo.
+            PlasmaLauncher = 2, //Like destiny's fusion rifle.
             SniperRifle = 2,
-            MachineGun = 3
+            MachineGun = 3, 
+            Laser = 3, //Halo style.
+            RocketLauncher = 3,
+            GrenadeLauncher = 3
         }
 
         public enum WeaponVariation

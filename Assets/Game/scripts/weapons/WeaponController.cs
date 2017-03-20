@@ -45,7 +45,6 @@ namespace Raider.Game.Weapons
                 }
 
                 Vector3 firePointPosition;
-                Vector2 bulletSpread = Random.insideUnitCircle * weaponCustomization.bulletSpread;
 
 
                 RaycastHit raycastHit;
@@ -53,20 +52,26 @@ namespace Raider.Game.Weapons
 #if DEBUG
                 firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponCustomization.range;
                 Debug.DrawLine(CameraModeController.singleton.cam.transform.position, firePointPosition, Color.red);
+
 #endif
 
-                firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponCustomization.range + CameraModeController.singleton.cam.transform.right * bulletSpread.x + CameraModeController.singleton.cam.transform.up * bulletSpread.y;
-
-                if (Physics.Linecast(CameraModeController.singleton.cam.transform.position, firePointPosition, out raycastHit, ~dontShoot))
+                for (int projectileCount = 0; projectileCount < weaponCustomization.projectileCount; ++projectileCount)
                 {
-                    firePointPosition = raycastHit.point;
-                }
+                    Vector2 bulletSpread = Random.insideUnitCircle * weaponCustomization.bulletSpread;
+
+                    firePointPosition = CameraModeController.singleton.cam.transform.position + CameraModeController.singleton.cam.transform.forward * weaponCustomization.range + CameraModeController.singleton.cam.transform.right * bulletSpread.x + CameraModeController.singleton.cam.transform.up * bulletSpread.y;
+
+                    if (Physics.Linecast(CameraModeController.singleton.cam.transform.position, firePointPosition, out raycastHit, ~dontShoot))
+                    {
+                        firePointPosition = raycastHit.point;
+                    }
 
 #if DEBUG
-                Debug.DrawLine(CameraModeController.singleton.cam.transform.position, firePointPosition, Color.magenta);
+                    Debug.DrawLine(CameraModeController.singleton.cam.transform.position, firePointPosition, Color.magenta);
 #endif
 
-                Debug.DrawLine(weaponFirePoint.transform.position, firePointPosition, Color.green);
+                    Debug.DrawLine(weaponFirePoint.transform.position, firePointPosition, Color.green);
+                }
 
                 clipAmmo--;
 
@@ -74,6 +79,11 @@ namespace Raider.Game.Weapons
             }
         }
 
+        public virtual void Recoil()
+        {
+            //Apply recoil...
+        }
+        
         float lastReload = 0;
         public virtual void Reload()
         {
