@@ -9,7 +9,7 @@ namespace Raider.Game.Weapons
              
         }
 
-        public WeaponSettings(int projectileCount, int range, float reloadTime, float damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
+        public WeaponSettings(int projectileCount, float range, float reloadTime, float damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
         {
             this.projectileCount = projectileCount;
             this.range = range;
@@ -33,7 +33,7 @@ namespace Raider.Game.Weapons
         /// <summary>
         /// Bullet range, in meters.
         /// </summary>
-        public int range = 100;
+        public float range = 100;
         /// <summary>
         /// Reload time in seconds.
         /// </summary>
