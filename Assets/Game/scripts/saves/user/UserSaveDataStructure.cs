@@ -97,7 +97,7 @@ namespace Raider.Game.Saves.User
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
                 foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(new Armory.WeaponTypeAndVariation(weapon, Armory.WeaponVariation.Mid));
+                    weaponCustomizations.Add(new Armory.WeaponAndVariation(weapon, Armory.WeaponVariation.Mid));
                 }
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(Color.cyan);
                 armourSecondaryColor = new CommonSaveDataStructure.SerializableColor(Color.black);
@@ -118,7 +118,7 @@ namespace Raider.Game.Saves.User
                 TertiaryWeapon = Armory.DEFAULT_TERTIARY_WEAPON;
                 foreach (Armory.Weapons weapon in Enum.GetValues(typeof(Armory.Weapons)))
                 {
-                    weaponCustomizations.Add(new Armory.WeaponTypeAndVariation(weapon, Armory.WeaponVariation.Mid));
+                    weaponCustomizations.Add(new Armory.WeaponAndVariation(weapon, Armory.WeaponVariation.Mid));
                 }
                 guild = _guild;
                 armourPrimaryColor = new CommonSaveDataStructure.SerializableColor(_armourPrimaryColor);
@@ -164,11 +164,11 @@ namespace Raider.Game.Saves.User
             [SyncVar] public string primaryWeaponString;
             [SyncVar] public string secondaryWeaponString;
             [SyncVar] public string tertiaryWeaponString;
-            [SyncVar] public List<Armory.WeaponTypeAndVariation> weaponCustomizations = new List<Armory.WeaponTypeAndVariation>();
+            [SyncVar] public List<Armory.WeaponAndVariation> weaponCustomizations = new List<Armory.WeaponAndVariation>();
 
             public Armory.WeaponVariation GetWeaponChosenVariation(Armory.Weapons weapon)
             {
-                foreach(Armory.WeaponTypeAndVariation weaponCustomization in weaponCustomizations)
+                foreach(Armory.WeaponAndVariation weaponCustomization in weaponCustomizations)
                 {
                     if (weaponCustomization.Weapon == weapon)
                         return weaponCustomization.Variation;

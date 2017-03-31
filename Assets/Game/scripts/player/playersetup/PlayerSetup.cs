@@ -18,9 +18,6 @@ namespace Raider.Game.Player
 
             gameObject.layer = LayerMask.NameToLayer("LocalPlayer");
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
             SetupLocalPlayer();
 
             PlayerData.localPlayerData.syncData.Character = Session.ActiveCharacter;

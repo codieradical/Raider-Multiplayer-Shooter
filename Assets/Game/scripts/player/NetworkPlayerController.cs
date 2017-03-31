@@ -21,7 +21,7 @@ namespace Raider.Game.Player
             {
                 weaponCustomization = Armory.GetWeaponMidSettings(weapon);
                 UserSaveDataStructure.Character character = Session.ActiveCharacter;
-                character.weaponCustomizations.Add(new Armory.WeaponTypeAndVariation(weapon, Armory.WeaponVariation.Mid));
+                character.weaponCustomizations.Add(new Armory.WeaponAndVariation(weapon, Armory.WeaponVariation.Mid));
                 Session.UpdateActiveCharacter(character);
             }
             CmdSpawnWeapon(weapon, weaponCustomization, PlayerData.localPlayerData.syncData.id);

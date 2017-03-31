@@ -8,74 +8,74 @@ using UnityEngine.SceneManagement;
 namespace Raider.Game.Scene
 {
 
-    public class Scenario : MonoBehaviour
-    {
+	public class Scenario : MonoBehaviour
+	{
 
-        private const string COMMON_SCENES_PATH = "multi";
+		private const string COMMON_SCENES_PATH = "multi";
 
-        [HideInInspector]
-        public static Scenario instance;
+		[HideInInspector]
+		public static Scenario instance;
 
-        public string gameuiScene;
-        public string currentScene;
-        public Gametype currentGametype = Gametype.None;
+		public string gameuiScene;
+		public string currentScene;
+		public Gametype currentGametype = Gametype.None;
 
-        public static bool InLobby
-        {
-            get
-            {
-                if (SceneManager.GetActiveScene().name == NetworkGameManager.instance.lobbyScene)
-                    return true;
-                else
-                    return false;
-            }
-        }
+		public static bool InLobby
+		{
+			get
+			{
+				if (SceneManager.GetActiveScene().name == NetworkGameManager.instance.lobbyScene)
+					return true;
+				else
+					return false;
+			}
+		}
 
-        public void LeaveGame()
-        {
-            if(InLobby)
-            {
-                Debug.LogWarning("Can't leave game when in lobby!");
-            }
-            else
-            {
-                if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
-                {
-                    if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
-                        NetworkGameManager.instance.ServerReturnToLobby();
-                    else
-                        NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
-                }
-                LoadScene(NetworkGameManager.instance.lobbyScene, Gametype.Ui);
-            }
-        }
+		public void LeaveGame()
+		{
+			if (InLobby)
+			{
+				Debug.LogWarning("Can't leave game when in lobby!");
+			}
+			else
+			{
+				if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
+				{
+					if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+						NetworkGameManager.instance.ServerReturnToLobby();
+					else
+						NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+				}
+				LoadScene(NetworkGameManager.instance.lobbyScene, Gametype.Ui);
+			}
+		}
 
-        //A list of scenes by path.
-        public List<string> scenes;
+		//A list of scenes by path.
+		public List<string> scenes;
 
-        public List<string> GetSceneNamesByGametype(Gametype gametype)
-        {
-            List<string> paths = GetScenePathsByGametype(gametype);
-            List<string> names = new List<string>();
+		public List<string> GetSceneNamesByGametype(Gametype gametype)
+		{
+			List<string> paths = GetScenePathsByGametype(gametype);
+			List<string> names = new List<string>();
 
-            foreach (string path in paths)
-            {
-                names.Add(path.Remove(0, path.LastIndexOf("/") + 1).Replace(".unity", ""));
-            }
+			foreach (string path in paths)
+			{
+				names.Add(path.Remove(0, path.LastIndexOf("/") + 1).Replace(".unity", ""));
+			}
 
-            return names;
-        }
+			return names;
+		}
 
-        public List<string> GetScenePathsByGametype(Gametype gametype)
-        {
-            List<string> appropriateScenes = new List<string>();
+		public List<string> GetScenePathsByGametype(Gametype gametype)
+		{
+			List<string> appropriateScenes = new List<string>();
 
 #if UNITY_EDITOR
-            foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
-            {
-                if (scene.path.Contains(gametype.ToString().ToLower()) || scene.path.Contains(COMMON_SCENES_PATH))
-                    appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
-            }
+			foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
+			{
+				if (scene.path.Contains(gametype.ToString().ToLower()) || scene.path.Contains(COMMON_SCENES_PATH))
+					appropriateScenes.Add(scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", ""));
+			}
 #else
             foreach(string scene in scenes)
             {
@@ -83,31 +83,24 @@ namespace Raider.Game.Scene
                     appropriateScenes.Add(scene);
             }
 #endif
-            return appropriateScenes;
-        }
+			return appropriateScenes;
+		}
 
-        public enum Gametype
-        {
-            //1 represents a game scene, 2 represents a lobby scene.
-            None = 0,
-            Slayer = 1,
-            Capture_The_Flag = 1,
-            King_Of_The_Hill = 1,
-            Assault = 1,
-            Oddball = 1,
-            Ui = 2,
-            Test = 1
+		public enum Gametype
+		{
+			//1 represents a game scene, 2 represents a lobby scene.
+			None,
+			Slayer,
+			Capture_The_Flag,
+			King_Of_The_Hill,
+			Assault,
+			Oddball,
+			Ui,
+			Test
+		}
 
-            //Excavator Gametypes:
-            //Story,
-            //Survival,
-            //Seige,
-            //Skirmish,
-            //Anvil,
-        }
-
-        // Use this for initialization
-        void Awake()
+		// Use this for initialization
+		void Awake()
         {
             DontDestroyOnLoad(gameObject);
 
@@ -143,6 +136,11 @@ namespace Raider.Game.Scene
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
+			else
+			{
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
         }
 
         public void OnClientDisconnectSceneChange()
@@ -154,7 +152,12 @@ namespace Raider.Game.Scene
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
-        }
+			else
+			{
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
+		}
 
         void OnDestroy()
         {
@@ -168,15 +171,14 @@ namespace Raider.Game.Scene
         {
             currentScene = NetworkGameManager.networkSceneName;
 
-            //Hacky, the currentgametype is unreliable at this point, and as a result a manual scene name check has been added.
-            if ((int)currentGametype == 1 && currentScene != NetworkGameManager.instance.lobbyScene)
+            if (currentScene != NetworkGameManager.instance.lobbyScene)
             {
                 StartCoroutine(LoadGameUI());
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
 
-            if ((int)currentGametype == 2 && currentScene == NetworkGameManager.instance.lobbyScene)
+            if (currentScene == NetworkGameManager.instance.lobbyScene)
             {
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
@@ -201,21 +203,21 @@ namespace Raider.Game.Scene
             currentScene = sceneName;
             currentGametype = gametype;
 
-            //If this is a game scene, load the game UI scene additive.
-            if ((int)gametype == 1)
-            {
-                StartCoroutine(LoadGameUI());
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+			//If this is a game scene, load the game UI scene additive.
+			if (sceneName != NetworkGameManager.instance.lobbyScene)
+			{
+				StartCoroutine(LoadGameUI());
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
 
-            if ((int)gametype == 2)
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
-            }
+			if (sceneName == NetworkGameManager.instance.lobbyScene)
+			{
+				Cursor.lockState = CursorLockMode.Confined;
+				Cursor.visible = true;
+			}
 
-        }
+		}
 
         //This is a kinda hacky solution to merging the next frame.
         IEnumerator LoadGameUI()

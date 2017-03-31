@@ -32,36 +32,44 @@ namespace Raider.Game.Weapons
         //3 = tertiary
         public enum Weapons
         {
-            ScoutRifle = 1, //BR, DMR, something like that.
-            AssaultRifle = 1, 
-            PulseRifle = 1, //Like the famas, or destiny's pulse rifle.
-            Pistol = 1, 
-            Shotgun = 2, 
-            PlasmaRifle = 2, //Like the beam rifle or focus rifle from Halo.
-            PlasmaLauncher = 2, //Like destiny's fusion rifle.
-            SniperRifle = 2,
-            MachineGun = 3, 
-            Laser = 3, //Halo style.
-            RocketLauncher = 3,
-            GrenadeLauncher = 3
+            ScoutRifle, //BR, DMR, something like that.
+            AssaultRifle, 
+            PulseRifle, //Like the famas, or destiny's pulse rifle.
+            Pistol, 
+            Shotgun, 
+            PlasmaRifle, //Like the beam rifle or focus rifle from Halo.
+            PlasmaLauncher, //Like destiny's fusion rifle.
+            SniperRifle,
+            MachineGun, 
+            Laser, //Halo style.
+            RocketLauncher,
+            GrenadeLauncher,
         }
 
         public enum WeaponVariation
         {
-            Slow = 1,
-            Mid = 2,
-            Fast = 3
+            Slow,
+            Mid,
+            Fast
         }
 
+		public enum WeaponType
+		{
+			Primary,
+			Secondary,
+			Tertiary,
+			Special
+		}
+
         [Serializable]
-        public class WeaponTypeAndVariation
+        public class WeaponAndVariation
         {
-            public WeaponTypeAndVariation()
+            public WeaponAndVariation()
             {
 
             }
 
-            public WeaponTypeAndVariation(Weapons weapon, WeaponVariation variation)
+            public WeaponAndVariation(Weapons weapon, WeaponVariation variation)
             {
                 Weapon = weapon;
                 Variation = variation;
@@ -82,38 +90,16 @@ namespace Raider.Game.Weapons
             }
         }
 
-        public static List<Weapons> GetPrimaryWeapons()
-        {
-            List<Weapons> primaryWeapons = new List<Weapons>();
-            foreach(Weapons weapon in Enum.GetValues(typeof(Weapons)))
-            {
-                if ((int)weapon == 1)
-                    primaryWeapons.Add(weapon);
-            }
-            return primaryWeapons;
-        }
-
-        public static List<Weapons> GetSecondaryWeapons()
-        {
-            List<Weapons> secondaryWeapons = new List<Weapons>();
-            foreach (Weapons weapon in Enum.GetValues(typeof(Weapons)))
-            {
-                if ((int)weapon == 2)
-                    secondaryWeapons.Add(weapon);
-            }
-            return secondaryWeapons;
-        }
-
-        public static List<Weapons> GetTertiaryWeapons()
-        {
-            List<Weapons> tertiaryWeapons = new List<Weapons>();
-            foreach (Weapons weapon in Enum.GetValues(typeof(Weapons)))
-            {
-                if ((int)weapon == 2)
-                    tertiaryWeapons.Add(weapon);
-            }
-            return tertiaryWeapons;
-        }
+		public static List<Weapons> GetWeaponsByType(WeaponType type)
+		{
+			List<Weapons> weapons = new List<Weapons>();
+			foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
+			{
+				if (weaponPrefab.weaponType == type)
+					weapons.Add(weaponPrefab.weapon);
+			}
+			return weapons;
+		}
 
         public const Weapons DEFAULT_PRIMARY_WEAPON = Weapons.ScoutRifle;
         public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.SniperRifle;
@@ -122,7 +108,8 @@ namespace Raider.Game.Weapons
         [Serializable]
         public class WeaponPrefabAndDefaults
         {
-            public Weapons type;
+            public Weapons weapon;
+			public WeaponType weaponType;
             public GameObject prefab;
             public WeaponSettings slowWeaponSettings = new WeaponSettings();
             public WeaponSettings midWeaponSettings = new WeaponSettings();
@@ -138,7 +125,7 @@ namespace Raider.Game.Weapons
                 bool foundInweaponPrefabs = false;
                 foreach (WeaponPrefabAndDefaults weaponPrefab in weapons)
                 {
-                    if (weaponPrefab.type == weapon)
+                    if (weaponPrefab.weapon == weapon)
                     {
                         if (foundInweaponPrefabs)
                             Debug.Log("Warning, weapon " + weapon.ToString() + " was found in weapon prefabs more than once.");
@@ -153,75 +140,75 @@ namespace Raider.Game.Weapons
 
         private void RegisterSpawnablePrefabs()
         {
-            foreach(WeaponPrefabAndDefaults weapon in weapons)
+            foreach(WeaponPrefabAndDefaults weaponPrefab in weapons)
             {
-                ClientScene.RegisterPrefab(weapon.prefab);
+                ClientScene.RegisterPrefab(weaponPrefab.prefab);
             }
         }
 
-        public static GameObject GetWeaponPrefab(Weapons weaponType)
+        public static GameObject GetWeaponPrefab(Weapons weapon)
         {
             foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
             {
-                if (weaponPrefab.type == weaponType)
+                if (weaponPrefab.weapon == weapon)
                     return weaponPrefab.prefab;
             }
-            Debug.LogError("Couldn't find prefab for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find prefab for weapon " + weapon.ToString());
             return null;
         }
 
-        public static WeaponSettings GetWeaponSlowSettings(Weapons weaponType)
+        public static WeaponSettings GetWeaponSlowSettings(Weapons weapon)
         {
-            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
             {
-                if (weapon.type == weaponType)
-                    return weapon.slowWeaponSettings;
+                if (weaponPrefab.weapon == weapon)
+                    return weaponPrefab.slowWeaponSettings;
             }
-            Debug.LogError("Couldn't find slow settings for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find slow settings for weapon " + weapon.ToString());
             return null;
         }
 
-        public static WeaponSettings GetWeaponMidSettings(Weapons weaponType)
+        public static WeaponSettings GetWeaponMidSettings(Weapons weapon)
         {
-            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
             {
-                if (weapon.type == weaponType)
-                    return weapon.midWeaponSettings;
+                if (weaponPrefab.weapon == weapon)
+                    return weaponPrefab.midWeaponSettings;
             }
-            Debug.LogError("Couldn't find mid settings for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find mid settings for weapon " + weapon.ToString());
             return null;
         }
 
-        public static WeaponSettings GetWeaponFastSettings(Weapons weaponType)
+        public static WeaponSettings GetWeaponFastSettings(Weapons weapon)
         {
-            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
             {
-                if (weapon.type == weaponType)
-                    return weapon.fastWeaponSettings;
+                if (weaponPrefab.weapon == weapon)
+                    return weaponPrefab.fastWeaponSettings;
             }
-            Debug.LogError("Couldn't find fast defaults for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find fast defaults for weapon " + weapon.ToString());
             return null;
         }
 
-        public static WeaponSettings GetWeaponSettingsByWeaponAndVariation(Weapons weaponType, WeaponVariation variation)
+        public static WeaponSettings GetWeaponSettingsByWeaponAndVariation(Weapons weapon, WeaponVariation variation)
         {
-            foreach (WeaponPrefabAndDefaults weapon in instance.weapons)
+            foreach (WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
             {
-                if (weapon.type == weaponType)
+                if (weaponPrefab.weapon == weapon)
                 {
                     switch (variation)
                     {
                         case WeaponVariation.Fast:
-                            return weapon.fastWeaponSettings;
+                            return weaponPrefab.fastWeaponSettings;
                         case WeaponVariation.Mid:
-                            return weapon.midWeaponSettings;
+                            return weaponPrefab.midWeaponSettings;
                         case WeaponVariation.Slow:
-                            return weapon.slowWeaponSettings;
+                            return weaponPrefab.slowWeaponSettings;
                     }
                 }
             }
 
-            Debug.LogError("Couldn't find fast defaults for weapon " + weaponType.ToString());
+            Debug.LogError("Couldn't find fast defaults for weapon " + weapon.ToString());
             return null;
         }
 
