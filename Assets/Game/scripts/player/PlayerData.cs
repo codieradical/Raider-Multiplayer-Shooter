@@ -47,7 +47,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public Gametype.Teams team = Gametype.Teams.None;
+            [SyncVar] public Gametypes.Gametypes.Teams team = Gametypes.Gametypes.Teams.None;
 
             //Properties
             public bool GotData
@@ -86,9 +86,9 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        public void CmdChangeTeam(Gametype.Teams newTeam)
+        public void CmdChangeTeam(Gametypes.Gametypes.Teams newTeam)
         {
-            if (newTeam == Gametype.Teams.None)
+            if (newTeam == Gametypes.Gametypes.Teams.None)
                 return;
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
                 return;
@@ -97,10 +97,10 @@ namespace Raider.Game.Player
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && Scenario.InLobby)
                 return;
 
-            Gametype.Teams[] availableTeams = (Gametype.Teams[])Enum.GetValues(typeof(Gametype.Teams));
+			Gametypes.Gametypes.Teams[] availableTeams = (Gametypes.Gametypes.Teams[])Enum.GetValues(typeof(Gametypes.Gametypes.Teams));
             Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
 
-            foreach(Gametype.Teams team in availableTeams)
+            foreach(Gametypes.Gametypes.Teams team in availableTeams)
             {
                 if(team == newTeam)
                 {
@@ -128,7 +128,7 @@ namespace Raider.Game.Player
         }
 
         [ClientRpc]
-        public void RpcChangeTeam(Gametype.Teams team)
+        public void RpcChangeTeam(Gametypes.Gametypes.Teams team)
         {
             syncData.team = team;
             NetworkGameManager.instance.UpdateLobbyNameplates();

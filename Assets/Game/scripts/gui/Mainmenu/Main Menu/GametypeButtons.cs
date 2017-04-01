@@ -51,7 +51,7 @@ namespace Raider.Game.GUI.Components
         {
             try
             {
-                Scenario.Gametype enumGametype = (Scenario.Gametype)Enum.Parse(typeof(Scenario.Gametype), gametype);
+				Gametypes.Gametypes.Gametype enumGametype = (Gametypes.Gametypes.Gametype)Enum.Parse(typeof(Gametypes.Gametypes.Gametype), gametype);
                 HideButtons();
                 LobbySetupPane.instance.OpenPane(enumGametype);
             }

@@ -18,7 +18,7 @@ namespace Raider.Game.Scene
 
 		public string gameuiScene;
 		public string currentScene;
-		public Gametype currentGametype = Gametype.None;
+		public Gametypes.Gametypes.Gametype currentGametype = Gametypes.Gametypes.Gametype.None;
 
 		public static bool InLobby
 		{
@@ -46,14 +46,14 @@ namespace Raider.Game.Scene
 					else
 						NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
 				}
-				LoadScene(NetworkGameManager.instance.lobbyScene, Gametype.Ui);
+				LoadScene(NetworkGameManager.instance.lobbyScene, Gametypes.Gametypes.Gametype.Ui);
 			}
 		}
 
 		//A list of scenes by path.
 		public List<string> scenes;
 
-		public List<string> GetSceneNamesByGametype(Gametype gametype)
+		public List<string> GetSceneNamesByGametype(Gametypes.Gametypes.Gametype gametype)
 		{
 			List<string> paths = GetScenePathsByGametype(gametype);
 			List<string> names = new List<string>();
@@ -66,7 +66,7 @@ namespace Raider.Game.Scene
 			return names;
 		}
 
-		public List<string> GetScenePathsByGametype(Gametype gametype)
+		public List<string> GetScenePathsByGametype(Gametypes.Gametypes.Gametype gametype)
 		{
 			List<string> appropriateScenes = new List<string>();
 
@@ -79,24 +79,11 @@ namespace Raider.Game.Scene
 #else
             foreach(string scene in scenes)
             {
-                if (scene.Contains(gametype.ToString().ToLower()))
+                if (scene.Contains(gametype.ToString().ToLower()) || scene.Contains(COMMON_SCENES_PATH))
                     appropriateScenes.Add(scene);
             }
 #endif
 			return appropriateScenes;
-		}
-
-		public enum Gametype
-		{
-			//1 represents a game scene, 2 represents a lobby scene.
-			None,
-			Slayer,
-			Capture_The_Flag,
-			King_Of_The_Hill,
-			Assault,
-			Oddball,
-			Ui,
-			Test
 		}
 
 		// Use this for initialization
@@ -132,7 +119,7 @@ namespace Raider.Game.Scene
             currentScene = newScene.name;
             if (currentScene == NetworkGameManager.instance.lobbyScene)
             {
-                currentGametype = Gametype.Ui;
+                currentGametype = Gametypes.Gametypes.Gametype.Ui;
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
@@ -148,7 +135,7 @@ namespace Raider.Game.Scene
             currentScene = SceneManager.GetActiveScene().name;
             if(currentScene == NetworkGameManager.instance.lobbyScene)
             {
-                currentGametype = Gametype.Ui;
+                currentGametype = Gametypes.Gametypes.Gametype.Ui;
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
@@ -187,20 +174,20 @@ namespace Raider.Game.Scene
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
-        public void LoadScene(string sceneName, Gametype gametype)
+        public void LoadScene(string sceneName, Gametypes.Gametypes.Gametype gametype)
         {
             SceneManager.LoadScene(sceneName);
 
-            //Now the scene has loaded, we can check
+			//Now the scene has loaded, we can check
 #if !UNITY_EDITOR
             UnityEngine.SceneManagement.Scene newScene = SceneManager.GetSceneByName(sceneName);
 
-            if (!newScene.path.Contains(gametype.ToString().ToLower()))
+            if (!newScene.path.Contains(gametype.ToString().ToLower()) && !newScene.path.Contains(COMMON_SCENES_PATH))
                 Debug.LogError(string.Format("Incompatible Gametype, loaded {0} with gametype {1}", newScene.path + newScene.name, gametype.ToString()));
             
             SceneManager.SetActiveScene(newScene);
 #endif
-            currentScene = sceneName;
+			currentScene = sceneName;
             currentGametype = gametype;
 
 			//If this is a game scene, load the game UI scene additive.

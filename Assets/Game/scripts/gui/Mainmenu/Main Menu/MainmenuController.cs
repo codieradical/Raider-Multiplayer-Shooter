@@ -3,6 +3,7 @@ using Raider.Game.GUI.Components;
 using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Saves.User;
+using Raider.Game.Cameras;
 using UnityEngine;
 
 namespace Raider.Game.GUI.Screens
@@ -28,10 +29,16 @@ namespace Raider.Game.GUI.Screens
             instance = null;
         }
 
-        #endregion
+		#endregion
 
-        public void Start()
-        {
+		public void Start()
+		{
+			if (animationClip != null)
+			{
+				CameraModeController.singleton.animationClip = animationClip;
+				CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.Animated);
+			}
+
             if (Session.ActiveCharacter != null)
             {
                 MenuManager.instance.ShowMenu(MainMenuScreen.GetComponent<Menu>());
@@ -63,6 +70,9 @@ namespace Raider.Game.GUI.Screens
                 ChooseCharacterScreen.GetComponent<CharacterSelectionHandler>().LoadCharacterPlates();
             }
         }
+
+		[Header("Camera Setup")]
+		public AnimationClip animationClip;
 
         [SerializeField]
         public CharacterEditorHandler editorHandler;

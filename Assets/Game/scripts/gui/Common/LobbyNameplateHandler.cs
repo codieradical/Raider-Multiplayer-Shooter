@@ -34,7 +34,7 @@ namespace Raider.Game.GUI.Components
 
         public void UpdateColor()
         {
-            if (playerData.team == Gametype.Teams.None)
+            if (playerData.team == Gametypes.Gametypes.Teams.None)
             {
                 float h, s, v;
                 Color.RGBToHSV(playerData.Character.armourPrimaryColor.Color, out h, out s, out v);
@@ -44,7 +44,7 @@ namespace Raider.Game.GUI.Components
             }
             else
             {
-                Color nameplateColor = Gametype.GetTeamColor(playerData.team);
+                Color nameplateColor = Gametypes.Gametypes.GetTeamColor(playerData.team);
                 nameplateColor.a = 200f / 255f;
                 backgroundImage.color = nameplateColor;
             }

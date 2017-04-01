@@ -47,8 +47,9 @@ namespace Raider.Game.Cameras
 
         public GameObject sceneOverviewGameObject;
         public GameObject cameraPathGameObject;
+		public AnimationClip animationClip;
 
-        [System.Serializable]
+        [Serializable]
         public class FirstPersonCameraSettings
         {
             public float lookSensitivity = 3f;
@@ -56,7 +57,7 @@ namespace Raider.Game.Cameras
             public bool moveWithBody = true;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class ThirdPersonCameraSettings
         {
             public LayerMask transparent;
@@ -80,7 +81,8 @@ namespace Raider.Game.Cameras
             Follow = 6,
             SceneOverview = 7,
             FreeCam = 8,
-            FollowPath = 9
+            FollowPath = 9,
+			Animated = 10
         }
 
         public CameraModes CameraMode
@@ -89,26 +91,28 @@ namespace Raider.Game.Cameras
             {
                 CameraController attachedController = GetComponent<CameraController>();
 
-                if (attachedController == null)
-                    return CameraModes.None;
-                else if (attachedController is FirstPersonCameraController)
-                    return CameraModes.FirstPerson;
-                else if (attachedController is ThirdPersonCameraController)
-                    return CameraModes.ThirdPerson;
-                else if (attachedController is ShoulderCameraController)
-                    return CameraModes.Shoulder;
-                else if (attachedController is FlyCameraController)
-                    return CameraModes.FlyCam;
-                else if (attachedController is StaticCameraController)
-                    return CameraModes.Static;
-                else if (attachedController is FollowCameraController)
-                    return CameraModes.Follow;
-                else if (attachedController is SceneOverviewCameraController)
-                    return CameraModes.SceneOverview;
-                else if (attachedController is FreeCameraController)
-                    return CameraModes.FreeCam;
-                else if (attachedController is FollowPathCameraController)
-                    return CameraModes.FollowPath;
+				if (attachedController == null)
+					return CameraModes.None;
+				else if (attachedController is FirstPersonCameraController)
+					return CameraModes.FirstPerson;
+				else if (attachedController is ThirdPersonCameraController)
+					return CameraModes.ThirdPerson;
+				else if (attachedController is ShoulderCameraController)
+					return CameraModes.Shoulder;
+				else if (attachedController is FlyCameraController)
+					return CameraModes.FlyCam;
+				else if (attachedController is StaticCameraController)
+					return CameraModes.Static;
+				else if (attachedController is FollowCameraController)
+					return CameraModes.Follow;
+				else if (attachedController is SceneOverviewCameraController)
+					return CameraModes.SceneOverview;
+				else if (attachedController is FreeCameraController)
+					return CameraModes.FreeCam;
+				else if (attachedController is FollowPathCameraController)
+					return CameraModes.FollowPath;
+				else if (attachedController is AnimatedCameraController)
+					return CameraModes.Animated;
 
                 return CameraModes.Unknown;
             }
@@ -158,6 +162,9 @@ namespace Raider.Game.Cameras
                         case CameraModes.FollowPath:
                             newController = gameObject.AddComponent<FollowPathCameraController>();
                             break;
+						case CameraModes.Animated:
+							newController = gameObject.AddComponent<AnimatedCameraController>();
+							break;
                     }
                 }
                 if (newController != null)

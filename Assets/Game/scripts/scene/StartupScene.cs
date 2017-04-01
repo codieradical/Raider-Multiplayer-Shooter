@@ -11,7 +11,7 @@ namespace Raider.Game.Scene
         //On the second frame, load the other scenario.
         //There will be no third frame.
         void Update() {
-            Scenario.instance.LoadScene(startScene, Scenario.Gametype.Ui);
+            Scenario.instance.LoadScene(startScene, Gametypes.Gametypes.Gametype.Ui);
         }
     }
 }

@@ -24,16 +24,16 @@ namespace Raider.Game.Networking
                     NetworkGameManager.instance.lobbySetup.SendLobbySetupUpdate();
                 }
             }
-            public Scenario.Gametype Gametype
+            public Gametypes.Gametypes.Gametype Gametype
             {
                 get
                 {
                     //Replace spaces in the string with underscores, parse.
-                    return (Scenario.Gametype)(Enum.Parse(typeof(Scenario.Gametype), GametypeString.Replace(" ", "_")));
+                    return Gametypes.Gametypes.instance.GetGametypeByTitle(GametypeString);
                 }
                 set
                 {
-                    GametypeString = value.ToString().Replace("_", " ");
+                    GametypeString = Gametypes.Gametypes.instance.GetGametypeTitle(value);
                 }
             }
             public string selectedScene;
@@ -63,7 +63,7 @@ namespace Raider.Game.Networking
                 }
             }
 
-            public Gametype.GameOptions gameOptions;
+            public GametypeController.GameOptions gameOptions;
         }
 
         public SyncData syncData = new SyncData();

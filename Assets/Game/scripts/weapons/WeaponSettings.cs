@@ -9,8 +9,10 @@ namespace Raider.Game.Weapons
              
         }
 
-        public WeaponSettings(int projectileCount, float range, float reloadTime, float damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
+        public WeaponSettings(float bulletSpeed, float recoil, int projectileCount, float range, float reloadTime, int damagePerShot, int clipSize, int maxAmmo, float fireRate, float bulletSpread)
         {
+			this.bulletSpeed = bulletSpeed;
+			this.recoil = recoil;
             this.projectileCount = projectileCount;
             this.range = range;
             this.reloadTime = reloadTime;
@@ -21,6 +23,10 @@ namespace Raider.Game.Weapons
             this.bulletSpread = bulletSpread;
         }
 
+		/// <summary>
+		/// The speed of bullet projectiles.
+		/// </summary>
+		public float bulletSpeed = 10f;
         //public int scope;
         /// <summary>
         /// Recoil recieved from firing.
@@ -41,7 +47,7 @@ namespace Raider.Game.Weapons
         /// <summary>
         /// Damage dealt per bullet.
         /// </summary>
-        public float damagePerShot = 10;
+        public int damagePerShot = 10;
         /// <summary>
         /// The maximum amount of ammo in a clip.
         /// </summary>

@@ -2,7 +2,7 @@
 
 namespace Raider.Game.Gametypes
 {
-    public class Slayer : Gametype
+    public class Slayer : GametypeController
     {
         [Serializable]
         public class SlayerGameOptions : GameOptions

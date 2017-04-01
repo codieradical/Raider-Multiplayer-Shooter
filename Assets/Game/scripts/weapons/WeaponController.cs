@@ -1,5 +1,6 @@
 ﻿using Raider.Game.Cameras;
 using Raider.Game.Networking;
+using Raider.Game.Player;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -15,6 +16,8 @@ namespace Raider.Game.Weapons
         protected virtual void Start()
         {
             transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
+			clipAmmo = weaponCustomization.clipSize;
+			totalAmmo = weaponCustomization.maxAmmo;
         }
 
         public WeaponSettings weaponCustomization;
@@ -36,7 +39,7 @@ namespace Raider.Game.Weapons
         float lastFired = 0;
         public virtual void Shoot()
         {
-            if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading)
+            if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading && hasAuthority)
             {
                 if (clipAmmo <= 0)
                 {
@@ -70,6 +73,8 @@ namespace Raider.Game.Weapons
                     Debug.DrawLine(CameraModeController.singleton.cam.transform.position, firePointPosition, Color.magenta);
 #endif
 
+					CmdShoot(firePointPosition);
+
                     Debug.DrawLine(weaponFirePoint.transform.position, firePointPosition, Color.green);
                 }
 
@@ -78,6 +83,20 @@ namespace Raider.Game.Weapons
                 lastFired = Time.time;
             }
         }
+
+		[Command]
+		public virtual void CmdShoot(Vector3 firePointPosition)
+		{
+			RaycastHit raycastHit;
+			if (Physics.Linecast(weaponFirePoint.transform.position, firePointPosition, out raycastHit, ~dontShoot))
+			{
+				NetworkPlayerController player = raycastHit.collider.gameObject.GetComponentInParent<NetworkPlayerController>();
+				if (player != null)
+				{
+					player.TakeDamage(weaponCustomization.damagePerShot, ownerId);
+				}
+			}
+		}
 
         public virtual void Recoil()
         {

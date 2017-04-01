@@ -30,7 +30,7 @@ namespace Raider.Game.GUI.Components
         public Image mapImage;
         public Button startGameButton;
 
-        public void OpenPane(Scenario.Gametype gametype)
+        public void OpenPane(Gametypes.Gametypes.Gametype gametype)
         {
             IsOpen = true;
             NetworkGameManager.instance.lobbySetup.syncData.Gametype = gametype;
@@ -42,7 +42,7 @@ namespace Raider.Game.GUI.Components
             else
                 NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = Scenario.instance.GetSceneNamesByGametype(gametype)[0];
 
-            NetworkGameManager.instance.lobbySetup.syncData.gameOptions = Gametype.GetGameOptionsByEnum(gametype);
+            NetworkGameManager.instance.lobbySetup.syncData.gameOptions = GametypeController.GetGameOptionsByEnum(gametype);
 
             UpdatePaneData();
         }

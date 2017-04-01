@@ -83,9 +83,9 @@ namespace Raider.Game.Player
         {
             PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerSlot);
             Color usernameColor;
-            if (playerData.syncData.team != Gametypes.Gametype.Teams.None)
+            if (playerData.syncData.team != Gametypes.Gametypes.Teams.None)
             {
-                usernameColor = Gametypes.Gametype.GetTeamColor(playerData.syncData.team);
+                usernameColor = Gametypes.Gametypes.GetTeamColor(playerData.syncData.team);
             }
             else
             {

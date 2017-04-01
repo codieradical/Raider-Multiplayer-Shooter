@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Raider.Game.Common.Types
+namespace Raider.Common.Types
 {
     [System.Serializable]
     public class Tuple<T1, T2>

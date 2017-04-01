@@ -1,5 +1,4 @@
 ﻿using Raider.Game.Cameras;
-using Raider.Game.Gametypes;
 using Raider.Game.GUI.CharacterPreviews;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,11 +67,11 @@ namespace Raider.Game.Player
         {
             base.UpdatePlayerAppearence(syncData.Character);
 
-            if(syncData.team != Gametype.Teams.None)
+            if(syncData.team != Gametypes.Gametypes.Teams.None)
             {
                 foreach (Renderer primaryRenderer in primaryRenderers)
                 {
-                    primaryRenderer.material.color = Gametype.GetTeamColor(syncData.team);
+                    primaryRenderer.material.color = Gametypes.Gametypes.GetTeamColor(syncData.team);
                 }
             }
         }

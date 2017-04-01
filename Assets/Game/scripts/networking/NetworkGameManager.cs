@@ -1,4 +1,5 @@
-﻿using Raider.Game.Gametypes;
+﻿using Raider.Common.Types;
+using Raider.Game.Gametypes;
 using Raider.Game.GUI.Components;
 using Raider.Game.Player;
 using Raider.Game.Scene;
@@ -20,6 +21,7 @@ namespace Raider.Game.Networking
         //This class already inherits a singleton...
         public static NetworkGameManager instance;
         public LobbySetup lobbySetup;
+		public GametypeController activeGametype;
 
         void Start()
         {
@@ -78,7 +80,33 @@ namespace Raider.Game.Networking
             }
         }
 
-        public bool IsLeader
+
+		//DEBUG
+		private void OnGUI()
+		{
+			for (int i = 0; i < Players.Count; i++)
+			{
+				UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
+				UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
+				UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
+				UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
+				try
+				{
+					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].name);
+					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
+					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
+
+					foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
+					{
+						if (player.name == Players[i].name)
+							UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
+					}
+				}
+				catch (Exception ex) { }
+			}
+		}
+
+		public bool IsLeader
         {
             get
             {
@@ -120,7 +148,9 @@ namespace Raider.Game.Networking
 
             if(sceneName != lobbyScene)
             {
-                StartCoroutine(InitialSpawnPlayers());
+				StartCoroutine(InitialSpawnPlayers());
+				//Reset the scoreboard...
+				GametypeController.InstanceGametypeByEnum(lobbySetup.syncData.Gametype);
             }
             else
             {
@@ -168,7 +198,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onStartServer;
         public override void OnStartServer()
         {
-            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new GametypeController.GameOptions();
 
             base.OnStartServer();
             if (onStartServer != null)
@@ -188,7 +218,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onStopServer;
         public override void OnStopServer()
         {
-            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new GametypeController.GameOptions();
 
             base.OnStopServer();
             if(onStopServer != null)
@@ -199,7 +229,7 @@ namespace Raider.Game.Networking
         public NetworkMessage onClientDisconnect;
         public override void OnClientDisconnect(NetworkConnection conn)
         {
-            lobbySetup.syncData.gameOptions = new Gametype.GameOptions();
+            lobbySetup.syncData.gameOptions = new GametypeController.GameOptions();
 
             base.OnClientDisconnect(conn);
             if(onClientDisconnect != null)
@@ -275,7 +305,7 @@ namespace Raider.Game.Networking
 
                 if (lobbySetup != null && lobbySetup.syncData != null && lobbySetup.syncData.gameOptions != null && lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
-                    foreach (Gametype.Teams team in Enum.GetValues(typeof(Gametype.Teams)))
+                    foreach (Gametypes.Gametypes.Teams team in Enum.GetValues(typeof(Gametypes.Gametypes.Teams)))
                     {
                         foreach (PlayerData playerData in Players)
                         {

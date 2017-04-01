@@ -25,6 +25,8 @@ namespace Raider.Game.Player
 
                 gameObject.layer = LayerMask.NameToLayer("LocalPlayer");
 
+				gameObject.name = Session.userSaveDataHandler.GetUsername();
+
                 localPlayer = this;
 
                 playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.PrimaryWeapon);
