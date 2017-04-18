@@ -44,10 +44,10 @@ namespace Raider.Game
         /// </summary>
         /// 
         //The following URL can be used for LIVE API deployment.
-        public const string API_URL = "http://raiderapi-alex231.rhcloud.com/api";
+        //public const string API_URL = "http://raiderapi-alex231.rhcloud.com/api";
 
         //The following URL can be used for localhost API deployment.
-        //public const string API_URL = "http://localhost:3000/api";
+        public const string API_URL = "http://localhost:3000/api";
 
         //The following URL can be used for Local Debugging via Fiddler.
         //Useful for finding out what exactly Unity is sending.

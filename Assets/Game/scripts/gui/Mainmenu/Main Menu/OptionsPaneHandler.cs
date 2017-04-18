@@ -29,7 +29,7 @@ namespace Raider.Game.GUI.Components
             return FindObjectsOfType<OptionsPaneHandler>();
         }
 
-        public static OptionsPaneHandler InstanceOpt1ionsPane(Transform parent)
+        public static OptionsPaneHandler InstanceOptionsPane(Transform parent)
         {
             OptionsPaneHandler newOptionsPane;
             if(Scenario.InLobby)

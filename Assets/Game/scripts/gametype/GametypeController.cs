@@ -31,7 +31,6 @@ namespace Raider.Game.Gametypes
 
 		#region Scoring
 
-		[Serializable]
 		public struct ScoreboardPlayer
 		{
 			public ScoreboardPlayer(int id, string name, int score, Gametypes.Teams team)
@@ -47,21 +46,45 @@ namespace Raider.Game.Gametypes
 			public Gametypes.Teams team;
 		}
 
-		[Serializable]
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
 		{
 
 		}
 
-		private void Start()
+		public SyncListScoreboardPlayer scoreboard = new SyncListScoreboardPlayer();
+
+		public void AddPlayerToScoreboard(int playerId)
 		{
-			foreach(PlayerData player in NetworkGameManager.instance.Players)
+			PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
+			if(playerData == null)
 			{
-				scoreboard.Add(new ScoreboardPlayer(player.syncData.id, player.syncData.username, 0, player.syncData.team));
+				Debug.Log("Unable to add Player " + playerId + "to scoreboard.");
+				return;
 			}
+
+			//If the player is already on the scoreboard, just make sure their team is alright.
+			foreach(ScoreboardPlayer player in scoreboard)
+			{
+				if (player.id == playerData.syncData.id && player.team == playerData.syncData.team)
+				{
+					return;
+				}
+			}
+
+			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, playerData.syncData.username, 0, playerData.syncData.team));
 		}
 
-		public SyncListScoreboardPlayer scoreboard = new SyncListScoreboardPlayer();
+		public void RemovePlayer(int playerId)
+		{
+			foreach(ScoreboardPlayer player in scoreboard)
+			{
+				if(player.id == playerId)
+				{
+					scoreboard.Remove(player);
+					break;
+				}
+			}
+		}
 
 		public List<Tuple<Gametypes.Teams, int>> teamScores
 		{
@@ -155,5 +178,25 @@ namespace Raider.Game.Gametypes
 
             else return null;
         }
-    }
+
+		[SyncVar]
+		public bool hasInitialSpawned = false;
+		public virtual IEnumerator InitialSpawnPlayers()
+		{
+			if (hasInitialSpawned)
+			{
+				Debug.Log("What are you doing!? Can't initial spawn twice!");
+			}
+			else
+			{
+				yield return new WaitForSeconds(10f);
+				hasInitialSpawned = true;
+				foreach (PlayerData player in NetworkGameManager.instance.Players)
+				{
+					//Send an RPC to the client who owns this player. Tell them to spawn.
+					player.GetComponent<NetworkPlayerSetup>().TargetSetupLocalControl(player.connectionToClient);
+				}
+			}
+		}
+	}
 }

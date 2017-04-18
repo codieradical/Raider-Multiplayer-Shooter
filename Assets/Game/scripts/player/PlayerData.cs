@@ -114,6 +114,10 @@ namespace Raider.Game.Player
                     //If the player is not in lobby, have the server update their lobby player for later.
                     if(!Scenario.InLobby)
                     {
+						//Remove the old team item, add the new.
+						GametypeController.singleton.RemovePlayer(syncData.id);
+						GametypeController.singleton.AddPlayerToScoreboard(syncData.id);
+
                         foreach(NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
                         {
                             if(lobbyPlayer.playerData.syncData.id == syncData.id)

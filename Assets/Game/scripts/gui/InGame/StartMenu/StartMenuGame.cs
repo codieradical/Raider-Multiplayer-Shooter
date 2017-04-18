@@ -108,7 +108,7 @@ namespace Raider.Game.GUI.StartMenu
                 changeTeamOptions.Add(new OptionsPaneOption.OptionsPaneContents(availableTeam.ToString(), "Switch to the " + availableTeam.ToString() + " team"));
             }
 
-            OptionsPaneHandler.InstanceOpt1ionsPane(GetComponentInParent<Canvas>().gameObject.transform).ShowOptions("Change Team", changeTeamOptions, ChangeTeam, true);
+            OptionsPaneHandler.InstanceOptionsPane(GetComponentInParent<Canvas>().gameObject.transform).ShowOptions("Change Team", changeTeamOptions, ChangeTeam, true);
         }
 
         public void ChangeTeam(string option)

@@ -144,7 +144,7 @@ namespace Raider.Game.GUI.Components
             options.Add(new OptionsPaneOption.OptionsPaneContents("Team Options", "Change team gameplay options, if teams are enabled."));
             options.Add(new OptionsPaneOption.OptionsPaneContents("General Options", "Change general game options."));
 
-            OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectGameOptions, false);
+            OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectGameOptions, false);
         }
         
         public void SelectGameOptions(string option)
@@ -166,7 +166,7 @@ namespace Raider.Game.GUI.Components
                 options.Add(new OptionsPaneOption.OptionsPaneContents("400", "400 points to win."));
                 options.Add(new OptionsPaneOption.OptionsPaneContents("500", "500 points to win."));
 
-                OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectScoreToWin, true);
+                OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectScoreToWin, true);
             }
 
             if (option.Contains("Teams Enabled"))
@@ -174,7 +174,7 @@ namespace Raider.Game.GUI.Components
                 options.Add(new OptionsPaneOption.OptionsPaneContents("Enabled", "Allow players to fight as a team."));
                 options.Add(new OptionsPaneOption.OptionsPaneContents("Disabled", "Free for all gameplay."));
 
-                OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectTeamsEnabled, true);
+                OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectTeamsEnabled, true);
             }
         }
 
@@ -231,7 +231,7 @@ namespace Raider.Game.GUI.Components
                 options.Add(new OptionsPaneOption.OptionsPaneContents(Scenario.GetMapTitle(scene), Scenario.GetMapDescription(scene), Scenario.GetMapImage(scene)));
             }
 
-            OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Select Map...", options, SelectMap, true);
+            OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Select Map...", options, SelectMap, true);
         }
 
         public void SelectMap(string title)
@@ -252,7 +252,7 @@ namespace Raider.Game.GUI.Components
             options.Add(new OptionsPaneOption.OptionsPaneContents("Online Server", "Host an online server lobby on your PC"));
             options.Add(new OptionsPaneOption.OptionsPaneContents("Matchmaker/Dedicated", "Not yet implemented."));
 
-            OptionsPaneHandler.InstanceOpt1ionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Network", options, SelectNetwork, true);
+            OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Network", options, SelectNetwork, true);
         }
 
         public void SelectNetwork(string option)

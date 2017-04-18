@@ -1,4 +1,7 @@
 ﻿using Raider.Game.Cameras;
+using Raider.Game.Gametypes;
+using Raider.Game.Networking;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -38,17 +41,32 @@ namespace Raider.Game.Player
             {
                 playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().Perspective);
             }
+
+			if(isLocalPlayer && GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)
+			{
+				SetupLocalControl();
+			}
+
+			if(isServer && GametypeController.singleton != null)
+			{
+				GametypeController.singleton.AddPlayerToScoreboard(playerData.syncData.id);
+			}
         }
+
+		private void SetupLocalControl()
+		{
+			gameObject.AddComponent<MovementController>();
+			playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
+			playerData.gamePlayerController = gameObject.AddComponent<LocalPlayerController>();
+			CameraModeController.singleton.playerGameObject = gameObject;
+			//CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
+			playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
+		}
 
         [TargetRpc]
         public void TargetSetupLocalControl(NetworkConnection conn)
         {
-            gameObject.AddComponent<MovementController>();
-            playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
-            playerData.gamePlayerController = gameObject.AddComponent<LocalPlayerController>();
-            CameraModeController.singleton.playerGameObject = gameObject;
-            //CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
-            playerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
+			SetupLocalControl();
         }
 
         //Detatch Camera, Prototype.
@@ -60,5 +78,5 @@ namespace Raider.Game.Player
                     CameraModeController.singleton.gameObject.transform.SetParent(null, false);
             }
         }
-    }
+	}
 }
