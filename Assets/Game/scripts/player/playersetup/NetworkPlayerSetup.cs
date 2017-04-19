@@ -1,6 +1,7 @@
 ﻿using Raider.Game.Cameras;
 using Raider.Game.Gametypes;
 using Raider.Game.Networking;
+using Raider.Game.Weapons;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -33,7 +34,9 @@ namespace Raider.Game.Player
                 localPlayer = this;
 
                 playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.PrimaryWeapon);
-            }
+				playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.SecondaryWeapon);
+				playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.TertiaryWeapon);
+			}
 
             playerData.appearenceController.ReplacePlayerModel(playerData);
 
@@ -68,6 +71,34 @@ namespace Raider.Game.Player
         {
 			SetupLocalControl();
         }
+
+		[TargetRpc]
+		public void TargetSpawnedWeapon(NetworkConnection conn, GameObject weaponObject, Armory.Weapons weapon)
+		{
+			WeaponController weaponController = weaponObject.GetComponent<WeaponController>();
+			Armory.WeaponType weaponType = Armory.GetWeaponType(weapon);
+
+			if (weaponController == null || weaponType == Armory.WeaponType.Special)
+				return;
+			else
+			{
+				switch(weaponType)
+				{
+					case Armory.WeaponType.Primary:
+						playerData.primaryWeaponController = weaponController;
+						break;
+					case Armory.WeaponType.Secondary:
+						playerData.secondaryWeaponController = weaponController;
+						break;
+					case Armory.WeaponType.Tertiary:
+						playerData.tertiaryWeaponController = weaponController;
+						break;
+				}
+
+				if (weaponType == playerData.ActiveWeaponType)
+					weaponController.activeWeapon = true;
+			}
+		}
 
         //Detatch Camera, Prototype.
         private void OnDestroy()

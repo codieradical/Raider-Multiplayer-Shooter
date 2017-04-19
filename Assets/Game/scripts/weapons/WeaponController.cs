@@ -11,6 +11,10 @@ namespace Raider.Game.Weapons
         [SyncVar]
         public int ownerId;
 
+		//This will allow dual weilding if I ever wanted that.
+		[SyncVar]
+		public bool activeWeapon = false;
+
         public LayerMask dontShoot;
 
         protected virtual void Start()
@@ -29,10 +33,13 @@ namespace Raider.Game.Weapons
 
         protected virtual void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R))
-                Reload();
-            else if (Input.GetKey(KeyCode.Mouse0))
-                Shoot();
+			if (activeWeapon)
+			{
+				if (Input.GetKeyDown(KeyCode.R))
+					Reload();
+				else if (Input.GetKey(KeyCode.Mouse0))
+					Shoot();
+			}
         }
 
 

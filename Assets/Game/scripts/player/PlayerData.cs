@@ -2,6 +2,7 @@
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
+using Raider.Game.Weapons;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -33,6 +34,30 @@ namespace Raider.Game.Player
         public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
         public LocalPlayerController gamePlayerController;
+
+		private Armory.WeaponType activeWeaponType = Armory.WeaponType.Primary;
+		public Armory.WeaponType ActiveWeaponType
+		{
+			get { return activeWeaponType; }
+			set
+			{
+				activeWeaponType = value;
+				primaryWeaponController.activeWeapon = false;
+				secondaryWeaponController.activeWeapon = false;
+				tertiaryWeaponController.activeWeapon = false;
+
+				if (value == Armory.WeaponType.Primary)
+					primaryWeaponController.activeWeapon = true;
+				else if (value == Armory.WeaponType.Secondary)
+					secondaryWeaponController.activeWeapon = true;
+				else if (value == Armory.WeaponType.Tertiary)
+					tertiaryWeaponController.activeWeapon = true;
+			}
+		}
+
+		public WeaponController primaryWeaponController;
+		public WeaponController secondaryWeaponController;
+		public WeaponController tertiaryWeaponController;
 
         public bool paused;
 

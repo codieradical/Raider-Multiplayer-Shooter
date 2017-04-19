@@ -92,8 +92,11 @@ namespace Raider.Game.Player
 
             newWeapon.GetComponent<WeaponController>().weaponCustomization = customization;
             newWeapon.GetComponent<WeaponController>().ownerId = ownerID;
+			newWeapon.name = weapon.ToString() + ownerID;
 
             NetworkServer.SpawnWithClientAuthority(newWeapon, connectionToClient);
+
+			GetComponent<NetworkPlayerSetup>().TargetSpawnedWeapon(connectionToClient, newWeapon, weapon);
         }
     }
 }
