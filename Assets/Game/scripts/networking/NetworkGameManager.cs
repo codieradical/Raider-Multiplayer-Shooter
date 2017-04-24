@@ -92,13 +92,13 @@ namespace Raider.Game.Networking
 				UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
 				try
 				{
-					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].name);
+					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
 					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
 					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
 
 					foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
 					{
-						if (player.name == Players[i].name)
+						if (player.name == Players[i].syncData.username)
 							UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
 					}
 				}
@@ -139,7 +139,6 @@ namespace Raider.Game.Networking
             //if the newly loaded scene is the menu, and there's a lobby player already setup, and that player is not the host, send the ready up flag.
             if (SceneManager.GetActiveScene().name == lobbyScene && NetworkLobbyPlayerSetup.localPlayer != null && CurrentNetworkState != NetworkState.Host && CurrentNetworkState != NetworkState.Server)
                 NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
-
         }
 
         public override void OnLobbyServerSceneChanged(string sceneName)
@@ -148,10 +147,16 @@ namespace Raider.Game.Networking
 
             if(sceneName != lobbyScene)
             {
-				StartCoroutine(InitialSpawnPlayers());
 				//Reset the scoreboard...
 				GametypeController.InstanceGametypeByEnum(lobbySetup.syncData.Gametype);
-            }
+
+				StartCoroutine(activeGametype.InitialSpawnPlayers());
+
+				foreach(PlayerData player in Players)
+				{
+					activeGametype.AddPlayerToScoreboard(player.syncData.id);
+				}
+			}
             else
             {
                 foreach(PlayerData player in Players)
@@ -160,16 +165,6 @@ namespace Raider.Game.Networking
                     //So now that the lobby is loaded again, update the other players.
                     player.RpcChangeTeam(player.syncData.team);
                 }
-            }
-        }
-
-        private IEnumerator InitialSpawnPlayers()
-        {
-            yield return new WaitForSeconds(10f);
-            foreach(PlayerData player in Players)
-            {
-                //Send an RPC to the client who owns this player. Tell them to spawn.
-                player.GetComponent<NetworkPlayerSetup>().TargetSetupLocalControl(player.connectionToClient);
             }
         }
 

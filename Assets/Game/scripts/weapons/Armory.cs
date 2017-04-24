@@ -102,7 +102,7 @@ namespace Raider.Game.Weapons
 		}
 
         public const Weapons DEFAULT_PRIMARY_WEAPON = Weapons.ScoutRifle;
-        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.SniperRifle;
+        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.Shotgun;
         public const Weapons DEFAULT_TERTIARY_WEAPON = Weapons.MachineGun;
 
         [Serializable]
@@ -189,6 +189,16 @@ namespace Raider.Game.Weapons
             Debug.LogError("Couldn't find fast defaults for weapon " + weapon.ToString());
             return null;
         }
+
+		public static WeaponType GetWeaponType(Weapons weapon)
+		{
+			foreach(WeaponPrefabAndDefaults weaponPrefab in instance.weapons)
+			{
+				if (weaponPrefab.weapon == weapon)
+					return weaponPrefab.weaponType;
+			}
+			return WeaponType.Special;
+		}
 
         public static WeaponSettings GetWeaponSettingsByWeaponAndVariation(Weapons weapon, WeaponVariation variation)
         {

@@ -28,7 +28,7 @@ namespace Raider.Game
         /// If set to true, TeamSpeak 3 binaries will be distributed with builds.
         /// If set to false, no binaries will be distributed, and VoIP Chat Managers will self-destruct.
         /// </summary>
-        public const bool VOIP_ENABLED = true;
+        public const bool VOIP_ENABLED = false;
         /// <summary>
         /// The base path for local save data files.
         /// Modified on debug builds so that saves used in testing are committed to the repo.
@@ -44,10 +44,10 @@ namespace Raider.Game
         /// </summary>
         /// 
         //The following URL can be used for LIVE API deployment.
-        public const string API_URL = "http://raiderapi-alex231.rhcloud.com/api";
+        //public const string API_URL = "http://raiderapi-alex231.rhcloud.com/api";
 
         //The following URL can be used for localhost API deployment.
-        //public const string API_URL = "http://localhost:3000/api";
+        public const string API_URL = "http://localhost:3000/api";
 
         //The following URL can be used for Local Debugging via Fiddler.
         //Useful for finding out what exactly Unity is sending.

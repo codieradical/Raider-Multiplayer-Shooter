@@ -1,5 +1,6 @@
 ﻿using Raider.Game.Cameras;
 using Raider.Game.Saves.User;
+using Raider.Game.Weapons;
 using System.Collections;
 using UnityEngine;
 
@@ -11,13 +12,55 @@ namespace Raider.Game.Player
     {
         void OnDestroy()
         {
-                //If the player is being destroyed, save the camera!
-                CameraModeController.singleton.CameraParent = null;
-                DontDestroyOnLoad(CameraModeController.singleton.camPoint);
-                CameraModeController.singleton.enabled = true;
+            //If the player is being destroyed, save the camera!
+            CameraModeController.singleton.CameraParent = null;
+            DontDestroyOnLoad(CameraModeController.singleton.camPoint);
+            CameraModeController.singleton.enabled = true;
         }
 
-        public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
+		private void Update()
+		{
+			float scroll = Input.GetAxis("Mouse ScrollWheel");
+			if (scroll != 0f)
+				SwitchWeapon(scroll);
+
+		}
+
+		public void SwitchWeapon(float scroll)
+		{
+			if (scroll > 0f)
+			{
+				switch(PlayerData.localPlayerData.ActiveWeaponType)
+				{
+					case Armory.WeaponType.Primary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
+						break;
+					case Armory.WeaponType.Secondary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
+						break;
+					case Armory.WeaponType.Tertiary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
+						break;
+				}
+			}
+			else if (scroll < 0f)
+			{
+				switch (PlayerData.localPlayerData.ActiveWeaponType)
+				{
+					case Armory.WeaponType.Primary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
+						break;
+					case Armory.WeaponType.Secondary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
+						break;
+					case Armory.WeaponType.Tertiary:
+						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
+						break;
+				}
+			}
+		}
+
+		public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
         {
             UserSaveDataStructure.UserSettings settings = Session.userSaveDataHandler.GetSettings();
             settings.Perspective = newPerspective;
