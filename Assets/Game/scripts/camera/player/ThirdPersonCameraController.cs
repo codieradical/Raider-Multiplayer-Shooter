@@ -130,7 +130,7 @@ namespace Raider.Game.Cameras
             GameObject _desiredCam = new GameObject("_desiredCam");
 
             //Change the parents.
-            _desiredCamPoint.transform.parent = CameraModeController.singleton.playerGameObject.transform;
+            _desiredCamPoint.transform.parent = CameraModeController.singleton.localPlayerGameObject.transform;
             _desiredCam.transform.parent = _desiredCamPoint.transform;
 
             //Read the rotation and position from actual gameobjects.

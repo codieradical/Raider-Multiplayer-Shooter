@@ -9,8 +9,8 @@ namespace Raider.Game.Cameras
 
         public override void Setup()
         {
-            parent = CameraModeController.singleton.playerGameObject.transform;
-            characterController = CameraModeController.singleton.playerGameObject.GetComponent<CharacterController>();
+            parent = CameraModeController.singleton.localPlayerGameObject.transform;
+            characterController = CameraModeController.singleton.localPlayerGameObject.GetComponent<CharacterController>();
 
             base.Setup();
         }

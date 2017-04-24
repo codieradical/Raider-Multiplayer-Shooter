@@ -38,7 +38,7 @@ namespace Raider.Game.Player
         void SetupLocalPlayer()
 		{
 			gameObject.name = Session.userSaveDataHandler.GetUsername();
-			CameraModeController.singleton.playerGameObject = gameObject;
+			CameraModeController.singleton.localPlayerGameObject = gameObject;
             CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().Perspective);
         }
 

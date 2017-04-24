@@ -31,7 +31,6 @@ namespace Raider.Game.Gametypes
 
 		#region Scoring
 
-		[Serializable]
 		public struct ScoreboardPlayer
 		{
 			public ScoreboardPlayer(int id, string name, int score, Gametypes.Teams team)
@@ -47,7 +46,6 @@ namespace Raider.Game.Gametypes
 			public Gametypes.Teams team;
 		}
 
-		[Serializable]
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
 		{
 
