@@ -33,7 +33,7 @@ namespace Raider.Game.Player
 
         public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
-        public LocalPlayerController gamePlayerController;
+        public LocalPlayerController localPlayerController;
 
 		private Armory.WeaponType activeWeaponType = Armory.WeaponType.Primary;
 		public Armory.WeaponType ActiveWeaponType
@@ -106,7 +106,7 @@ namespace Raider.Game.Player
         {
             if(playerModel != null) //PlayerData is also used in lobby, where the player model is not assigned.
                 appearenceController = playerModel.GetComponent<PlayerAppearenceController>();
-            gamePlayerController = GetComponent<LocalPlayerController>(); //Singleplayer assignment.
+            localPlayerController = GetComponent<LocalPlayerController>(); //Singleplayer assignment.
             animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
         }
 

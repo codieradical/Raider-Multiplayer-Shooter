@@ -24,7 +24,7 @@ namespace Raider.Game.Player
             PlayerData.localPlayerData.syncData.username = Session.userSaveDataHandler.GetUsername();
             PlayerData.localPlayerData.syncData.isLeader = true;
 
-            PlayerData.localPlayerData.gamePlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
+            PlayerData.localPlayerData.localPlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
         }
 
         IEnumerator PauseNewCameraController()

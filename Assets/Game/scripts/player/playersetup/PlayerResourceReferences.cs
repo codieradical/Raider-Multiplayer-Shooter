@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
@@ -19,6 +20,7 @@ namespace Raider.Game.Player
         public void Awake()
         {
             instance = this;
+			RegisterSpawnablePrefabs();
         }
 
         public void OnDestroy()
@@ -35,6 +37,7 @@ namespace Raider.Game.Player
         {
             public UserSaveDataStructure.Character.Races race;
             public GameObject model;
+			public GameObject ragdoll;
         }
 
         [SerializeField]
@@ -72,5 +75,24 @@ namespace Raider.Game.Player
             Debug.LogError("Couldn't find model for race " + race.ToString());
             return null;
         }
-    }
+
+		public GameObject GetRagdollByRace(UserSaveDataStructure.Character.Races race)
+		{
+			foreach (RaceAndModel raceModel in raceModels)
+			{
+				if (raceModel.race == race)
+					return raceModel.ragdoll;
+			}
+			Debug.LogError("Couldn't find ragdoll for race " + race.ToString());
+			return null;
+		}
+
+		private void RegisterSpawnablePrefabs()
+		{
+			foreach (RaceAndModel raceModel in raceModels)
+			{
+				ClientScene.RegisterPrefab(raceModel.ragdoll);
+			}
+		}
+	}
 }

@@ -17,9 +17,13 @@ namespace Raider.Game.Weapons
 
         public LayerMask dontShoot;
 
-        protected virtual void Start()
+		public override void OnStartClient()
+		{
+			transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
+		}
+
+		protected virtual void Start()
         {
-            transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
 			clipAmmo = weaponCustomization.clipSize;
 			totalAmmo = weaponCustomization.maxAmmo;
         }
