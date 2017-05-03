@@ -39,7 +39,7 @@ namespace Raider.Game.GUI
                     ChatUiHandler.instance.CloseChatInput();
 
                     if (!Scenario.InLobby)
-                        PlayerData.localPlayerData.gamePlayerController.UnpausePlayer();
+                        PlayerData.localPlayerData.localPlayerController.UnpausePlayer();
                 }
 
                 return;
@@ -62,7 +62,7 @@ namespace Raider.Game.GUI
                     {
                         ChatUiHandler.instance.OpenChatInput();
                         if (!Scenario.InLobby)
-                            PlayerData.localPlayerData.gamePlayerController.PausePlayer();
+                            PlayerData.localPlayerData.localPlayerController.PausePlayer();
                     }
 
                     return;

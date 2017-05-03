@@ -139,7 +139,7 @@ namespace Raider.Game.GUI.Components
             List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
 
             options.Add(new OptionsPaneOption.OptionsPaneContents("Score To Win: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin.ToString(), "The amount of points required to win."));
-            options.Add(new OptionsPaneOption.OptionsPaneContents("Teams Enabled", "Enable or Disable teams."));
+            options.Add(new OptionsPaneOption.OptionsPaneContents("Teams Enabled: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled.ToString(), "Enable or Disable teams."));
             options.Add(new OptionsPaneOption.OptionsPaneContents(NetworkGameManager.instance.lobbySetup.syncData.Gametype + " Options", "Change the " + NetworkGameManager.instance.lobbySetup.syncData.Gametype + " options"));
             options.Add(new OptionsPaneOption.OptionsPaneContents("Team Options", "Change team gameplay options, if teams are enabled."));
             options.Add(new OptionsPaneOption.OptionsPaneContents("General Options", "Change general game options."));
@@ -176,9 +176,59 @@ namespace Raider.Game.GUI.Components
 
                 OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Game Options", options, SelectTeamsEnabled, true);
             }
-        }
 
-        public void SelectTeamsEnabled(string option)
+			if (option.Contains("General Options"))
+			{
+				options.Add(new OptionsPaneOption.OptionsPaneContents("Number Of Rounds: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.numberOfRounnds.ToString(), "How many rounds will take place before the game ends."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("Time Limit: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes.ToString(), "How long a round lasts."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("Respawn Time: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds.ToString(), "How long players must wait to respawn upon death."));
+				OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("General Options", options, SelectGeneralOptions, true);
+			}
+		}
+
+		public void SelectGeneralOptions(string option)
+		{
+			List<OptionsPaneOption.OptionsPaneContents> options = new List<OptionsPaneOption.OptionsPaneContents>();
+			if (option.Contains("Respawn Time"))
+			{
+				options.Add(new OptionsPaneOption.OptionsPaneContents("0 Seconds", "Instant Respawn"));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("3 Seconds", "3 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("5 Seconds", "5 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("6 Seconds", "6 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("7 Seconds", "7 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("8 Seconds", "8 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("9 Seconds", "9 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("10 Seconds", "10 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("15 Seconds", "15 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("20 Seconds", "20 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("30 Seconds", "30 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("45 Seconds", "45 seconds to respawn."));
+				options.Add(new OptionsPaneOption.OptionsPaneContents("60 Seconds", "60 seconds to respawn."));
+
+				OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Respawn Time", options, SelectRespawnTime, true);
+			}
+		}
+
+		public void SelectRespawnTime(string option)
+		{
+			int value;
+
+			if (int.TryParse(option.Replace(" Seconds", ""), out value))
+			{
+				OptionsPaneHandler[] oldOpenPanes = OptionsPaneHandler.GetOptionsPanes();
+				NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds = value;
+				NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(NetworkGameManager.instance.lobbySetup.syncData);
+
+				OpenGameOptions();
+
+				foreach (OptionsPaneHandler optionsPane in oldOpenPanes)
+				{
+					Destroy(optionsPane.gameObject);
+				}
+			}
+		}
+
+		public void SelectTeamsEnabled(string option)
         {
             if(option == "Enabled" || option == "Disabled")
             {

@@ -38,7 +38,7 @@ namespace Raider.Game.Cameras
         public GameObject camPoint;
         public GameObject cam;
         public GameObject localPlayerGameObject;
-        public GameObject spectatingPlayerGameObject;
+        public int spectatingPlayerIndex;
 
         //how close the camera can be to directly overhead or underfoot.
         public float xAxisBuffer = 35f;
@@ -83,7 +83,8 @@ namespace Raider.Game.Cameras
             SceneOverview = 7,
             FreeCam = 8,
             FollowPath = 9,
-			Animated = 10
+			Animated = 10,
+			SpectatorThirdPerson = 11
         }
 
         public CameraModes CameraMode
@@ -114,6 +115,8 @@ namespace Raider.Game.Cameras
 					return CameraModes.FollowPath;
 				else if (attachedController is AnimatedCameraController)
 					return CameraModes.Animated;
+				else if (attachedController is SpectatorThirdPersonCameraController)
+					return CameraModes.SpectatorThirdPerson;
 
                 return CameraModes.Unknown;
             }
@@ -165,6 +168,9 @@ namespace Raider.Game.Cameras
                             break;
 						case CameraModes.Animated:
 							newController = gameObject.AddComponent<AnimatedCameraController>();
+							break;
+						case CameraModes.SpectatorThirdPerson:
+							newController = gameObject.AddComponent<SpectatorThirdPersonCameraController>();
 							break;
                     }
                 }
@@ -263,7 +269,7 @@ namespace Raider.Game.Cameras
         //But each camera controller inherently updates the position on start.
         public Transform CameraParent
         {
-            set{ gameObject.transform.parent = value; }
+            set{ gameObject.transform.SetParent(value, false); }
             get { return camPoint.transform.parent; }
         }
 

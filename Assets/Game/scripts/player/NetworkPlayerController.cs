@@ -2,6 +2,7 @@
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Weapons;
+using Raider.Game.Cameras;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -30,6 +31,10 @@ namespace Raider.Game.Player
 		[Server]
 		public void TakeDamage(int damage, int damageDealtBy)
 		{
+			if (health <= 0)
+				return;
+				//If they're already dead, stop killing them!
+
 			health -= damage;
 			if (health < 1)
 			{ 
@@ -50,13 +55,75 @@ namespace Raider.Game.Player
 		public void KillPlayer()
 		{
 			Debug.Log("This player died.");
+			TargetKillPlayer(connectionToClient);
+			RpcKillPlayer();
+
+			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(GetComponent<PlayerData>().syncData.Character.Race));
+			ragDoll.transform.position = this.transform.position;
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData.Character);
+			NetworkServer.Spawn(ragDoll);
+			RpcSetupRagdoll(ragDoll);
+
 			StartCoroutine(WaitAndRespawn());
+		}
+
+		[ClientRpc]
+		public void RpcSetupRagdoll(GameObject ragDoll)
+		{
+			ragDoll.transform.position = this.transform.position;
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData.Character);
+		}
+
+		[TargetRpc]
+		public void TargetKillPlayer(NetworkConnection conn)
+		{
+			//When the player dies, switch their camera to spectate.
+			for (int i = 0; i < NetworkGameManager.instance.Players.Count; i++)
+				if(NetworkGameManager.instance.Players[i].syncData.id == PlayerData.localPlayerData.syncData.id)
+				{
+					CameraModeController.singleton.spectatingPlayerIndex = i;
+					break;
+				}
+
+			GetComponent<MovementController>().canMove = false;
+
+			CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.SpectatorThirdPerson);
+		}
+
+		[ClientRpc]
+		public void RpcKillPlayer()
+		{
+			//Hide the dead player.
+			GetComponent<PlayerData>().appearenceController.HidePlayer(true);
+			ToggleWeapons(false);
 		}
 
 		public IEnumerator WaitAndRespawn()
 		{
 			yield return new WaitForSeconds(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds);
 			RespawnPlayer();
+			TargetRespawnPlayer(connectionToClient);
+			RpcRespawnPlayer();
+		}
+
+		[TargetRpc]
+		public void TargetRespawnPlayer(NetworkConnection conn)
+		{
+			//Switch back to the normal camera.
+			NetworkStartPosition[] startPositions = FindObjectsOfType<NetworkStartPosition>();
+			int randomElement = Random.Range(0, startPositions.Length);
+			gameObject.transform.position = startPositions[randomElement].transform.position;
+			CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().Perspective);
+
+			if (!PlayerData.localPlayerData.paused)
+				GetComponent<MovementController>().canMove = true;
+		}
+
+		[ClientRpc]
+		public void RpcRespawnPlayer()
+		{
+			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
+			ToggleWeapons(true);
 		}
 
 		[Server]
@@ -66,7 +133,25 @@ namespace Raider.Game.Player
 			Debug.Log("This player respawned.");
 		}
 
-        public void SpawnWeapon(Armory.Weapons weapon)
+		public void ToggleWeapons(bool active)
+		{
+			PlayerData playerData = GetComponent<PlayerData>();
+
+			if (active)
+			{
+				playerData.primaryWeaponController.gameObject.SetActive(true);
+				playerData.secondaryWeaponController.gameObject.SetActive(true);
+				playerData.tertiaryWeaponController.gameObject.SetActive(true);
+			}
+			else
+			{
+				playerData.primaryWeaponController.gameObject.SetActive(false);
+				playerData.secondaryWeaponController.gameObject.SetActive(false);
+				playerData.tertiaryWeaponController.gameObject.SetActive(false);
+			}
+		}
+
+		public void SpawnWeapon(Armory.Weapons weapon)
         {
             if(!isLocalPlayer)
             {
@@ -95,6 +180,27 @@ namespace Raider.Game.Player
 			newWeapon.name = weapon.ToString() + ownerID;
 
             NetworkServer.SpawnWithClientAuthority(newWeapon, connectionToClient);
+
+			WeaponController weaponController = newWeapon.GetComponent<WeaponController>();
+			Armory.WeaponType weaponType = Armory.GetWeaponType(weapon);
+
+			if (weaponController == null || weaponType == Armory.WeaponType.Special)
+				return;
+			else
+			{
+				switch (weaponType)
+				{
+					case Armory.WeaponType.Primary:
+						GetComponent<PlayerData>().primaryWeaponController = weaponController;
+						break;
+					case Armory.WeaponType.Secondary:
+						GetComponent<PlayerData>().secondaryWeaponController = weaponController;
+						break;
+					case Armory.WeaponType.Tertiary:
+						GetComponent<PlayerData>().tertiaryWeaponController = weaponController;
+						break;
+				}
+			}
 
 			GetComponent<NetworkPlayerSetup>().TargetSpawnedWeapon(connectionToClient, newWeapon, weapon);
         }

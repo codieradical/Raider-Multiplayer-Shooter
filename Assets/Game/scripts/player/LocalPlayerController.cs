@@ -23,11 +23,14 @@ namespace Raider.Game.Player
 			float scroll = Input.GetAxis("Mouse ScrollWheel");
 			if (scroll != 0f)
 				SwitchWeapon(scroll);
-
 		}
 
 		public void SwitchWeapon(float scroll)
 		{
+			//If the player is dead, don't let them switch weapon.
+			if (!PlayerData.localPlayerData.networkPlayerController.IsAlive)
+				return;
+
 			if (scroll > 0f)
 			{
 				switch(PlayerData.localPlayerData.ActiveWeaponType)
@@ -77,7 +80,7 @@ namespace Raider.Game.Player
         {
             PlayerData.localPlayerData.paused = true;
 
-            GetComponent<MovementController>().enabled = false;
+            GetComponent<MovementController>().canMove = false;
             PlayerData.localPlayerData.animationController.StopAnimations();
             PlayerData.localPlayerData.animationController.enabled = false;
             CameraModeController.singleton.GetCameraController().enabled = false;
@@ -90,7 +93,9 @@ namespace Raider.Game.Player
         {
             PlayerData.localPlayerData.paused = false;
 
-            GetComponent<MovementController>().enabled = true;
+			if(PlayerData.localPlayerData.networkPlayerController.IsAlive)
+				GetComponent<MovementController>().canMove = true;
+
             PlayerData.localPlayerData.animationController.enabled = true;
             CameraModeController.singleton.GetCameraController().enabled = true;
 

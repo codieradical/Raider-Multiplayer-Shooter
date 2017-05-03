@@ -8,7 +8,7 @@ namespace Raider.Game.Player
     public class PlayerAppearenceController : CharacterPreviewAppearenceController
     {
         public GameObject firstPersonObject;
-
+		public List<SkinnedMeshRenderer> sharedRenderers;
         public List<SkinnedMeshRenderer> thirdPersonRenderers;
 
         private void Awake()
@@ -47,18 +47,14 @@ namespace Raider.Game.Player
             {
                 firstPersonObject.SetActive(true);
                 foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
-                {
                     meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-                }
                 emblem.gameObject.SetActive(false);
             }
             else
             {
                 firstPersonObject.SetActive(false);
                 foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
-                {
                     meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-                }
                 emblem.gameObject.SetActive(true);
             }
         }
@@ -75,5 +71,45 @@ namespace Raider.Game.Player
                 }
             }
         }
+
+		public void HidePlayer(bool hide)
+		{
+			if (hide)
+			{
+				foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
+					meshRenderer.enabled = false;
+				foreach (SkinnedMeshRenderer sharedRenderer in sharedRenderers)
+					sharedRenderer.enabled = false;
+
+				firstPersonObject.SetActive(false);
+				emblem.gameObject.SetActive(false);
+			}
+			else
+			{
+				foreach (SkinnedMeshRenderer sharedRenderer in sharedRenderers)
+					sharedRenderer.enabled = true;
+
+				if (Session.userSaveDataHandler.GetSettings().Perspective == CameraModeController.CameraModes.FirstPerson && this == PlayerData.localPlayerData.appearenceController)
+				{
+					firstPersonObject.SetActive(true);
+					foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
+					{
+						meshRenderer.enabled = true;
+						meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+					}
+					emblem.gameObject.SetActive(false);
+				}
+				else
+				{
+					firstPersonObject.SetActive(false);
+					foreach (SkinnedMeshRenderer meshRenderer in thirdPersonRenderers)
+					{
+						meshRenderer.enabled = true;
+						meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+					}
+					emblem.gameObject.SetActive(true);
+				}
+			}
+		}
     }
 }

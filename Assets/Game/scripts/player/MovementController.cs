@@ -16,6 +16,8 @@ namespace Raider.Game.Player
         public MovementAndRotationSettings movSettings = new MovementAndRotationSettings();
         public JumpingAndFallingSettings jumpSettings = new JumpingAndFallingSettings();
 
+		public bool canMove = true;
+
         [System.Serializable]
         public class MovementAndRotationSettings
         {
@@ -70,6 +72,13 @@ namespace Raider.Game.Player
         {
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
+
+			if (!canMove)
+			{
+				inputX = 0;
+				inputY = 0;
+			}
+
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && movSettings.limitDiagonalSpeed) ? .7071f : 1.0f;
             CameraController cameraController = CameraModeController.singleton.GetCameraController();
 
