@@ -28,6 +28,13 @@ Found on the Unity forums, free to use. Created by "Megagamefan100", modified by
 Last accessed 22/2/17
 https://forum.unity3d.com/threads/solved-dynamic-blurred-background-on-ui.345083/
 
+Sprite Gradient
+Rendering\Shaders\Gradient
+A gradient shader used to preserve detail on scaling Ui.
+Found on the Unity forums, free to use.
+Last accessed 2/5/17
+http://answers.unity3d.com/questions/913898/horizontally-gradient-on-image-ui-element.html
+
 Tuple Type
 Types\Tuple.cs
 A common tuple type for use in scripting. Tuples are a part of .NET 4, but Unity uses 3.5.

@@ -36,7 +36,7 @@ namespace Raider.Game.Audio
             if (audioSource == null)
                 audioSource = GetComponent<AudioSource>();
             //If the current gametype is Ui, unmute the mainmenu music.
-            if (Scenario.instance.currentGametype == Gametypes.Gametypes.Gametype.Ui)
+            if (Scenario.instance.currentGametype == Gametypes.GametypeHelper.Gametype.Ui)
                 audioSource.mute = false;
             //Else mute it.
             else

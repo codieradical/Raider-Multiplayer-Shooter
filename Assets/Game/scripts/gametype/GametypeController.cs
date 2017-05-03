@@ -1,12 +1,14 @@
 ﻿using Raider.Common.Types;
 using Raider.Game.Networking;
 using Raider.Game.Player;
-using Raider.Game.Scene;
+using Raider.Game.GUI.Scoreboard;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using Raider.Game.Saves.User;
 
 namespace Raider.Game.Gametypes
 {
@@ -27,23 +29,32 @@ namespace Raider.Game.Gametypes
 			singleton = null;
 		}
 
-		#endregion
+        #endregion
 
-		#region Scoring
+        #region Scoring
 
-		public struct ScoreboardPlayer
+        public override void OnStartClient()
+        {
+            scoreboard.Callback = ScoreboardHandler.InvalidateScoreboard;
+        }
+
+        public struct ScoreboardPlayer
 		{
-			public ScoreboardPlayer(int id, string name, int score, Gametypes.Teams team)
+			public ScoreboardPlayer(int id, int score, GametypeHelper.Teams team, string name, string clan, UserSaveDataStructure.Emblem emblem)
 			{
 				this.id = id;
-				this.name = name;
 				this.score = score;
 				this.team = team;
+                this.name = name;
+                this.clan = clan;
+                this.emblem = emblem;
 			}
 			public int id;
-			public string name;
+            public string name;
+            public string clan;
+            public UserSaveDataStructure.Emblem emblem;
 			public int score;
-			public Gametypes.Teams team;
+			public GametypeHelper.Teams team;
 		}
 
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
@@ -71,7 +82,7 @@ namespace Raider.Game.Gametypes
 				}
 			}
 
-			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, playerData.syncData.username, 0, playerData.syncData.team));
+			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, 0, playerData.syncData.team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem));
 		}
 
 		public void RemovePlayer(int playerId)
@@ -86,12 +97,12 @@ namespace Raider.Game.Gametypes
 			}
 		}
 
-		public List<Tuple<Gametypes.Teams, int>> teamScores
+		public List<Tuple<GametypeHelper.Teams, int>> teamRanking
 		{
 			get
 			{
-				List<Tuple<Gametypes.Teams, int>> teamScores = new List<Tuple<Gametypes.Teams, int>>();
-				foreach (Gametypes.Teams team in Enum.GetValues(typeof(Gametypes.Teams)))
+				List<Tuple<GametypeHelper.Teams, int>> teamScores = new List<Tuple<GametypeHelper.Teams, int>>();
+				foreach (GametypeHelper.Teams team in Enum.GetValues(typeof(GametypeHelper.Teams)))
 				{
 					int iterationScore = 0;
 					foreach (ScoreboardPlayer player in scoreboard)
@@ -99,25 +110,42 @@ namespace Raider.Game.Gametypes
 						if (player.team == team)
 							iterationScore += player.score;
 					}
-					teamScores.Add(new Tuple<Gametypes.Teams, int>(team, iterationScore));
+					teamScores.Add(new Tuple<GametypeHelper.Teams, int>(team, iterationScore));
 				}
-				return teamScores;
+				return (teamScores.OrderBy(team => PlayerRanking(team.First).Count() < 1).ThenBy(team => team.Second).ThenBy(team => team.First)).ToList();
 			}
 		}
 
+        public List<ScoreboardPlayer> PlayerRanking(GametypeHelper.Teams team)
+        {
+            List<ScoreboardPlayer> players = new List<ScoreboardPlayer>();
+
+            foreach (ScoreboardPlayer player in scoreboard)
+                if (player.team == team)
+                    players.Add(player);
+
+            return (players.OrderBy(player => NetworkGameManager.instance.GetPlayerDataById(player.id) != null).ThenBy(player => player.score).ThenBy(player => player.id)).ToList();
+        }
+
+        public List<ScoreboardPlayer> PlayerRanking()
+        {
+            return (scoreboard.OrderBy(player => NetworkGameManager.instance.GetPlayerDataById(player.id) != null).ThenBy(player => player.score).ThenBy(player => player.id)).ToList();
+        }
+
 		[Server]
-		public void AddToScoreboard(int playerId, Gametypes.Teams playerTeam, int addition)
+		public void AddToScoreboard(int playerId, GametypeHelper.Teams playerTeam, int addition)
 		{
 			for (int i = 0; i < scoreboard.Count; i++)
 			{
 				if (scoreboard[i].id == playerId && scoreboard[i].team == playerTeam)
 				{
-					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].name, scoreboard[i].score + addition, scoreboard[i].team);
+					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem);
 					scoreboard[i] = updatedScore;
 					return;
 				}
 			}
-			ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, NetworkGameManager.instance.GetPlayerDataById(playerId).syncData.username, addition, playerTeam);
+            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
+            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem);
 			scoreboard.Add(newScore);
 		}
 
@@ -144,7 +172,7 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class TeamOptions
             {
-                public int maxTeams = Enum.GetValues(typeof(Gametypes.Teams)).Length - 1;
+                public int maxTeams = Enum.GetValues(typeof(GametypeHelper.Teams)).Length - 1;
                 public bool clientTeamChangingLobby = true;
                 public bool clientTeamChangingGame = true;
                 public bool friendlyFire = false;
@@ -162,19 +190,19 @@ namespace Raider.Game.Gametypes
         }
 		
 		[Server]
-        public static void InstanceGametypeByEnum(Gametypes.Gametype gametype)
+        public static void InstanceGametypeByEnum(GametypeHelper.Gametype gametype)
         {
-			GameObject gametypeController = Instantiate(Gametypes.instance.GetControllerPrefabByGametype(gametype));
+			GameObject gametypeController = Instantiate(GametypeHelper.instance.GetControllerPrefabByGametype(gametype));
 
 			NetworkServer.Spawn(gametypeController);
 
 			NetworkGameManager.instance.activeGametype = gametypeController.GetComponent<GametypeController>();
         }
 
-        public static GameOptions GetGameOptionsByEnum(Gametypes.Gametype gametype)
+        public static GameOptions GetGameOptionsByEnum(GametypeHelper.Gametype gametype)
         {
-            if (gametype == Gametypes.Gametype.Slayer)
-                return new Slayer.SlayerGameOptions();
+            if (gametype == GametypeHelper.Gametype.Slayer)
+                return new SlayerController.SlayerGameOptions();
 
             else return null;
         }

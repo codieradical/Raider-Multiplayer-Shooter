@@ -72,7 +72,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public Gametypes.Gametypes.Teams team = Gametypes.Gametypes.Teams.None;
+            [SyncVar] public Gametypes.GametypeHelper.Teams team = Gametypes.GametypeHelper.Teams.None;
 
             //Properties
             public bool GotData
@@ -111,9 +111,9 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        public void CmdChangeTeam(Gametypes.Gametypes.Teams newTeam)
+        public void CmdChangeTeam(Gametypes.GametypeHelper.Teams newTeam)
         {
-            if (newTeam == Gametypes.Gametypes.Teams.None)
+            if (newTeam == Gametypes.GametypeHelper.Teams.None)
                 return;
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
                 return;
@@ -122,10 +122,10 @@ namespace Raider.Game.Player
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && Scenario.InLobby)
                 return;
 
-			Gametypes.Gametypes.Teams[] availableTeams = (Gametypes.Gametypes.Teams[])Enum.GetValues(typeof(Gametypes.Gametypes.Teams));
+			Gametypes.GametypeHelper.Teams[] availableTeams = (Gametypes.GametypeHelper.Teams[])Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams));
             Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
 
-            foreach(Gametypes.Gametypes.Teams team in availableTeams)
+            foreach(Gametypes.GametypeHelper.Teams team in availableTeams)
             {
                 if(team == newTeam)
                 {
@@ -157,7 +157,7 @@ namespace Raider.Game.Player
         }
 
         [ClientRpc]
-        public void RpcChangeTeam(Gametypes.Gametypes.Teams team)
+        public void RpcChangeTeam(Gametypes.GametypeHelper.Teams team)
         {
             syncData.team = team;
             NetworkGameManager.instance.UpdateLobbyNameplates();

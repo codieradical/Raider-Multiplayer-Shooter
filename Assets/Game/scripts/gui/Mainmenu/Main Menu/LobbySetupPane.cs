@@ -30,7 +30,7 @@ namespace Raider.Game.GUI.Components
         public Image mapImage;
         public Button startGameButton;
 
-        public void OpenPane(Gametypes.Gametypes.Gametype gametype)
+        public void OpenPane(Gametypes.GametypeHelper.Gametype gametype)
         {
             IsOpen = true;
             NetworkGameManager.instance.lobbySetup.syncData.Gametype = gametype;

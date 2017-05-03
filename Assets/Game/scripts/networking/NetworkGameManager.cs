@@ -300,7 +300,7 @@ namespace Raider.Game.Networking
 
                 if (lobbySetup != null && lobbySetup.syncData != null && lobbySetup.syncData.gameOptions != null && lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
-                    foreach (Gametypes.Gametypes.Teams team in Enum.GetValues(typeof(Gametypes.Gametypes.Teams)))
+                    foreach (Gametypes.GametypeHelper.Teams team in Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams)))
                     {
                         foreach (PlayerData playerData in Players)
                         {

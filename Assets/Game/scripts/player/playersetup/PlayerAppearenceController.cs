@@ -67,11 +67,11 @@ namespace Raider.Game.Player
         {
             base.UpdatePlayerAppearence(syncData.Character);
 
-            if(syncData.team != Gametypes.Gametypes.Teams.None)
+            if(syncData.team != Gametypes.GametypeHelper.Teams.None)
             {
                 foreach (Renderer primaryRenderer in primaryRenderers)
                 {
-                    primaryRenderer.material.color = Gametypes.Gametypes.GetTeamColor(syncData.team);
+                    primaryRenderer.material.color = Gametypes.GametypeHelper.GetTeamColor(syncData.team);
                 }
             }
         }

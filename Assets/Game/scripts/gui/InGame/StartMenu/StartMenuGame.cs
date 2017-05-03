@@ -91,19 +91,19 @@ namespace Raider.Game.GUI.StartMenu
         {
 
             List<OptionsPaneOption.OptionsPaneContents> changeTeamOptions = new List<OptionsPaneOption.OptionsPaneContents>();
-            Gametypes.Gametypes.Teams[] teams = (Gametypes.Gametypes.Teams[])Enum.GetValues(typeof(Gametypes.Gametypes.Teams));
+            Gametypes.GametypeHelper.Teams[] teams = (Gametypes.GametypeHelper.Teams[])Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams));
 
-            List<Gametypes.Gametypes.Teams> availableTeams = new List<Gametypes.Gametypes.Teams>();
+            List<Gametypes.GametypeHelper.Teams> availableTeams = new List<Gametypes.GametypeHelper.Teams>();
 
-            foreach (Gametypes.Gametypes.Teams team in teams)
+            foreach (Gametypes.GametypeHelper.Teams team in teams)
             {
-                if (team != Gametypes.Gametypes.Teams.None)
+                if (team != Gametypes.GametypeHelper.Teams.None)
                     availableTeams.Add(team);
 
             }
 
             Array.Resize(ref teams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
-            foreach(Gametypes.Gametypes.Teams availableTeam in availableTeams)
+            foreach(Gametypes.GametypeHelper.Teams availableTeam in availableTeams)
             {
                 changeTeamOptions.Add(new OptionsPaneOption.OptionsPaneContents(availableTeam.ToString(), "Switch to the " + availableTeam.ToString() + " team"));
             }
@@ -113,7 +113,7 @@ namespace Raider.Game.GUI.StartMenu
 
         public void ChangeTeam(string option)
         {
-            PlayerData.localPlayerData.CmdChangeTeam((Gametypes.Gametypes.Teams)Enum.Parse(typeof(Gametypes.Gametypes.Teams), option));
+            PlayerData.localPlayerData.CmdChangeTeam((Gametypes.GametypeHelper.Teams)Enum.Parse(typeof(Gametypes.GametypeHelper.Teams), option));
         }
 
         public void ChangeTeamHover()
@@ -126,7 +126,7 @@ namespace Raider.Game.GUI.StartMenu
         public void NoHover()
         {
             optionImage.sprite = Scenario.GetMapImage(Scenario.instance.currentScene);
-            if(Scenario.instance.currentGametype == Gametypes.Gametypes.Gametype.Ui)
+            if(Scenario.instance.currentGametype == Gametypes.GametypeHelper.Gametype.Ui)
                 optionText.text = Scenario.GetMapTitle(Scenario.instance.currentScene);
             else
                 optionText.text = Scenario.instance.currentGametype + " on " + Scenario.GetMapTitle(Scenario.instance.currentScene);

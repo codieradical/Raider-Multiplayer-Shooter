@@ -132,11 +132,11 @@ namespace Raider.Game.Player
             //If teams are enabled, assign the player a team.
             if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
-				Gametypes.Gametypes.Teams smallestTeam = Gametypes.Gametypes.Teams.Red;
+				Gametypes.GametypeHelper.Teams smallestTeam = Gametypes.GametypeHelper.Teams.Red;
                 int smallestTeamSize = 0;
 
                 int currentTeamSize;
-                foreach(Gametypes.Gametypes.Teams team in Enum.GetValues(typeof(Gametypes.Gametypes.Teams)))
+                foreach(Gametypes.GametypeHelper.Teams team in Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams)))
                 {
                     currentTeamSize = 0;
                     foreach (PlayerData player in NetworkGameManager.instance.Players)
@@ -202,17 +202,17 @@ namespace Raider.Game.Player
             {
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
-                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametypes.Gametypes.Teams.None)
+                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametypes.GametypeHelper.Teams.None)
                     {
                         if ((i + 1) % 2 == 1)
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametypes.Teams.Red;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametypes.Teams.Red);
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Teams.Red;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Teams.Red);
                         }
                         else
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.Gametypes.Teams.Blue;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.Gametypes.Teams.Blue);
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Teams.Blue;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Teams.Blue);
                         }
                     }
                 }
@@ -221,10 +221,10 @@ namespace Raider.Game.Player
             {
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    if (player.syncData.team != Gametypes.Gametypes.Teams.None)
+                    if (player.syncData.team != Gametypes.GametypeHelper.Teams.None)
                     {
-                        player.syncData.team = Gametypes.Gametypes.Teams.None;
-                        player.RpcChangeTeam(Gametypes.Gametypes.Teams.None);
+                        player.syncData.team = Gametypes.GametypeHelper.Teams.None;
+                        player.RpcChangeTeam(Gametypes.GametypeHelper.Teams.None);
                     }
                 }
             }

@@ -6,11 +6,11 @@ using UnityEngine.Networking;
 namespace Raider.Game.Gametypes
 {
 
-	public class Gametypes : MonoBehaviour
+	public class GametypeHelper : MonoBehaviour
 	{
 		#region Singleton Setup
 
-		public static Gametypes instance;
+		public static GametypeHelper instance;
 
 		public void Awake()
 		{
@@ -127,7 +127,7 @@ namespace Raider.Game.Gametypes
 			return null;
 		}
 
-		public enum Teams
+		public enum Teams : byte
 		{
 			None = 0,
 			Red = 1,

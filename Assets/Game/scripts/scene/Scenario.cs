@@ -18,7 +18,7 @@ namespace Raider.Game.Scene
 
 		public string gameuiScene;
 		public string currentScene;
-		public Gametypes.Gametypes.Gametype currentGametype = Gametypes.Gametypes.Gametype.None;
+		public Gametypes.GametypeHelper.Gametype currentGametype = Gametypes.GametypeHelper.Gametype.None;
 
 		public static bool InLobby
 		{
@@ -46,14 +46,14 @@ namespace Raider.Game.Scene
 					else
 						NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
 				}
-				LoadScene(NetworkGameManager.instance.lobbyScene, Gametypes.Gametypes.Gametype.Ui);
+				LoadScene(NetworkGameManager.instance.lobbyScene, Gametypes.GametypeHelper.Gametype.Ui);
 			}
 		}
 
 		//A list of scenes by path.
 		public List<string> scenes;
 
-		public List<string> GetSceneNamesByGametype(Gametypes.Gametypes.Gametype gametype)
+		public List<string> GetSceneNamesByGametype(Gametypes.GametypeHelper.Gametype gametype)
 		{
 			List<string> paths = GetScenePathsByGametype(gametype);
 			List<string> names = new List<string>();
@@ -66,7 +66,7 @@ namespace Raider.Game.Scene
 			return names;
 		}
 
-		public List<string> GetScenePathsByGametype(Gametypes.Gametypes.Gametype gametype)
+		public List<string> GetScenePathsByGametype(Gametypes.GametypeHelper.Gametype gametype)
 		{
 			List<string> appropriateScenes = new List<string>();
 
@@ -119,7 +119,7 @@ namespace Raider.Game.Scene
             currentScene = newScene.name;
             if (currentScene == NetworkGameManager.instance.lobbyScene)
             {
-                currentGametype = Gametypes.Gametypes.Gametype.Ui;
+                currentGametype = Gametypes.GametypeHelper.Gametype.Ui;
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
@@ -135,7 +135,7 @@ namespace Raider.Game.Scene
             currentScene = SceneManager.GetActiveScene().name;
             if(currentScene == NetworkGameManager.instance.lobbyScene)
             {
-                currentGametype = Gametypes.Gametypes.Gametype.Ui;
+                currentGametype = Gametypes.GametypeHelper.Gametype.Ui;
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = true;
             }
@@ -174,7 +174,7 @@ namespace Raider.Game.Scene
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
-        public void LoadScene(string sceneName, Gametypes.Gametypes.Gametype gametype)
+        public void LoadScene(string sceneName, Gametypes.GametypeHelper.Gametype gametype)
         {
             SceneManager.LoadScene(sceneName);
 
