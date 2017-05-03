@@ -4,6 +4,7 @@ using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -132,11 +133,12 @@ namespace Raider.Game.Player
             //If teams are enabled, assign the player a team.
             if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
-				Gametypes.GametypeHelper.Teams smallestTeam = Gametypes.GametypeHelper.Teams.Red;
-                int smallestTeamSize = 0;
+				GametypeHelper.Team smallestTeam = GametypeHelper.Team.Red;
+				List<GametypeHelper.Team> activeTeams = new List<GametypeHelper.Team>();
 
+                int smallestTeamSize = 0;
                 int currentTeamSize;
-                foreach(Gametypes.GametypeHelper.Teams team in Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams)))
+                foreach(GametypeHelper.Team team in Enum.GetValues(typeof(GametypeHelper.Team)))
                 {
                     currentTeamSize = 0;
                     foreach (PlayerData player in NetworkGameManager.instance.Players)
@@ -144,6 +146,10 @@ namespace Raider.Game.Player
                         if (player.syncData.team == team)
                             currentTeamSize++;
                     }
+
+					if (currentTeamSize > 0)
+						activeTeams.Add(team);
+
                     if(currentTeamSize < smallestTeamSize && currentTeamSize > 0)
                     {
                         smallestTeamSize = currentTeamSize;
@@ -151,8 +157,17 @@ namespace Raider.Game.Player
                     }
                 }
 
-                playerData.syncData.team = smallestTeam;
-                playerData.RpcChangeTeam(smallestTeam);
+				if(activeTeams.Count < 2)
+				{
+					if (activeTeams[0] == GametypeHelper.Team.Red)
+						playerData.syncData.team = GametypeHelper.Team.Blue;
+					else
+						playerData.syncData.team = GametypeHelper.Team.Blue;
+				}
+				else
+					playerData.syncData.team = smallestTeam;
+
+                playerData.RpcChangeTeam(playerData.syncData.team);
             }
         }
 
@@ -202,17 +217,17 @@ namespace Raider.Game.Player
             {
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
-                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametypes.GametypeHelper.Teams.None)
+                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametypes.GametypeHelper.Team.None)
                     {
                         if ((i + 1) % 2 == 1)
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Teams.Red;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Teams.Red);
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Team.Red;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Red);
                         }
                         else
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Teams.Blue;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Teams.Blue);
+                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Team.Blue;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Blue);
                         }
                     }
                 }
@@ -221,10 +236,10 @@ namespace Raider.Game.Player
             {
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    if (player.syncData.team != Gametypes.GametypeHelper.Teams.None)
+                    if (player.syncData.team != Gametypes.GametypeHelper.Team.None)
                     {
-                        player.syncData.team = Gametypes.GametypeHelper.Teams.None;
-                        player.RpcChangeTeam(Gametypes.GametypeHelper.Teams.None);
+                        player.syncData.team = Gametypes.GametypeHelper.Team.None;
+                        player.RpcChangeTeam(Gametypes.GametypeHelper.Team.None);
                     }
                 }
             }

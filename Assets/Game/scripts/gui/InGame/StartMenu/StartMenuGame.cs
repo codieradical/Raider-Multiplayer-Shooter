@@ -91,29 +91,26 @@ namespace Raider.Game.GUI.StartMenu
         {
 
             List<OptionsPaneOption.OptionsPaneContents> changeTeamOptions = new List<OptionsPaneOption.OptionsPaneContents>();
-            Gametypes.GametypeHelper.Teams[] teams = (Gametypes.GametypeHelper.Teams[])Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams));
+            GametypeHelper.Team[] teams = (GametypeHelper.Team[])Enum.GetValues(typeof(GametypeHelper.Team));
 
-            List<Gametypes.GametypeHelper.Teams> availableTeams = new List<Gametypes.GametypeHelper.Teams>();
+            List<GametypeHelper.Team> availableTeams = new List<GametypeHelper.Team>();
 
-            foreach (Gametypes.GametypeHelper.Teams team in teams)
+            foreach (GametypeHelper.Team team in teams)
             {
-                if (team != Gametypes.GametypeHelper.Teams.None)
+                if (team != GametypeHelper.Team.None)
                     availableTeams.Add(team);
-
             }
 
             Array.Resize(ref teams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
-            foreach(Gametypes.GametypeHelper.Teams availableTeam in availableTeams)
-            {
+            foreach(GametypeHelper.Team availableTeam in availableTeams)
                 changeTeamOptions.Add(new OptionsPaneOption.OptionsPaneContents(availableTeam.ToString(), "Switch to the " + availableTeam.ToString() + " team"));
-            }
 
             OptionsPaneHandler.InstanceOptionsPane(GetComponentInParent<Canvas>().gameObject.transform).ShowOptions("Change Team", changeTeamOptions, ChangeTeam, true);
         }
 
         public void ChangeTeam(string option)
         {
-            PlayerData.localPlayerData.CmdChangeTeam((Gametypes.GametypeHelper.Teams)Enum.Parse(typeof(Gametypes.GametypeHelper.Teams), option));
+            PlayerData.localPlayerData.CmdChangeTeam((GametypeHelper.Team)Enum.Parse(typeof(GametypeHelper.Team), option));
         }
 
         public void ChangeTeamHover()

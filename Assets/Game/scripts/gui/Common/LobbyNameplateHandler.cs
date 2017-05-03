@@ -34,7 +34,7 @@ namespace Raider.Game.GUI.Components
 
         public void UpdateColor()
         {
-            if (playerData.team == Gametypes.GametypeHelper.Teams.None)
+            if (playerData.team == Gametypes.GametypeHelper.Team.None)
             {
                 float h, s, v;
                 Color.RGBToHSV(playerData.Character.armourPrimaryColor.Color, out h, out s, out v);

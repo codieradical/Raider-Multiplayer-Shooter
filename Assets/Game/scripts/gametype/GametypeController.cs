@@ -40,7 +40,7 @@ namespace Raider.Game.Gametypes
 
         public struct ScoreboardPlayer
 		{
-			public ScoreboardPlayer(int id, int score, GametypeHelper.Teams team, string name, string clan, UserSaveDataStructure.Emblem emblem)
+			public ScoreboardPlayer(int id, int score, GametypeHelper.Team team, string name, string clan, UserSaveDataStructure.Emblem emblem, bool hasLeft)
 			{
 				this.id = id;
 				this.score = score;
@@ -48,13 +48,15 @@ namespace Raider.Game.Gametypes
                 this.name = name;
                 this.clan = clan;
                 this.emblem = emblem;
+				this.hasLeft = hasLeft;
 			}
 			public int id;
             public string name;
             public string clan;
             public UserSaveDataStructure.Emblem emblem;
 			public int score;
-			public GametypeHelper.Teams team;
+			public GametypeHelper.Team team;
+			public bool hasLeft;
 		}
 
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
@@ -82,7 +84,7 @@ namespace Raider.Game.Gametypes
 				}
 			}
 
-			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, 0, playerData.syncData.team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem));
+			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, 0, playerData.syncData.team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem, false));
 		}
 
 		public void RemovePlayer(int playerId)
@@ -97,56 +99,143 @@ namespace Raider.Game.Gametypes
 			}
 		}
 
-		public List<Tuple<GametypeHelper.Teams, int>> teamRanking
+		public List<Tuple<GametypeHelper.Team, int>> TeamRanking
 		{
 			get
 			{
-				List<Tuple<GametypeHelper.Teams, int>> teamScores = new List<Tuple<GametypeHelper.Teams, int>>();
-				foreach (GametypeHelper.Teams team in Enum.GetValues(typeof(GametypeHelper.Teams)))
+				List<Tuple<GametypeHelper.Team, int>> teamScores = new List<Tuple<GametypeHelper.Team, int>>();
+				foreach (GametypeHelper.Team team in Enum.GetValues(typeof(GametypeHelper.Team)))
 				{
+					if (PlayerRanking(team).Count < 1)
+					{
+						int teamTotal;
+						if (GetTeamTotal(team, out teamTotal))
+						{
+							teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, teamTotal));
+							continue;
+						}
+						else
+							continue;
+					}
+
 					int iterationScore = 0;
+
 					foreach (ScoreboardPlayer player in scoreboard)
 					{
 						if (player.team == team)
 							iterationScore += player.score;
 					}
-					teamScores.Add(new Tuple<GametypeHelper.Teams, int>(team, iterationScore));
+					teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, iterationScore));
 				}
-				return (teamScores.OrderBy(team => PlayerRanking(team.First).Count() < 1).ThenBy(team => team.Second).ThenBy(team => team.First)).ToList();
+				return (teamScores.OrderBy(team => PlayerRanking(team.First).Count() < 1).ThenByDescending(team => team.Second).ThenBy(team => team.First)).ToList();
 			}
 		}
 
-        public List<ScoreboardPlayer> PlayerRanking(GametypeHelper.Teams team)
+		public bool GetTeamTotal(GametypeHelper.Team team, out int total)
+		{
+			List<ScoreboardPlayer> players = new List<ScoreboardPlayer>();
+			total = 0;
+
+			foreach (ScoreboardPlayer player in scoreboard)
+			{
+				if (player.team == team)
+				{
+					players.Add(player);
+					continue;
+				}
+			}
+
+			if (players.Count < 1)
+				return false;
+			else
+			{
+				foreach (ScoreboardPlayer player in players)
+					total += player.score;
+
+				return true;
+			}
+		}
+
+        public List<ScoreboardPlayer> PlayerRanking(GametypeHelper.Team team)
         {
             List<ScoreboardPlayer> players = new List<ScoreboardPlayer>();
 
-            foreach (ScoreboardPlayer player in scoreboard)
-                if (player.team == team)
-                    players.Add(player);
+			foreach (ScoreboardPlayer player in scoreboard)
+			{
+				if (!player.hasLeft && player.team == team)
+				{
+					players.Add(player);
+					continue;
+				}
 
-            return (players.OrderBy(player => NetworkGameManager.instance.GetPlayerDataById(player.id) != null).ThenBy(player => player.score).ThenBy(player => player.id)).ToList();
+				bool playerInAnotherTeam = false;
+
+				foreach (ScoreboardPlayer player2 in scoreboard)
+				{
+					if (player.id == player2.id)
+					{
+						playerInAnotherTeam = true;
+						break;
+					}
+				}
+
+				if (playerInAnotherTeam)
+					continue;
+
+				players.Add(player);
+			}
+
+            return (players.OrderBy(player => !player.hasLeft).ThenByDescending(player => player.score).ThenBy(player => player.id)).ToList();
         }
 
         public List<ScoreboardPlayer> PlayerRanking()
         {
-            return (scoreboard.OrderBy(player => NetworkGameManager.instance.GetPlayerDataById(player.id) != null).ThenBy(player => player.score).ThenBy(player => player.id)).ToList();
+            return (scoreboard.OrderBy(player => !player.hasLeft).ThenByDescending(player => player.score).ThenBy(player => player.id)).ToList();
         }
 
 		[Server]
-		public void AddToScoreboard(int playerId, GametypeHelper.Teams playerTeam, int addition)
+		public void AddToScoreboard(int playerId, GametypeHelper.Team playerTeam, int addition)
 		{
 			for (int i = 0; i < scoreboard.Count; i++)
 			{
 				if (scoreboard[i].id == playerId && scoreboard[i].team == playerTeam)
 				{
-					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem);
+					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, scoreboard[i].hasLeft);
 					scoreboard[i] = updatedScore;
 					return;
 				}
 			}
             PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem);
+            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem, false);
 			scoreboard.Add(newScore);
+		}
+
+		[Server]
+		public void UpdateScoreboardActivePlayers()
+		{
+			List<Tuple<int, GametypeHelper.Team>> activePlayersAndTeams = new List<Tuple<int, GametypeHelper.Team>>();
+
+			foreach (PlayerData player in NetworkGameManager.instance.Players)
+				activePlayersAndTeams.Add(new Tuple<int, GametypeHelper.Team>(player.syncData.id, player.syncData.team));
+
+			for (int i = 0; i < scoreboard.Count; i++)
+			{
+				bool foundPlayer = false;
+				foreach (Tuple<int, GametypeHelper.Team> activePlayer in activePlayersAndTeams)
+				{
+					if (scoreboard[i].id == activePlayer.First && scoreboard[i].team == activePlayer.Second)
+					{
+						scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, false);
+						foundPlayer = true;
+						break;
+					}
+				}
+
+				if (foundPlayer)
+					continue;
+
+				scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, true);
+			}
 		}
 
 		#endregion
@@ -172,7 +261,7 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class TeamOptions
             {
-                public int maxTeams = Enum.GetValues(typeof(GametypeHelper.Teams)).Length - 1;
+                public int maxTeams = Enum.GetValues(typeof(GametypeHelper.Team)).Length - 1;
                 public bool clientTeamChangingLobby = true;
                 public bool clientTeamChangingGame = true;
                 public bool friendlyFire = false;

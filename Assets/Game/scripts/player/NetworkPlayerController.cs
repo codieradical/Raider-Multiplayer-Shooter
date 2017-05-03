@@ -6,6 +6,7 @@ using Raider.Game.Cameras;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using Raider.Game.GUI.Scoreboard;
 
 namespace Raider.Game.Player
 {
@@ -60,7 +61,7 @@ namespace Raider.Game.Player
 
 			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(GetComponent<PlayerData>().syncData.Character.Race));
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData.Character);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData);
 			NetworkServer.Spawn(ragDoll);
 			RpcSetupRagdoll(ragDoll);
 
@@ -71,7 +72,7 @@ namespace Raider.Game.Player
 		public void RpcSetupRagdoll(GameObject ragDoll)
 		{
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData.Character);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData);
 		}
 
 		[TargetRpc]
@@ -94,6 +95,7 @@ namespace Raider.Game.Player
 		public void RpcKillPlayer()
 		{
 			//Hide the dead player.
+			ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(true);
 			ToggleWeapons(false);
 		}
@@ -122,6 +124,7 @@ namespace Raider.Game.Player
 		[ClientRpc]
 		public void RpcRespawnPlayer()
 		{
+			ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
 			ToggleWeapons(true);
 		}

@@ -17,5 +17,5 @@ namespace Raider.Game.Cameras
 
             base.Setup();
         }
-    }
+	}
 }

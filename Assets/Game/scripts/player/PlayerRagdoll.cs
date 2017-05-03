@@ -2,6 +2,8 @@
 using System.Collections;
 using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.Networking;
+using Raider.Game.Player;
+using Raider.Game.Gametypes;
 
 public class PlayerRagdoll : CharacterPreviewAppearenceController
 {
@@ -13,6 +15,19 @@ public class PlayerRagdoll : CharacterPreviewAppearenceController
 	void Start()
 	{
 		spawnedTime = Time.time;
+	}
+
+	public void UpdatePlayerAppearence(PlayerData.SyncData syncData)
+	{
+		base.UpdatePlayerAppearence(syncData.Character);
+
+		if (syncData.team != GametypeHelper.Team.None)
+		{
+			foreach (Renderer primaryRenderer in primaryRenderers)
+			{
+				primaryRenderer.material.color = GametypeHelper.GetTeamColor(syncData.team);
+			}
+		}
 	}
 
 	// Update is called once per frame

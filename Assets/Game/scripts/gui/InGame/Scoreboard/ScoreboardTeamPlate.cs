@@ -25,15 +25,17 @@ namespace Raider.Game.GUI.Scoreboard
 
             matchObjectSizeComponent.matchGameObject = scoreboardHeader;
 
-            foreach (Image image in background)
+			float newH, newS, newV;
+			Color.RGBToHSV(color, out newH, out newS, out newV);
+			Color newColor;
+
+			foreach (Image image in background)
             {
-
-                float oldH, oldS, oldV;
+                float oldH, oldS, oldV, oldA;
                 Color.RGBToHSV(image.color, out oldH, out oldS, out oldV);
-                float newH, newS, newV;
-                Color.RGBToHSV(color, out newH, out newS, out newV);
-
-                image.color = Color.HSVToRGB(newH, newS, oldV);
+				oldA = image.color.a;
+                newColor = Color.HSVToRGB(newH, newS, oldV);
+				image.color = new Color(newColor.r, newColor.g, newColor.b, oldA);
             }
 
         }

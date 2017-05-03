@@ -1,5 +1,6 @@
 ﻿using Raider.Game.Cameras;
 using Raider.Game.Gametypes;
+using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using Raider.Game.Weapons;
 using System.Collections;
@@ -43,14 +44,17 @@ namespace Raider.Game.Player
             if(isLocalPlayer)
             {
                 playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().Perspective);
-            }
+				ScoreboardHandler.UpdateHeaderMessage("Waiting for initial spawn...");
+				ScoreboardHandler.Focus(true);
+			}
 
 			if(isLocalPlayer && GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)
 			{
 				SetupLocalControl();
+				ScoreboardHandler.UpdateHeaderMessage(NetworkGameManager.instance.lobbySetup.syncData.GametypeString);
 			}
 
-			if(isServer && GametypeController.singleton != null)
+			if (isServer && GametypeController.singleton != null)
 			{
 				GametypeController.singleton.AddPlayerToScoreboard(playerData.syncData.id);
 			}
@@ -64,13 +68,15 @@ namespace Raider.Game.Player
 			CameraModeController.singleton.localPlayerGameObject = gameObject;
 			//CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
 			playerData.localPlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
+			ScoreboardHandler.Focus(false);
 		}
 
         [TargetRpc]
         public void TargetSetupLocalControl(NetworkConnection conn)
         {
 			SetupLocalControl();
-        }
+			ScoreboardHandler.UpdateHeaderMessage(NetworkGameManager.instance.lobbySetup.syncData.GametypeString);
+		}
 
 		[TargetRpc]
 		public void TargetSpawnedWeapon(NetworkConnection conn, GameObject weaponObject, Armory.Weapons weapon)

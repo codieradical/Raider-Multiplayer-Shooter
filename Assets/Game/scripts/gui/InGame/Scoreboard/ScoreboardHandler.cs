@@ -2,35 +2,76 @@
 using System.Collections.Generic;
 using Raider.Game.Networking;
 using Raider.Game.Gametypes;
+using Raider.Game.Player;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Scoreboard
 {
-    public class ScoreboardHandler : MonoBehaviour
-    {
-        #region Singleton Setup
+	public class ScoreboardHandler : MonoBehaviour
+	{
+		Animator animatorInstance;
+		#region Singleton Setup
 
-        private static List<ScoreboardHandler> instances = new List<ScoreboardHandler>();
+		private static List<ScoreboardHandler> instances = new List<ScoreboardHandler>();
 
-        void Awake()
-        {
-            if (instances == null)
-                instances = new List<ScoreboardHandler>();
-            instances.Add(this);
-        }
+		void Awake()
+		{
+			animatorInstance = GetComponent<Animator>();
+			if (instances == null)
+				instances = new List<ScoreboardHandler>();
+			instances.Add(this);
+		}
 
-        void OnDestroy()
-        {
-            instances.Remove(this);
-        }
+		void OnDestroy()
+		{
+			instances.Remove(this);
+		}
 
-        #endregion
+		#endregion
 
-        [Header("Active Objects")]
-        public GameObject playerContainer;
-        public GameObject headerObject;
-        [Header("Prefabs Objects")]
-        public GameObject playerPlatePrefab;
-        public GameObject teamPlatePrefab;
+		[Header("Active Objects")]
+		public GameObject playerContainer;
+		public GameObject headerObject;
+		public Text headerMessage;
+		[Header("Prefabs Objects")]
+		public GameObject playerPlatePrefab;
+		public GameObject teamPlatePrefab;
+
+		public bool IsOpen
+		{
+			get { return animatorInstance.GetBool("open"); }
+			set { animatorInstance.SetBool("open", value); }
+		}
+
+		public bool Focused
+		{
+			get { return animatorInstance.GetBool("focused"); }
+			set { animatorInstance.SetBool("focused", value); }
+		}
+
+		public static void Open(bool open)
+		{
+			foreach(ScoreboardHandler instance in instances)
+			{
+				instance.IsOpen = open;
+			}
+		}
+
+		public static void Focus(bool focus)
+		{
+			foreach (ScoreboardHandler instance in instances)
+			{
+				instance.Focused = focus;
+			}
+		}
+
+		public static void UpdateHeaderMessage(string message)
+		{
+			foreach(ScoreboardHandler instance in instances)
+			{
+				instance.headerMessage.text = message;
+			}
+		}
 
         private void Start()
         {
@@ -58,18 +99,28 @@ namespace Raider.Game.GUI.Scoreboard
 
             if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
-                for (int i = 0; i < GametypeController.singleton.teamRanking.Count; i++)
+                for (int i = 0; i < GametypeController.singleton.TeamRanking.Count; i++)
                 {
                     GameObject teamPlate = Instantiate(teamPlatePrefab);
-                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), GametypeController.singleton.teamRanking[i].First.ToString() + " Team", GametypeController.singleton.teamRanking[i].Second, GametypeHelper.GetTeamColor(GametypeController.singleton.teamRanking[i].First), headerObject);
+                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), GametypeController.singleton.TeamRanking[i].First.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Second, GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[i].First), headerObject);
                     teamPlate.transform.SetParent(playerContainer.transform, false);
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.teamRanking[i].First))
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First))
                     {
-                        bool hasLeft = NetworkGameManager.instance.GetPlayerDataById(player.id) == null;
+						PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(player.id);
+
+						bool hasLeft = playerData == null;
+						bool isLeader = false;
+						bool isDead = false;
+
+						if(!hasLeft)
+						{
+							isLeader = playerData.syncData.isLeader;
+							isDead = !playerData.networkPlayerController.IsAlive;
+						}
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, hasLeft, GametypeHelper.GetTeamColor(player.team), headerObject);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, hasLeft, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
                 }
@@ -80,11 +131,22 @@ namespace Raider.Game.GUI.Scoreboard
 
                 for (int i = 0; i < playerRanking.Count; i++)
                 {
-                    if (NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id) == null)
-                        continue;
+					PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id);
 
-                    GameObject playerPlate = Instantiate(playerPlatePrefab);
-                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), playerRanking[i].emblem, playerRanking[i].name, playerRanking[i].clan, playerRanking[i].score, false, NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id).syncData.Character.armourPrimaryColor.Color, headerObject);
+					bool hasLeft = playerData == null;
+					bool isLeader = false;
+					bool isDead = false;
+
+					if (!hasLeft)
+					{
+						isLeader = playerData.syncData.isLeader;
+						isDead = !playerData.networkPlayerController.IsAlive;
+					}
+					else
+						continue;
+
+					GameObject playerPlate = Instantiate(playerPlatePrefab);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), playerRanking[i].emblem, playerRanking[i].name, playerRanking[i].clan, playerRanking[i].score, false, NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id).syncData.Character.armourPrimaryColor.Color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
             }

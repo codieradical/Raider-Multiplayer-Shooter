@@ -81,29 +81,36 @@ namespace Raider.Game.Networking
         }
 
 
-		//DEBUG
-		private void OnGUI()
-		{
-			for (int i = 0; i < Players.Count; i++)
-			{
-				UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
-				UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
-				UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
-				UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
-				try
-				{
-					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
-					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
-					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
+		////DEBUG
+		//private void OnGUI()
+		//{
+		//	for (int i = 0; i < Players.Count; i++)
+		//	{
+		//		UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
+		//		UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
+		//		UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
+		//		UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
+		//		try
+		//		{
+		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
+		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
+		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
 
-					foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
-					{
-						if (player.name == Players[i].syncData.username)
-							UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
-					}
-				}
-				catch (Exception ex) { }
-			}
+		//			foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
+		//			{
+		//				if (player.name == Players[i].syncData.username)
+		//					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
+		//			}
+		//		}
+		//		catch (Exception ex) { }
+		//	}
+		//}
+
+			//Called when a client leaves.
+		public override void OnLobbyServerDisconnect(NetworkConnection conn)
+		{
+			if (activeGametype != null)
+				activeGametype.UpdateScoreboardActivePlayers();
 		}
 
 		public bool IsLeader
@@ -300,7 +307,7 @@ namespace Raider.Game.Networking
 
                 if (lobbySetup != null && lobbySetup.syncData != null && lobbySetup.syncData.gameOptions != null && lobbySetup.syncData.gameOptions.teamsEnabled)
                 {
-                    foreach (Gametypes.GametypeHelper.Teams team in Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams)))
+                    foreach (Gametypes.GametypeHelper.Team team in Enum.GetValues(typeof(Gametypes.GametypeHelper.Team)))
                     {
                         foreach (PlayerData playerData in Players)
                         {

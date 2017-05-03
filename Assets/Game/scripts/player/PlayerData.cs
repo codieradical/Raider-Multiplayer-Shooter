@@ -1,4 +1,5 @@
 ﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
@@ -61,9 +62,9 @@ namespace Raider.Game.Player
 
         public bool paused;
 
-        [SyncVar(hook = "OnSyncDataSynced")] public SyncData syncData;
+		[SyncVar(hook = "OnSyncDataSynced")] public SyncData syncData;
 
-        [System.Serializable]
+        [Serializable]
         public class SyncData
         {
             //Sync Fields
@@ -72,7 +73,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public Gametypes.GametypeHelper.Teams team = Gametypes.GametypeHelper.Teams.None;
+            [SyncVar] public Gametypes.GametypeHelper.Team team = Gametypes.GametypeHelper.Team.None;
 
             //Properties
             public bool GotData
@@ -111,9 +112,9 @@ namespace Raider.Game.Player
         }
 
         [Command]
-        public void CmdChangeTeam(Gametypes.GametypeHelper.Teams newTeam)
+        public void CmdChangeTeam(GametypeHelper.Team newTeam)
         {
-            if (newTeam == Gametypes.GametypeHelper.Teams.None)
+            if (newTeam == GametypeHelper.Team.None)
                 return;
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
                 return;
@@ -122,10 +123,10 @@ namespace Raider.Game.Player
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && Scenario.InLobby)
                 return;
 
-			Gametypes.GametypeHelper.Teams[] availableTeams = (Gametypes.GametypeHelper.Teams[])Enum.GetValues(typeof(Gametypes.GametypeHelper.Teams));
+			GametypeHelper.Team[] availableTeams = (GametypeHelper.Team[])Enum.GetValues(typeof(GametypeHelper.Team));
             Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
 
-            foreach(Gametypes.GametypeHelper.Teams team in availableTeams)
+            foreach(GametypeHelper.Team team in availableTeams)
             {
                 if(team == newTeam)
                 {
@@ -140,8 +141,8 @@ namespace Raider.Game.Player
                     if(!Scenario.InLobby)
                     {
 						//Remove the old team item, add the new.
-						GametypeController.singleton.RemovePlayer(syncData.id);
 						GametypeController.singleton.AddPlayerToScoreboard(syncData.id);
+						GametypeController.singleton.UpdateScoreboardActivePlayers();
 
                         foreach(NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
                         {
@@ -157,7 +158,7 @@ namespace Raider.Game.Player
         }
 
         [ClientRpc]
-        public void RpcChangeTeam(Gametypes.GametypeHelper.Teams team)
+        public void RpcChangeTeam(Gametypes.GametypeHelper.Team team)
         {
             syncData.team = team;
             NetworkGameManager.instance.UpdateLobbyNameplates();

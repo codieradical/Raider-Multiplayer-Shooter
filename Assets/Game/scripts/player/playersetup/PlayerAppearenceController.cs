@@ -63,7 +63,7 @@ namespace Raider.Game.Player
         {
             base.UpdatePlayerAppearence(syncData.Character);
 
-            if(syncData.team != Gametypes.GametypeHelper.Teams.None)
+            if(syncData.team != Gametypes.GametypeHelper.Team.None)
             {
                 foreach (Renderer primaryRenderer in primaryRenderers)
                 {

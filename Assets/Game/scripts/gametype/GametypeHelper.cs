@@ -127,46 +127,43 @@ namespace Raider.Game.Gametypes
 			return null;
 		}
 
-		public enum Teams : byte
+		public enum Team : byte
 		{
 			None = 0,
 			Red = 1,
 			Blue = 2,
 			Green = 3,
-			Yellow = 4,
-			Pink = 5,
-			Brown = 6,
-			Purple = 7,
-			White = 8,
-			Black = 9
+			Orange = 4,
+			Purple = 5,
+			Gold = 6,
+			Brown = 7,
+			Pink = 8
 		}
 
-		public static Color GetTeamColor(Teams team)
+		public static Color GetTeamColor(Team team)
 		{
 			switch (team)
 			{
-				case Teams.Blue:
+				case Team.Blue:
 					return Color.blue;
-				case Teams.Brown:
+				case Team.Brown:
 					return new Color(0.54f, 0.27f, 0.07f);
-				case Teams.Green:
+				case Team.Green:
 					return Color.green;
-				case Teams.Pink:
+				case Team.Pink:
 					return new Color(0.97f, 1f, 0.86f);
-				case Teams.Purple:
+				case Team.Purple:
 					return Color.magenta;
-				case Teams.Red:
+				case Team.Red:
 					return Color.red;
-				case Teams.White:
-					return Color.white;
-				case Teams.Yellow:
-					return Color.yellow;
-				case Teams.Black:
-					return Color.black;
+				case Team.Gold:
+					return new Color(1, 0.843f, 0);
+				case Team.Orange:
+					return new Color(1, 0.549f, 0);
 			}
 
 			Debug.Log("Team color out of enum!"); // Could probably default case this.
-			return Color.black;
+			return Color.white;
 		}
 	}
 }
