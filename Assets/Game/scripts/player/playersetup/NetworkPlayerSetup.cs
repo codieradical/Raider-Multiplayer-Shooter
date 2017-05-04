@@ -44,8 +44,6 @@ namespace Raider.Game.Player
             if(isLocalPlayer)
             {
                 playerData.appearenceController.ChangePerspectiveModel(Session.userSaveDataHandler.GetSettings().Perspective);
-				ScoreboardHandler.UpdateHeaderMessage("Waiting for initial spawn...");
-				ScoreboardHandler.Focus(true);
 			}
 
 			if(isLocalPlayer && GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)

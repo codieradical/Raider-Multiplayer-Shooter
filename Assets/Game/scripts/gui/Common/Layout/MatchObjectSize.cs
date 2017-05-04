@@ -30,7 +30,10 @@ namespace Raider.Game.GUI.Layout
 
         void ResizeUI()
         {
-            RectTransform matchRect = matchGameObject.GetComponent<RectTransform>();
+			RectTransform matchRect = null;
+
+			if (matchGameObject != null)
+				matchRect = matchGameObject.GetComponent<RectTransform>();
 
             if (matchRect != null)
             {

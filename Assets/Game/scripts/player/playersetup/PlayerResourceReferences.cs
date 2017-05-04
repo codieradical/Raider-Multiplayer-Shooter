@@ -32,7 +32,7 @@ namespace Raider.Game.Player
 
         //Player Appearence Controller.
 
-        [System.Serializable]
+        [Serializable]
         private class RaceAndModel
         {
             public UserSaveDataStructure.Character.Races race;

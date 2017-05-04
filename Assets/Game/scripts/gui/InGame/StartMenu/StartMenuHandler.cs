@@ -1,4 +1,5 @@
-﻿using Raider.Game.Networking;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Scene;
 using UnityEngine;
@@ -84,12 +85,17 @@ namespace Raider.Game.GUI.StartMenu
             if (Session.ActiveCharacter == null)
                 return;
 
-            SetupStartMenuData();
+			if (!Scenario.InLobby && PlayerData.localPlayerData != null)
+			{
+				if (GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)
+					PlayerData.localPlayerData.localPlayerController.PausePlayer();
+				else
+					return;
+			}
 
-            if (!Scenario.InLobby)
-                PlayerData.localPlayerData.localPlayerController.PausePlayer();
+			SetupStartMenuData();
 
-            OpenAPane(DefaultPane);
+			OpenAPane(DefaultPane);
 
             IsOpen = true;
         }

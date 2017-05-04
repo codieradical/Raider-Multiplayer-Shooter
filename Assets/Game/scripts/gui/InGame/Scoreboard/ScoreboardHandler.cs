@@ -20,6 +20,15 @@ namespace Raider.Game.GUI.Scoreboard
 			if (instances == null)
 				instances = new List<ScoreboardHandler>();
 			instances.Add(this);
+
+			if(GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)
+				headerMessage.text = NetworkGameManager.instance.lobbySetup.syncData.GametypeString;
+			else
+			{
+				headerMessage.text = "Waiting to spawn...";
+				Focused = true;
+			}
+
 		}
 
 		void OnDestroy()
