@@ -124,7 +124,7 @@ namespace Raider.Game.GUI.Scoreboard
 
 						if(!hasLeft)
 						{
-							isLeader = playerData.syncData.isLeader;
+							isLeader = playerData.PlayerSyncData.isLeader;
 							isDead = !playerData.networkPlayerController.IsAlive;
 						}
 
@@ -148,14 +148,14 @@ namespace Raider.Game.GUI.Scoreboard
 
 					if (!hasLeft)
 					{
-						isLeader = playerData.syncData.isLeader;
+						isLeader = playerData.PlayerSyncData.isLeader;
 						isDead = !playerData.networkPlayerController.IsAlive;
 					}
 					else
 						continue;
 
 					GameObject playerPlate = Instantiate(playerPlatePrefab);
-                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), playerRanking[i].emblem, playerRanking[i].name, playerRanking[i].clan, playerRanking[i].score, false, NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id).syncData.Character.armourPrimaryColor.Color, headerObject, isLeader, isDead);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), playerRanking[i].emblem, playerRanking[i].name, playerRanking[i].clan, playerRanking[i].score, false, NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id).PlayerSyncData.Character.armourPrimaryColor.Color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
             }

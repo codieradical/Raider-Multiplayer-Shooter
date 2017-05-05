@@ -78,13 +78,13 @@ namespace Raider.Game.Gametypes
 			//If the player is already on the scoreboard, just make sure their team is alright.
 			foreach(ScoreboardPlayer player in scoreboard)
 			{
-				if (player.id == playerData.syncData.id && player.team == playerData.syncData.team)
+				if (player.id == playerData.PlayerSyncData.id && player.team == playerData.PlayerSyncData.team)
 				{
 					return;
 				}
 			}
 
-			scoreboard.Add(new ScoreboardPlayer(playerData.syncData.id, 0, playerData.syncData.team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem, false));
+			scoreboard.Add(new ScoreboardPlayer(playerData.PlayerSyncData.id, 0, playerData.PlayerSyncData.team, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false));
 		}
 
 		public void RemovePlayer(int playerId)
@@ -206,7 +206,7 @@ namespace Raider.Game.Gametypes
 				}
 			}
             PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.emblem, false);
+            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false);
 			scoreboard.Add(newScore);
 		}
 
@@ -216,7 +216,7 @@ namespace Raider.Game.Gametypes
 			List<Tuple<int, GametypeHelper.Team>> activePlayersAndTeams = new List<Tuple<int, GametypeHelper.Team>>();
 
 			foreach (PlayerData player in NetworkGameManager.instance.Players)
-				activePlayersAndTeams.Add(new Tuple<int, GametypeHelper.Team>(player.syncData.id, player.syncData.team));
+				activePlayersAndTeams.Add(new Tuple<int, GametypeHelper.Team>(player.PlayerSyncData.id, player.PlayerSyncData.team));
 
 			for (int i = 0; i < scoreboard.Count; i++)
 			{

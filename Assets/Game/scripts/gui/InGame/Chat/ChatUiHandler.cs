@@ -145,7 +145,7 @@ namespace Raider.Game.GUI.Screens
             yield return 0; //Wait a frame...
 
             if (PlayerData.localPlayerData != null)
-                PlayerData.localPlayerData.GetComponent<PlayerChatManager>().CmdSendMessage(message, PlayerData.localPlayerData.syncData.id);
+                PlayerData.localPlayerData.GetComponent<PlayerChatManager>().CmdSendMessage(message, PlayerData.localPlayerData.PlayerSyncData.id);
         }
 
         public void OpenChatInput()

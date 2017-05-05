@@ -34,9 +34,9 @@ namespace Raider.Game.Player
 
                 localPlayer = this;
 
-                playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.PrimaryWeapon);
-				playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.SecondaryWeapon);
-				playerData.networkPlayerController.SpawnWeapon(playerData.syncData.Character.TertiaryWeapon);
+                playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.PrimaryWeapon);
+				playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.SecondaryWeapon);
+				playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.TertiaryWeapon);
 			}
 
             playerData.appearenceController.ReplacePlayerModel(playerData);
@@ -54,7 +54,7 @@ namespace Raider.Game.Player
 
 			if (isServer && GametypeController.singleton != null)
 			{
-				GametypeController.singleton.AddPlayerToScoreboard(playerData.syncData.id);
+				GametypeController.singleton.AddPlayerToScoreboard(playerData.PlayerSyncData.id);
 			}
         }
 

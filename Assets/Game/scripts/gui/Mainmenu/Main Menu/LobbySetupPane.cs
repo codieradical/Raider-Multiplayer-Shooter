@@ -83,7 +83,7 @@ namespace Raider.Game.GUI.Components
                 Scenario.instance.currentGametype = NetworkGameManager.instance.lobbySetup.syncData.Gametype;
                 foreach (PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    if (!player.syncData.GotData)
+                    if (!player.PlayerSyncData.GotData)
                     {
                         UserFeedback.LogError("A player is still connecting. Please wait until all players have joined.");
                         return;

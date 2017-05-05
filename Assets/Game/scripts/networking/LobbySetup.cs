@@ -72,7 +72,7 @@ namespace Raider.Game.Networking
         public void SendLobbySetupUpdate()
         {
             //If the player is offline, there's nowhere to send the data...
-            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline && NetworkLobbyPlayerSetup.localPlayer.playerData.syncData.isLeader)
+            if(NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline && NetworkLobbyPlayerSetup.localPlayer.playerData.PlayerSyncData.isLeader)
                 NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(syncData);
         }
 

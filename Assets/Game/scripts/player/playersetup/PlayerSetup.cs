@@ -20,9 +20,9 @@ namespace Raider.Game.Player
 
             SetupLocalPlayer();
 
-            PlayerData.localPlayerData.syncData.Character = Session.ActiveCharacter;
-            PlayerData.localPlayerData.syncData.username = Session.userSaveDataHandler.GetUsername();
-            PlayerData.localPlayerData.syncData.isLeader = true;
+            PlayerData.localPlayerData.PlayerSyncData.Character = Session.ActiveCharacter;
+            PlayerData.localPlayerData.PlayerSyncData.username = Session.userSaveDataHandler.GetUsername();
+            PlayerData.localPlayerData.PlayerSyncData.isLeader = true;
 
             PlayerData.localPlayerData.localPlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
         }

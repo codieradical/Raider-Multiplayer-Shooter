@@ -46,7 +46,7 @@ namespace Raider.Game.Player
 					PlayerData player = NetworkGameManager.instance.GetPlayerDataById(damageDealtBy);
 
 					Debug.Log("I was killed by " + player.name);
-					GametypeController.singleton.AddToScoreboard(player.syncData.id, player.syncData.team, 1);
+					GametypeController.singleton.AddToScoreboard(player.PlayerSyncData.id, player.PlayerSyncData.team, 1);
 					
 				}
 			}
@@ -59,9 +59,9 @@ namespace Raider.Game.Player
 			TargetKillPlayer(connectionToClient);
 			RpcKillPlayer();
 
-			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(GetComponent<PlayerData>().syncData.Character.Race));
+			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(GetComponent<PlayerData>().PlayerSyncData.Character.Race));
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().PlayerSyncData);
 			NetworkServer.Spawn(ragDoll);
 			RpcSetupRagdoll(ragDoll);
 
@@ -72,7 +72,7 @@ namespace Raider.Game.Player
 		public void RpcSetupRagdoll(GameObject ragDoll)
 		{
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().syncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().PlayerSyncData);
 		}
 
 		[TargetRpc]
@@ -80,7 +80,7 @@ namespace Raider.Game.Player
 		{
 			//When the player dies, switch their camera to spectate.
 			for (int i = 0; i < NetworkGameManager.instance.Players.Count; i++)
-				if(NetworkGameManager.instance.Players[i].syncData.id == PlayerData.localPlayerData.syncData.id)
+				if(NetworkGameManager.instance.Players[i].PlayerSyncData.id == PlayerData.localPlayerData.PlayerSyncData.id)
 				{
 					CameraModeController.singleton.spectatingPlayerIndex = i;
 					break;
@@ -170,7 +170,7 @@ namespace Raider.Game.Player
                 character.weaponCustomizations.Add(new Armory.WeaponAndVariation(weapon, Armory.WeaponVariation.Mid));
                 Session.UpdateActiveCharacter(character);
             }
-            CmdSpawnWeapon(weapon, weaponCustomization, PlayerData.localPlayerData.syncData.id);
+            CmdSpawnWeapon(weapon, weaponCustomization, PlayerData.localPlayerData.PlayerSyncData.id);
         }
 
         [Command]

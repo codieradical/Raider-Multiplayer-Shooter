@@ -118,7 +118,7 @@ namespace Raider.Game.Networking
             get
             {
                 if (PlayerData.localPlayerData != null)
-                    if (PlayerData.localPlayerData.syncData.isLeader)
+                    if (PlayerData.localPlayerData.PlayerSyncData.isLeader)
                         return true;
                     else
                         return false;
@@ -131,7 +131,7 @@ namespace Raider.Game.Networking
         {
             PlayerData gamePlayerData = gamePlayer.GetComponent<PlayerData>();
             PlayerData lobbyPlayerData = lobbyPlayer.GetComponent<PlayerData>();
-            gamePlayerData.syncData = lobbyPlayerData.syncData;
+            gamePlayerData.PlayerSyncData = lobbyPlayerData.PlayerSyncData;
             gamePlayer.name = lobbyPlayerData.name;
             return true;
         }
@@ -161,7 +161,7 @@ namespace Raider.Game.Networking
 
 				foreach(PlayerData player in Players)
 				{
-					activeGametype.AddPlayerToScoreboard(player.syncData.id);
+					activeGametype.AddPlayerToScoreboard(player.PlayerSyncData.id);
 				}
 			}
             else
@@ -170,7 +170,7 @@ namespace Raider.Game.Networking
                 {
                     //If players have changed their team in game, only the host updates the lobby object.
                     //So now that the lobby is loaded again, update the other players.
-                    player.RpcChangeTeam(player.syncData.team);
+                    player.RpcChangeTeam(player.PlayerSyncData.team);
                 }
             }
         }
@@ -181,14 +181,14 @@ namespace Raider.Game.Networking
         /// <returns>Returns the int slot.</returns>
         public int GetMyPlayerId()
         {
-            return PlayerData.localPlayerData.syncData.id;
+            return PlayerData.localPlayerData.PlayerSyncData.id;
         }
 
         public PlayerData GetPlayerDataById(int gamePlayerSlot)
         {
             foreach(PlayerData player in Players)
             {
-                if (player.GetComponent<PlayerData>().syncData.id == gamePlayerSlot)
+                if (player.GetComponent<PlayerData>().PlayerSyncData.id == gamePlayerSlot)
                     return player;
             }
             return null;
@@ -253,7 +253,7 @@ namespace Raider.Game.Networking
 
                 if (playerData != null)
                 {
-                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.syncData.id);
+                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.PlayerSyncData.id);
                     break;
                 }
             }
@@ -311,13 +311,13 @@ namespace Raider.Game.Networking
                     {
                         foreach (PlayerData playerData in Players)
                         {
-                            if (playerData.syncData.GotData && playerData.syncData.team == team)
-                                LobbyHandler.AddPlayer(playerData.syncData);
+                            if (playerData.PlayerSyncData.GotData && playerData.PlayerSyncData.team == team)
+                                LobbyHandler.AddPlayer(playerData.PlayerSyncData);
                         }
                     }
                     foreach (PlayerData playerData in Players)
                     {
-                        if (!playerData.syncData.GotData)
+                        if (!playerData.PlayerSyncData.GotData)
                             LobbyHandler.AddLoadingPlayer();
                     }
                 }
@@ -325,8 +325,8 @@ namespace Raider.Game.Networking
                 {
                     foreach (PlayerData playerData in Players)
                     {
-                        if (playerData.syncData.GotData)
-                            LobbyHandler.AddPlayer(playerData.syncData);
+                        if (playerData.PlayerSyncData.GotData)
+                            LobbyHandler.AddPlayer(playerData.PlayerSyncData);
                         else
                             LobbyHandler.AddLoadingPlayer();
                     }

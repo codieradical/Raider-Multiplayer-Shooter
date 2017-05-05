@@ -68,17 +68,17 @@ namespace Raider.Game.Player
         void UpdateLocalData(int _id, string _username, UserSaveDataStructure.Character _character, bool _isLeader, bool _isHost)
         {
             Debug.Log("Updated Local Data. Slot: " + _id + "username: " + _username);
-            playerData.syncData.id = _id;
-            playerData.syncData.username = _username;
-            playerData.syncData.Character = _character;
-            playerData.syncData.isLeader = _isLeader;
-            playerData.syncData.isHost = _isHost;
+            playerData.PlayerSyncData.id = _id;
+            playerData.PlayerSyncData.username = _username;
+            playerData.PlayerSyncData.Character = _character;
+            playerData.PlayerSyncData.isLeader = _isLeader;
+            playerData.PlayerSyncData.isHost = _isHost;
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         public void Update()
         {
-            if (playerData != null && playerData.syncData != null && !playerData.syncData.GotData && !isLocalPlayer)
+            if (playerData != null && playerData.PlayerSyncData != null && !playerData.PlayerSyncData.GotData && !isLocalPlayer)
             {
                 if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
                 {
@@ -96,38 +96,38 @@ namespace Raider.Game.Player
         public void TargetSendClientSyncData(NetworkConnection target, PlayerData.SyncData _syncData)
         {
             //If for some reason the local player is sent to itself (sometimes unavoidable), ignore it.
-            if (playerData.isLocalPlayer || playerData.syncData.GotData)
+            if (playerData.isLocalPlayer || playerData.PlayerSyncData.GotData)
                 return;
 
-            playerData.syncData = _syncData;
-            Debug.Log("Recieved sync data on for player " + playerData.syncData.username);
+            playerData.PlayerSyncData = _syncData;
+            Debug.Log("Recieved sync data on for player " + playerData.PlayerSyncData.username);
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
 
         [TargetRpc]
         public void TargetRequestSyncData(NetworkConnection target)
         {
-            if (playerData.syncData.GotData)
-                CmdRecieveSyncData(playerData.syncData);
+            if (playerData.PlayerSyncData.GotData)
+                CmdRecieveSyncData(playerData.PlayerSyncData);
         }
 
         [Command]
         public void CmdRecieveSyncData(PlayerData.SyncData _syncData)
         {
-            if (playerData.syncData.GotData) //For some reason this can be called more than once.
+            if (playerData.PlayerSyncData.GotData) //For some reason this can be called more than once.
                 return;
 
-            playerData.syncData = _syncData;
-            gameObject.name = playerData.syncData.username;
+            playerData.PlayerSyncData = _syncData;
+            gameObject.name = playerData.PlayerSyncData.username;
             serverGotPlayerData = true;
             NetworkGameManager.instance.UpdateLobbyNameplates();
-            GetComponent<PlayerChatManager>().CmdSendNotificationMessage("joined the game.", playerData.syncData.id);
+            GetComponent<PlayerChatManager>().CmdSendNotificationMessage("joined the game.", playerData.PlayerSyncData.id);
 
             //Now that the client has sent the server it's data, the server can send back other clients' data.
             foreach (PlayerData player in NetworkGameManager.instance.Players)
             {
-                if (player.syncData.GotData && player != playerData)
-                    player.GetComponent<NetworkLobbyPlayerSetup>().TargetSendClientSyncData(connectionToClient, player.syncData);
+                if (player.PlayerSyncData.GotData && player != playerData)
+                    player.GetComponent<NetworkLobbyPlayerSetup>().TargetSendClientSyncData(connectionToClient, player.PlayerSyncData);
             }
 
             //If teams are enabled, assign the player a team.
@@ -143,7 +143,7 @@ namespace Raider.Game.Player
                     currentTeamSize = 0;
                     foreach (PlayerData player in NetworkGameManager.instance.Players)
                     {
-                        if (player.syncData.team == team)
+                        if (player.PlayerSyncData.team == team)
                             currentTeamSize++;
                     }
 
@@ -160,27 +160,27 @@ namespace Raider.Game.Player
 				if(activeTeams.Count < 2)
 				{
 					if (activeTeams[0] == GametypeHelper.Team.Red)
-						playerData.syncData.team = GametypeHelper.Team.Blue;
+						playerData.PlayerSyncData.team = GametypeHelper.Team.Blue;
 					else
-						playerData.syncData.team = GametypeHelper.Team.Blue;
+						playerData.PlayerSyncData.team = GametypeHelper.Team.Blue;
 				}
 				else
-					playerData.syncData.team = smallestTeam;
+					playerData.PlayerSyncData.team = smallestTeam;
 
-                playerData.RpcChangeTeam(playerData.syncData.team);
+                playerData.RpcChangeTeam(playerData.PlayerSyncData.team);
             }
         }
 
         [Command] //As a backup, if for some reason the player still lacks sync data, they can request an update on all.
         public void CmdRequestAllSyncData()
         {
-            Debug.LogWarning("A player (" + playerData.syncData.username + ") just requested all sync data.");
+            Debug.LogWarning("A player (" + playerData.PlayerSyncData.username + ") just requested all sync data.");
             foreach(PlayerData player in NetworkGameManager.instance.Players)
             {
-                if (player.syncData.GotData && player.connectionToClient != connectionToClient) //If the server has data on the player and it's not the target player.
+                if (player.PlayerSyncData.GotData && player.connectionToClient != connectionToClient) //If the server has data on the player and it's not the target player.
                 {
-                    TargetSendClientSyncData(connectionToClient, player.syncData); //Send the sync data.
-                    Debug.LogWarning("Sending " + playerData.syncData.username + " sync data for " + player.syncData.username);
+                    TargetSendClientSyncData(connectionToClient, player.PlayerSyncData); //Send the sync data.
+                    Debug.LogWarning("Sending " + playerData.PlayerSyncData.username + " sync data for " + player.PlayerSyncData.username);
                 }
             }
         }
@@ -209,7 +209,7 @@ namespace Raider.Game.Player
         [Command]
         public void CmdSendLobbySetup(LobbySetup.SyncData syncData)
         {
-            if (!playerData.syncData.isLeader)
+            if (!playerData.PlayerSyncData.isLeader)
                 return;
 
             //Update teams.
@@ -217,16 +217,16 @@ namespace Raider.Game.Player
             {
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
-                    if (NetworkGameManager.instance.Players[i].syncData.team == Gametypes.GametypeHelper.Team.None)
+                    if (NetworkGameManager.instance.Players[i].PlayerSyncData.team == Gametypes.GametypeHelper.Team.None)
                     {
                         if ((i + 1) % 2 == 1)
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Team.Red;
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = Gametypes.GametypeHelper.Team.Red;
                             NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Red);
                         }
                         else
                         {
-                            NetworkGameManager.instance.Players[i].syncData.team = Gametypes.GametypeHelper.Team.Blue;
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = Gametypes.GametypeHelper.Team.Blue;
                             NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Blue);
                         }
                     }
@@ -236,9 +236,9 @@ namespace Raider.Game.Player
             {
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    if (player.syncData.team != Gametypes.GametypeHelper.Team.None)
+                    if (player.PlayerSyncData.team != Gametypes.GametypeHelper.Team.None)
                     {
-                        player.syncData.team = Gametypes.GametypeHelper.Team.None;
+                        player.PlayerSyncData.team = Gametypes.GametypeHelper.Team.None;
                         player.RpcChangeTeam(Gametypes.GametypeHelper.Team.None);
                     }
                 }

@@ -62,7 +62,24 @@ namespace Raider.Game.Player
 
         public bool paused;
 
-		[SyncVar(hook = "OnSyncDataSynced")] public SyncData syncData;
+        /// <summary>
+        /// Don't set synData! Set PlayerSyndData!
+        /// syncData is used for sync only!
+        /// </summary>
+        [SyncVar(hook = "OnSyncDataSynced")]
+        public SyncData syncData;
+		public SyncData PlayerSyncData
+        {
+            get
+            {
+                return syncData;
+            }
+            set
+            {
+                syncData = value;
+                gameObject.name = syncData.username;
+            }
+        }
 
         [Serializable]
         public class SyncData
@@ -96,9 +113,8 @@ namespace Raider.Game.Player
 
         void OnSyncDataSynced(SyncData value)
         {
-            syncData = value;
-            Debug.Log("Synced data for id " + syncData.id.ToString() + ", player " + syncData.username);
-            gameObject.name = syncData.username;
+            PlayerSyncData = value;
+            Debug.Log("Synced data for id " + PlayerSyncData.id.ToString() + ", player " + PlayerSyncData.username);
 
             NetworkGameManager.instance.UpdateLobbyNameplates();
         }
@@ -130,23 +146,23 @@ namespace Raider.Game.Player
             {
                 if(team == newTeam)
                 {
-                    syncData.team = team;
+                    PlayerSyncData.team = team;
                     NetworkGameManager.instance.UpdateLobbyNameplates();
                     RpcChangeTeam(team);
 
                     if (appearenceController != null)
-                        appearenceController.UpdatePlayerAppearence(syncData);
+                        appearenceController.UpdatePlayerAppearence(PlayerSyncData);
 
                     //If the player is not in lobby, have the server update their lobby player for later.
                     if(!Scenario.InLobby)
                     {
 						//Remove the old team item, add the new.
-						GametypeController.singleton.AddPlayerToScoreboard(syncData.id);
+						GametypeController.singleton.AddPlayerToScoreboard(PlayerSyncData.id);
 						GametypeController.singleton.UpdateScoreboardActivePlayers();
 
                         foreach(NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
                         {
-                            if(lobbyPlayer.playerData.syncData.id == syncData.id)
+                            if(lobbyPlayer.playerData.PlayerSyncData.id == PlayerSyncData.id)
                             {
                                 lobbyPlayer.playerData.RpcChangeTeam(team);
                                 break;
@@ -160,11 +176,11 @@ namespace Raider.Game.Player
         [ClientRpc]
         public void RpcChangeTeam(Gametypes.GametypeHelper.Team team)
         {
-            syncData.team = team;
+            PlayerSyncData.team = team;
             NetworkGameManager.instance.UpdateLobbyNameplates();
 
             if (appearenceController != null)
-                appearenceController.UpdatePlayerAppearence(syncData);
+                appearenceController.UpdatePlayerAppearence(PlayerSyncData);
         }
     }
 }

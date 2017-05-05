@@ -205,9 +205,9 @@ namespace Raider.Game.GUI.Components
                 {
                     foreach (PlayerData playerData in NetworkGameManager.instance.Players)
                     {
-                        if (playerData.syncData.isHost)
+                        if (playerData.PlayerSyncData.isHost)
                         {
-                            instance.lobbyOwnerText.text = playerData.syncData.username + " is the Leader.";
+                            instance.lobbyOwnerText.text = playerData.PlayerSyncData.username + " is the Leader.";
                             break;
                         }
                     }

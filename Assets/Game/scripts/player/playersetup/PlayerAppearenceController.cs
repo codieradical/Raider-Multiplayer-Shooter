@@ -25,14 +25,14 @@ namespace Raider.Game.Player
         public void ReplacePlayerModel(PlayerData playerData)
         {
             //Spawn the model.
-            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.GetModelByRace(playerData.syncData.Character.Race)) as GameObject;
+            playerData.playerModel = Instantiate(PlayerResourceReferences.instance.GetModelByRace(playerData.PlayerSyncData.Character.Race)) as GameObject;
             playerData.playerModel.transform.SetParent(playerData.graphicsObject.transform, false);
             playerData.playerModel.name = "Model"; //Prevents infinate (clone) appends.
 
             //Update the colors, emblem.
             playerData.appearenceController = playerData.playerModel.GetComponent<PlayerAppearenceController>();
             playerData.firstPersonPlayerModel = playerData.appearenceController.firstPersonObject;
-            playerData.appearenceController.UpdatePlayerAppearence(playerData.syncData);
+            playerData.appearenceController.UpdatePlayerAppearence(playerData.PlayerSyncData);
 
             if (playerData.IsLocalPlayer) //If the local player's model is being recreated, make sure to update the perspective.
                 ChangePerspectiveModel(CameraModeController.singleton.CameraMode);

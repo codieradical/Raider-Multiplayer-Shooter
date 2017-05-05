@@ -83,18 +83,18 @@ namespace Raider.Game.Player
         {
             PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerSlot);
             Color usernameColor;
-            if (playerData.syncData.team != Gametypes.GametypeHelper.Team.None)
+            if (playerData.PlayerSyncData.team != Gametypes.GametypeHelper.Team.None)
             {
-                usernameColor = Gametypes.GametypeHelper.GetTeamColor(playerData.syncData.team);
+                usernameColor = Gametypes.GametypeHelper.GetTeamColor(playerData.PlayerSyncData.team);
             }
             else
             {
-                usernameColor = playerData.syncData.Character.armourPrimaryColor.Color;
+                usernameColor = playerData.PlayerSyncData.Character.armourPrimaryColor.Color;
                 float H, S, V = 0f;
                 Color.RGBToHSV(usernameColor, out H, out S, out V);
                 usernameColor = Color.HSVToRGB(H, 0.75f, 0.75f);
             }
-            return AddBoldCode(AddColorCode(usernameColor, playerData.syncData.username));
+            return AddBoldCode(AddColorCode(usernameColor, playerData.PlayerSyncData.username));
         }
 
         static string AddColorCode(Color color, string message)
