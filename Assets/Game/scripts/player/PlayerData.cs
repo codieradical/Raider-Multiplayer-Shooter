@@ -127,8 +127,8 @@ namespace Raider.Game.Player
             animationController = GetComponent<AnimationParametersController>(); //Singleplayer assignment.
         }
 
-        [Command]
-        public void CmdChangeTeam(GametypeHelper.Team newTeam)
+        [Server]
+        public void ServerChangeTeam(GametypeHelper.Team newTeam)
         {
             if (newTeam == GametypeHelper.Team.None)
                 return;
@@ -139,12 +139,12 @@ namespace Raider.Game.Player
             if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.clientTeamChangingGame && Scenario.InLobby)
                 return;
 
-			GametypeHelper.Team[] availableTeams = (GametypeHelper.Team[])Enum.GetValues(typeof(GametypeHelper.Team));
+            GametypeHelper.Team[] availableTeams = (GametypeHelper.Team[])Enum.GetValues(typeof(GametypeHelper.Team));
             Array.Resize(ref availableTeams, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamOptions.maxTeams - 1);
 
-            foreach(GametypeHelper.Team team in availableTeams)
+            foreach (GametypeHelper.Team team in availableTeams)
             {
-                if(team == newTeam)
+                if (team == newTeam)
                 {
                     PlayerSyncData.team = team;
                     NetworkGameManager.instance.UpdateLobbyNameplates();
@@ -154,15 +154,15 @@ namespace Raider.Game.Player
                         appearenceController.UpdatePlayerAppearence(PlayerSyncData);
 
                     //If the player is not in lobby, have the server update their lobby player for later.
-                    if(!Scenario.InLobby)
+                    if (!Scenario.InLobby)
                     {
-						//Remove the old team item, add the new.
-						GametypeController.singleton.AddPlayerToScoreboard(PlayerSyncData.id);
-						GametypeController.singleton.UpdateScoreboardActivePlayers();
+                        //Remove the old team item, add the new.
+                        GametypeController.singleton.AddPlayerToScoreboard(PlayerSyncData.id);
+                        GametypeController.singleton.UpdateScoreboardActivePlayers();
 
-                        foreach(NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
+                        foreach (NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
                         {
-                            if(lobbyPlayer.playerData.PlayerSyncData.id == PlayerSyncData.id)
+                            if (lobbyPlayer.playerData.PlayerSyncData.id == PlayerSyncData.id)
                             {
                                 lobbyPlayer.playerData.RpcChangeTeam(team);
                                 break;
@@ -171,6 +171,12 @@ namespace Raider.Game.Player
                     }
                 }
             }
+        }
+
+        [Command]
+        public void CmdChangeTeam(GametypeHelper.Team newTeam)
+        {
+            ServerChangeTeam(newTeam);
         }
 
         [ClientRpc]

@@ -1,5 +1,7 @@
-﻿using Raider.Game.GUI.Screens;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Screens;
 using Raider.Game.Networking;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -50,14 +52,31 @@ namespace Raider.Game.Player
             ChatUiHandler.instance.AddMessageToShortLog(message);
         }
 
+
+        private const string COMMAND_HELP_MESSAGE =
+            "/me - Express an action./n" +
+            "/leave - Leave the game./n" +
+            "/endgame - End the game, hosts only./n" +
+            "/help - Display this text./n" +
+            "/changeteam - Change your team. (eg. /changeteam RedTeam)";
+
         string ParseCommands(string input, int playerSlot)
         {
             if (input.StartsWith("/me"))
-                input = "* " + GetFormattedUsername(playerSlot) + input.Replace("/me","");
+                input = "* " + GetFormattedUsername(playerSlot) + input.Replace("/me", "");
             else if (input.StartsWith("/leave"))
                 NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
             else if (input.StartsWith("/endgame") && (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host))
                 NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+            else if (input.StartsWith("/help"))
+            {
+                SendLocalNotificationMessage(COMMAND_HELP_MESSAGE);
+                input = "";
+            }
+            else if(input.StartsWith("/changeteam"))
+            {
+                NetworkGameManager.instance.GetPlayerDataById(playerSlot).ServerChangeTeam((GametypeHelper.Team)Enum.Parse(typeof(GametypeHelper.Team), input.Replace("/changeteam", "")));
+            }
             else
                 input = string.Format("<{0}> {1}", GetFormattedUsername(playerSlot), input);
             return input;
