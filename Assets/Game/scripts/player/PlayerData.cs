@@ -30,6 +30,14 @@ namespace Raider.Game.Player
         public GameObject playerModel; // Assigned In Editor To Begin
         public GameObject firstPersonPlayerModel; //Assigned in editor to begin.
         public NetworkPlayerController networkPlayerController; //Assigned in editor.
+		public PlayerChatManager PlayerChatManager
+		{
+
+			get
+			{
+				return GetComponent<PlayerChatManager>();
+			}
+		}
         public Animator sharedParametersAnimator; //Assigned in editor.
 
         public AnimationParametersController animationController; //Assigned in editor or on creation.

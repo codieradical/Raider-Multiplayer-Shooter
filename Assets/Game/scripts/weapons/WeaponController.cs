@@ -16,6 +16,7 @@ namespace Raider.Game.Weapons
 		public bool activeWeapon = false;
 
         public LayerMask dontShoot;
+		public LayerMask playerLayer;
 
 		public override void OnStartClient()
 		{
@@ -78,13 +79,17 @@ namespace Raider.Game.Weapons
                     if (Physics.Linecast(CameraModeController.singleton.cam.transform.position, firePointPosition, out raycastHit, ~dontShoot))
                     {
                         firePointPosition = raycastHit.point;
-                    }
+
+						Vector3 heading = firePointPosition - weaponFirePoint.transform.position;
+						float distance = heading.magnitude;
+						Vector3 direction = heading / distance;
+
+						CmdShoot(direction);
+					}
 
 #if DEBUG
                     Debug.DrawLine(CameraModeController.singleton.cam.transform.position, firePointPosition, Color.magenta);
 #endif
-
-					CmdShoot(firePointPosition);
 
                     Debug.DrawLine(weaponFirePoint.transform.position, firePointPosition, Color.green);
                 }
@@ -96,11 +101,18 @@ namespace Raider.Game.Weapons
         }
 
 		[Command]
-		public virtual void CmdShoot(Vector3 firePointPosition)
+		public virtual void CmdShoot(Vector3 fireAngle)
 		{
 			RaycastHit raycastHit;
-			if (Physics.Linecast(weaponFirePoint.transform.position, firePointPosition, out raycastHit, ~dontShoot))
+			Debug.DrawRay(weaponFirePoint.transform.position, fireAngle, Color.blue, 1f);
+			if (Physics.Raycast(weaponFirePoint.transform.position, fireAngle, out raycastHit, weaponCustomization.range))
 			{
+
+				//if(raycastHit.collider.gameObject.layer == playerLayer)
+				//{
+				//	raycastHit.collider.gameObject.GetComponentInParent<NetworkPlayerController>();
+				//}
+				
 				NetworkPlayerController player = raycastHit.collider.gameObject.GetComponentInParent<NetworkPlayerController>();
 				if (player != null)
 				{

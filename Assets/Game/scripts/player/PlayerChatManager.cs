@@ -31,20 +31,22 @@ namespace Raider.Game.Player
         /// Sends a notification message, formatted in bold, to the server.
         /// </summary>
         /// <param name="message">The message to be sent.</param>
-        /// <param name="playerSlot">The slot containing the sender's data. Used for formatting.</param>
+        /// <param name="playerSlot">The slot containing the sender's data. Used for formatting. Ignored if -1.</param>
         [Command]
         public void CmdSendNotificationMessage(string message, int playerSlot)
         {
-            message = GetFormattedUsername(playerSlot) + " " + AddBoldCode(message);
-            chatLog.Push(message);
+            message = AddBoldCode(message);
+			if (playerSlot > -1)
+				message = GetFormattedUsername(playerSlot) + " " + message;
+			chatLog.Push(message);
             RpcUpdateClientChat(message);
         }
 
-        /// <summary>
-        /// Sends a local chat message that only the sender can see.
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void SendLocalNotificationMessage(string message)
+		/// <summary>
+		/// Sends a local chat message that only the sender can see.
+		/// </summary>
+		/// <param name="message">The message to send.</param>
+		public void SendLocalNotificationMessage(string message)
         {
             message = AddBoldCode(message);
             chatLog.Push(message);
@@ -98,13 +100,13 @@ namespace Raider.Game.Player
         /// </summary>
         /// <param name="playerSlot"></param>
         /// <returns></returns>
-        string GetFormattedUsername(int playerSlot)
+        public static string GetFormattedUsername(int playerSlot)
         {
             PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerSlot);
             Color usernameColor;
-            if (playerData.PlayerSyncData.team != Gametypes.GametypeHelper.Team.None)
+            if (playerData.PlayerSyncData.team != GametypeHelper.Team.None)
             {
-                usernameColor = Gametypes.GametypeHelper.GetTeamColor(playerData.PlayerSyncData.team);
+                usernameColor = GametypeHelper.GetTeamColor(playerData.PlayerSyncData.team);
             }
             else
             {

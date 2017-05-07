@@ -12,6 +12,14 @@ namespace Raider.Game.Player
 {
     public class NetworkPlayerController : NetworkBehaviour
     {
+		public PlayerData PlayerData
+		{
+			get
+			{
+				return GetComponent<PlayerData>();
+			}
+		}
+
 		[SyncVar]
 		public int health = 100;
 		public bool IsAlive
@@ -32,6 +40,10 @@ namespace Raider.Game.Player
 		[Server]
 		public void TakeDamage(int damage, int damageDealtBy)
 		{
+			if (PlayerData.syncData.id == damageDealtBy)
+				return;
+			//Don't let players shoot themselves. Not sure how that would happen anyway.
+
 			if (health <= 0)
 				return;
 				//If they're already dead, stop killing them!
@@ -41,7 +53,10 @@ namespace Raider.Game.Player
 			{ 
 				KillPlayer();
 
-				if(damageDealtBy > -1)
+				PlayerChatManager chatManager = PlayerData.localPlayerData.PlayerChatManager;
+				chatManager.CmdSendNotificationMessage(PlayerChatManager.GetFormattedUsername(damageDealtBy) + " killed " + PlayerChatManager.GetFormattedUsername(PlayerData.syncData.id), -1);
+
+				if (damageDealtBy > -1)
 				{
 					PlayerData player = NetworkGameManager.instance.GetPlayerDataById(damageDealtBy);
 
@@ -59,9 +74,9 @@ namespace Raider.Game.Player
 			TargetKillPlayer(connectionToClient);
 			RpcKillPlayer();
 
-			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(GetComponent<PlayerData>().PlayerSyncData.Character.Race));
+			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(PlayerData.PlayerSyncData.Character.Race));
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().PlayerSyncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData.PlayerSyncData);
 			NetworkServer.Spawn(ragDoll);
 			RpcSetupRagdoll(ragDoll);
 
@@ -72,7 +87,7 @@ namespace Raider.Game.Player
 		public void RpcSetupRagdoll(GameObject ragDoll)
 		{
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(GetComponent<PlayerData>().PlayerSyncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData.PlayerSyncData);
 		}
 
 		[TargetRpc]
