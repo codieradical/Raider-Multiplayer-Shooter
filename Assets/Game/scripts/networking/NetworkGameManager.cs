@@ -143,9 +143,12 @@ namespace Raider.Game.Networking
         {
             base.OnClientSceneChanged(conn);
 
-            //if the newly loaded scene is the menu, and there's a lobby player already setup, and that player is not the host, send the ready up flag.
-            if (SceneManager.GetActiveScene().name == lobbyScene && NetworkLobbyPlayerSetup.localPlayer != null && CurrentNetworkState != NetworkState.Host && CurrentNetworkState != NetworkState.Server)
-                NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+			//if the newly loaded scene is the menu, and there's a lobby player already setup, and that player is not the host, send the ready up flag.
+			if (SceneManager.GetActiveScene().name == lobbyScene && NetworkLobbyPlayerSetup.localPlayer != null && CurrentNetworkState != NetworkState.Host && CurrentNetworkState != NetworkState.Server)
+			{
+				NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+				NetworkLobbyPlayerSetup.localPlayer.CmdRequestLobbySetupUpdate();
+			}
         }
 
         public override void OnLobbyServerSceneChanged(string sceneName)

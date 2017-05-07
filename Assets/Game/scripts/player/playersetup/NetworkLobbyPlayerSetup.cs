@@ -12,7 +12,7 @@ namespace Raider.Game.Player
 {
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(PlayerChatManager))]
-    [System.Serializable]
+    [Serializable]
     public class NetworkLobbyPlayerSetup : NetworkBehaviour
     {
         public static NetworkLobbyPlayerSetup localPlayer;
@@ -26,6 +26,7 @@ namespace Raider.Game.Player
         {
             playerData = GetComponent<PlayerData>();
 
+			//Dont think this is required.
             if (isLocalPlayer)
                 serverGotPlayerData = true;
         }
@@ -34,7 +35,15 @@ namespace Raider.Game.Player
             playerData = GetComponent<PlayerData>();
         }
 
-        public override void OnStartLocalPlayer()
+		public void Awake()
+		{
+			if (isLocalPlayer && !playerData.syncData.isLeader)
+				GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
+			else if(isLocalPlayer)
+				CmdRequestLobbySetupUpdate();
+		}
+
+		public override void OnStartLocalPlayer()
         {
             localPlayer = this;
             PlayerData.localPlayerData = playerData;
@@ -188,7 +197,7 @@ namespace Raider.Game.Player
         #region LobbySetup Syncing (Refactor Me!)
 
         [Command]
-        void CmdRequestLobbySetupUpdate()
+        public void CmdRequestLobbySetupUpdate()
         {
             Debug.Log("Sending Lobby Data.");
             TargetSendLobbySetup(connectionToClient, NetworkGameManager.instance.lobbySetup.syncData);

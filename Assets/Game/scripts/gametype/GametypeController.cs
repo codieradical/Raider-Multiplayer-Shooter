@@ -22,6 +22,8 @@ namespace Raider.Game.Gametypes
 			if (singleton != null)
 				Debug.LogError("More than one Gametype active! What are you doing!!");
 			singleton = this;
+
+			ScoreboardHandler.InvalidateScoreboard();
 		}
 
 		void OnDestroy()
