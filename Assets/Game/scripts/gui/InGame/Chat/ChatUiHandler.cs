@@ -169,7 +169,10 @@ namespace Raider.Game.GUI.Screens
 
             IsOpen = true;
 
-            StartCoroutine(SelectInputObject());
+			if(!Scenario.InLobby)
+				PlayerData.localPlayerData.localPlayerController.PausePlayer();
+
+			StartCoroutine(SelectInputObject());
         }
 
         public void CloseChatInput()
