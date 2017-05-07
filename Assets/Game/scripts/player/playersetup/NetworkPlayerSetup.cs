@@ -66,7 +66,7 @@ namespace Raider.Game.Player
 			CameraModeController.singleton.localPlayerGameObject = gameObject;
 			//CameraModeController.singleton.SetCameraMode(Session.saveDataHandler.GetSettings().perspective);
 			playerData.localPlayerController.UpdatePerspective(Session.userSaveDataHandler.GetSettings().Perspective);
-			ScoreboardHandler.Focus(false);
+			ScoreboardHandler.Focus = false;
 		}
 
         [TargetRpc]

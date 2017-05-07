@@ -12,6 +12,12 @@ namespace Raider.Game.Player
 {
     public class NetworkPlayerController : NetworkBehaviour
     {
+		public override void OnNetworkDestroy()
+		{
+			if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
+				NetworkGameManager.instance.actionQueue.Enqueue(GametypeController.singleton.UpdateScoreboardActivePlayers);
+		}
+
 		public PlayerData PlayerData
 		{
 			get

@@ -1,4 +1,5 @@
 ﻿using Raider.Game.Cameras;
+using Raider.Game.Gametypes;
 using Raider.Game.Networking;
 using Raider.Game.Player;
 using UnityEngine;
@@ -51,6 +52,9 @@ namespace Raider.Game.Weapons
         float lastFired = 0;
         public virtual void Shoot()
         {
+			if (!GametypeController.singleton.hasInitialSpawned)
+				return;
+
             if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading && hasAuthority)
             {
                 if (clipAmmo <= 0)

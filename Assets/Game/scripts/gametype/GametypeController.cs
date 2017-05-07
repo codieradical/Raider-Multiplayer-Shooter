@@ -198,6 +198,9 @@ namespace Raider.Game.Gametypes
 		[Server]
 		public void AddToScoreboard(int playerId, GametypeHelper.Team playerTeam, int addition)
 		{
+			if (isGameEnding)
+				return;
+
 			for (int i = 0; i < scoreboard.Count; i++)
 			{
 				if (scoreboard[i].id == playerId && scoreboard[i].team == playerTeam)
@@ -207,9 +210,17 @@ namespace Raider.Game.Gametypes
 					return;
 				}
 			}
-            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-            ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false);
+			PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
+			ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false);
 			scoreboard.Add(newScore);
+
+			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+			{
+				if (TeamRanking[0].Second >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+					StartCoroutine(GameOver());
+			}
+			else if (newScore.score >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+				StartCoroutine(GameOver());
 		}
 
 		[Server]
@@ -238,6 +249,14 @@ namespace Raider.Game.Gametypes
 
 				scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, true);
 			}
+		}
+
+		public string GetWinner()
+		{
+			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+				return TeamRanking[0].First.ToString();
+			else
+				return PlayerRanking()[0].name;
 		}
 
 		#endregion
@@ -316,6 +335,31 @@ namespace Raider.Game.Gametypes
 					player.GetComponent<NetworkPlayerSetup>().TargetSetupLocalControl(player.connectionToClient);
 				}
 			}
+		}
+
+		public bool isGameEnding = false;
+		public virtual IEnumerator GameOver()
+		{
+			isGameEnding = true;
+			RpcForceOpenScoreboard();
+			yield return new WaitForSeconds(5f);
+			RpcForceFocusScoreboard();
+			yield return new WaitForSeconds(5f);
+			isGameEnding = false;
+			NetworkGameManager.instance.ServerReturnToLobby();
+		}
+
+		[ClientRpc]
+		public void RpcForceOpenScoreboard()
+		{
+			ScoreboardHandler.UpdateHeaderMessage(GetWinner() + " wins!");
+			ScoreboardHandler.Open = true;
+		}
+
+		[ClientRpc]
+		public void RpcForceFocusScoreboard()
+		{
+			ScoreboardHandler.Focus = true;
 		}
 	}
 }

@@ -34,16 +34,16 @@ namespace Raider.Game.Weapons
         {
             ScoutRifle, //BR, DMR, something like that.
             AssaultRifle, 
-            PulseRifle, //Like the famas, or destiny's pulse rifle.
+            //PulseRifle, //Like the famas, or destiny's pulse rifle.
             Pistol, 
             Shotgun, 
-            PlasmaRifle, //Like the beam rifle or focus rifle from Halo.
-            PlasmaLauncher, //Like destiny's fusion rifle.
+            //PlasmaRifle, //Like the beam rifle or focus rifle from Halo.
+            //PlasmaLauncher, //Like destiny's fusion rifle.
             SniperRifle,
             MachineGun, 
-            Laser, //Halo style.
-            RocketLauncher,
-            GrenadeLauncher,
+            //Laser, //Halo style.
+            //RocketLauncher,
+            //GrenadeLauncher,
         }
 
         public enum WeaponVariation
@@ -102,7 +102,7 @@ namespace Raider.Game.Weapons
 		}
 
         public const Weapons DEFAULT_PRIMARY_WEAPON = Weapons.ScoutRifle;
-        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.Shotgun;
+        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.SniperRifle;
         public const Weapons DEFAULT_TERTIARY_WEAPON = Weapons.MachineGun;
 
         [Serializable]
@@ -134,7 +134,7 @@ namespace Raider.Game.Weapons
                     }
                 }
                 if (!foundInweaponPrefabs)
-                    Debug.LogError(weapon.ToString() + " was not found in weapon prefabs list.");
+                    Debug.LogWarning(weapon.ToString() + " was not found in weapon prefabs list.");
             }
         }
 

@@ -17,8 +17,10 @@ namespace Raider.Game.GUI.Scoreboard
 		void Awake()
 		{
 			animatorInstance = GetComponent<Animator>();
+
 			if (instances == null)
 				instances = new List<ScoreboardHandler>();
+
 			instances.Add(this);
 
 			if(GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned)
@@ -58,19 +60,33 @@ namespace Raider.Game.GUI.Scoreboard
 			set { animatorInstance.SetBool("focused", value); }
 		}
 
-		public static void Open(bool open)
+		public static bool Open
 		{
-			foreach(ScoreboardHandler instance in instances)
+			get
 			{
-				instance.IsOpen = open;
+				return instances[0].IsOpen;
+			}
+			set
+			{
+				foreach (ScoreboardHandler instance in instances)
+				{
+					instance.IsOpen = value;
+				}
 			}
 		}
 
-		public static void Focus(bool focus)
+		public static bool Focus
 		{
-			foreach (ScoreboardHandler instance in instances)
+			get
 			{
-				instance.Focused = focus;
+				return instances[0].Focused;
+			}
+			set
+			{
+				foreach (ScoreboardHandler instance in instances)
+				{
+					instance.Focused = value;
+				}
 			}
 		}
 
@@ -136,6 +152,9 @@ namespace Raider.Game.GUI.Scoreboard
             }
             else
             {
+				if (GametypeController.singleton == null)
+					return;
+
                 List<GametypeController.ScoreboardPlayer> playerRanking = GametypeController.singleton.PlayerRanking();
 
                 for (int i = 0; i < playerRanking.Count; i++)
