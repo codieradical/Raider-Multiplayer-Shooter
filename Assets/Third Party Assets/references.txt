@@ -1,0 +1,43 @@
+﻿Halo Music 
+Audio\Halo Music 
+Used as a temporary mainmenu music theme. 
+Last accessed 31/12/16. 
+http://music.thefeeltra.in/ 
+ 
+TeamSpeak 3 SDK 3.0.3.2 (C++ Distribution) 
+Audio\TeamSpeak 3 SDK 
+Provides a basic Voice Communication client and server. 
+Allows up to 32 unlisenced users. 
+Implemented with a custom C++ interface. 
+This folder contains TeamSpeak 3 SDK distribution binaries. 
+Unlicensed. Non commercial. 
+Last accessed 31/12/16. 
+https://www.teamspeak.com/downloads#sdk 
+ 
+TeamSpeak 3 SDK 3.0.3.2 (Unity Example (Post-Build Script)) 
+Editor\TeamSpeak 3 SDK 
+Copies TeamSpeak 3 libraries from the project folder to compiled build folders. 
+THIS ASSET HAS BEEN MODIFIED FOR RAIDER AND DOES NOT REPRESENT THE SOURCE DISTRIBUTION. 
+Last accessed 31/12/16. 
+http://www.teamspeak.com/downloads 
+ 
+Frosted Glass Shader 
+Rendering\Shaders\FrostedGlass 
+A blur shader used throughout Ui. 
+Found on the Unity forums, free to use. Created by "Megagamefan100", modified by "pedroahpolonio". 
+Last accessed 22/2/17 
+https://forum.unity3d.com/threads/solved-dynamic-blurred-background-on-ui.345083/ 
+ 
+Sprite Gradient 
+Rendering\Shaders\Gradient 
+A gradient shader used to preserve detail on scaling Ui. 
+Found on the Unity forums, free to use. 
+Last accessed 2/5/17 
+http://answers.unity3d.com/questions/913898/horizontally-gradient-on-image-ui-element.html 
+ 
+Tuple Type 
+Types\Tuple.cs 
+A common tuple type for use in scripting. Tuples are a part of .NET 4, but Unity uses 3.5. 
+Found on StackOverflow, free to use, created by Tomas Jansson, expanded and modified since retrieval. 
+Last accessed 24/2/17 
+http://stackoverflow.com/questions/7120845/equivalent-of-tuple-net-4-for-net-framework-3-5

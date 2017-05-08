@@ -68,6 +68,23 @@ namespace Raider.Game.Player
 		public WeaponController secondaryWeaponController;
 		public WeaponController tertiaryWeaponController;
 
+        public WeaponController ActiveWeaponController
+        {
+            get
+            {
+                switch(activeWeaponType)
+                {
+                    case Armory.WeaponType.Primary:
+                        return primaryWeaponController;
+                    case Armory.WeaponType.Secondary:
+                        return secondaryWeaponController;
+                    case Armory.WeaponType.Tertiary:
+                        return tertiaryWeaponController;
+                }
+                return null;
+            }
+        }
+
         public bool paused;
 
         /// <summary>
