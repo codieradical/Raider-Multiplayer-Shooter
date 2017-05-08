@@ -20,6 +20,19 @@ namespace Raider.Game.Player
 			}
 		}
 
+		public override void OnStartClient()
+		{
+			base.OnStartClient();
+			ScoreboardHandler.InvalidateScoreboard();
+		}
+
+		public override void OnNetworkDestroy()
+		{
+			if (GametypeController.singleton == null && !GametypeController.singleton.isGameEnding)
+				GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
+			base.OnNetworkDestroy();
+		}
+
 		[SyncVar]
 		public int health = 100;
 		public bool IsAlive
@@ -119,6 +132,14 @@ namespace Raider.Game.Player
 		{
 			yield return new WaitForSeconds(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds);
 			RespawnPlayer();
+		}
+
+		[Server]
+		public void RespawnPlayer()
+		{
+			health = 100;
+			Debug.Log("This player respawned.");
+
 			TargetRespawnPlayer(connectionToClient);
 			RpcRespawnPlayer();
 		}
@@ -142,13 +163,6 @@ namespace Raider.Game.Player
 			ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
 			ToggleWeapons(true);
-		}
-
-		[Server]
-		public void RespawnPlayer()
-		{
-			health = 100;
-			Debug.Log("This player respawned.");
 		}
 
 		public void ToggleWeapons(bool active)

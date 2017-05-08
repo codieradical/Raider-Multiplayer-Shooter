@@ -110,9 +110,6 @@ namespace Raider.Game.Networking
         public NetworkMessage onLobbyServerDisconnect;
 		public override void OnLobbyServerDisconnect(NetworkConnection conn)
 		{
-			if (activeGametype != null)
-				activeGametype.UpdateScoreboardActivePlayers();
-
             if (onLobbyServerDisconnect != null)
                 onLobbyServerDisconnect();
         }

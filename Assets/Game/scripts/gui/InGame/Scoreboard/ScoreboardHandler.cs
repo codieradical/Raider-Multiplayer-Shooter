@@ -141,7 +141,7 @@ namespace Raider.Game.GUI.Scoreboard
 						isDead = !playerData.networkPlayerController.IsAlive;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, false, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
 

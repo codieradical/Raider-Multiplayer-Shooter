@@ -171,20 +171,25 @@ namespace Raider.Game.Player
             {
                 if (team == newTeam)
                 {
-                    PlayerSyncData.team = team;
+					if (!Scenario.InLobby)
+						GametypeController.singleton.InactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
+
+					PlayerSyncData.team = team;
                     NetworkGameManager.instance.UpdateLobbyNameplates();
                     RpcChangeTeam(team);
 
-                    if (appearenceController != null)
+					if (!Scenario.InLobby)
+					{
+						GametypeController.singleton.AddOrReactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
+						networkPlayerController.RespawnPlayer();
+					}
+
+					if (appearenceController != null)
                         appearenceController.UpdatePlayerAppearence(PlayerSyncData);
 
                     //If the player is not in lobby, have the server update their lobby player for later.
                     if (!Scenario.InLobby)
                     {
-                        //Remove the old team item, add the new.
-                        GametypeController.singleton.AddOrReactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
-                        GametypeController.singleton.UpdateScoreboardActivePlayers();
-
                         foreach (NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())
                         {
                             if (lobbyPlayer.playerData.PlayerSyncData.id == PlayerSyncData.id)

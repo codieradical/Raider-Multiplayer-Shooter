@@ -1,4 +1,10 @@
-﻿using Raider.Game.Player;
+﻿//If neither 32 bit or 64 bit have been defined, default to 64.
+//This happens on very specific test environments, specifically with multiple Unity Editor instances.
+#if !UNITY_64 && !UNITY_32
+	#define UNITY_64
+#endif
+
+using Raider.Game.Player;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -6,30 +12,31 @@ using UnityEngine;
 
 namespace Raider.Game.Networking.VoIP
 {
-    //This part contains all management functions.
-    /// <summary>
-    /// Responsible for everything VoIP.
-    /// Standalone, can be detached without breaking references, because it isn't referenced.
-    /// Debugging with an active TS thread can be difficult.
-    /// Deactivate if necessary.
-    /// </summary>
-    public partial class VoiceChatManager : MonoBehaviour
-    {
-        #if UNITY_EDITOR
-            #if UNITY_64
-                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64_edi";
-            #elif UNITY_32
-                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32_edi";
-            #endif
-        #elif !UNITY_EDITOR
-            #if UNITY_64
-                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64";
-            #elif UNITY_32
-                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32";
-            #endif
-        #endif
 
-        static string SoundbackendsPath;
+	//This part contains all management functions.
+	/// <summary>
+	/// Responsible for everything VoIP.
+	/// Standalone, can be detached without breaking references, because it isn't referenced.
+	/// Debugging with an active TS thread can be difficult.
+	/// Deactivate if necessary.
+	/// </summary>
+	public partial class VoiceChatManager : MonoBehaviour
+    {
+#if UNITY_EDITOR
+#if UNITY_64
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64_edi";
+#elif UNITY_32
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32_edi";
+#endif
+#elif !UNITY_EDITOR
+#if UNITY_64
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface64";
+#elif UNITY_32
+                const string INTERFACE_DLL_NAME = "TeamSpeakInterface32";
+#endif
+#endif
+
+		static string SoundbackendsPath;
 
 #region DLL Imports
 
@@ -58,7 +65,7 @@ namespace Raider.Game.Networking.VoIP
         [DllImport(INTERFACE_DLL_NAME, CharSet = CharSet.Unicode, EntryPoint = "StartServer")]
         static extern bool StopServer();
 
-        #endregion
+#endregion
 
         //DLL interactions take place on another thread.
         //This thread must not interact with the Unity Library.
@@ -132,7 +139,7 @@ namespace Raider.Game.Networking.VoIP
             }
         }
 
-        #region Client Functions
+#region Client Functions
 
         void StartVoIPClient()
         {
@@ -209,10 +216,10 @@ namespace Raider.Game.Networking.VoIP
             StopVoIPClient();
         }
 
-        #endregion
+#endregion
 
-        #region Server Callbacks
+#region Server Callbacks
 
-        #endregion
+#endregion
     }
 }

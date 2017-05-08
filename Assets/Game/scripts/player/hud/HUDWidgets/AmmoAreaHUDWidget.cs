@@ -8,8 +8,13 @@ public class AmmoAreaHUDWidget : MonoBehaviour
     public Text loadedAmmo;
     public Text backpackAmmo;
     public Image weaponSchematic;
-    
-    public void UpdateWidgetData()
+
+	private void Update()
+	{
+		UpdateWidgetData();
+	}
+
+	public void UpdateWidgetData()
     {
         WeaponController weaponController = PlayerData.localPlayerData.ActiveWeaponController;
         loadedAmmo.text = weaponController.clipAmmo.ToString();
