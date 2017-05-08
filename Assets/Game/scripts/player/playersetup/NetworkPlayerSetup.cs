@@ -54,7 +54,7 @@ namespace Raider.Game.Player
 
 			if (isServer && GametypeController.singleton != null)
 			{
-				GametypeController.singleton.AddPlayerToScoreboard(playerData.PlayerSyncData.id);
+				GametypeController.singleton.AddOrReactivateScoreboardPlayer(playerData.PlayerSyncData.id, playerData.PlayerSyncData.team);
 			}
         }
 

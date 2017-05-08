@@ -33,9 +33,9 @@ namespace Raider.Game.GUI.Screens
 
 		public void Start()
 		{
-			if (animationClip != null)
+			if (animatorController != null)
 			{
-				CameraModeController.singleton.animationClip = animationClip;
+				CameraModeController.singleton.animatorController = animatorController;
 				CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.Animated);
 			}
 
@@ -72,7 +72,7 @@ namespace Raider.Game.GUI.Screens
         }
 
 		[Header("Camera Setup")]
-		public AnimationClip animationClip;
+		public RuntimeAnimatorController animatorController;
 
         [SerializeField]
         public CharacterEditorHandler editorHandler;

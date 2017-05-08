@@ -12,12 +12,6 @@ namespace Raider.Game.Player
 {
     public class NetworkPlayerController : NetworkBehaviour
     {
-		public override void OnNetworkDestroy()
-		{
-			if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
-				NetworkGameManager.instance.actionQueue.Enqueue(GametypeController.singleton.UpdateScoreboardActivePlayers);
-		}
-
 		public PlayerData PlayerData
 		{
 			get
@@ -197,7 +191,7 @@ namespace Raider.Game.Player
         [Command]
         public void CmdSpawnWeapon(Armory.Weapons weapon, WeaponSettings customization, int ownerID)
         {
-            GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon));
+            GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon), NetworkGameManager.instance.GetPlayerDataById(ownerID).gameObject.transform, false);
 
             newWeapon.GetComponent<WeaponController>().weaponCustomization = customization;
             newWeapon.GetComponent<WeaponController>().ownerId = ownerID;

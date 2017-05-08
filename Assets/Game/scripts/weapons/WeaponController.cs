@@ -21,10 +21,10 @@ namespace Raider.Game.Weapons
 
 		public override void OnStartClient()
 		{
-			transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
+            //transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
 		}
 
-		protected virtual void Start()
+        protected virtual void Start()
         {
 			clipAmmo = weaponCustomization.clipSize;
 			totalAmmo = weaponCustomization.maxAmmo;
@@ -39,7 +39,7 @@ namespace Raider.Game.Weapons
 
         protected virtual void Update()
         {
-			if (activeWeapon)
+			if (activeWeapon && hasAuthority)
 			{
 				if (Input.GetKeyDown(KeyCode.R))
 					Reload();
@@ -55,7 +55,7 @@ namespace Raider.Game.Weapons
 			if (!GametypeController.singleton.hasInitialSpawned)
 				return;
 
-            if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading && hasAuthority)
+            if (Time.time - lastFired >= weaponCustomization.fireRate && !IsReloading)
             {
                 if (clipAmmo <= 0)
                 {

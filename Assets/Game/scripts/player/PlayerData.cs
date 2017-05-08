@@ -165,7 +165,7 @@ namespace Raider.Game.Player
                     if (!Scenario.InLobby)
                     {
                         //Remove the old team item, add the new.
-                        GametypeController.singleton.AddPlayerToScoreboard(PlayerSyncData.id);
+                        GametypeController.singleton.AddOrReactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
                         GametypeController.singleton.UpdateScoreboardActivePlayers();
 
                         foreach (NetworkLobbyPlayerSetup lobbyPlayer in FindObjectsOfType<NetworkLobbyPlayerSetup>())

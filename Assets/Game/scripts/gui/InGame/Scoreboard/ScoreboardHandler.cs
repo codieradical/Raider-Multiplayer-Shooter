@@ -130,22 +130,28 @@ namespace Raider.Game.GUI.Scoreboard
                     teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), GametypeController.singleton.TeamRanking[i].First.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Second, GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[i].First), headerObject);
                     teamPlate.transform.SetParent(playerContainer.transform, false);
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First))
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First).First)
                     {
 						PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(player.id);
 
-						bool hasLeft = playerData == null;
 						bool isLeader = false;
 						bool isDead = false;
 
-						if(!hasLeft)
-						{
-							isLeader = playerData.PlayerSyncData.isLeader;
-							isDead = !playerData.networkPlayerController.IsAlive;
-						}
+						isLeader = playerData.PlayerSyncData.isLeader;
+						isDead = !playerData.networkPlayerController.IsAlive;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, hasLeft, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.transform.SetParent(playerContainer.transform, false);
+                    }
+
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First).Second)
+                    {
+                        bool isLeader = false;
+                        bool isDead = false;
+
+                        GameObject playerPlate = Instantiate(playerPlatePrefab);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
                 }
@@ -155,26 +161,33 @@ namespace Raider.Game.GUI.Scoreboard
 				if (GametypeController.singleton == null)
 					return;
 
-                List<GametypeController.ScoreboardPlayer> playerRanking = GametypeController.singleton.PlayerRanking();
+                List<GametypeController.ScoreboardPlayer> activePlayerRanking = GametypeController.singleton.PlayerRanking().First;
 
-                for (int i = 0; i < playerRanking.Count; i++)
+                for (int i = 0; i < activePlayerRanking.Count; i++)
                 {
-					PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id);
+					PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(activePlayerRanking[i].id);
 
-					bool hasLeft = playerData == null;
 					bool isLeader = false;
 					bool isDead = false;
 
-					if (!hasLeft)
-					{
-						isLeader = playerData.PlayerSyncData.isLeader;
-						isDead = !playerData.networkPlayerController.IsAlive;
-					}
-					else
-						continue;
+					isLeader = playerData.PlayerSyncData.isLeader;
+					isDead = !playerData.networkPlayerController.IsAlive;
 
 					GameObject playerPlate = Instantiate(playerPlatePrefab);
-                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), playerRanking[i].emblem, playerRanking[i].name, playerRanking[i].clan, playerRanking[i].score, false, NetworkGameManager.instance.GetPlayerDataById(playerRanking[i].id).PlayerSyncData.Character.armourPrimaryColor.Color, headerObject, isLeader, isDead);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), activePlayerRanking[i].emblem, activePlayerRanking[i].name, activePlayerRanking[i].clan, activePlayerRanking[i].score, false, activePlayerRanking[i].color, headerObject, isLeader, isDead);
+                    playerPlate.transform.SetParent(playerContainer.transform, false);
+                }
+                List<GametypeController.ScoreboardPlayer> inactivePlayerRanking = GametypeController.singleton.PlayerRanking().Second;
+
+                for (int i = 0; i < inactivePlayerRanking.Count; i++)
+                {
+                    PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(activePlayerRanking[i].id);
+
+                    bool isLeader = false;
+                    bool isDead = false;
+
+                    GameObject playerPlate = Instantiate(playerPlatePrefab);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1 + activePlayerRanking.Count).ToString(), inactivePlayerRanking[i].emblem, inactivePlayerRanking[i].name, inactivePlayerRanking[i].clan, inactivePlayerRanking[i].score, true, inactivePlayerRanking[i].color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
             }

@@ -38,11 +38,13 @@ namespace Raider.Game.Gametypes
         public override void OnStartClient()
         {
             scoreboard.Callback = ScoreboardHandler.InvalidateScoreboard;
+            inactiveScoreboard.Callback = ScoreboardHandler.InvalidateScoreboard;
+            NetworkGameManager.instance.onLobbyServerDisconnect += ScoreboardHandler.InvalidateScoreboard;
         }
 
         public struct ScoreboardPlayer
 		{
-			public ScoreboardPlayer(int id, int score, GametypeHelper.Team team, string name, string clan, UserSaveDataStructure.Emblem emblem, bool hasLeft)
+			public ScoreboardPlayer(int id, int score, GametypeHelper.Team team, string name, string clan, Color color, UserSaveDataStructure.Emblem emblem)
 			{
 				this.id = id;
 				this.score = score;
@@ -50,7 +52,8 @@ namespace Raider.Game.Gametypes
                 this.name = name;
                 this.clan = clan;
                 this.emblem = emblem;
-				this.hasLeft = hasLeft;
+                this.color = color;
+                created = Time.time;
 			}
 			public int id;
             public string name;
@@ -58,7 +61,8 @@ namespace Raider.Game.Gametypes
             public UserSaveDataStructure.Emblem emblem;
 			public int score;
 			public GametypeHelper.Team team;
-			public bool hasLeft;
+            public Color color;
+            public float created;
 		}
 
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
@@ -67,39 +71,93 @@ namespace Raider.Game.Gametypes
 		}
 
 		public SyncListScoreboardPlayer scoreboard = new SyncListScoreboardPlayer();
+        public SyncListScoreboardPlayer inactiveScoreboard = new SyncListScoreboardPlayer();
 
-		public void AddPlayerToScoreboard(int playerId)
-		{
-			PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-			if(playerData == null)
-			{
-				Debug.Log("Unable to add Player " + playerId + "to scoreboard.");
-				return;
-			}
+        public void InactivateScoreboardPlayer(int id, GametypeHelper.Team team)
+        {
+            foreach(ScoreboardPlayer player in scoreboard)
+            {
+                if(player.id == id && player.team == team)
+                {
+                    bool addPlayer = true;
 
-			//If the player is already on the scoreboard, just make sure their team is alright.
-			foreach(ScoreboardPlayer player in scoreboard)
-			{
-				if (player.id == playerData.PlayerSyncData.id && player.team == playerData.PlayerSyncData.team)
-				{
-					return;
-				}
-			}
+                    foreach(ScoreboardPlayer inactivePlayer in inactiveScoreboard)
+                    {
+                        if (inactivePlayer.id == id && inactivePlayer.team == team)
+                        {
+                            Debug.LogWarning("Inactive scoreboard already contains this player!");
+                            addPlayer = false;
+                        }
+                    }
 
-			scoreboard.Add(new ScoreboardPlayer(playerData.PlayerSyncData.id, 0, playerData.PlayerSyncData.team, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false));
-		}
+                    if(addPlayer)
+                        inactiveScoreboard.Add(player);
 
-		public void RemovePlayer(int playerId)
-		{
-			foreach(ScoreboardPlayer player in scoreboard)
-			{
-				if(player.id == playerId)
-				{
-					scoreboard.Remove(player);
-					break;
-				}
-			}
-		}
+                    scoreboard.Remove(player);
+                }
+            }
+        }
+
+        public void AddOrReactivateScoreboardPlayer(int id, GametypeHelper.Team team)
+        {
+            foreach (ScoreboardPlayer player in inactiveScoreboard)
+            {
+                if (player.id == id && player.team == team)
+                {
+                    scoreboard.Add(player);
+                    inactiveScoreboard.Remove(player);
+                    return;
+                }
+            }
+
+            foreach (ScoreboardPlayer player in scoreboard)
+            {
+                if(player.id == id)
+                {
+                    Debug.Log("Attempting to add player " + player.name + " to the scoreboard again...");
+                    if (player.team != team)
+                        InactivateScoreboardPlayer(id, player.team);
+                    else
+                        return;
+                }
+            }
+
+            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(id);
+            scoreboard.Add(new ScoreboardPlayer(id, 0, team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.armourPrimaryColor.Color, playerData.syncData.Character.emblem));
+        }
+
+  //      public void AddPlayerToScoreboard(int playerId)
+		//{
+		//	PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
+		//	if(playerData == null)
+		//	{
+		//		Debug.Log("Unable to add Player " + playerId + "to scoreboard.");
+		//		return;
+		//	}
+
+		//	//If the player is already on the scoreboard, just make sure their team is alright.
+		//	foreach(ScoreboardPlayer player in scoreboard)
+		//	{
+		//		if (player.id == playerData.PlayerSyncData.id && player.team == playerData.PlayerSyncData.team)
+		//		{
+		//			return;
+		//		}
+		//	}
+
+		//	scoreboard.Add(new ScoreboardPlayer(playerData.PlayerSyncData.id, 0, playerData.PlayerSyncData.team, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem));
+		//}
+
+		//public void RemovePlayer(int playerId)
+		//{
+		//	foreach(ScoreboardPlayer player in scoreboard)
+		//	{
+		//		if(player.id == playerId)
+		//		{
+		//			scoreboard.Remove(player);
+		//			break;
+		//		}
+		//	}
+		//}
 
 		public List<Tuple<GametypeHelper.Team, int>> TeamRanking
 		{
@@ -108,7 +166,7 @@ namespace Raider.Game.Gametypes
 				List<Tuple<GametypeHelper.Team, int>> teamScores = new List<Tuple<GametypeHelper.Team, int>>();
 				foreach (GametypeHelper.Team team in Enum.GetValues(typeof(GametypeHelper.Team)))
 				{
-					if (PlayerRanking(team).Count < 1)
+					if (PlayerRanking(team).First.Concat(PlayerRanking(team).Second).Count() < 1)
 					{
 						int teamTotal;
 						if (GetTeamTotal(team, out teamTotal))
@@ -127,9 +185,15 @@ namespace Raider.Game.Gametypes
 						if (player.team == team)
 							iterationScore += player.score;
 					}
-					teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, iterationScore));
+
+                    foreach (ScoreboardPlayer player in inactiveScoreboard)
+                    {
+                        if (player.team == team)
+                            iterationScore += player.score;
+                    }
+                    teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, iterationScore));
 				}
-				return (teamScores.OrderBy(team => PlayerRanking(team.First).Count() < 1).ThenByDescending(team => team.Second).ThenBy(team => team.First)).ToList();
+				return (teamScores.OrderBy(team => PlayerRanking(team.First).First.Concat(PlayerRanking(team.First).Second).Count() < 1).ThenByDescending(team => team.Second).ThenBy(team => team.First)).ToList();
 			}
 		}
 
@@ -147,7 +211,16 @@ namespace Raider.Game.Gametypes
 				}
 			}
 
-			if (players.Count < 1)
+            foreach (ScoreboardPlayer player in inactiveScoreboard)
+            {
+                if (player.team == team)
+                {
+                    players.Add(player);
+                    continue;
+                }
+            }
+
+            if (players.Count < 1)
 				return false;
 			else
 			{
@@ -158,41 +231,87 @@ namespace Raider.Game.Gametypes
 			}
 		}
 
-        public List<ScoreboardPlayer> PlayerRanking(GametypeHelper.Team team)
+        public Tuple<List<ScoreboardPlayer>, List<ScoreboardPlayer>> PlayerRanking(GametypeHelper.Team team)
         {
             List<ScoreboardPlayer> players = new List<ScoreboardPlayer>();
 
 			foreach (ScoreboardPlayer player in scoreboard)
 			{
-				if (!player.hasLeft && player.team == team)
+				if (player.team == team)
 				{
 					players.Add(player);
 					continue;
 				}
 
-				bool playerInAnotherTeam = false;
+				//bool playerInAnotherTeam = false;
 
-				foreach (ScoreboardPlayer player2 in scoreboard)
-				{
-					if (player.id == player2.id)
-					{
-						playerInAnotherTeam = true;
-						break;
-					}
-				}
+				//foreach (ScoreboardPlayer player2 in scoreboard)
+				//{
+				//	if (player.id == player2.id)
+				//	{
+				//		playerInAnotherTeam = true;
+				//		break;
+				//	}
+				//}
 
-				if (playerInAnotherTeam)
-					continue;
+				//if (playerInAnotherTeam)
+				//	continue;
 
-				players.Add(player);
+				//players.Add(player);
 			}
 
-            return (players.OrderBy(player => !player.hasLeft).ThenByDescending(player => player.score).ThenBy(player => player.id)).ToList();
+            players = (players.OrderByDescending(player => player.score).ThenBy(player => player.id)).ToList();
+
+            List<ScoreboardPlayer> inactivePlayers = new List<ScoreboardPlayer>();
+
+            foreach (ScoreboardPlayer inactivePlayer in inactiveScoreboard)
+            {
+                bool addPlayer = false;
+
+                if (inactivePlayer.team == team)
+                {
+                    addPlayer = true;
+                    //continue;
+                }
+
+                //If the player is active, don't show their old inactive lir.
+                foreach (ScoreboardPlayer player in scoreboard)
+                {
+                    if (inactivePlayer.id == player.id)
+                    {
+                        addPlayer = false;
+                        break;
+                    }
+                }
+
+                //If the player is inactive in another team, make sure the most recent is shown.
+                foreach (ScoreboardPlayer inactivePlayer2 in scoreboard)
+                {
+                    if (inactivePlayer2.created > inactivePlayer.created)
+                    {
+                        addPlayer = false;
+                        break;
+                    }
+                }
+
+                if (addPlayer)
+                    inactivePlayers.Add(inactivePlayer);
+            }
+
+            inactivePlayers = (inactivePlayers.OrderByDescending(inactivePlayer => inactivePlayer.score).ThenBy(inactivePlayer => inactivePlayer.id)).ToList();
+
+            return new Tuple<List<ScoreboardPlayer>, List<ScoreboardPlayer>>(players, inactivePlayers);
         }
 
-        public List<ScoreboardPlayer> PlayerRanking()
+        public Tuple<List<ScoreboardPlayer>, List<ScoreboardPlayer>> PlayerRanking()
         {
-            return (scoreboard.OrderBy(player => !player.hasLeft).ThenByDescending(player => player.score).ThenBy(player => player.id)).ToList();
+            List<ScoreboardPlayer> players = new List<ScoreboardPlayer>();
+            players = (scoreboard.OrderByDescending(player => player.score).ThenBy(player => player.id)).ToList();
+
+            List<ScoreboardPlayer> inactivePlayers = new List<ScoreboardPlayer>();
+            inactivePlayers = (inactiveScoreboard.OrderByDescending(player => player.score).ThenBy(player => player.id)).ToList();
+
+            return new Tuple<List<ScoreboardPlayer>, List<ScoreboardPlayer>>(players, inactivePlayers);
         }
 
 		[Server]
@@ -205,13 +324,22 @@ namespace Raider.Game.Gametypes
 			{
 				if (scoreboard[i].id == playerId && scoreboard[i].team == playerTeam)
 				{
-					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, scoreboard[i].hasLeft);
+					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].color, scoreboard[i].emblem);
 					scoreboard[i] = updatedScore;
-					return;
+
+                    if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+                    {
+                        if (TeamRanking[0].Second >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+                            StartCoroutine(GameOver());
+                    }
+                    else if (updatedScore.score >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+                        StartCoroutine(GameOver());
+
+                    return;
 				}
 			}
 			PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-			ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.emblem, false);
+			ScoreboardPlayer newScore = new ScoreboardPlayer(playerId, addition, playerTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.armourPrimaryColor.Color, playerData.PlayerSyncData.Character.emblem);
 			scoreboard.Add(newScore);
 
 			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
@@ -238,7 +366,7 @@ namespace Raider.Game.Gametypes
 				{
 					if (scoreboard[i].id == activePlayer.First && scoreboard[i].team == activePlayer.Second)
 					{
-						scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, false);
+						scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].color, scoreboard[i].emblem);
 						foundPlayer = true;
 						break;
 					}
@@ -247,7 +375,7 @@ namespace Raider.Game.Gametypes
 				if (foundPlayer)
 					continue;
 
-				scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].emblem, true);
+				scoreboard[i] = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].color, scoreboard[i].emblem);
 			}
 		}
 
@@ -256,7 +384,7 @@ namespace Raider.Game.Gametypes
 			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
 				return TeamRanking[0].First.ToString();
 			else
-				return PlayerRanking()[0].name;
+				return PlayerRanking().First[0].name;
 		}
 
 		#endregion

@@ -81,37 +81,41 @@ namespace Raider.Game.Networking
         }
 
 
-		////DEBUG
-		//private void OnGUI()
-		//{
-		//	for (int i = 0; i < Players.Count; i++)
-		//	{
-		//		UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
-		//		UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
-		//		UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
-		//		UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
-		//		try
-		//		{
-		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
-		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
-		//			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
+        ////DEBUG
+        //private void OnGUI()
+        //{
+        //	for (int i = 0; i < Players.Count; i++)
+        //	{
+        //		UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
+        //		UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
+        //		UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
+        //		UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
+        //		try
+        //		{
+        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
+        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
+        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
 
-		//			foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
-		//			{
-		//				if (player.name == Players[i].syncData.username)
-		//					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
-		//			}
-		//		}
-		//		catch (Exception ex) { }
-		//	}
-		//}
+        //			foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
+        //			{
+        //				if (player.name == Players[i].syncData.username)
+        //					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
+        //			}
+        //		}
+        //		catch (Exception ex) { }
+        //	}
+        //}
 
-			//Called when a client leaves.
+        //Called when a client leaves.
+        public NetworkMessage onLobbyServerDisconnect;
 		public override void OnLobbyServerDisconnect(NetworkConnection conn)
 		{
 			if (activeGametype != null)
 				activeGametype.UpdateScoreboardActivePlayers();
-		}
+
+            if (onLobbyServerDisconnect != null)
+                onLobbyServerDisconnect();
+        }
 
 		public bool IsLeader
         {
@@ -164,7 +168,7 @@ namespace Raider.Game.Networking
 
 				foreach(PlayerData player in Players)
 				{
-					activeGametype.AddPlayerToScoreboard(player.PlayerSyncData.id);
+					activeGametype.AddOrReactivateScoreboardPlayer(player.PlayerSyncData.id,player.PlayerSyncData.team);
 				}
 			}
             else

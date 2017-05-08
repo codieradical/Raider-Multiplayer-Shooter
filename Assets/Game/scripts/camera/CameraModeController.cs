@@ -48,7 +48,7 @@ namespace Raider.Game.Cameras
 
         public GameObject sceneOverviewGameObject;
         public GameObject cameraPathGameObject;
-		public AnimationClip animationClip;
+		public RuntimeAnimatorController animatorController;
 
         [Serializable]
         public class FirstPersonCameraSettings
@@ -231,7 +231,7 @@ namespace Raider.Game.Cameras
             else
                 cameraPathGameObject = GameObject.Find(CAMERA_PATH_OBJECT_NAME);
                 if(cameraPathGameObject != null)
-                cameraModeUpdates.Enqueue(CameraModes.FollowPath);
+                    cameraModeUpdates.Enqueue(CameraModes.FollowPath);
         }
 
         void SetupCameraController()

@@ -41,7 +41,7 @@ namespace Raider.Game.GUI.Scoreboard
 
             if (hasLeft)
             {
-                Color leftColor = Color.HSVToRGB(1, 1, 0.705f);
+                Color leftColor = Color.gray;
                 this.place.color = leftColor;
                 this.username.color = leftColor;
                 this.clan.color = leftColor;
