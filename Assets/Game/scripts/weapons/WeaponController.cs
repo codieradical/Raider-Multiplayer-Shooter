@@ -31,6 +31,7 @@ namespace Raider.Game.Weapons
 			totalAmmo = weaponCustomization.maxAmmo;
         }
 
+		[SyncVar]
         public WeaponSettings weaponCustomization;
 
         public GameObject weaponFirePoint; //Assigned in inspector, where the bullet raycast begins.
