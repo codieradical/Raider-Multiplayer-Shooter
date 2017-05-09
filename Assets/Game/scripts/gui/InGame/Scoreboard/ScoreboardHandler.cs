@@ -4,11 +4,14 @@ using Raider.Game.Networking;
 using Raider.Game.Gametypes;
 using Raider.Game.Player;
 using UnityEngine.UI;
+using System;
 
 namespace Raider.Game.GUI.Scoreboard
 {
 	public class ScoreboardHandler : MonoBehaviour
 	{
+        public static Action scoreboardHUDInvalidate;
+
 		Animator animatorInstance;
 		#region Singleton Setup
 
@@ -103,11 +106,6 @@ namespace Raider.Game.GUI.Scoreboard
             InvalidateScoreboard();
         }
 
-        public static void InvalidateScoreboard(GametypeController.SyncListScoreboardPlayer.Operation operation, int index)
-        {
-            InvalidateScoreboard();
-        }
-
         public static void InvalidateScoreboard()
         {
             if (instances.Count < 1)
@@ -115,6 +113,9 @@ namespace Raider.Game.GUI.Scoreboard
 
             foreach (ScoreboardHandler instance in instances)
                 instance.UpdateScoreboard();
+
+            if (scoreboardHUDInvalidate != null)
+                scoreboardHUDInvalidate();
         }
 
         public void UpdateScoreboard()

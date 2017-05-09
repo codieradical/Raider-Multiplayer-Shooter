@@ -17,8 +17,11 @@ public class AmmoAreaHUDWidget : MonoBehaviour
 	public void UpdateWidgetData()
     {
         WeaponController weaponController = PlayerData.localPlayerData.ActiveWeaponController;
-        loadedAmmo.text = weaponController.clipAmmo.ToString();
-        backpackAmmo.text = weaponController.totalAmmo.ToString();
-        weaponSchematic.sprite = weaponController.gameObject.GetComponent<WeaponHUDData>().blueprints;
+        if (weaponController != null)
+        {
+            loadedAmmo.text = weaponController.clipAmmo.ToString();
+            backpackAmmo.text = weaponController.totalAmmo.ToString();
+            weaponSchematic.sprite = weaponController.gameObject.GetComponent<WeaponHUDData>().blueprints;
+        }
     }
 }

@@ -1,9 +1,15 @@
-﻿using System;
+﻿using Raider.Game.Player;
+using System;
 
 namespace Raider.Game.Gametypes
 {
     public class SlayerController : GametypeController
     {
+        private void Start()
+        {
+            NetworkPlayerController.onServerPlayerKilledPlayer += PVPScore;
+        }
+
         [Serializable]
         public class SlayerGameOptions : GameOptions
         {

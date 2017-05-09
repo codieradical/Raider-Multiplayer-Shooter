@@ -77,7 +77,7 @@ namespace Raider.Game.Gametypes
 					}
 				}
 				if (!foundInPrefabs)
-					Debug.LogError(gametype.ToString() + " was not found in gametype prefabs list.");
+					Debug.LogWarning(gametype.ToString() + " was not found in gametype prefabs list.");
 			}
 		}
 

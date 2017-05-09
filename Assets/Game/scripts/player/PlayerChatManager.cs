@@ -55,11 +55,11 @@ namespace Raider.Game.Player
         }
 
 
-        private const string COMMAND_HELP_MESSAGE =
-            "/me - Express an action./n" +
-            "/leave - Leave the game./n" +
-            "/endgame - End the game, hosts only./n" +
-            "/help - Display this text./n" +
+        private string COMMAND_HELP_MESSAGE =
+            "/me - Express an action." + Environment.NewLine +
+            "/leave - Leave the game." + Environment.NewLine +
+            "/endgame - End the game, hosts only." + Environment.NewLine +
+            "/help - Display this text." + Environment.NewLine +
             "/changeteam - Change your team. (eg. /changeteam RedTeam)";
 
         string ParseCommands(string input, int playerSlot)

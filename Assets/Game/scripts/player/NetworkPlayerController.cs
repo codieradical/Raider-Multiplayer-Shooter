@@ -12,11 +12,22 @@ namespace Raider.Game.Player
 {
     public class NetworkPlayerController : NetworkBehaviour
     {
+        public delegate void OnServerPlayerKilledPlayer(int idKilled, int idKilledBy);
+        public delegate void OnServerPlayerRespawned(int idRespawned);
+        public delegate void OnClientLocalPlayerHealthChange();
+
+        public static OnServerPlayerKilledPlayer onServerPlayerKilledPlayer;
+        public static OnServerPlayerRespawned onServerPlayerRespawned;
+        public static OnClientLocalPlayerHealthChange onClientLocalPlayerHealthChange;
+
+        private PlayerData playerData;
 		public PlayerData PlayerData
 		{
 			get
 			{
-				return GetComponent<PlayerData>();
+                if (playerData != null)
+                    return playerData;
+                else return playerData = GetComponent<PlayerData>();
 			}
 		}
 
@@ -33,13 +44,32 @@ namespace Raider.Game.Player
 			base.OnNetworkDestroy();
 		}
 
-		[SyncVar]
-		public int health = 100;
+        void HealthSync(int value)
+        {
+            Health = value;
+
+            if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
+                onClientLocalPlayerHealthChange();
+        }
+
+        [SyncVar(hook = "HealthSync")]
+        private int health = MAX_HEALTH;
+		public int Health
+        {
+            get { return health; }
+            set {
+                health = value; if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
+                    onClientLocalPlayerHealthChange();
+            }
+        }
+
+        public const int MAX_HEALTH = 100;
+
 		public bool IsAlive
 		{
 			get
 			{
-				if (health > 0)
+				if (Health > 0)
 					return true;
 				else
 					return false;
@@ -57,12 +87,12 @@ namespace Raider.Game.Player
 				return;
 			//Don't let players shoot themselves. Not sure how that would happen anyway.
 
-			if (health <= 0)
+			if (Health <= 0)
 				return;
 				//If they're already dead, stop killing them!
 
-			health -= damage;
-			if (health < 1)
+			Health -= damage;
+			if (Health < 1)
 			{ 
 				KillPlayer();
 
@@ -74,8 +104,9 @@ namespace Raider.Game.Player
 					PlayerData player = NetworkGameManager.instance.GetPlayerDataById(damageDealtBy);
 
 					Debug.Log("I was killed by " + player.name);
-					GametypeController.singleton.AddToScoreboard(player.PlayerSyncData.id, player.PlayerSyncData.team, 1);
-					
+
+                    if (onServerPlayerKilledPlayer != null)
+                        onServerPlayerKilledPlayer(PlayerData.syncData.id, player.syncData.id);
 				}
 			}
 		}
@@ -137,8 +168,11 @@ namespace Raider.Game.Player
 		[Server]
 		public void RespawnPlayer()
 		{
-			health = 100;
+			Health = MAX_HEALTH;
 			Debug.Log("This player respawned.");
+
+            if (onServerPlayerRespawned != null)
+                onServerPlayerRespawned(PlayerData.syncData.id);
 
 			TargetRespawnPlayer(connectionToClient);
 			RpcRespawnPlayer();

@@ -68,7 +68,6 @@ namespace Raider.Game.Gametypes
 
 		public void OnScoreboardChanged(SyncListScoreboardPlayer.Operation operation, int index)
 		{
-			Debug.LogError(operation.ToString() + " at " + index.ToString());
 			ScoreboardHandler.InvalidateScoreboard();
 		}
 
@@ -326,6 +325,23 @@ namespace Raider.Game.Gametypes
 				StartCoroutine(GameOver());
 		}
 
+        public ScoreboardPlayer GetScoreboardPlayerByIDAndTeam(int playerID, GametypeHelper.Team team)
+        {
+            foreach(ScoreboardPlayer player in scoreboard)
+            {
+                if (player.id == playerID && player.team == team)
+                    return player;
+            }
+
+            foreach (ScoreboardPlayer player in inactiveScoreboard)
+            {
+                if (player.id == playerID && player.team == team)
+                    return player;
+            }
+
+            return new ScoreboardPlayer();
+        }
+
 		public string GetWinner()
 		{
 			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
@@ -413,7 +429,7 @@ namespace Raider.Game.Gametypes
 		}
 
 		public bool isGameEnding = false;
-		public virtual IEnumerator GameOver()
+		protected virtual IEnumerator GameOver()
 		{
 			isGameEnding = true;
 			RpcForceOpenScoreboard();
@@ -425,16 +441,23 @@ namespace Raider.Game.Gametypes
 		}
 
 		[ClientRpc]
-		public void RpcForceOpenScoreboard()
+		private void RpcForceOpenScoreboard()
 		{
 			ScoreboardHandler.UpdateHeaderMessage(GetWinner() + " wins!");
 			ScoreboardHandler.Open = true;
 		}
 
 		[ClientRpc]
-		public void RpcForceFocusScoreboard()
+		private void RpcForceFocusScoreboard()
 		{
 			ScoreboardHandler.Focus = true;
 		}
+
+        [Server]
+        protected virtual void PVPScore(int killed, int killedby)
+        {
+            PlayerData killingPlayer = NetworkGameManager.instance.GetPlayerDataById(killedby);
+            AddToScoreboard(killingPlayer.syncData.id, killingPlayer.syncData.team, 1);
+        }
 	}
 }
