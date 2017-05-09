@@ -41,3 +41,9 @@ A common tuple type for use in scripting. Tuples are a part of .NET 4, but Unity
 Found on StackOverflow, free to use, created by Tomas Jansson, expanded and modified since retrieval. 
 Last accessed 24/2/17 
 http://stackoverflow.com/questions/7120845/equivalent-of-tuple-net-4-for-net-framework-3-5
+
+Halo 3 Textures
+Textures\Halo 3
+Textures extracted from Halo 3, Xbox 360 Cache files.
+Cache files obtained from personal game files.
+Retrieved 9/5/17

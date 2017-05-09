@@ -21,7 +21,8 @@ namespace Raider.Game.Weapons
 
 		public override void OnStartClient()
 		{
-            //transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).transform, false);
+            transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).gunPosition.transform, false);
+			transform.position = NetworkGameManager.instance.GetPlayerDataById(ownerId).gunPosition.transform.position;
 		}
 
         protected virtual void Start()

@@ -27,7 +27,8 @@ namespace Raider.Game.Player
 
         //A reference to the root graphics object, assigned in editor.
         public GameObject graphicsObject;
-        public GameObject playerModel; // Assigned In Editor To Begin
+		public GameObject gunPosition;
+		public GameObject playerModel; // Assigned In Editor To Begin
         public GameObject firstPersonPlayerModel; //Assigned in editor to begin.
         public NetworkPlayerController networkPlayerController; //Assigned in editor.
 		public PlayerChatManager PlayerChatManager
@@ -106,7 +107,7 @@ namespace Raider.Game.Player
             }
         }
 
-        [Serializable]
+		[Serializable]
         public class SyncData
         {
             //Sync Fields

@@ -58,7 +58,12 @@ namespace Raider.Game.Player
         {
             get { return health; }
             set {
-                health = value; if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
+				if (value > MAX_HEALTH)
+					health = MAX_HEALTH;
+				else
+					health = value;
+
+				if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
                     onClientLocalPlayerHealthChange();
             }
         }
@@ -75,6 +80,9 @@ namespace Raider.Game.Player
 					return false;
 			}
 		}
+
+		Coroutine regenCoroutine;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -89,11 +97,17 @@ namespace Raider.Game.Player
 
 			if (Health <= 0)
 				return;
-				//If they're already dead, stop killing them!
+			//If they're already dead, stop killing them!
+
+			if (regenCoroutine != null)
+			{
+				StopCoroutine(regenCoroutine);
+				regenCoroutine = null;
+			}
 
 			Health -= damage;
 			if (Health < 1)
-			{ 
+			{
 				KillPlayer();
 
 				PlayerChatManager chatManager = PlayerData.localPlayerData.PlayerChatManager;
@@ -105,9 +119,26 @@ namespace Raider.Game.Player
 
 					Debug.Log("I was killed by " + player.name);
 
-                    if (onServerPlayerKilledPlayer != null)
-                        onServerPlayerKilledPlayer(PlayerData.syncData.id, player.syncData.id);
+					if (onServerPlayerKilledPlayer != null)
+						onServerPlayerKilledPlayer(PlayerData.syncData.id, player.syncData.id);
 				}
+			}
+			else
+				regenCoroutine = StartCoroutine(RechargeHealth());
+		}
+
+		public int healthRechargeCooldownSeconds = 5;
+		public int healthRechargeSteps = 10;
+		public int healthRechargeTime = 5;
+
+		[Server]
+		public IEnumerator RechargeHealth()
+		{
+			yield return new WaitForSeconds(healthRechargeCooldownSeconds);
+			for (int i = 0; i < healthRechargeSteps; i++)
+			{
+				health += MAX_HEALTH / healthRechargeSteps;
+				yield return new WaitForSeconds((float)healthRechargeTime / healthRechargeSteps);
 			}
 		}
 
@@ -239,7 +270,7 @@ namespace Raider.Game.Player
         [Command]
         public void CmdSpawnWeapon(Armory.Weapons weapon, WeaponSettings customization, int ownerID)
         {
-            GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon), NetworkGameManager.instance.GetPlayerDataById(ownerID).gameObject.transform, false);
+            GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon), NetworkGameManager.instance.GetPlayerDataById(ownerID).gunPosition.transform, false);
 
             newWeapon.GetComponent<WeaponController>().weaponCustomization = customization;
             newWeapon.GetComponent<WeaponController>().ownerId = ownerID;

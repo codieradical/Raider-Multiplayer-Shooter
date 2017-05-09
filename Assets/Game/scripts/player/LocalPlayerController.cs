@@ -31,6 +31,7 @@ namespace Raider.Game.Player
 				SwitchWeapon(scroll);
 
 			OpenCloseScoreboard();
+			UpdateWeaponRotation();
 		}
 
 		public void SwitchWeapon(float scroll)
@@ -119,7 +120,7 @@ namespace Raider.Game.Player
 				CameraModeController.singleton.GetCameraController().enabled = false;
 		}
 
-		public void OpenCloseScoreboard()
+		void OpenCloseScoreboard()
 		{
 			if (Scenario.InLobby)
 				return;
@@ -144,6 +145,12 @@ namespace Raider.Game.Player
 
 				ScoreboardHandler.Open = false;
 			}
+		}
+
+		void UpdateWeaponRotation()
+		{
+			if(CameraModeController.singleton.GetCameraController() is PlayerCameraController)
+				PlayerData.localPlayerData.gunPosition.transform.rotation = CameraModeController.singleton.cam.transform.rotation;
 		}
     }
 }

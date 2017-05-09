@@ -33,6 +33,8 @@ public class ScoreboardHUDWidget : MonoBehaviour
         ScoreboardHandler.scoreboardHUDInvalidate = UpdateWidgetData;
 
         animatorInstance = GetComponent<Animator>();
+
+		UpdateWidgetData();
     }
 
     public void UpdateWidgetData()
