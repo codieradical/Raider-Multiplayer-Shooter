@@ -1,18 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CrosshairHUDWidget : MonoBehaviour
+namespace Raider.Game.Player.HUD
 {
-
-    // Use this for initialization
-    void Start()
+    public class CrosshairHUDWidget : MonoBehaviour
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

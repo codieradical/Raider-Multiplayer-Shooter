@@ -35,11 +35,12 @@ namespace Raider.Game.Player
             playerData = GetComponent<PlayerData>();
         }
 
-		public void Awake()
+		public void OnEnable()
 		{
 			if (isLocalPlayer && !playerData.syncData.isLeader)
 				GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
-			else if(isLocalPlayer)
+                
+		    if(isLocalPlayer)
 				CmdRequestLobbySetupUpdate();
 		}
 
@@ -130,7 +131,7 @@ namespace Raider.Game.Player
             gameObject.name = playerData.PlayerSyncData.username;
             serverGotPlayerData = true;
             NetworkGameManager.instance.UpdateLobbyNameplates();
-            GetComponent<PlayerChatManager>().CmdSendNotificationMessage("joined the game.", playerData.PlayerSyncData.id);
+            GetComponent<PlayerChatManager>().ServerSendNotificationMessage("joined the game.", playerData.PlayerSyncData.id);
 
             //Now that the client has sent the server it's data, the server can send back other clients' data.
             foreach (PlayerData player in NetworkGameManager.instance.Players)

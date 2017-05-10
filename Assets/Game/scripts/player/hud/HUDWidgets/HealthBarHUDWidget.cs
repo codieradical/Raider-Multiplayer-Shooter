@@ -4,21 +4,24 @@ using UnityEngine.UI;
 using Raider.Game.Player;
 using System.Collections.Generic;
 
-public class HealthBarHUDWidget : MonoBehaviour
+namespace Raider.Game.Player.HUD
 {
-
-    public List<Image> meters = new List<Image>();
-
-    private void Start()
+    public class HealthBarHUDWidget : MonoBehaviour
     {
-        NetworkPlayerController.onClientLocalPlayerHealthChange += UpdateWidgetData;
-    }
 
-    public void UpdateWidgetData()
-    {
-        foreach (Image meter in meters)
+        public List<Image> meters = new List<Image>();
+
+        private void Start()
         {
-            meter.fillAmount = (float)PlayerData.localPlayerData.networkPlayerController.Health / NetworkPlayerController.MAX_HEALTH;
+            NetworkPlayerController.onClientLocalPlayerHealthChange += UpdateWidgetData;
+        }
+
+        public void UpdateWidgetData()
+        {
+            foreach (Image meter in meters)
+            {
+                meter.fillAmount = (float)PlayerData.localPlayerData.networkPlayerController.Health / NetworkPlayerController.MAX_HEALTH;
+            }
         }
     }
 }

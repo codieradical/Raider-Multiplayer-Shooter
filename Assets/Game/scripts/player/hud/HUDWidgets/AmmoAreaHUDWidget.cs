@@ -3,25 +3,28 @@ using UnityEngine.UI;
 using Raider.Game.Player;
 using Raider.Game.Weapons;
 
-public class AmmoAreaHUDWidget : MonoBehaviour
+namespace Raider.Game.Player.HUD
 {
-    public Text loadedAmmo;
-    public Text backpackAmmo;
-    public Image weaponSchematic;
-
-	private void Update()
-	{
-		UpdateWidgetData();
-	}
-
-	public void UpdateWidgetData()
+    public class AmmoAreaHUDWidget : MonoBehaviour
     {
-        WeaponController weaponController = PlayerData.localPlayerData.ActiveWeaponController;
-        if (weaponController != null)
+        public Text loadedAmmo;
+        public Text backpackAmmo;
+        public Image weaponSchematic;
+
+        private void Update()
         {
-            loadedAmmo.text = weaponController.clipAmmo.ToString();
-            backpackAmmo.text = weaponController.totalAmmo.ToString();
-            weaponSchematic.sprite = weaponController.gameObject.GetComponent<WeaponHUDData>().blueprints;
+            UpdateWidgetData();
+        }
+
+        public void UpdateWidgetData()
+        {
+            WeaponController weaponController = PlayerData.localPlayerData.ActiveWeaponController;
+            if (weaponController != null)
+            {
+                loadedAmmo.text = weaponController.clipAmmo.ToString();
+                backpackAmmo.text = weaponController.totalAmmo.ToString();
+                weaponSchematic.sprite = weaponController.gameObject.GetComponent<WeaponHUDData>().blueprints;
+            }
         }
     }
 }

@@ -1,18 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ScopeHUDWidget : MonoBehaviour
+namespace Raider.Game.Player.HUD
 {
-
-    // Use this for initialization
-    void Start()
+    public class ScopeHUDWidget : MonoBehaviour
     {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        
     }
 }

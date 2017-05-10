@@ -33,7 +33,7 @@ namespace Raider.Game.Cameras
 			else if (Input.GetKeyDown(KeyCode.DownArrow))
 			{
 				if ((CameraModeController.singleton.spectatingPlayerIndex - 1) <= -1)
-					CameraModeController.singleton.spectatingPlayerIndex = NetworkGameManager.instance.Players.Count;
+					CameraModeController.singleton.spectatingPlayerIndex = NetworkGameManager.instance.Players.Count - 1;
 				else
 					CameraModeController.singleton.spectatingPlayerIndex -= 1;
 			}

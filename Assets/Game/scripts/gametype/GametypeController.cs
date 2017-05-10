@@ -22,11 +22,14 @@ namespace Raider.Game.Gametypes
 			if (singleton != null)
 				Debug.LogError("More than one Gametype active! What are you doing!!");
 			singleton = this;
-
-			ScoreboardHandler.InvalidateScoreboard();
 		}
 
-		void OnDestroy()
+        private void Start()
+        {
+            ScoreboardHandler.InvalidateScoreboard();
+        }
+
+        void OnDestroy()
 		{
 			singleton = null;
 		}
@@ -216,22 +219,6 @@ namespace Raider.Game.Gametypes
 					players.Add(player);
 					continue;
 				}
-
-				//bool playerInAnotherTeam = false;
-
-				//foreach (ScoreboardPlayer player2 in scoreboard)
-				//{
-				//	if (player.id == player2.id)
-				//	{
-				//		playerInAnotherTeam = true;
-				//		break;
-				//	}
-				//}
-
-				//if (playerInAnotherTeam)
-				//	continue;
-
-				//players.Add(player);
 			}
 
             players = (players.OrderByDescending(player => player.score).ThenBy(player => player.id)).ToList();
@@ -386,6 +373,16 @@ namespace Raider.Game.Gametypes
                 public int numberOfRounnds = 1;
                 public int timeLimitMinutes = 10;
                 public int respawnTimeSeconds = 3;
+                public bool TimeLimit
+                {
+                    get
+                    {
+                        if (timeLimitMinutes < 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                }
             }
 
         }
@@ -419,8 +416,10 @@ namespace Raider.Game.Gametypes
 			else
 			{
 				yield return new WaitForSeconds(10f);
-				hasInitialSpawned = true;
-				foreach (PlayerData player in NetworkGameManager.instance.Players)
+                if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+                    gameEnds = Time.time + (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes * 60);
+                hasInitialSpawned = true;
+                foreach (PlayerData player in NetworkGameManager.instance.Players)
 				{
 					//Send an RPC to the client who owns this player. Tell them to spawn.
 					player.GetComponent<NetworkPlayerSetup>().TargetSetupLocalControl(player.connectionToClient);
@@ -456,8 +455,34 @@ namespace Raider.Game.Gametypes
         [Server]
         protected virtual void PVPScore(int killed, int killedby)
         {
-            PlayerData killingPlayer = NetworkGameManager.instance.GetPlayerDataById(killedby);
-            AddToScoreboard(killingPlayer.syncData.id, killingPlayer.syncData.team, 1);
+            PlayerData.SyncData killerPlayer = NetworkGameManager.instance.GetPlayerDataById(killedby).syncData;
+            PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
+
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled && killerPlayer.team == killedPlayer.team)
+                return;
+    
+            AddToScoreboard(killerPlayer.id, killerPlayer.team, 1);
         }
-	}
+
+        [SyncVar]
+        public float gameEnds;
+        /// <summary>
+        /// Checks if the game end time is in the past.
+        /// Don't call this if there's no time limit.
+        /// </summary>
+        protected void CheckGameTime()
+        {
+            if (!hasInitialSpawned || isGameEnding)
+                return;
+
+            if (Time.time > gameEnds)
+                StartCoroutine(GameOver());
+        }
+
+        protected void Update()
+        {
+            if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+                CheckGameTime();
+        }   
+    }
 }

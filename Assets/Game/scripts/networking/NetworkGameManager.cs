@@ -277,31 +277,6 @@ namespace Raider.Game.Networking
             base.OnLobbyClientSceneChanged(conn);
         }
 
-        //TODO
-        //IMPLEMENT COUNTDOWN TIMER
-        //float countTimer = 0;
-
-        //public override void OnLobbyServerPlayersReady()
-        //{
-        //    countTimer = Time.time + 5;
-        //}
-
-        //void Update()
-        //{
-        //    if (countTimer == 0)
-        //        return;
-
-        //    if (Time.time > countTimer)
-        //    {
-        //        countTimer = 0;
-        //        ServerChangeScene(playScene);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Counting down " + (countTimer - Time.time));
-        //    }
-        //}
-
         public void UpdateLobbyNameplates()
         {
             //If the player is in a lobby, use the player lobby objects to create nameplates.

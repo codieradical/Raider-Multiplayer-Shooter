@@ -180,7 +180,10 @@ namespace Raider.Game.GUI.Components
 			if (option.Contains("General Options"))
 			{
 				options.Add(new OptionsPaneOption.OptionsPaneContents("Number Of Rounds: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.numberOfRounnds.ToString(), "How many rounds will take place before the game ends."));
-				options.Add(new OptionsPaneOption.OptionsPaneContents("Time Limit: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes.ToString(), "How long a round lasts."));
+                if(!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+                    options.Add(new OptionsPaneOption.OptionsPaneContents("Time Limit: None", "How long a round lasts."));
+                else
+                    options.Add(new OptionsPaneOption.OptionsPaneContents("Time Limit: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes.ToString(), "How long a round lasts."));
 				options.Add(new OptionsPaneOption.OptionsPaneContents("Respawn Time: " + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds.ToString(), "How long players must wait to respawn upon death."));
 				OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("General Options", options, SelectGeneralOptions, true);
 			}
@@ -207,9 +210,63 @@ namespace Raider.Game.GUI.Components
 
 				OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Respawn Time", options, SelectRespawnTime, true);
 			}
-		}
+            else if (option.Contains("Time Limit"))
+            {
+                options.Add(new OptionsPaneOption.OptionsPaneContents("None", "No time limit."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("3 Minutes", "Rounds last 3 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("5 Minutes", "Rounds last 5 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("10 Minutes", "Rounds last 10 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("15 Minutes", "Rounds last 15 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("20 Minutes", "Rounds last 20 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("25 Minutes", "Rounds last 25 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("30 Minutes", "Rounds last 30 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("40 Minutes", "Rounds last 40 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("45 Minutes", "Rounds last 45 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("50 Minutes", "Rounds last 50 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("60 Minutes", "Rounds last 60 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("90 Minutes", "Rounds last 90 minutes."));
+                options.Add(new OptionsPaneOption.OptionsPaneContents("120 Minutes", "Rounds last 120 minutes."));
 
-		public void SelectRespawnTime(string option)
+                OptionsPaneHandler.InstanceOptionsPane(MainmenuController.instance.MainMenuScreen.transform).ShowOptions("Time Limit", options, SelectTimeLimit, true);
+            }
+        }
+
+        //Refactor me!
+        public void SelectTimeLimit(string option)
+        {
+            int value;
+
+            if (option == "None")
+            {
+                value = -1;
+
+                OptionsPaneHandler[] oldOpenPanes = OptionsPaneHandler.GetOptionsPanes();
+                NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes = value;
+                NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(NetworkGameManager.instance.lobbySetup.syncData);
+
+                OpenGameOptions();
+
+                foreach (OptionsPaneHandler optionsPane in oldOpenPanes)
+                {
+                    Destroy(optionsPane.gameObject);
+                }
+            }
+            else if (int.TryParse(option.Replace(" Minutes", ""), out value))
+            {
+                OptionsPaneHandler[] oldOpenPanes = OptionsPaneHandler.GetOptionsPanes();
+                NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes = value;
+                NetworkLobbyPlayerSetup.localPlayer.CmdSendLobbySetup(NetworkGameManager.instance.lobbySetup.syncData);
+
+                OpenGameOptions();
+
+                foreach (OptionsPaneHandler optionsPane in oldOpenPanes)
+                {
+                    Destroy(optionsPane.gameObject);
+                }
+            }
+        }
+
+        public void SelectRespawnTime(string option)
 		{
 			int value;
 

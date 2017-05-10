@@ -1,69 +1,106 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
-using Raider.Game.Networking;
-using Raider.Game.Gametypes;
-using Raider.Game.Player;
+﻿using Raider.Game.Gametypes;
 using Raider.Game.GUI.Scoreboard;
+using Raider.Game.Networking;
+using System;
+using UnityEngine;
+using UnityEngine.UI;
 
-[RequireComponent(typeof(Animator))]
-public class ScoreboardHUDWidget : MonoBehaviour
+namespace Raider.Game.Player.HUD
 {
-    Animator animatorInstance;
 
-    public bool MeLeading
+    [RequireComponent(typeof(Animator))]
+    public class ScoreboardHUDWidget : MonoBehaviour
     {
-        get { return animatorInstance.GetBool("meLeading"); }
-        private set { animatorInstance.SetBool("meLeading", value); }
-    }
+        Animator animatorInstance;
 
-    [Header("My Score")]
-    public Image myBackground;
-    public Image myMeter;
-    public Text myText;
-
-    [Header("Other Score")]
-    public CanvasGroup otherCanvasGroup;
-    public Image otherBackground;
-    public Image otherMeter;
-    public Text otherText;
-
-    private void Start()
-    {
-        ScoreboardHandler.scoreboardHUDInvalidate = UpdateWidgetData;
-
-        animatorInstance = GetComponent<Animator>();
-
-		UpdateWidgetData();
-    }
-
-    public void UpdateWidgetData()
-    {
-        if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+        public bool MeLeading
         {
-            int myTeamScore = GametypeController.singleton.TeamRanking[0].Second;
+            get { return animatorInstance.GetBool("meLeading"); }
+            private set { animatorInstance.SetBool("meLeading", value); }
+        }
 
-            Color newColor = GametypeHelper.GetTeamColor(PlayerData.localPlayerData.syncData.team);
+        [Header("Scoreboard Header")]
+        public Text timeRemaining;
+        public Text gametype;
 
-            float previousAlpha = myBackground.color.a;
-            myBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+        [Header("My Score")]
+        public Image myBackground;
+        public Image myMeter;
+        public Text myText;
 
-            previousAlpha = myMeter.color.a;
-            myMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-            myMeter.fillAmount = (float)myTeamScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+        [Header("Other Score")]
+        public CanvasGroup otherCanvasGroup;
+        public Image otherBackground;
+        public Image otherMeter;
+        public Text otherText;
 
-            myText.text = myTeamScore.ToString();
+        private void Start()
+        {
+            ScoreboardHandler.scoreboardHUDInvalidate = UpdateWidgetData;
 
-            if (GametypeController.singleton.TeamRanking[0].First == PlayerData.localPlayerData.syncData.team)
+            animatorInstance = GetComponent<Animator>();
+
+            gametype.text = NetworkGameManager.instance.lobbySetup.syncData.GametypeString;
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+                gametype.text = "Team " + gametype.text;
+
+            if (!NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+                timeRemaining.text = "";
+
+            UpdateWidgetData();
+        }
+
+        public void UpdateWidgetData()
+        {
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
+                int myTeamScore = GametypeController.singleton.TeamRanking[0].Second;
 
-                MeLeading = true;
+                Color newColor = GametypeHelper.GetTeamColor(PlayerData.localPlayerData.syncData.team);
 
-                if (GametypeController.singleton.TeamRanking[1] != null)
+                float previousAlpha = myBackground.color.a;
+                myBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+
+                previousAlpha = myMeter.color.a;
+                myMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                myMeter.fillAmount = (float)myTeamScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+
+                myText.text = myTeamScore.ToString();
+
+                if (GametypeController.singleton.TeamRanking[0].First == PlayerData.localPlayerData.syncData.team)
                 {
-                    int otherTeamScore = GametypeController.singleton.TeamRanking[1].Second;
 
-                    newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[1].First);
+                    MeLeading = true;
+
+                    if (GametypeController.singleton.TeamRanking[1] != null)
+                    {
+                        int otherTeamScore = GametypeController.singleton.TeamRanking[1].Second;
+
+                        newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[1].First);
+
+                        previousAlpha = otherBackground.color.a;
+                        otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+
+                        previousAlpha = myMeter.color.a;
+                        otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                        otherMeter.fillAmount = (float)otherTeamScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+
+                        otherText.text = otherTeamScore.ToString();
+
+                        otherCanvasGroup.alpha = 1;
+                    }
+                    else
+                    {
+                        otherCanvasGroup.alpha = 0;
+                    }
+                }
+                else
+                {
+                    MeLeading = false;
+
+                    int otherTeamScore = GametypeController.singleton.TeamRanking[0].Second;
+
+                    newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[0].First);
 
                     previousAlpha = otherBackground.color.a;
                     otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
@@ -76,67 +113,67 @@ public class ScoreboardHUDWidget : MonoBehaviour
 
                     otherCanvasGroup.alpha = 1;
                 }
-                else
-                {
-                    otherCanvasGroup.alpha = 0;
-                }
             }
             else
             {
-                MeLeading = false;
+                int myScore = GametypeController.singleton.GetScoreboardPlayerByIDAndTeam(PlayerData.localPlayerData.syncData.id, PlayerData.localPlayerData.syncData.team).score;
 
-                int otherTeamScore = GametypeController.singleton.TeamRanking[0].Second;
+                Color newColor = PlayerData.localPlayerData.syncData.Character.armourPrimaryColor.Color;
 
-                newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[0].First);
-
-                previousAlpha = otherBackground.color.a;
-                otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                float previousAlpha = myBackground.color.a;
+                myBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
 
                 previousAlpha = myMeter.color.a;
-                otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-                otherMeter.fillAmount = (float)otherTeamScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+                myMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                myMeter.fillAmount = (float)myScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
 
-                otherText.text = otherTeamScore.ToString();
+                myText.text = myScore.ToString();
 
-                otherCanvasGroup.alpha = 1;
-            }
-        }
-        else
-        {
-            int myScore = GametypeController.singleton.GetScoreboardPlayerByIDAndTeam(PlayerData.localPlayerData.syncData.id, PlayerData.localPlayerData.syncData.team).score;
-
-            Color newColor = PlayerData.localPlayerData.syncData.Character.armourPrimaryColor.Color;
-
-            float previousAlpha = myBackground.color.a;
-            myBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-
-            previousAlpha = myMeter.color.a;
-            myMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-            myMeter.fillAmount = (float)myScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
-
-            myText.text = myScore.ToString();
-
-            if (GametypeController.singleton.PlayerRanking().First[0].id == PlayerData.localPlayerData.syncData.id) {
-                MeLeading = true;
-                if (GametypeController.singleton.PlayerRanking().First.Count > 1)
+                if (GametypeController.singleton.PlayerRanking().First[0].id == PlayerData.localPlayerData.syncData.id)
                 {
-                    int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[1].score;
+                    MeLeading = true;
+                    if (GametypeController.singleton.PlayerRanking().First.Count > 1)
+                    {
+                        int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[1].score;
 
-                    newColor = GametypeController.singleton.PlayerRanking().First[1].color;
+                        newColor = GametypeController.singleton.PlayerRanking().First[1].color;
 
-                    previousAlpha = otherBackground.color.a;
-                    otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                        previousAlpha = otherBackground.color.a;
+                        otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
 
-                    previousAlpha = myMeter.color.a;
-                    otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-                    otherMeter.fillAmount = (float)otherPlayerScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+                        previousAlpha = myMeter.color.a;
+                        otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                        otherMeter.fillAmount = (float)otherPlayerScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
 
-                    otherText.text = otherPlayerScore.ToString();
+                        otherText.text = otherPlayerScore.ToString();
 
-                    otherCanvasGroup.alpha = 1;
+                        otherCanvasGroup.alpha = 1;
+                    }
+                    else if (GametypeController.singleton.PlayerRanking().First.Count > 0)
+                    {
+                        int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
+
+                        newColor = GametypeController.singleton.PlayerRanking().First[0].color;
+
+                        previousAlpha = otherBackground.color.a;
+                        otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+
+                        previousAlpha = myMeter.color.a;
+                        otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
+                        otherMeter.fillAmount = (float)otherPlayerScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
+
+                        otherText.text = otherPlayerScore.ToString();
+
+                        otherCanvasGroup.alpha = 1;
+                    }
+                    else
+                    {
+                        otherCanvasGroup.alpha = 0;
+                    }
                 }
-                else if (GametypeController.singleton.PlayerRanking().First.Count > 0)
+                else
                 {
+                    MeLeading = false;
                     int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
 
                     newColor = GametypeController.singleton.PlayerRanking().First[0].color;
@@ -152,32 +189,30 @@ public class ScoreboardHUDWidget : MonoBehaviour
 
                     otherCanvasGroup.alpha = 1;
                 }
-                else
-                {
-                    otherCanvasGroup.alpha = 0;
-                }
             }
-            else
-            {
-                MeLeading = false;
-                int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
 
-                newColor = GametypeController.singleton.PlayerRanking().First[0].color;
 
-                previousAlpha = otherBackground.color.a;
-                otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-
-                previousAlpha = myMeter.color.a;
-                otherMeter.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
-                otherMeter.fillAmount = (float)otherPlayerScore / NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin;
-
-                otherText.text = otherPlayerScore.ToString();
-
-                otherCanvasGroup.alpha = 1;
-            }
+            //healthMeter.fillAmount = PlayerData.localPlayerData.networkPlayerController.health / NetworkPlayerController.MAX_HEALTH;
         }
 
+        private void UpdateTimeRemaining()
+        {
+            if (GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned && !GametypeController.singleton.isGameEnding)
+            {
+                TimeSpan span = new TimeSpan(0, 0, (int)(GametypeController.singleton.gameEnds - Time.time)); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
+                timeRemaining.text = string.Format("{0}:{1:00}",
+                                            (int)span.TotalMinutes,
+                                            span.Seconds);
 
-        //healthMeter.fillAmount = PlayerData.localPlayerData.networkPlayerController.health / NetworkPlayerController.MAX_HEALTH;
+            }
+            else
+                timeRemaining.text = "0:00";
+        }
+
+        private void Update()
+        {
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+                UpdateTimeRemaining();
+        }
     }
 }

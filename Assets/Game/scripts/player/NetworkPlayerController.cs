@@ -97,7 +97,21 @@ namespace Raider.Game.Player
 
 			if (Health <= 0)
 				return;
-			//If they're already dead, stop killing them!
+
+            PlayerData shooter = NetworkGameManager.instance.GetPlayerDataById(damageDealtBy);
+            GametypeController.GameOptions gameOptions = NetworkGameManager.instance.lobbySetup.syncData.gameOptions;
+            //If they're already dead, stop killing them!
+
+            if (!GametypeController.singleton.hasInitialSpawned || GametypeController.singleton.isGameEnding)
+                return;
+
+            bool friendlyFire = PlayerData.syncData.team == shooter.syncData.team;
+
+            //If friendlyFire is disabled, don't let friends fire!
+            if (gameOptions.teamsEnabled && !gameOptions.teamOptions.friendlyFire && friendlyFire)
+            {
+                return;
+            }
 
 			if (regenCoroutine != null)
 			{
@@ -115,12 +129,10 @@ namespace Raider.Game.Player
 
 				if (damageDealtBy > -1)
 				{
-					PlayerData player = NetworkGameManager.instance.GetPlayerDataById(damageDealtBy);
-
-					Debug.Log("I was killed by " + player.name);
+					Debug.Log("I was killed by " + shooter.syncData.username);
 
 					if (onServerPlayerKilledPlayer != null)
-						onServerPlayerKilledPlayer(PlayerData.syncData.id, player.syncData.id);
+						onServerPlayerKilledPlayer(PlayerData.syncData.id, shooter.syncData.id);
 				}
 			}
 			else
@@ -185,7 +197,7 @@ namespace Raider.Game.Player
 		public void RpcKillPlayer()
 		{
 			//Hide the dead player.
-			ScoreboardHandler.InvalidateScoreboard();
+			//ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(true);
 			ToggleWeapons(false);
 		}
@@ -225,7 +237,7 @@ namespace Raider.Game.Player
 		[ClientRpc]
 		public void RpcRespawnPlayer()
 		{
-			ScoreboardHandler.InvalidateScoreboard();
+			//ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
 			ToggleWeapons(true);
 		}

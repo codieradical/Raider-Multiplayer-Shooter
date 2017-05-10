@@ -42,11 +42,21 @@ namespace Raider.Game.Player
             RpcUpdateClientChat(message);
         }
 
-		/// <summary>
-		/// Sends a local chat message that only the sender can see.
-		/// </summary>
-		/// <param name="message">The message to send.</param>
-		public void SendLocalNotificationMessage(string message)
+        [Server]
+        public void ServerSendNotificationMessage(string message, int playerSlot)
+        {
+            message = AddBoldCode(message);
+            if (playerSlot > -1)
+                message = GetFormattedUsername(playerSlot) + " " + message;
+            chatLog.Push(message);
+            RpcUpdateClientChat(message);
+        }
+
+        /// <summary>
+        /// Sends a local chat message that only the sender can see.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void SendLocalNotificationMessage(string message)
         {
             message = AddBoldCode(message);
             chatLog.Push(message);

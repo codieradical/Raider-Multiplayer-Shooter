@@ -33,7 +33,6 @@ namespace Raider.Game.Player
         public NetworkPlayerController networkPlayerController; //Assigned in editor.
 		public PlayerChatManager PlayerChatManager
 		{
-
 			get
 			{
 				return GetComponent<PlayerChatManager>();
