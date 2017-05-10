@@ -9,7 +9,12 @@ namespace Raider.Game.Weapons
 {
     public class WeaponController : NetworkBehaviour
     {
-        [SyncVar]
+		[SyncVar]
+		public Armory.WeaponType weaponType;
+		[SyncVar]
+		public Armory.Weapons weapon;
+
+		[SyncVar]
         public int ownerId;
 
 		//This will allow dual weilding if I ever wanted that.

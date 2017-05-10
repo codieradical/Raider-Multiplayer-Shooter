@@ -12,13 +12,15 @@ namespace Raider.Game.Player
 {
     public class NetworkPlayerController : NetworkBehaviour
     {
-        public delegate void OnServerPlayerKilledPlayer(int idKilled, int idKilledBy);
-        public delegate void OnServerPlayerRespawned(int idRespawned);
-        public delegate void OnClientLocalPlayerHealthChange();
+        public delegate void OnPlayerKilledPlayer(int idKilled, int idKilledBy);
+        public delegate void OnPlayerRespawned(int idRespawned);
+        public delegate void OnPlayerHealthChange();
 
-        public static OnServerPlayerKilledPlayer onServerPlayerKilledPlayer;
-        public static OnServerPlayerRespawned onServerPlayerRespawned;
-        public static OnClientLocalPlayerHealthChange onClientLocalPlayerHealthChange;
+        public static OnPlayerKilledPlayer onServerPlayerKilledPlayer;
+        public static OnPlayerRespawned onServerPlayerRespawned;
+		public static OnPlayerKilledPlayer onClientPlayerKilledPlayer;
+		public static OnPlayerRespawned onClientPlayerRespawned;
+        public static OnPlayerHealthChange onClientLocalPlayerHealthChange;
 
         private PlayerData playerData;
 		public PlayerData PlayerData
@@ -34,7 +36,7 @@ namespace Raider.Game.Player
 		public override void OnStartClient()
 		{
 			base.OnStartClient();
-			ScoreboardHandler.InvalidateScoreboard();
+			//ScoreboardHandler.InvalidateScoreboard();
 		}
 
 		public override void OnNetworkDestroy()
@@ -122,7 +124,7 @@ namespace Raider.Game.Player
 			Health -= damage;
 			if (Health < 1)
 			{
-				KillPlayer();
+				KillPlayer(damageDealtBy);
 
 				PlayerChatManager chatManager = PlayerData.localPlayerData.PlayerChatManager;
 				chatManager.CmdSendNotificationMessage(PlayerChatManager.GetFormattedUsername(damageDealtBy) + " killed " + PlayerChatManager.GetFormattedUsername(PlayerData.syncData.id), -1);
@@ -155,11 +157,11 @@ namespace Raider.Game.Player
 		}
 
 		[Server]
-		public void KillPlayer()
+		public void KillPlayer(int killer)
 		{
 			Debug.Log("This player died.");
 			TargetKillPlayer(connectionToClient);
-			RpcKillPlayer();
+			RpcKillPlayer(killer);
 
 			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(PlayerData.PlayerSyncData.Character.Race));
 			ragDoll.transform.position = this.transform.position;
@@ -189,17 +191,20 @@ namespace Raider.Game.Player
 				}
 
 			GetComponent<MovementController>().canMove = false;
+			StartCoroutine(PlayerData.localPlayerData.localPlayerController.PauseNewCameraController());
 
 			CameraModeController.singleton.SetCameraMode(CameraModeController.CameraModes.SpectatorThirdPerson);
 		}
 
 		[ClientRpc]
-		public void RpcKillPlayer()
+		public void RpcKillPlayer(int killer)
 		{
 			//Hide the dead player.
-			//ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(true);
 			ToggleWeapons(false);
+
+			if (onClientPlayerKilledPlayer != null)
+				onClientPlayerKilledPlayer(PlayerData.syncData.id, killer);
 		}
 
 		public IEnumerator WaitAndRespawn()
@@ -232,14 +237,18 @@ namespace Raider.Game.Player
 
 			if (!PlayerData.localPlayerData.paused)
 				GetComponent<MovementController>().canMove = true;
+
+			StartCoroutine(PlayerData.localPlayerData.localPlayerController.PauseNewCameraController());
 		}
 
 		[ClientRpc]
 		public void RpcRespawnPlayer()
 		{
-			//ScoreboardHandler.InvalidateScoreboard();
 			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
 			ToggleWeapons(true);
+
+			if (onClientPlayerRespawned != null)
+				onClientPlayerRespawned(PlayerData.syncData.id);
 		}
 
 		public void ToggleWeapons(bool active)
@@ -248,15 +257,15 @@ namespace Raider.Game.Player
 
 			if (active)
 			{
-				playerData.primaryWeaponController.gameObject.SetActive(true);
-				playerData.secondaryWeaponController.gameObject.SetActive(true);
-				playerData.tertiaryWeaponController.gameObject.SetActive(true);
+				playerData.PrimaryWeaponController.gameObject.SetActive(true);
+				playerData.SecondaryWeaponController.gameObject.SetActive(true);
+				playerData.TertiaryWeaponController.gameObject.SetActive(true);
 			}
 			else
 			{
-				playerData.primaryWeaponController.gameObject.SetActive(false);
-				playerData.secondaryWeaponController.gameObject.SetActive(false);
-				playerData.tertiaryWeaponController.gameObject.SetActive(false);
+				playerData.PrimaryWeaponController.gameObject.SetActive(false);
+				playerData.SecondaryWeaponController.gameObject.SetActive(false);
+				playerData.TertiaryWeaponController.gameObject.SetActive(false);
 			}
 		}
 
@@ -284,14 +293,17 @@ namespace Raider.Game.Player
         {
             GameObject newWeapon = Instantiate(Armory.GetWeaponPrefab(weapon), NetworkGameManager.instance.GetPlayerDataById(ownerID).gunPosition.transform, false);
 
-            newWeapon.GetComponent<WeaponController>().weaponCustomization = customization;
+			Armory.WeaponType weaponType = Armory.GetWeaponType(weapon);
+
+			newWeapon.GetComponent<WeaponController>().weaponCustomization = customization;
             newWeapon.GetComponent<WeaponController>().ownerId = ownerID;
+			newWeapon.GetComponent<WeaponController>().weapon = weapon;
+			newWeapon.GetComponent<WeaponController>().weaponType = weaponType;
 			newWeapon.name = weapon.ToString() + ownerID;
 
             NetworkServer.SpawnWithClientAuthority(newWeapon, connectionToClient);
 
 			WeaponController weaponController = newWeapon.GetComponent<WeaponController>();
-			Armory.WeaponType weaponType = Armory.GetWeaponType(weapon);
 
 			if (weaponController == null || weaponType == Armory.WeaponType.Special)
 				return;
@@ -300,13 +312,13 @@ namespace Raider.Game.Player
 				switch (weaponType)
 				{
 					case Armory.WeaponType.Primary:
-						GetComponent<PlayerData>().primaryWeaponController = weaponController;
+						GetComponent<PlayerData>().PrimaryWeaponController = weaponController;
 						break;
 					case Armory.WeaponType.Secondary:
-						GetComponent<PlayerData>().secondaryWeaponController = weaponController;
+						GetComponent<PlayerData>().SecondaryWeaponController = weaponController;
 						break;
 					case Armory.WeaponType.Tertiary:
-						GetComponent<PlayerData>().tertiaryWeaponController = weaponController;
+						GetComponent<PlayerData>().TertiaryWeaponController = weaponController;
 						break;
 				}
 			}

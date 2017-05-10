@@ -5,11 +5,17 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Raider.Game.Saves.User;
 using Raider.Game.GUI.Layout;
+using Raider.Game.Gametypes;
 
 namespace Raider.Game.GUI.Scoreboard
 {
     public class ScoreboardPlayerPlate : MonoBehaviour
     {
+		public int playerId;
+		public GametypeHelper.Team playerTeam;
+
+		bool hasLeft;
+
         public Text place;
         public EmblemHandler emblem;
         public Text username;
@@ -22,9 +28,12 @@ namespace Raider.Game.GUI.Scoreboard
 
         public MatchObjectSize matchObjectSizeComponent;
 
-        public void SetupPlate(string place, UserSaveDataStructure.Emblem emblem, string username, string clan, int score, bool hasLeft, Color color, GameObject scoreboardHeader, bool isLeader, bool isDead)
+        public void SetupPlate(int playerID, GametypeHelper.Team playerTeam, string place, UserSaveDataStructure.Emblem emblem, string username, string clan, int score, bool hasLeft, Color color, GameObject scoreboardHeader, bool isLeader, bool isDead)
         {
             matchObjectSizeComponent = GetComponent<MatchObjectSize>();
+
+			this.playerId = playerID;
+			this.playerTeam = playerTeam;
 
             this.place.text = place;
             this.emblem.UpdateEmblem(emblem);
@@ -36,8 +45,9 @@ namespace Raider.Game.GUI.Scoreboard
 			if (isLeader)
 				leaderIcon.SetActive(true);
 
-			if (isDead)
-				deadIcon.SetActive(true);
+			IsDead = isDead;
+
+			this.hasLeft = hasLeft;
 
             if (hasLeft)
             {
@@ -74,6 +84,21 @@ namespace Raider.Game.GUI.Scoreboard
 
 			gradient.material = newGradMaterial;
 
+		}
+
+		public bool IsDead
+		{
+			set
+			{
+				if (hasLeft || playerId == -1)
+					deadIcon.SetActive(false);
+				else
+					deadIcon.SetActive(value);
+			}
+			get
+			{
+				return deadIcon.activeSelf;
+			}
 		}
     }
 }

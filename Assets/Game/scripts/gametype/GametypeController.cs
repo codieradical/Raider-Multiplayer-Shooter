@@ -24,12 +24,13 @@ namespace Raider.Game.Gametypes
 			singleton = this;
 		}
 
-        private void Start()
-        {
-            ScoreboardHandler.InvalidateScoreboard();
-        }
+		private void Start()
+		{
+			if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host)
+				ScoreboardHandler.InvalidateScoreboard();
+		}
 
-        void OnDestroy()
+		void OnDestroy()
 		{
 			singleton = null;
 		}
@@ -71,14 +72,21 @@ namespace Raider.Game.Gametypes
 
 		public void OnScoreboardChanged(SyncListScoreboardPlayer.Operation operation, int index)
 		{
+			Debug.Log(operation.ToString() + " at " + index.ToString());
+
 			ScoreboardHandler.InvalidateScoreboard();
 		}
 
 		public override void OnStartClient()
         {
+			Debug.Log("Added invalidatescoreboard callback");
             scoreboard.Callback = OnScoreboardChanged;
             inactiveScoreboard.Callback = OnScoreboardChanged;
-            NetworkGameManager.instance.onLobbyServerDisconnect += ScoreboardHandler.InvalidateScoreboard;
+
+			//if (!NetworkServer.active)
+				OnScoreboardChanged(SyncList<ScoreboardPlayer>.Operation.OP_DIRTY, 0);
+
+            //NetworkGameManager.instance.onLobbyServerDisconnect += ScoreboardHandler.InvalidateScoreboard;
         }
 
 		[Server]
@@ -287,6 +295,10 @@ namespace Raider.Game.Gametypes
 				{
 					ScoreboardPlayer updatedScore = new ScoreboardPlayer(scoreboard[i].id, scoreboard[i].score + addition, scoreboard[i].team, scoreboard[i].name, scoreboard[i].clan, scoreboard[i].color, scoreboard[i].emblem);
 					scoreboard[i] = updatedScore;
+					//scoreboard.RemoveAt(i);
+					//scoreboard.Add(updatedScore);
+
+					scoreboard.Dirty(i);
 
                     if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
                     {
@@ -339,6 +351,8 @@ namespace Raider.Game.Gametypes
 
 		#endregion
 
+		#region Game Options
+
 		[Serializable]
         public class GameOptions
         {
@@ -386,7 +400,9 @@ namespace Raider.Game.Gametypes
             }
 
         }
-		
+
+#endregion
+
 		[Server]
         public static void InstanceGametypeByEnum(GametypeHelper.Gametype gametype)
         {
@@ -405,6 +421,8 @@ namespace Raider.Game.Gametypes
             else return null;
         }
 
+		#region Initial Spawn and Game Over
+
 		[SyncVar]
 		public bool hasInitialSpawned = false;
 		public virtual IEnumerator InitialSpawnPlayers()
@@ -417,7 +435,7 @@ namespace Raider.Game.Gametypes
 			{
 				yield return new WaitForSeconds(10f);
                 if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
-                    gameEnds = Time.time + (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes * 60);
+                    gameEnds = (float)Network.time + (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes * 60);
                 hasInitialSpawned = true;
                 foreach (PlayerData player in NetworkGameManager.instance.Players)
 				{
@@ -475,7 +493,7 @@ namespace Raider.Game.Gametypes
             if (!hasInitialSpawned || isGameEnding)
                 return;
 
-            if (Time.time > gameEnds)
+            if (Network.time > gameEnds)
                 StartCoroutine(GameOver());
         }
 
@@ -483,6 +501,8 @@ namespace Raider.Game.Gametypes
         {
             if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
                 CheckGameTime();
-        }   
-    }
+        }
+
+		#endregion
+	}
 }

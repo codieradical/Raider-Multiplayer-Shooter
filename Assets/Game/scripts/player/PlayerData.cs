@@ -64,11 +64,75 @@ namespace Raider.Game.Player
 			}
 		}
 
-		public WeaponController primaryWeaponController;
-		public WeaponController secondaryWeaponController;
-		public WeaponController tertiaryWeaponController;
+		private WeaponController primaryWeaponController;
+		private WeaponController secondaryWeaponController;
+		private WeaponController tertiaryWeaponController;
 
-        public WeaponController ActiveWeaponController
+		public WeaponController PrimaryWeaponController
+		{
+			set { primaryWeaponController = value; }
+			get
+			{
+				if (primaryWeaponController != null)
+					return primaryWeaponController;
+				else
+				{
+					foreach(WeaponController weapon in FindObjectsOfType<WeaponController>())
+					{
+						if (weapon.ownerId == syncData.id && weapon.weaponType == Armory.WeaponType.Primary)
+						{
+							primaryWeaponController = weapon;
+							return weapon;
+						}
+					}
+					return primaryWeaponController;
+				}
+			}
+		}
+		public WeaponController SecondaryWeaponController
+		{
+			set { secondaryWeaponController = value; }
+			get
+			{
+				if (secondaryWeaponController != null)
+					return secondaryWeaponController;
+				else
+				{
+					foreach (WeaponController weapon in FindObjectsOfType<WeaponController>())
+					{
+						if (weapon.ownerId == syncData.id && weapon.weaponType == Armory.WeaponType.Secondary)
+						{
+							secondaryWeaponController = weapon;
+							break;
+						}
+					}
+					return secondaryWeaponController;
+				}
+			}
+		}
+		public WeaponController TertiaryWeaponController
+		{
+			set { tertiaryWeaponController = value; }
+			get
+			{
+				if (tertiaryWeaponController != null)
+					return tertiaryWeaponController;
+				else
+				{
+					foreach (WeaponController weapon in FindObjectsOfType<WeaponController>())
+					{
+						if (weapon.ownerId == syncData.id && weapon.weaponType == Armory.WeaponType.Tertiary)
+						{
+							tertiaryWeaponController = weapon;
+							break;
+						}
+					}
+					return tertiaryWeaponController;
+				}
+			}
+		}
+
+		public WeaponController ActiveWeaponController
         {
             get
             {
@@ -115,7 +179,7 @@ namespace Raider.Game.Player
             [SyncVar] public string character; //This should really be private set, but I'm pretty sure that'd break the syncvar.
             [SyncVar] public bool isLeader;
             [SyncVar] public bool isHost;
-            [SyncVar] public Gametypes.GametypeHelper.Team team = Gametypes.GametypeHelper.Team.None;
+            [SyncVar] public GametypeHelper.Team team = GametypeHelper.Team.None;
 
             //Properties
             public bool GotData
@@ -210,7 +274,7 @@ namespace Raider.Game.Player
         }
 
         [ClientRpc]
-        public void RpcChangeTeam(Gametypes.GametypeHelper.Team team)
+        public void RpcChangeTeam(GametypeHelper.Team team)
         {
             PlayerSyncData.team = team;
             NetworkGameManager.instance.UpdateLobbyNameplates();

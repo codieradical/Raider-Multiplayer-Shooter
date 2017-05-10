@@ -53,18 +53,8 @@ namespace Raider.Game.Saves.User
         }
 
         [Serializable]
-        public class Emblem
+        public struct Emblem
         {
-            public Emblem()
-            {
-                layer2Color = new CommonSaveDataStructure.SerializableColor(Color.white);
-                layer1Color = new CommonSaveDataStructure.SerializableColor(Color.gray);
-                layer0Color = new CommonSaveDataStructure.SerializableColor(Color.black);
-                layer0 = 0;
-                layer1 = 0;
-                layer2 = true;
-            }
-
             public Emblem(Color _layer2Color, Color _layer1Color, Color _layer0Color, int _layer0, int _layer1, bool _layer2)
             {
                 layer0Color = new CommonSaveDataStructure.SerializableColor(_layer0Color);

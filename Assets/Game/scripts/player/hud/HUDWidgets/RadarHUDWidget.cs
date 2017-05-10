@@ -1,7 +1,7 @@
 ﻿namespace Raider.Game.Player.HUD
 {
     public class RadarHUDWidget : HUDWidget
-    {
+	{
 
         int pingDelay;
         // Update is called once per frame

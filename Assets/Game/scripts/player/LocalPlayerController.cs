@@ -112,7 +112,7 @@ namespace Raider.Game.Player
 			Cursor.visible = false;
 		}
 
-		IEnumerator PauseNewCameraController()
+		public IEnumerator PauseNewCameraController()
 		{
 			yield return 0;
 			yield return 0;

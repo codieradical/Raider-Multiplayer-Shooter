@@ -103,7 +103,10 @@ namespace Raider.Game.GUI.Scoreboard
 
         private void Start()
         {
-            InvalidateScoreboard();
+			NetworkPlayerController.onClientPlayerKilledPlayer += PlayerDied;
+			NetworkPlayerController.onClientPlayerRespawned += PlayerRespawned;
+
+            //InvalidateScoreboard();
         }
 
         public static void InvalidateScoreboard()
@@ -142,7 +145,7 @@ namespace Raider.Game.GUI.Scoreboard
 						isDead = !playerData.networkPlayerController.IsAlive;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, false, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(player.id, player.team, "", player.emblem, player.name, player.clan, player.score, false, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
 
@@ -152,7 +155,7 @@ namespace Raider.Game.GUI.Scoreboard
                         bool isDead = false;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate("", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(-1, player.team, "", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
                 }
@@ -175,7 +178,7 @@ namespace Raider.Game.GUI.Scoreboard
 					isDead = !playerData.networkPlayerController.IsAlive;
 
 					GameObject playerPlate = Instantiate(playerPlatePrefab);
-                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1).ToString(), activePlayerRanking[i].emblem, activePlayerRanking[i].name, activePlayerRanking[i].clan, activePlayerRanking[i].score, false, activePlayerRanking[i].color, headerObject, isLeader, isDead);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(activePlayerRanking[i].id, activePlayerRanking[i].team, (i + 1).ToString(), activePlayerRanking[i].emblem, activePlayerRanking[i].name, activePlayerRanking[i].clan, activePlayerRanking[i].score, false, activePlayerRanking[i].color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
                 List<GametypeController.ScoreboardPlayer> inactivePlayerRanking = GametypeController.singleton.PlayerRanking().Second;
@@ -188,10 +191,41 @@ namespace Raider.Game.GUI.Scoreboard
                     bool isDead = false;
 
                     GameObject playerPlate = Instantiate(playerPlatePrefab);
-                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate((i + 1 + activePlayerRanking.Count).ToString(), inactivePlayerRanking[i].emblem, inactivePlayerRanking[i].name, inactivePlayerRanking[i].clan, inactivePlayerRanking[i].score, true, inactivePlayerRanking[i].color, headerObject, isLeader, isDead);
+                    playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(-1, inactivePlayerRanking[i].team, (i + 1 + activePlayerRanking.Count).ToString(), inactivePlayerRanking[i].emblem, inactivePlayerRanking[i].name, inactivePlayerRanking[i].clan, inactivePlayerRanking[i].score, true, inactivePlayerRanking[i].color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
             }
         }
+
+		ScoreboardPlayerPlate GetPlayerPlateByIDAndTeam(int playerID, GametypeHelper.Team team)
+		{
+			ScoreboardPlayerPlate[] plates = playerContainer.GetComponentsInChildren<ScoreboardPlayerPlate>();
+
+			foreach (ScoreboardPlayerPlate player in plates)
+			{
+				if (player.playerId == playerID && player.playerTeam == team)
+					return player;
+			}
+
+			return null;
+		}
+
+		public void PlayerDied(int killed, int killedby)
+		{
+			PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
+
+			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(killedPlayer.id, killedPlayer.team);
+			if(playerPlate != null)
+				playerPlate.IsDead = true;
+		}
+
+		public void PlayerRespawned(int respawned)
+		{
+			PlayerData.SyncData respawnedPlayer = NetworkGameManager.instance.GetPlayerDataById(respawned).syncData;
+
+			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(respawnedPlayer.id, respawnedPlayer.team);
+			if (playerPlate != null)
+				playerPlate.IsDead = false;
+		}
     }
 }

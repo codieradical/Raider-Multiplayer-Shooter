@@ -9,7 +9,7 @@ namespace Raider.Game.Player.HUD
 {
 
     [RequireComponent(typeof(Animator))]
-    public class ScoreboardHUDWidget : MonoBehaviour
+    public class ScoreboardHUDWidget : HUDWidget
     {
         Animator animatorInstance;
 
@@ -116,7 +116,16 @@ namespace Raider.Game.Player.HUD
             }
             else
             {
-                int myScore = GametypeController.singleton.GetScoreboardPlayerByIDAndTeam(PlayerData.localPlayerData.syncData.id, PlayerData.localPlayerData.syncData.team).score;
+				int myScore = 0;
+
+				try
+				{
+					myScore = GametypeController.singleton.GetScoreboardPlayerByIDAndTeam(PlayerData.localPlayerData.syncData.id, PlayerData.localPlayerData.syncData.team).score;
+				}
+				catch(NullReferenceException)
+				{
+					return;
+				}
 
                 Color newColor = PlayerData.localPlayerData.syncData.Character.armourPrimaryColor.Color;
 
@@ -199,11 +208,8 @@ namespace Raider.Game.Player.HUD
         {
             if (GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned && !GametypeController.singleton.isGameEnding)
             {
-                TimeSpan span = new TimeSpan(0, 0, (int)(GametypeController.singleton.gameEnds - Time.time)); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
-                timeRemaining.text = string.Format("{0}:{1:00}",
-                                            (int)span.TotalMinutes,
-                                            span.Seconds);
-
+                TimeSpan span = new TimeSpan(0, 0, (int)(GametypeController.singleton.gameEnds - Network.time));
+                timeRemaining.text = string.Format("{0}:{1:00}", (int)span.TotalMinutes, span.Seconds);
             }
             else
                 timeRemaining.text = "0:00";

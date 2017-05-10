@@ -172,7 +172,7 @@ namespace Raider.Game.Player
 					if (activeTeams[0] == GametypeHelper.Team.Red)
 						playerData.PlayerSyncData.team = GametypeHelper.Team.Blue;
 					else
-						playerData.PlayerSyncData.team = GametypeHelper.Team.Blue;
+						playerData.PlayerSyncData.team = GametypeHelper.Team.Red;
 				}
 				else
 					playerData.PlayerSyncData.team = smallestTeam;
@@ -227,17 +227,17 @@ namespace Raider.Game.Player
             {
                 for(int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
                 {
-                    if (NetworkGameManager.instance.Players[i].PlayerSyncData.team == Gametypes.GametypeHelper.Team.None)
+                    if (NetworkGameManager.instance.Players[i].PlayerSyncData.team == GametypeHelper.Team.None)
                     {
-                        if ((i + 1) % 2 == 1)
+                        if ((i + 2) % 2 == 1)
                         {
-                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = Gametypes.GametypeHelper.Team.Red;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Red);
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = GametypeHelper.Team.Red;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(GametypeHelper.Team.Red);
                         }
                         else
                         {
-                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = Gametypes.GametypeHelper.Team.Blue;
-                            NetworkGameManager.instance.Players[i].RpcChangeTeam(Gametypes.GametypeHelper.Team.Blue);
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = GametypeHelper.Team.Blue;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(GametypeHelper.Team.Blue);
                         }
                     }
                 }
@@ -246,10 +246,10 @@ namespace Raider.Game.Player
             {
                 foreach(PlayerData player in NetworkGameManager.instance.Players)
                 {
-                    if (player.PlayerSyncData.team != Gametypes.GametypeHelper.Team.None)
+                    if (player.PlayerSyncData.team != GametypeHelper.Team.None)
                     {
-                        player.PlayerSyncData.team = Gametypes.GametypeHelper.Team.None;
-                        player.RpcChangeTeam(Gametypes.GametypeHelper.Team.None);
+                        player.PlayerSyncData.team = GametypeHelper.Team.None;
+                        player.RpcChangeTeam(GametypeHelper.Team.None);
                     }
                 }
             }

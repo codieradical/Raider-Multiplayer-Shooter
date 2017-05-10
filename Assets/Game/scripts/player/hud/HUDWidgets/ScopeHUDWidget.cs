@@ -3,8 +3,8 @@ using System.Collections;
 
 namespace Raider.Game.Player.HUD
 {
-    public class ScopeHUDWidget : MonoBehaviour
-    {
+    public class ScopeHUDWidget : HUDWidget
+	{
 
         
     }

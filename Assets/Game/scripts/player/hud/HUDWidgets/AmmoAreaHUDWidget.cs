@@ -5,8 +5,8 @@ using Raider.Game.Weapons;
 
 namespace Raider.Game.Player.HUD
 {
-    public class AmmoAreaHUDWidget : MonoBehaviour
-    {
+    public class AmmoAreaHUDWidget : HUDWidget
+	{
         public Text loadedAmmo;
         public Text backpackAmmo;
         public Image weaponSchematic;

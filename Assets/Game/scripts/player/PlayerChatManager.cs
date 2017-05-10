@@ -87,7 +87,7 @@ namespace Raider.Game.Player
             }
             else if(input.StartsWith("/changeteam"))
             {
-                NetworkGameManager.instance.GetPlayerDataById(playerSlot).ServerChangeTeam((GametypeHelper.Team)Enum.Parse(typeof(GametypeHelper.Team), input.Replace("/changeteam", "")));
+                NetworkGameManager.instance.GetPlayerDataById(playerSlot).CmdChangeTeam((GametypeHelper.Team)Enum.Parse(typeof(GametypeHelper.Team), input.Replace("/changeteam", "")));
             }
             else
                 input = string.Format("<{0}> {1}", GetFormattedUsername(playerSlot), input);

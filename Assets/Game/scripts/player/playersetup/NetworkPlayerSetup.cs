@@ -89,17 +89,17 @@ namespace Raider.Game.Player
 				switch(weaponType)
 				{
 					case Armory.WeaponType.Primary:
-						playerData.primaryWeaponController = weaponController;
+						playerData.PrimaryWeaponController = weaponController;
 						break;
 					case Armory.WeaponType.Secondary:
-						playerData.secondaryWeaponController = weaponController;
+						playerData.SecondaryWeaponController = weaponController;
 						break;
 					case Armory.WeaponType.Tertiary:
-						playerData.tertiaryWeaponController = weaponController;
+						playerData.TertiaryWeaponController = weaponController;
 						break;
 				}
 
-				if (weaponType == playerData.ActiveWeaponType)
+				if (isLocalPlayer && weaponType == playerData.ActiveWeaponType)
 					weaponController.activeWeapon = true;
 			}
 		}

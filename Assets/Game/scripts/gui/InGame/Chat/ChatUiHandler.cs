@@ -20,8 +20,8 @@ namespace Raider.Game.GUI.Screens
         // Use this for initialization
         void Awake()
         {
-            if (instance != null)
-                Debug.LogWarning("More than one ChatUiHandler instance");
+            //if (instance != null)
+            //    Debug.LogWarning("More than one ChatUiHandler instance");
             instance = this;
             animatorInstance = GetComponent<Animator>();
         }
