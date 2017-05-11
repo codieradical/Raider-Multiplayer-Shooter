@@ -1,4 +1,5 @@
-﻿using Raider.Game.Gametypes;
+﻿using Raider.Common.Types;
+using Raider.Game.Gametypes;
 using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using System;
@@ -54,7 +55,13 @@ namespace Raider.Game.Player.HUD
         {
             if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
-                int myTeamScore = GametypeController.singleton.TeamRanking[0].Second;
+				int myTeamScore = 0;
+
+				foreach (Tuple<GametypeHelper.Team, int> team in GametypeController.singleton.TeamRanking)
+				{
+					if(team.First == PlayerData.localPlayerData.syncData.team)
+						myTeamScore = team.Second;
+				}
 
                 Color newColor = GametypeHelper.GetTeamColor(PlayerData.localPlayerData.syncData.team);
 
@@ -72,7 +79,7 @@ namespace Raider.Game.Player.HUD
 
                     MeLeading = true;
 
-                    if (GametypeController.singleton.TeamRanking[1] != null)
+                    if (GametypeController.singleton.TeamRanking.Count > 1)
                     {
                         int otherTeamScore = GametypeController.singleton.TeamRanking[1].Second;
 
@@ -158,7 +165,7 @@ namespace Raider.Game.Player.HUD
 
                         otherCanvasGroup.alpha = 1;
                     }
-                    else if (GametypeController.singleton.PlayerRanking().First.Count > 0)
+                    else if (GametypeController.singleton.PlayerRanking().Second.Count > 0)
                     {
                         int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
 

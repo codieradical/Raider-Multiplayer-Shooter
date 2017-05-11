@@ -235,16 +235,13 @@ namespace Raider.Game.Player
             {
                 if (team == newTeam)
                 {
-					if (!Scenario.InLobby)
-						GametypeController.singleton.InactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
-
 					PlayerSyncData.team = team;
                     NetworkGameManager.instance.UpdateLobbyNameplates();
                     RpcChangeTeam(team);
 
 					if (!Scenario.InLobby)
 					{
-						GametypeController.singleton.AddOrReactivateScoreboardPlayer(PlayerSyncData.id, PlayerSyncData.team);
+						GametypeController.singleton.ChangeScoreboardPlayerTeam(PlayerSyncData.id, PlayerSyncData.team);
 						networkPlayerController.RespawnPlayer();
 					}
 

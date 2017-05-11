@@ -144,6 +144,50 @@ namespace Raider.Game.Gametypes
             scoreboard.Add(new ScoreboardPlayer(id, 0, team, playerData.syncData.username, playerData.syncData.Character.guild, playerData.syncData.Character.armourPrimaryColor.Color, playerData.syncData.Character.emblem));
 		}
 
+		[Server]
+		public void ChangeScoreboardPlayerTeam(int playerID, GametypeHelper.Team newTeam)
+		{
+			ScoreboardPlayer? oldActivePlayer = null;
+			ScoreboardPlayer? oldInactivePlayer = null;
+
+			int oldActivePlayerIndex = 0;
+			int oldInactivePlayerIndex = 0;
+
+			//If the player was previously on the team they're changing too, grab their old entry.
+			for (int i = 0; i < inactiveScoreboard.Count; i++)
+			{
+				if(inactiveScoreboard[i].id == playerID && inactiveScoreboard[i].team == newTeam)
+				{
+					oldInactivePlayer = inactiveScoreboard[i];
+					break;
+				}
+			}
+
+			for (int i = 0; i < scoreboard.Count; i++)
+			{
+				if (scoreboard[i].id == playerID)
+				{
+					oldActivePlayer = scoreboard[i];
+					break;
+				}
+			}
+
+			//If the player was previously inactive on the team they're switching to,
+			//Swap the inactive and active entries.
+			if (oldInactivePlayer != null)
+			{
+				inactiveScoreboard[oldInactivePlayerIndex] = (ScoreboardPlayer)oldActivePlayer;
+				scoreboard[oldActivePlayerIndex] = (ScoreboardPlayer)oldInactivePlayer;
+			}
+			else
+			{
+				inactiveScoreboard.Add((ScoreboardPlayer)oldActivePlayer);
+				PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerID);
+				ScoreboardPlayer newPlayer = new ScoreboardPlayer(playerID, 0, newTeam, playerData.PlayerSyncData.username, playerData.PlayerSyncData.Character.guild, playerData.PlayerSyncData.Character.armourPrimaryColor.Color, playerData.PlayerSyncData.Character.emblem);
+				scoreboard[oldActivePlayerIndex] = newPlayer;
+			}
+		}
+
 		public List<Tuple<GametypeHelper.Team, int>> TeamRanking
 		{
 			get
@@ -446,6 +490,7 @@ namespace Raider.Game.Gametypes
 		}
 
 		public bool isGameEnding = false;
+		[Server]
 		protected virtual IEnumerator GameOver()
 		{
 			isGameEnding = true;
@@ -488,6 +533,7 @@ namespace Raider.Game.Gametypes
         /// Checks if the game end time is in the past.
         /// Don't call this if there's no time limit.
         /// </summary>
+		[Server]
         protected void CheckGameTime()
         {
             if (!hasInitialSpawned || isGameEnding)
@@ -499,7 +545,7 @@ namespace Raider.Game.Gametypes
 
         protected void Update()
         {
-            if(NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
+            if(NetworkServer.active && NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
                 CheckGameTime();
         }
 
