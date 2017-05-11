@@ -37,10 +37,10 @@ namespace Raider.Game.Player
 
 		public void OnEnable()
 		{
-			if (isLocalPlayer && !playerData.syncData.isLeader)
+			if (isLocalPlayer && playerData != null && playerData.syncData != null && !playerData.syncData.isLeader)
 				GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
                 
-		    if(isLocalPlayer)
+		    if(isLocalPlayer && !NetworkServer.active)
 				CmdRequestLobbySetupUpdate();
 		}
 
@@ -229,7 +229,7 @@ namespace Raider.Game.Player
                 {
                     if (NetworkGameManager.instance.Players[i].PlayerSyncData.team == GametypeHelper.Team.None)
                     {
-                        if ((i + 2) % 2 == 1)
+                        if (i % 2 == 0)
                         {
                             NetworkGameManager.instance.Players[i].PlayerSyncData.team = GametypeHelper.Team.Red;
                             NetworkGameManager.instance.Players[i].RpcChangeTeam(GametypeHelper.Team.Red);

@@ -14,13 +14,16 @@ namespace Raider.Game.Player
     {
         public delegate void OnPlayerKilledPlayer(int idKilled, int idKilledBy);
         public delegate void OnPlayerRespawned(int idRespawned);
-        public delegate void OnPlayerHealthChange();
+        public delegate void OnPlayerHealthChange(int playerID);
 
         public static OnPlayerKilledPlayer onServerPlayerKilledPlayer;
         public static OnPlayerRespawned onServerPlayerRespawned;
 		public static OnPlayerKilledPlayer onClientPlayerKilledPlayer;
 		public static OnPlayerRespawned onClientPlayerRespawned;
         public static OnPlayerHealthChange onClientLocalPlayerHealthChange;
+        public static OnPlayerHealthChange onClientPlayerHealthChange;
+        public static OnPlayerHealthChange onClientPlayerHealthDead;
+        public static OnPlayerHealthChange onClientPlayerHealthAlive;
 
         private PlayerData playerData;
 		public PlayerData PlayerData
@@ -51,7 +54,16 @@ namespace Raider.Game.Player
             Health = value;
 
             if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
-                onClientLocalPlayerHealthChange();
+                onClientLocalPlayerHealthChange(PlayerData.syncData.id);
+            
+            if(onClientPlayerHealthChange != null)
+                onClientPlayerHealthChange(PlayerData.syncData.id);
+
+            if(onClientPlayerHealthDead != null)
+                onClientPlayerHealthDead(PlayerData.syncData.id);
+
+            if (onClientPlayerHealthAlive != null)
+                onClientPlayerHealthAlive(PlayerData.syncData.id);
         }
 
         [SyncVar(hook = "HealthSync")]
@@ -66,7 +78,16 @@ namespace Raider.Game.Player
 					health = value;
 
 				if (isLocalPlayer && onClientLocalPlayerHealthChange != null)
-                    onClientLocalPlayerHealthChange();
+                    onClientLocalPlayerHealthChange(PlayerData.syncData.id);
+
+                if (onClientPlayerHealthChange != null)
+                    onClientPlayerHealthChange(PlayerData.syncData.id);
+
+                if (onClientPlayerHealthDead != null)
+                    onClientPlayerHealthDead(PlayerData.syncData.id);
+
+                if (onClientPlayerHealthAlive != null)
+                    onClientPlayerHealthAlive(PlayerData.syncData.id);
             }
         }
 

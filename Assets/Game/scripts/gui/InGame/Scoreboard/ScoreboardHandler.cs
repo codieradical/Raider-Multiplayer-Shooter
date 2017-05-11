@@ -5,6 +5,7 @@ using Raider.Game.Gametypes;
 using Raider.Game.Player;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 
 namespace Raider.Game.GUI.Scoreboard
 {
@@ -103,10 +104,12 @@ namespace Raider.Game.GUI.Scoreboard
 
         private void Start()
         {
-			NetworkPlayerController.onClientPlayerKilledPlayer += PlayerDied;
-			NetworkPlayerController.onClientPlayerRespawned += PlayerRespawned;
+			NetworkPlayerController.onClientPlayerHealthDead += PlayerDied;
+			NetworkPlayerController.onClientPlayerHealthAlive += PlayerRespawned;
 
-            //InvalidateScoreboard();
+
+            //if(GametypeController.singleton.scoreboard != null)
+            //    InvalidateScoreboard();
         }
 
         public static void InvalidateScoreboard()
@@ -199,25 +202,49 @@ namespace Raider.Game.GUI.Scoreboard
 
 		ScoreboardPlayerPlate GetPlayerPlateByIDAndTeam(int playerID, GametypeHelper.Team team)
 		{
-			ScoreboardPlayerPlate[] plates = playerContainer.GetComponentsInChildren<ScoreboardPlayerPlate>();
+            //I should probably be using GetComponentsInChildren, but the function is broken, so maybe not.
 
-			foreach (ScoreboardPlayerPlate player in plates)
-			{
-				if (player.playerId == playerID && player.playerTeam == team)
-					return player;
-			}
+            foreach(Transform transform in playerContainer.transform)
+            {
+                if(transform.gameObject.activeSelf)
+                {
+                    ScoreboardPlayerPlate plate = transform.gameObject.GetComponent<ScoreboardPlayerPlate>();
+
+                    if (plate == null) continue;
+
+                    if (plate.playerId == playerID && plate.playerTeam == team)
+                        return plate;
+                }
+            }
 
 			return null;
 		}
 
-		public void PlayerDied(int killed, int killedby)
+		public void PlayerDied(int killed)
 		{
 			PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
 
 			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(killedPlayer.id, killedPlayer.team);
 			if(playerPlate != null)
 				playerPlate.IsDead = true;
+            //else
+            //    StartCoroutine(UpdateDeadPlateState(killedPlayer.id, killedPlayer.team, true));
 		}
+
+        //When a player is killed, the score changes, and the scoreboard is invalidated, and during invalidation
+        //plates are destroyed. Until the next frame, those plates are null.
+        //Due to the unpredicable nature of network syncing, the easiest solution is to provide an
+        //additional frame to update. If it didn't work last time, try again.
+        //private IEnumerator UpdateDeadPlateState(int id, GametypeHelper.Team team, bool dead)
+        //{
+        //    //Waiit a couple frames...
+        //    yield return new WaitForFixedUpdate();
+        //    //yield return new WaitForFixedUpdate();
+        //    ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(id, team);
+        //    if (playerPlate != null)
+        //        playerPlate.IsDead = dead;
+        //    yield return 0;
+        //}
 
 		public void PlayerRespawned(int respawned)
 		{
@@ -226,6 +253,8 @@ namespace Raider.Game.GUI.Scoreboard
 			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(respawnedPlayer.id, respawnedPlayer.team);
 			if (playerPlate != null)
 				playerPlate.IsDead = false;
-		}
+            //else
+            //    StartCoroutine(UpdateDeadPlateState(respawnedPlayer.id, respawnedPlayer.team, false));
+        }
     }
 }
