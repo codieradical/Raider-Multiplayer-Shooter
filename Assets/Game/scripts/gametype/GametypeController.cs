@@ -158,6 +158,7 @@ namespace Raider.Game.Gametypes
 			{
 				if(inactiveScoreboard[i].id == playerID && inactiveScoreboard[i].team == newTeam)
 				{
+					oldInactivePlayerIndex = i;
 					oldInactivePlayer = inactiveScoreboard[i];
 					break;
 				}
@@ -167,6 +168,7 @@ namespace Raider.Game.Gametypes
 			{
 				if (scoreboard[i].id == playerID)
 				{
+					oldActivePlayerIndex = i;
 					oldActivePlayer = scoreboard[i];
 					break;
 				}

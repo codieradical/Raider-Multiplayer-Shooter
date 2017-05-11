@@ -7,6 +7,7 @@ using Raider.Game.GUI.StartMenu;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
 using Raider.Game.Weapons;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -149,8 +150,14 @@ namespace Raider.Game.Player
 
 		void UpdateWeaponRotation()
 		{
-			if(CameraModeController.singleton.GetCameraController() is PlayerCameraController)
-				PlayerData.localPlayerData.gunPosition.transform.rotation = CameraModeController.singleton.cam.transform.rotation;
+			try
+			{
+				if (CameraModeController.singleton.GetCameraController() is PlayerCameraController)
+					PlayerData.localPlayerData.gunPosition.transform.rotation = CameraModeController.singleton.cam.transform.rotation;
+			}
+			catch (NullReferenceException)
+			{
+			}
 		}
     }
 }

@@ -104,12 +104,12 @@ namespace Raider.Game.GUI.Scoreboard
 
         private void Start()
         {
-			NetworkPlayerController.onClientPlayerHealthDead += PlayerDied;
-			NetworkPlayerController.onClientPlayerHealthAlive += PlayerRespawned;
+			//NetworkPlayerController.onClientPlayerHealthDead += PlayerDied;
+			//NetworkPlayerController.onClientPlayerHealthAlive += PlayerRespawned;
 
 
-            //if(GametypeController.singleton.scoreboard != null)
-            //    InvalidateScoreboard();
+            if(GametypeController.singleton != null && GametypeController.singleton.scoreboard != null)
+                InvalidateScoreboard();
         }
 
         public static void InvalidateScoreboard()
@@ -200,6 +200,27 @@ namespace Raider.Game.GUI.Scoreboard
             }
         }
 
+		void Update()
+		{
+			UpdatePlayerState();
+		}
+
+		void UpdatePlayerState()
+		{
+			try
+			{
+				foreach (ScoreboardPlayerPlate plate in playerContainer.GetComponentsInChildren<ScoreboardPlayerPlate>())
+				{
+					NetworkPlayerController networkPlayerController = NetworkGameManager.instance.GetPlayerDataById(plate.playerId).networkPlayerController;
+					if (networkPlayerController != null && !networkPlayerController.IsAlive)
+						plate.IsDead = true;
+					else
+						plate.IsDead = false;
+				}
+			}
+			catch (NullReferenceException) { }
+		}
+
 		ScoreboardPlayerPlate GetPlayerPlateByIDAndTeam(int playerID, GametypeHelper.Team team)
 		{
             //I should probably be using GetComponentsInChildren, but the function is broken, so maybe not.
@@ -220,41 +241,41 @@ namespace Raider.Game.GUI.Scoreboard
 			return null;
 		}
 
-		public void PlayerDied(int killed)
-		{
-			PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
+		//public void PlayerDied(int killed)
+		//{
+		//	PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
 
-			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(killedPlayer.id, killedPlayer.team);
-			if(playerPlate != null)
-				playerPlate.IsDead = true;
-            //else
-            //    StartCoroutine(UpdateDeadPlateState(killedPlayer.id, killedPlayer.team, true));
-		}
+		//	ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(killedPlayer.id, killedPlayer.team);
+		//	if(playerPlate != null)
+		//		playerPlate.IsDead = true;
+  //          //else
+  //          //    StartCoroutine(UpdateDeadPlateState(killedPlayer.id, killedPlayer.team, true));
+		//}
 
-        //When a player is killed, the score changes, and the scoreboard is invalidated, and during invalidation
-        //plates are destroyed. Until the next frame, those plates are null.
-        //Due to the unpredicable nature of network syncing, the easiest solution is to provide an
-        //additional frame to update. If it didn't work last time, try again.
-        //private IEnumerator UpdateDeadPlateState(int id, GametypeHelper.Team team, bool dead)
-        //{
-        //    //Waiit a couple frames...
-        //    yield return new WaitForFixedUpdate();
-        //    //yield return new WaitForFixedUpdate();
-        //    ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(id, team);
-        //    if (playerPlate != null)
-        //        playerPlate.IsDead = dead;
-        //    yield return 0;
-        //}
+  //      //When a player is killed, the score changes, and the scoreboard is invalidated, and during invalidation
+  //      //plates are destroyed. Until the next frame, those plates are null.
+  //      //Due to the unpredicable nature of network syncing, the easiest solution is to provide an
+  //      //additional frame to update. If it didn't work last time, try again.
+  //      //private IEnumerator UpdateDeadPlateState(int id, GametypeHelper.Team team, bool dead)
+  //      //{
+  //      //    //Waiit a couple frames...
+  //      //    yield return new WaitForFixedUpdate();
+  //      //    //yield return new WaitForFixedUpdate();
+  //      //    ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(id, team);
+  //      //    if (playerPlate != null)
+  //      //        playerPlate.IsDead = dead;
+  //      //    yield return 0;
+  //      //}
 
-		public void PlayerRespawned(int respawned)
-		{
-			PlayerData.SyncData respawnedPlayer = NetworkGameManager.instance.GetPlayerDataById(respawned).syncData;
+		//public void PlayerRespawned(int respawned)
+		//{
+		//	PlayerData.SyncData respawnedPlayer = NetworkGameManager.instance.GetPlayerDataById(respawned).syncData;
 
-			ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(respawnedPlayer.id, respawnedPlayer.team);
-			if (playerPlate != null)
-				playerPlate.IsDead = false;
-            //else
-            //    StartCoroutine(UpdateDeadPlateState(respawnedPlayer.id, respawnedPlayer.team, false));
-        }
+		//	ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(respawnedPlayer.id, respawnedPlayer.team);
+		//	if (playerPlate != null)
+		//		playerPlate.IsDead = false;
+  //          //else
+  //          //    StartCoroutine(UpdateDeadPlateState(respawnedPlayer.id, respawnedPlayer.team, false));
+  //      }
     }
 }

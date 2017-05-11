@@ -207,6 +207,8 @@ namespace Raider.Game.Cameras
         {
             if(cameraModeUpdates.Count > 0)
                 CameraMode = cameraModeUpdates.Dequeue();
+
+			ChangeCameraMode();
         }
 
         void OnSceneLoaded(UnityEngine.SceneManagement.Scene newScene, LoadSceneMode newSceneLoadMode)
