@@ -42,9 +42,9 @@ namespace Raider.Game.Player
 			//ScoreboardHandler.InvalidateScoreboard();
 		}
 
-		public override void OnNetworkDestroy()
+		public void OnDestroy()
 		{
-			if (GametypeController.singleton == null && !GametypeController.singleton.isGameEnding)
+			if (NetworkServer.active && GametypeController.singleton == null && !GametypeController.singleton.isGameEnding)
 				GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
 			base.OnNetworkDestroy();
 		}
@@ -221,7 +221,8 @@ namespace Raider.Game.Player
 		public void RpcKillPlayer(int killer)
 		{
 			//Hide the dead player.
-			GetComponent<PlayerData>().appearenceController.HidePlayer(true);
+			PlayerData.appearenceController.HidePlayer(true);
+			PlayerData.appearenceController.usernameText.text = "";
 			ToggleWeapons(false);
 
 			if (onClientPlayerKilledPlayer != null)
@@ -251,9 +252,7 @@ namespace Raider.Game.Player
 		public void TargetRespawnPlayer(NetworkConnection conn)
 		{
 			//Switch back to the normal camera.
-			NetworkStartPosition[] startPositions = FindObjectsOfType<NetworkStartPosition>();
-			int randomElement = Random.Range(0, startPositions.Length);
-			gameObject.transform.position = startPositions[randomElement].transform.position;
+			gameObject.transform.position = NetworkGameManager.GetSpawnPoint(PlayerData.syncData.team);
 			CameraModeController.singleton.SetCameraMode(Session.userSaveDataHandler.GetSettings().Perspective);
 
 			if (!PlayerData.localPlayerData.paused)
@@ -265,7 +264,9 @@ namespace Raider.Game.Player
 		[ClientRpc]
 		public void RpcRespawnPlayer()
 		{
-			GetComponent<PlayerData>().appearenceController.HidePlayer(false);
+			PlayerData.appearenceController.HidePlayer(false);
+			if(PlayerData != PlayerData.localPlayerData)
+				PlayerData.appearenceController.usernameText.text = PlayerData.syncData.username;
 			ToggleWeapons(true);
 
 			if (onClientPlayerRespawned != null)

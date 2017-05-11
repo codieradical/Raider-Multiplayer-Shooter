@@ -80,32 +80,6 @@ namespace Raider.Game.Networking
             }
         }
 
-
-        ////DEBUG
-        //private void OnGUI()
-        //{
-        //	for (int i = 0; i < Players.Count; i++)
-        //	{
-        //		UnityEngine.GUI.Label(new Rect(0, 100, 50, 20), "Name");
-        //		UnityEngine.GUI.Label(new Rect(0, 130, 50, 20), "Health");
-        //		UnityEngine.GUI.Label(new Rect(0, 160, 50, 20), "Alive");
-        //		UnityEngine.GUI.Label(new Rect(0, 190, 50, 20), "Score");
-        //		try
-        //		{
-        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 100, 100, 20), Players[i].syncData.username);
-        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 130, 100, 20), Players[i].networkPlayerController.health.ToString());
-        //			UnityEngine.GUI.Label(new Rect(i * 100 + 50, 160, 100, 20), Players[i].networkPlayerController.IsAlive.ToString());
-
-        //			foreach(GametypeController.ScoreboardPlayer player in GametypeController.singleton.scoreboard)
-        //			{
-        //				if (player.name == Players[i].syncData.username)
-        //					UnityEngine.GUI.Label(new Rect(i * 100 + 50, 190, 100, 20), player.score.ToString());
-        //			}
-        //		}
-        //		catch (Exception ex) { }
-        //	}
-        //}
-
         //Called when a client leaves.
         public NetworkMessage onLobbyServerDisconnect;
 		public override void OnLobbyServerDisconnect(NetworkConnection conn)
@@ -329,11 +303,110 @@ namespace Raider.Game.Networking
             }
         }
 
-        #endregion
+		#endregion
 
-        #region Updating NetworkState
+		#region spawning
 
-        public enum NetworkState
+		public static List<Tuple<GametypeHelper.Team, List<Vector3>>> spawnPoints = new List<Tuple<GametypeHelper.Team, List<Vector3>>>();
+
+		public static void RegisterSpawnPoint(Vector3 point, GametypeHelper.Team team)
+		{
+			for (int i = 0; i < spawnPoints.Count; i++)
+			{
+				if (spawnPoints[i].First == team)
+				{
+					spawnPoints[i].Second.Add(point);
+					return;
+				}
+			}
+
+			spawnPoints.Add(new Tuple<GametypeHelper.Team, List<Vector3>>(team, new List<Vector3>() { point }));
+		}
+
+		public static void UnregisterSpawnPoint(Vector3 point, GametypeHelper.Team team)
+		{
+			for (int i = 0; i < spawnPoints.Count; i++)
+			{
+				if (spawnPoints[i].First == team)
+				{
+					spawnPoints[i].Second.Remove(point);
+					return;
+				}
+			}
+		}
+
+		public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
+		{
+			if (gamePlayerPrefab == null)
+			{
+				if (LogFilter.logError) { Debug.LogError("The PlayerPrefab is empty on the NetworkManager. Please setup a PlayerPrefab object."); }
+				return null;
+			}
+
+			if (gamePlayerPrefab.GetComponent<NetworkIdentity>() == null)
+			{
+				if (LogFilter.logError) { Debug.LogError("The PlayerPrefab does not have a NetworkIdentity. Please add a NetworkIdentity to the player prefab."); }
+				return null;
+			}
+
+			GameObject player;
+
+			GametypeHelper.Team team = GametypeHelper.Team.None;
+			foreach(PlayerData playerData in Players) //This loop isn't working. Fix me!
+			{
+				if (playerData.connectionToClient == conn)
+					team = playerData.syncData.team;
+			}
+
+			Vector3 startPos = GetSpawnPoint(team);
+			if (startPos != null)
+			{
+				player = Instantiate(gamePlayerPrefab, startPos, Quaternion.identity);
+			}
+			else
+			{
+				player = Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
+			}
+
+			return player;
+		}
+
+		public static Vector3 GetSpawnPoint(GametypeHelper.Team team)
+		{
+			for (int i = 0; i < spawnPoints.Count; i++)
+			{
+				if (spawnPoints[i].First == team)
+				{
+					if (spawnPoints[i].Second.Count > 0)
+					{
+						int element = UnityEngine.Random.Range(0, spawnPoints[i].Second.Count - 1);
+						return spawnPoints[i].Second[element];
+					}
+					else break;
+				}
+			}
+
+			for (int i = 0; i < spawnPoints.Count; i++)
+			{
+				if (spawnPoints[i].First == GametypeHelper.Team.None)
+				{
+					if (spawnPoints[i].Second.Count > 0)
+					{
+						int element = UnityEngine.Random.Range(0, spawnPoints[i].Second.Count - 1);
+						return spawnPoints[i].Second[element];
+					}
+					else break;
+				}
+			}
+
+			return Vector3.zero;
+		}
+
+		#endregion
+
+		#region Updating NetworkState
+
+		public enum NetworkState
         {
             Offline,
             Client,

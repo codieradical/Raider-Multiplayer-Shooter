@@ -133,11 +133,17 @@ namespace Raider.Game.GUI.Scoreboard
             {
                 for (int i = 0; i < GametypeController.singleton.TeamRanking.Count; i++)
                 {
+					GametypeHelper.Team team = GametypeController.singleton.TeamRanking[i].First;
+
+					bool teamHasLeft = false;
+					if (GametypeController.singleton.PlayerRanking(team).First.Count < 1 && GametypeController.singleton.PlayerRanking(team).Second.Count < 1)
+						teamHasLeft = true;
+
                     GameObject teamPlate = Instantiate(teamPlatePrefab);
-                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), GametypeController.singleton.TeamRanking[i].First.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Second, GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[i].First), headerObject);
+                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), team.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Second, GametypeHelper.GetTeamColor(team), headerObject, teamHasLeft);
                     teamPlate.transform.SetParent(playerContainer.transform, false);
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First).First)
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).First)
                     {
 						PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(player.id);
 
@@ -148,17 +154,17 @@ namespace Raider.Game.GUI.Scoreboard
 						isDead = !playerData.networkPlayerController.IsAlive;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(player.id, player.team, "", player.emblem, player.name, player.clan, player.score, false, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(player.id, player.team, "", player.emblem, player.name, player.clan, player.score, false, GametypeHelper.GetTeamColor(team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(GametypeController.singleton.TeamRanking[i].First).Second)
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).Second)
                     {
                         bool isLeader = false;
                         bool isDead = false;
 
                         GameObject playerPlate = Instantiate(playerPlatePrefab);
-                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(-1, player.team, "", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(player.team), headerObject, isLeader, isDead);
+                        playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(-1, player.team, "", player.emblem, player.name, player.clan, player.score, true, GametypeHelper.GetTeamColor(team), headerObject, isLeader, isDead);
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
                 }
@@ -240,42 +246,5 @@ namespace Raider.Game.GUI.Scoreboard
 
 			return null;
 		}
-
-		//public void PlayerDied(int killed)
-		//{
-		//	PlayerData.SyncData killedPlayer = NetworkGameManager.instance.GetPlayerDataById(killed).syncData;
-
-		//	ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(killedPlayer.id, killedPlayer.team);
-		//	if(playerPlate != null)
-		//		playerPlate.IsDead = true;
-  //          //else
-  //          //    StartCoroutine(UpdateDeadPlateState(killedPlayer.id, killedPlayer.team, true));
-		//}
-
-  //      //When a player is killed, the score changes, and the scoreboard is invalidated, and during invalidation
-  //      //plates are destroyed. Until the next frame, those plates are null.
-  //      //Due to the unpredicable nature of network syncing, the easiest solution is to provide an
-  //      //additional frame to update. If it didn't work last time, try again.
-  //      //private IEnumerator UpdateDeadPlateState(int id, GametypeHelper.Team team, bool dead)
-  //      //{
-  //      //    //Waiit a couple frames...
-  //      //    yield return new WaitForFixedUpdate();
-  //      //    //yield return new WaitForFixedUpdate();
-  //      //    ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(id, team);
-  //      //    if (playerPlate != null)
-  //      //        playerPlate.IsDead = dead;
-  //      //    yield return 0;
-  //      //}
-
-		//public void PlayerRespawned(int respawned)
-		//{
-		//	PlayerData.SyncData respawnedPlayer = NetworkGameManager.instance.GetPlayerDataById(respawned).syncData;
-
-		//	ScoreboardPlayerPlate playerPlate = GetPlayerPlateByIDAndTeam(respawnedPlayer.id, respawnedPlayer.team);
-		//	if (playerPlate != null)
-		//		playerPlate.IsDead = false;
-  //          //else
-  //          //    StartCoroutine(UpdateDeadPlateState(respawnedPlayer.id, respawnedPlayer.team, false));
-  //      }
     }
 }

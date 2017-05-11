@@ -24,16 +24,16 @@ namespace Raider.Game.Networking
                     NetworkGameManager.instance.lobbySetup.SendLobbySetupUpdate();
                 }
             }
-            public Gametypes.GametypeHelper.Gametype Gametype
+            public GametypeHelper.Gametype Gametype
             {
                 get
                 {
                     //Replace spaces in the string with underscores, parse.
-                    return Gametypes.GametypeHelper.instance.GetGametypeByTitle(GametypeString);
+                    return GametypeHelper.instance.GetGametypeByTitle(GametypeString);
                 }
                 set
                 {
-                    GametypeString = Gametypes.GametypeHelper.instance.GetGametypeTitle(value);
+                    GametypeString = GametypeHelper.instance.GetGametypeTitle(value);
                 }
             }
             public string selectedScene;

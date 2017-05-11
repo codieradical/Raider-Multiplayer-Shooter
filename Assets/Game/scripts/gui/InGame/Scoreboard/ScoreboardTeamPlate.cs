@@ -15,7 +15,7 @@ namespace Raider.Game.GUI.Scoreboard
 
         public MatchObjectSize matchObjectSizeComponent;
 
-        public void SetupPlate(string place, string teamname, int score, Color color, GameObject scoreboardHeader)
+        public void SetupPlate(string place, string teamname, int score, Color color, GameObject scoreboardHeader, bool hasLeft)
         {
             matchObjectSizeComponent = GetComponent<MatchObjectSize>();
 
@@ -28,6 +28,14 @@ namespace Raider.Game.GUI.Scoreboard
 			float newH, newS, newV;
 			Color.RGBToHSV(color, out newH, out newS, out newV);
 			Color newColor;
+
+			if (hasLeft)
+			{
+				Color leftColor = Color.gray;
+				this.place.color = leftColor;
+				this.teamname.color = leftColor;
+				this.score.color = leftColor;
+			}
 
 			foreach (Image image in background)
             {
