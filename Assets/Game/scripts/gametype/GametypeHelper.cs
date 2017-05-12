@@ -59,7 +59,33 @@ namespace Raider.Game.Gametypes
 			public Gametype gametype;
 			public GameObject controllerPrefab;
 			public EngineMode engineMode;
+            public List<GametypeObjectData> objects = new List<GametypeObjectData>();
+
+            [Serializable]
+            public class GametypeObjectData
+            {
+                public GametypeObjectiveSpawnPoint.Objective objective;
+                public GameObject prefab;
+            }
 		}
+
+        public GameObject GetGametypeObjectivePrefab(Gametype gametype, GametypeObjectiveSpawnPoint.Objective objective)
+        {
+            foreach(GametypeData gametypeData in gametypes)
+            {
+                if(gametypeData.gametype == gametype)
+                {
+                    foreach(GametypeData.GametypeObjectData objectData in gametypeData.objects)
+                    {
+                        if (objectData.objective == objective)
+                            return objectData.prefab;
+                    }
+                }
+            }
+
+            Debug.LogError("Could not find gametype object prefab for " + gametype.ToString() + " " + objective.ToString());
+            return null;
+        }
 
 		public void CheckAllPrefabsPresent()
 		{
@@ -86,6 +112,11 @@ namespace Raider.Game.Gametypes
 			foreach (GametypeData gametype in gametypes)
 			{
 				ClientScene.RegisterPrefab(gametype.controllerPrefab);
+
+                foreach(GametypeData.GametypeObjectData objective in gametype.objects)
+                {
+                    ClientScene.RegisterPrefab(objective.prefab);
+                }
 			}
 		}
 
