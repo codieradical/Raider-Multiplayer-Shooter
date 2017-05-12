@@ -352,11 +352,15 @@ namespace Raider.Game.Networking
 			GameObject player;
 
 			GametypeHelper.Team team = GametypeHelper.Team.None;
-			foreach(PlayerData playerData in Players) //This loop isn't working. Fix me!
-			{
-				if (playerData.connectionToClient == conn)
-					team = playerData.syncData.team;
-			}
+
+            try
+            {
+                team = conn.playerControllers[playerControllerId].gameObject.GetComponent<PlayerData>().syncData.team;
+            }
+            catch (NullReferenceException)
+            {
+                Debug.LogWarning("Could not find a player's team.");
+            }
 
 			Vector3 startPos = GetSpawnPoint(team);
 			if (startPos != null)
