@@ -36,13 +36,72 @@ namespace Raider.Game.Player
 			}
 		}
 
-		public override void OnStartClient()
-		{
-			base.OnStartClient();
-			//ScoreboardHandler.InvalidateScoreboard();
-		}
 
-		public void OnDestroy()
+        private void Update()
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll != 0f)
+                CmdSwitchWeapon(scroll);
+        }
+
+        [Command]
+        public void CmdSwitchWeapon(float scroll)
+        {
+            if (pickupObjective != null)
+            {
+                CmdDropObjective();
+            }
+
+            SwitchWeapon(scroll);
+        }
+
+        void SwitchWeapon(float scroll)
+        {
+            ToggleWeapons(true);
+
+            //If the player is dead, don't let them switch weapon.
+            if (!PlayerData.networkPlayerController.IsAlive)
+                return;
+
+            if (scroll > 0f)
+            {
+                switch (PlayerData.ActiveWeaponType)
+                {
+                    case Armory.WeaponType.Primary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
+                        break;
+                    case Armory.WeaponType.Secondary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
+                        break;
+                    case Armory.WeaponType.Tertiary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
+                        break;
+                }
+            }
+            else if (scroll < 0f)
+            {
+                switch (PlayerData.ActiveWeaponType)
+                {
+                    case Armory.WeaponType.Primary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
+                        break;
+                    case Armory.WeaponType.Secondary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
+                        break;
+                    case Armory.WeaponType.Tertiary:
+                        PlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
+                        break;
+                }
+            }
+        }
+
+        //public override void OnStartClient()
+        //{
+        //	base.OnStartClient();
+        //	//ScoreboardHandler.InvalidateScoreboard();
+        //}
+
+        public void OnDestroy()
 		{
 			if (NetworkServer.active && GametypeController.singleton == null && !GametypeController.singleton.isGameEnding)
 				GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
@@ -180,6 +239,9 @@ namespace Raider.Game.Player
 		[Server]
 		public void KillPlayer(int killer)
 		{
+            if (pickupObjective != null)
+                CmdDropObjective();
+
 			Debug.Log("This player died.");
 			TargetKillPlayer(connectionToClient);
 			RpcKillPlayer(killer);
@@ -290,6 +352,37 @@ namespace Raider.Game.Player
 				playerData.TertiaryWeaponController.gameObject.SetActive(false);
 			}
 		}
+
+        public PickupGametypeObjective pickupObjective;
+
+        [Command]
+        public void CmdDropObjective()
+        {
+            pickupObjective.rb.isKinematic = false;
+            pickupObjective.mc.enabled = true;
+            pickupObjective.sc.enabled = true;
+            pickupObjective.transform.SetParent(null, true);
+            Vector3 flagRotation = pickupObjective.transform.rotation.eulerAngles;
+            flagRotation.x = 0;
+            flagRotation.z = 0;
+            pickupObjective.transform.rotation = Quaternion.Euler(flagRotation);
+            pickupObjective.carrierId = -1;
+            pickupObjective = null;
+        }
+
+        [ClientRpc]
+        public void RpcDropObjective()
+        {
+            pickupObjective.rb.isKinematic = false;
+            pickupObjective.mc.enabled = true;
+            pickupObjective.sc.enabled = true;
+            pickupObjective.transform.SetParent(null, true);
+            Vector3 flagRotation = pickupObjective.transform.rotation.eulerAngles;
+            flagRotation.x = 0;
+            flagRotation.z = 0;
+            pickupObjective.transform.rotation = Quaternion.Euler(flagRotation);
+            pickupObjective = null;
+        }
 
 		public void SpawnWeapon(Armory.Weapons weapon)
         {

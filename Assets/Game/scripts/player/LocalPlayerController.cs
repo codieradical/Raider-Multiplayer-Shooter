@@ -27,50 +27,8 @@ namespace Raider.Game.Player
 
 		private void Update()
 		{
-			float scroll = Input.GetAxis("Mouse ScrollWheel");
-			if (scroll != 0f)
-				SwitchWeapon(scroll);
-
 			OpenCloseScoreboard();
 			UpdateWeaponRotation();
-		}
-
-		public void SwitchWeapon(float scroll)
-		{
-			//If the player is dead, don't let them switch weapon.
-			if (!PlayerData.localPlayerData.networkPlayerController.IsAlive)
-				return;
-
-			if (scroll > 0f)
-			{
-				switch (PlayerData.localPlayerData.ActiveWeaponType)
-				{
-					case Armory.WeaponType.Primary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
-						break;
-					case Armory.WeaponType.Secondary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
-						break;
-					case Armory.WeaponType.Tertiary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
-						break;
-				}
-			}
-			else if (scroll < 0f)
-			{
-				switch (PlayerData.localPlayerData.ActiveWeaponType)
-				{
-					case Armory.WeaponType.Primary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Secondary;
-						break;
-					case Armory.WeaponType.Secondary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Tertiary;
-						break;
-					case Armory.WeaponType.Tertiary:
-						PlayerData.localPlayerData.ActiveWeaponType = Armory.WeaponType.Primary;
-						break;
-				}
-			}
 		}
 
 		public void UpdatePerspective(CameraModeController.CameraModes newPerspective)
@@ -153,7 +111,7 @@ namespace Raider.Game.Player
 			try
 			{
 				if (CameraModeController.singleton.GetCameraController() is PlayerCameraController)
-					PlayerData.localPlayerData.gunPosition.transform.rotation = CameraModeController.singleton.cam.transform.rotation;
+					PlayerData.localPlayerData.gunPosition.transform.parent.rotation = CameraModeController.singleton.cam.transform.rotation;
 			}
 			catch (NullReferenceException)
 			{
