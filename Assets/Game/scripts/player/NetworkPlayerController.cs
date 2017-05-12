@@ -368,6 +368,8 @@ namespace Raider.Game.Player
             pickupObjective.transform.rotation = Quaternion.Euler(flagRotation);
             pickupObjective.carrierId = -1;
             pickupObjective = null;
+
+            RpcDropObjective();
         }
 
         [ClientRpc]
