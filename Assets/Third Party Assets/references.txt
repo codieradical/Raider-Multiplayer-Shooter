@@ -47,3 +47,9 @@ Textures\Halo 3
 Textures extracted from Halo 3, Xbox 360 Cache files.
 Cache files obtained from personal game files.
 Retrieved 9/5/17
+
+Halo 3 Models
+Models\Halo 3
+Textures extracted from Halo 3, Xbox 360 Cache files.
+Cache files obtained from personal game files.
+Retrieved 12/5/17

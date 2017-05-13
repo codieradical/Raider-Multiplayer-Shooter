@@ -6,7 +6,6 @@ using Raider.Game.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    [RequireComponent(typeof(MeshCollider))]
     [RequireComponent(typeof(SphereCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(NetworkTransform))]
@@ -33,7 +32,6 @@ namespace Raider.Game.Gametypes
         private void Start()
         {
             rigidBody = GetComponent<Rigidbody>();
-            meshColllider = GetComponent<MeshCollider>();
             pickupTrigger = GetComponent<SphereCollider>();
             netTransform = GetComponent<NetworkTransform>();
         }
