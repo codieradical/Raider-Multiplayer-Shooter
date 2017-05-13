@@ -15,6 +15,7 @@ namespace Raider.Game.Player
         public delegate void OnPlayerKilledPlayer(int idKilled, int idKilledBy);
         public delegate void OnPlayerRespawned(int idRespawned);
         public delegate void OnPlayerHealthChange(int playerID);
+        public delegate void OnPlayerScored(int playerID);
 
         public static OnPlayerKilledPlayer onServerPlayerKilledPlayer;
         public static OnPlayerRespawned onServerPlayerRespawned;
@@ -24,6 +25,7 @@ namespace Raider.Game.Player
         public static OnPlayerHealthChange onClientPlayerHealthChange;
         public static OnPlayerHealthChange onClientPlayerHealthDead;
         public static OnPlayerHealthChange onClientPlayerHealthAlive;
+        public static OnPlayerScored onServerPlayerScored;
 
         private PlayerData playerData;
 		public PlayerData PlayerData
@@ -40,7 +42,7 @@ namespace Raider.Game.Player
         private void Update()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll != 0f)
+            if (scroll != 0f && isLocalPlayer)
                 CmdSwitchWeapon(scroll);
         }
 
@@ -95,15 +97,9 @@ namespace Raider.Game.Player
             }
         }
 
-        //public override void OnStartClient()
-        //{
-        //	base.OnStartClient();
-        //	//ScoreboardHandler.InvalidateScoreboard();
-        //}
-
         public void OnDestroy()
 		{
-			if (NetworkServer.active && GametypeController.singleton == null && !GametypeController.singleton.isGameEnding)
+			if (NetworkServer.active && GametypeController.singleton != null && !GametypeController.singleton.isGameEnding)
 				GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
 			base.OnNetworkDestroy();
 		}
@@ -282,7 +278,9 @@ namespace Raider.Game.Player
 		[ClientRpc]
 		public void RpcKillPlayer(int killer)
 		{
-			//Hide the dead player.
+            //Hide the dead player.
+            PlayerData.pickupTrigger.enabled = false;
+            PlayerData.characterController.enabled = false;
 			PlayerData.appearenceController.HidePlayer(true);
 			PlayerData.appearenceController.usernameText.text = "";
 			ToggleWeapons(false);
@@ -326,7 +324,9 @@ namespace Raider.Game.Player
 		[ClientRpc]
 		public void RpcRespawnPlayer()
 		{
-			PlayerData.appearenceController.HidePlayer(false);
+            PlayerData.pickupTrigger.enabled = true;
+            PlayerData.characterController.enabled = true;
+            PlayerData.appearenceController.HidePlayer(false);
 			if(PlayerData != PlayerData.localPlayerData)
 				PlayerData.appearenceController.usernameText.text = PlayerData.syncData.username;
 			ToggleWeapons(true);
@@ -341,52 +341,134 @@ namespace Raider.Game.Player
 
 			if (active)
 			{
-				playerData.PrimaryWeaponController.gameObject.SetActive(true);
-				playerData.SecondaryWeaponController.gameObject.SetActive(true);
-				playerData.TertiaryWeaponController.gameObject.SetActive(true);
+				PlayerData.PrimaryWeaponController.gameObject.SetActive(true);
+                PlayerData.SecondaryWeaponController.gameObject.SetActive(true);
+                PlayerData.TertiaryWeaponController.gameObject.SetActive(true);
 			}
 			else
 			{
-				playerData.PrimaryWeaponController.gameObject.SetActive(false);
-				playerData.SecondaryWeaponController.gameObject.SetActive(false);
-				playerData.TertiaryWeaponController.gameObject.SetActive(false);
+                PlayerData.PrimaryWeaponController.gameObject.SetActive(false);
+                PlayerData.SecondaryWeaponController.gameObject.SetActive(false);
+                PlayerData.TertiaryWeaponController.gameObject.SetActive(false);
 			}
 		}
+
+        #region Objective Pickup
 
         public PickupGametypeObjective pickupObjective;
 
         [Command]
+        public void CmdPickupObject(GameObject objective)
+        {
+            PickupGametypeObjective pickupObjective = objective.GetComponent<PickupGametypeObjective>();
+            if (pickupObjective.carrierId > -1)
+            {
+                Debug.LogWarning("Player attempted to pickup carried objective");
+                return;
+            }
+
+            pickupObjective.carrierId = PlayerData.syncData.id;
+
+            if (PlayerData.networkPlayerController.pickupObjective != null)
+                PlayerData.networkPlayerController.CmdDropObjective();
+
+            this.pickupObjective = pickupObjective;
+            pickupObjective.TogglePickup(false);
+            pickupObjective.transform.SetParent(PlayerData.gunPosition.gameObject.transform, false);
+            pickupObjective.transform.position = PlayerData.gunPosition.gameObject.transform.position;
+            pickupObjective.transform.rotation = PlayerData.gunPosition.gameObject.transform.rotation;
+            PlayerData.networkPlayerController.ToggleWeapons(false);
+
+            if (pickupObjective.respawnObjectTimer != null)
+            {
+                Debug.LogError("Ending Respawn Object Timer;");
+                StopCoroutine(pickupObjective.respawnObjectTimer);
+                pickupObjective.respawnObjectTimer = null;
+            }
+
+            RpcPickupObject(objective);
+        }
+
+        [ClientRpc]
+        private void RpcPickupObject(GameObject objective)
+        {
+            PickupGametypeObjective pickupObjective = objective.GetComponent<PickupGametypeObjective>();
+
+            this.pickupObjective = pickupObjective;
+            pickupObjective.TogglePickup(false);
+            pickupObjective.transform.SetParent(PlayerData.gunPosition.gameObject.transform, false);
+            pickupObjective.transform.position = PlayerData.gunPosition.gameObject.transform.position;
+            pickupObjective.transform.rotation = PlayerData.gunPosition.gameObject.transform.rotation;
+            ToggleWeapons(false);
+        }
+
+        [Command]
         public void CmdDropObjective()
         {
-            pickupObjective.rb.isKinematic = false;
-            pickupObjective.mc.enabled = true;
-            pickupObjective.sc.enabled = true;
-            pickupObjective.transform.SetParent(null, true);
-            Vector3 flagRotation = pickupObjective.transform.rotation.eulerAngles;
-            flagRotation.x = 0;
-            flagRotation.z = 0;
-            pickupObjective.transform.rotation = Quaternion.Euler(flagRotation);
+            pickupObjective.DropObjective();
+            pickupObjective.TogglePickup(true);
             pickupObjective.carrierId = -1;
-            pickupObjective = null;
 
             RpcDropObjective();
+
+            if (pickupObjective.respawnObjectTimer == null)
+                pickupObjective.respawnObjectTimer = StartCoroutine(pickupObjective.WaitAndRespawnObject());
+
+            pickupObjective = null;
+            ToggleWeapons(true);
         }
 
         [ClientRpc]
         public void RpcDropObjective()
         {
-            pickupObjective.rb.isKinematic = false;
-            pickupObjective.mc.enabled = true;
-            pickupObjective.sc.enabled = true;
-            pickupObjective.transform.SetParent(null, true);
-            Vector3 flagRotation = pickupObjective.transform.rotation.eulerAngles;
-            flagRotation.x = 0;
-            flagRotation.z = 0;
-            pickupObjective.transform.rotation = Quaternion.Euler(flagRotation);
+            if (pickupObjective == null)
+                return;
+
+            pickupObjective.DropObjective();
+            pickupObjective.TogglePickup(true);
             pickupObjective = null;
+            ToggleWeapons(true);
         }
 
-		public void SpawnWeapon(Armory.Weapons weapon)
+        [Command]
+        public void CmdScoreObjective()
+        {
+            if (pickupObjective == null)
+                return;
+
+            pickupObjective.DropObjective();
+            pickupObjective.RespawnObject();
+            pickupObjective.TogglePickup(true);
+            pickupObjective.carrierId = -1;
+            RpcScoreObjective();
+            pickupObjective = null;
+
+            if (onServerPlayerScored != null)
+                onServerPlayerScored(PlayerData.syncData.id);
+
+            PlayerChatManager chatManager = PlayerData.localPlayerData.PlayerChatManager;
+            chatManager.CmdSendNotificationMessage(PlayerChatManager.GetFormattedUsername(PlayerData.syncData.id) + " Scored!", -1);
+
+            ToggleWeapons(true);
+        }
+
+        [ClientRpc]
+        public void RpcScoreObjective()
+        {
+            if (pickupObjective == null)
+                return;
+
+            pickupObjective.DropObjective();
+            pickupObjective.RespawnObject();
+            pickupObjective.TogglePickup(true);
+            pickupObjective = null;
+
+            ToggleWeapons(true);
+        }
+
+        #endregion
+
+        public void SpawnWeapon(Armory.Weapons weapon)
         {
             if(!isLocalPlayer)
             {

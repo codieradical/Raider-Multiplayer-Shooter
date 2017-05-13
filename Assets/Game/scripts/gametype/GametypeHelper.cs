@@ -64,12 +64,12 @@ namespace Raider.Game.Gametypes
             [Serializable]
             public class GametypeObjectData
             {
-                public GametypeObjectiveSpawnPoint.Objective objective;
+                public GametypeObjective.Objective objective;
                 public GameObject prefab;
             }
 		}
 
-        public GameObject GetGametypeObjectivePrefab(Gametype gametype, GametypeObjectiveSpawnPoint.Objective objective)
+        public GameObject GetGametypeObjectivePrefab(Gametype gametype, GametypeObjective.Objective objective)
         {
             foreach(GametypeData gametypeData in gametypes)
             {

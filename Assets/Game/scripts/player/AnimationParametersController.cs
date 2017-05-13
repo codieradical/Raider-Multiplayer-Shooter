@@ -66,7 +66,7 @@ namespace Raider.Game.Player
                 //}
 
                 //Tell all of the animators that the player is running.
-                if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25)
+                if (Input.GetButton("Run") && Input.GetAxis("Vertical") > 0.25 && PlayerData.localPlayerData.networkPlayerController.pickupObjective == null)
                     Running = true;
                 else
                     Running = false;

@@ -9,39 +9,80 @@ namespace Raider.Game.Gametypes
     [RequireComponent(typeof(MeshCollider))]
     [RequireComponent(typeof(SphereCollider))]
     [RequireComponent(typeof(Rigidbody))]
-    public class PickupGametypeObjective : GametypeObjective
+    [RequireComponent(typeof(NetworkTransform))]
+    public abstract class PickupGametypeObjective : GametypeObjective
     {
         [SyncVar]
-        public int carrierId = -1;
-        bool canPickup;
+        public Vector3 spawnPosition;
 
-        public Rigidbody rb;
-        public MeshCollider mc;
-        public SphereCollider sc;
+        [SyncVar]
+        public int carrierId = -1;
+        public bool canPickup;
+
+        public Rigidbody rigidBody;
+        public MeshCollider meshColllider;
+        public SphereCollider pickupTrigger;
+        public NetworkTransform netTransform;
+
+        public virtual void SetupObjective(GametypeHelper.Gametype gametype, GametypeHelper.Team team, Objective objective, Vector3 spawnPosition)
+        {
+            SetupObjective(gametype, team, objective);
+            this.spawnPosition = spawnPosition;
+        }
 
         private void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            mc = GetComponent<MeshCollider>();
-            sc = GetComponent<SphereCollider>();
+            rigidBody = GetComponent<Rigidbody>();
+            meshColllider = GetComponent<MeshCollider>();
+            pickupTrigger = GetComponent<SphereCollider>();
+            netTransform = GetComponent<NetworkTransform>();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (pickedUpObjectThisFrame)
                 pickedUpObjectThisFrame = false;
         }
 
-        private void OnGUI()
+        protected virtual void OnGUI()
         {
             if (!canPickup) return;
             UnityEngine.GUI.Label(new Rect(Screen.width - 150, 150, 150, 30), "Press E to pickup object");
         }
 
-        private void OnTriggerEnter(Collider other)
+        public IEnumerator DisablePickupForSeconds(int seconds)
+        {
+            pickupTrigger.enabled = false;
+            yield return new WaitForSeconds(seconds);
+            pickupTrigger.enabled = true;
+        }
+
+        public virtual void DropObjective()
+        {
+            transform.SetParent(null, true);
+        }
+
+        public virtual void TogglePickup(bool enabled)
+        {
+            rigidBody.isKinematic = !enabled;
+            meshColllider.enabled = enabled;
+            pickupTrigger.enabled = enabled;
+            netTransform.enabled = enabled;
+
+            if(!enabled)
+                canPickup = enabled;
+            else if(enabled)
+                DisablePickupForSeconds(1);
+        }
+
+        protected virtual void OnTriggerEnter(Collider other)
+        {
+            EnterPickupRadius(other);
+        }
+
+        protected virtual void EnterPickupRadius(Collider other)
         {
             if (carrierId > -1) return;
-
 
             PlayerData playerData = null;
             playerData = other.gameObject.transform.root.GetComponent<PlayerData>();
@@ -49,14 +90,19 @@ namespace Raider.Game.Gametypes
             if (playerData == null)
                 return;
 
-            if (playerData.syncData.team != team)
+            if (playerData != PlayerData.localPlayerData)
                 return;
 
             canPickup = true;
         }
 
+        protected virtual void OnTriggerStay(Collider other)
+        {
+            CheckPickupRequested(other);
+        }
+
         public static bool pickedUpObjectThisFrame;
-        private void OnTriggerStay(Collider other)
+        protected virtual void CheckPickupRequested(Collider other)
         {
             if (pickedUpObjectThisFrame)
                 return;
@@ -72,57 +118,23 @@ namespace Raider.Game.Gametypes
             if (playerData == null)
                 return;
 
+            if (playerData != PlayerData.localPlayerData)
+                return;
+
             if (Input.GetKeyDown(KeyCode.E))
             {
                 canPickup = false;
                 pickedUpObjectThisFrame = true;
-                CmdPickupObject(PlayerData.localPlayerData.syncData.id);//pickup the ball;
+                PlayerData.localPlayerData.networkPlayerController.CmdPickupObject(gameObject);//pickup the ball;
             }
         }
 
-        [Command]
-        public void CmdPickupObject(int playerId)
+        protected virtual void OnTriggerExit(Collider other)
         {
-            if(carrierId > -1)
-            {
-                Debug.LogWarning("Player attempted to pickup carried objective");
-                return;
-            }
-
-            carrierId = playerId;
-            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-
-            if (playerData.networkPlayerController.pickupObjective != null)
-                playerData.networkPlayerController.CmdDropObjective();
-
-            playerData.networkPlayerController.pickupObjective = this;
-            rb.isKinematic = true;
-            mc.enabled = false;
-            sc.enabled = false;
-            transform.SetParent(playerData.gunPosition.gameObject.transform, false);
-            transform.position = playerData.gunPosition.gameObject.transform.position;
-            transform.rotation = playerData.gunPosition.gameObject.transform.rotation;
-            playerData.networkPlayerController.ToggleWeapons(false);
-
-            RpcPickupObject(carrierId);
+            ExitPickupRadius(other);
         }
 
-        [ClientRpc]
-        private void RpcPickupObject(int playerId)
-        {
-            PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(playerId);
-            playerData.networkPlayerController.pickupObjective = this;
-            rb.isKinematic = true;
-            mc.enabled = false;
-            sc.enabled = false;
-            transform.SetParent(playerData.gunPosition.gameObject.transform, false);
-            transform.position = playerData.gunPosition.gameObject.transform.position;
-            transform.rotation = playerData.gunPosition.gameObject.transform.rotation;
-            canPickup = false;
-            playerData.networkPlayerController.ToggleWeapons(false);
-        }
-
-        private void OnTriggerExit(Collider other)
+        protected virtual void ExitPickupRadius(Collider other)
         {
             if (!canPickup) return;
 
@@ -132,7 +144,40 @@ namespace Raider.Game.Gametypes
             if (playerData == null)
                 return;
 
+            if (playerData != PlayerData.localPlayerData)
+                return;
+
             canPickup = false;
+        }
+
+        public Coroutine respawnObjectTimer;
+
+        //If the object remains idle for 30 seconds, it may be out of bounds.
+        //Respawn it.
+        [Server]
+        public virtual IEnumerator WaitAndRespawnObject()
+        {
+            yield return new WaitForSeconds(30);
+            RespawnObject();
+            RpcRespawnObject();
+
+            if (team == GametypeHelper.Team.None)
+                PlayerData.localPlayerData.PlayerChatManager.CmdSendNotificationMessage(objective.ToString() + " reset.", -1);
+            else
+                PlayerData.localPlayerData.PlayerChatManager.CmdSendNotificationMessage(team.ToString() + " Team " + objective.ToString() + " reset.", -1);
+        }
+
+        [ClientRpc]
+        protected void RpcRespawnObject()
+        {
+            RespawnObject();
+        }
+
+        public virtual void RespawnObject()
+        {
+            DisablePickupForSeconds(1);
+            transform.position = spawnPosition;
+            transform.rotation = Quaternion.identity;
         }
     }
 }

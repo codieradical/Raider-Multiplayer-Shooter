@@ -529,6 +529,14 @@ namespace Raider.Game.Gametypes
             AddToScoreboard(killerPlayer.id, killerPlayer.team, 1);
         }
 
+        [Server]
+        protected virtual void GametypeScore(int scoredBy)
+        {
+            PlayerData.SyncData scoringPlayer = NetworkGameManager.instance.GetPlayerDataById(scoredBy).syncData;
+
+            AddToScoreboard(scoringPlayer.id, scoringPlayer.team, 1);
+        }
+
         [SyncVar]
         public float gameEnds;
         /// <summary>

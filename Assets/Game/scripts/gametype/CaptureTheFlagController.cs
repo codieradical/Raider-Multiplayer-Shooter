@@ -5,6 +5,11 @@ namespace Raider.Game.Gametypes
 {
     public class CaptureTheFlagController : GametypeController
     {
+        private void Start()
+        {
+            NetworkPlayerController.onServerPlayerScored += GametypeScore;
+        }
+
         [Serializable]
         public class CaptureTheFlagGameOptions : GameOptions
         {

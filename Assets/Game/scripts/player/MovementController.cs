@@ -111,7 +111,7 @@ namespace Raider.Game.Player
                 }
 
                 //If run key is down runSpeed, else walkSpeed.
-                speed = Input.GetButton("Run") ? movSettings.runSpeed : movSettings.walkSpeed;
+                speed = Input.GetButton("Run") && PlayerData.localPlayerData.networkPlayerController.pickupObjective == null ? movSettings.runSpeed : movSettings.walkSpeed;
 
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
                 if ((sliding && movSettings.slideOnSlopes) || (movSettings.slideOnSlopes && hit.collider.tag == "Slide"))

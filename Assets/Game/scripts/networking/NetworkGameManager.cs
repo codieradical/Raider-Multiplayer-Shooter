@@ -231,6 +231,12 @@ namespace Raider.Game.Networking
 
                 if (playerData != null)
                 {
+                    if(!Scenario.InLobby)
+                    {
+                        if (activeGametype != null && activeGametype.inactiveScoreboard != null)
+                            activeGametype.InactivateScoreboardPlayer(playerData.syncData.id, playerData.syncData.team);
+                    }
+
                     NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.PlayerSyncData.id);
                     break;
                 }

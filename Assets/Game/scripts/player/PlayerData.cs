@@ -26,6 +26,8 @@ namespace Raider.Game.Player
         }
 
         //A reference to the root graphics object, assigned in editor.
+        public SphereCollider pickupTrigger;//Assigned in editor.
+        public CharacterController characterController;//Assigned in editor.
         public GameObject graphicsObject;
 		public GameObject gunPosition;
 		public GameObject playerModel; // Assigned In Editor To Begin
