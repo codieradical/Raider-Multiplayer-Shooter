@@ -256,14 +256,12 @@ namespace Raider.Game.Cameras
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                CameraMode++;
+				if (CameraMode == CameraModes.SpectatorThirdPerson)
+					SetCameraMode(CameraModes.FreeCam);
+				else
+					SetCameraMode(CameraModes.SpectatorThirdPerson);
 
-                if ((int)CameraMode == Enum.GetNames(typeof(CameraModes)).Length)
-                {
-                    CameraMode = 0;
-                }
-
-                UserFeedback.LogError("Changed Camera Mode to " + CameraMode.ToString());
+				UserFeedback.LogError("Changed Camera Mode.");
             }
         }
 
