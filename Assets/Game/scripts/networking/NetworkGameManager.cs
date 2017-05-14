@@ -1,5 +1,4 @@
-﻿using Raider.Common.Types;
-using Raider.Game.Gametypes;
+﻿using Raider.Game.Gametypes;
 using Raider.Game.GUI.Components;
 using Raider.Game.Player;
 using Raider.Game.Scene;
@@ -60,6 +59,14 @@ namespace Raider.Game.Networking
             while(actionQueue.Count > 0)
             {
                 actionQueue.Dequeue()();
+            }
+        }
+
+        public NetworkLANDiscovery NetworkDiscovery
+        {
+            get
+            {
+                return GetComponent<NetworkLANDiscovery>();
             }
         }
 
@@ -369,14 +376,8 @@ namespace Raider.Game.Networking
             }
 
 			Vector3 startPos = GetSpawnPoint(team);
-			if (startPos != null)
-			{
-				player = Instantiate(gamePlayerPrefab, startPos, Quaternion.identity);
-			}
-			else
-			{
-				player = Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
-			}
+
+			player = Instantiate(gamePlayerPrefab, startPos, Quaternion.identity);
 
 			return player;
 		}
@@ -454,18 +455,23 @@ namespace Raider.Game.Networking
                 if (value == NetworkState.Client)
                 {
                     StartClient();
-                    if(onNetworkStateClient != null)
+                    NetworkDiscovery.StopBroadcast();
+                    if (onNetworkStateClient != null)
                         onNetworkStateClient();
                 }
                 else if (value == NetworkState.Host)
                 {
                     StartHost();
+                    NetworkDiscovery.Initialize();
+                    NetworkDiscovery.StartAsServer();
                     if (onNetworkStateHost != null)
                         onNetworkStateHost();
                 }
                 else if (value == NetworkState.Server)
                 {
                     StartServer();
+                    NetworkDiscovery.Initialize();
+                    NetworkDiscovery.StartAsServer();
                     if (onNetworkStateHost != null)
                         onNetworkStateServer();
                 }
@@ -488,6 +494,8 @@ namespace Raider.Game.Networking
             //If the network is active, figure out what's running, and stop it.
             if (isNetworkActive)
             {
+                NetworkDiscovery.StopBroadcast();
+
                 if (CurrentNetworkState == NetworkState.Client)
                     StopClient();
                 else if (CurrentNetworkState == NetworkState.Host)

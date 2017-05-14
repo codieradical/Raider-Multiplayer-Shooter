@@ -1,4 +1,5 @@
 ﻿using Raider.Game.GUI.Screens;
+using Raider.Game.Networking;
 using Raider.Game.Scene;
 using System;
 using UnityEngine;
@@ -64,6 +65,8 @@ namespace Raider.Game.GUI.Components
         public void MatchmakingButtonClick()
         {
             HideButtons();
+            NetworkGameManager.instance.NetworkDiscovery.Initialize();
+            NetworkGameManager.instance.NetworkDiscovery.StartAsClient();
             MenuManager.instance.ShowMenu(MainmenuController.instance.MatchmakingScreen.GetComponent<Menu>());
         }
     }

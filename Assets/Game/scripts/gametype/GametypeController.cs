@@ -1,5 +1,4 @@
-﻿using Raider.Common.Types;
-using Raider.Game.Networking;
+﻿using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.GUI.Scoreboard;
 using System;
@@ -197,7 +196,7 @@ namespace Raider.Game.Gametypes
 				List<Tuple<GametypeHelper.Team, int>> teamScores = new List<Tuple<GametypeHelper.Team, int>>();
 				foreach (GametypeHelper.Team team in Enum.GetValues(typeof(GametypeHelper.Team)))
 				{
-					if (PlayerRanking(team).First.Concat(PlayerRanking(team).Second).Count() < 1)
+					if (PlayerRanking(team).Item1.Concat(PlayerRanking(team).Second).Count() < 1)
 					{
 						int teamTotal;
 						if (GetTeamTotal(team, out teamTotal))
@@ -224,7 +223,7 @@ namespace Raider.Game.Gametypes
                     }
                     teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, iterationScore));
 				}
-				return (teamScores.OrderBy(team => PlayerRanking(team.First).First.Concat(PlayerRanking(team.First).Second).Count() < 1).ThenByDescending(team => team.Second).ThenBy(team => team.First)).ToList();
+				return (teamScores.OrderBy(team => PlayerRanking(team.Item1).First.Concat(PlayerRanking(team.Item1).Item2).Count() < 1).ThenByDescending(team => team.Item2).ThenBy(team => team.Item1)).ToList();
 			}
 		}
 
@@ -348,7 +347,7 @@ namespace Raider.Game.Gametypes
 
                     if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
                     {
-                        if (TeamRanking[0].Second >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+                        if (TeamRanking[0].Item2 >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
                             StartCoroutine(GameOver());
                     }
                     else if (updatedScore.score >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
@@ -363,7 +362,7 @@ namespace Raider.Game.Gametypes
 
 			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
 			{
-				if (TeamRanking[0].Second >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
+				if (TeamRanking[0].Item2 >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
 					StartCoroutine(GameOver());
 			}
 			else if (newScore.score >= NetworkGameManager.instance.lobbySetup.syncData.gameOptions.scoreToWin)
@@ -390,9 +389,9 @@ namespace Raider.Game.Gametypes
 		public string GetWinner()
 		{
 			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
-				return TeamRanking[0].First.ToString();
+				return TeamRanking[0].Item1.ToString();
 			else
-				return PlayerRanking().First[0].name;
+				return PlayerRanking().Item1[0].name;
 		}
 
 		#endregion

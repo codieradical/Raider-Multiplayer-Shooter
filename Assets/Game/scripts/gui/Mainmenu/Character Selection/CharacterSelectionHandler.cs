@@ -74,10 +74,10 @@ namespace Raider.Game.GUI.Screens
 
             newPlate.transform.name = PREVIEW_CHARACTER_NAME + slot.ToString();
             newPlate.transform.SetParent(plateContainer.transform, false);
-            newPlate.transform.FindChild("level").GetComponent<Text>().text = character.level.ToString();
-            newPlate.transform.FindChild("Emblem").GetComponent<EmblemHandler>().UpdateEmblem(character);
+            newPlate.transform.Find("level").GetComponent<Text>().text = character.level.ToString();
+            newPlate.transform.Find("Emblem").GetComponent<EmblemHandler>().UpdateEmblem(character);
 
-            RawImage previewDisplay = newPlate.transform.FindChild("Image").GetComponent<RawImage>();
+            RawImage previewDisplay = newPlate.transform.Find("Image").GetComponent<RawImage>();
             CharacterPreviewHandler.instance.NewPreview(PREVIEW_CHARACTER_NAME + slot.ToString(), character, PREVIEW_TYPE, previewDisplay);
 
             Color plateColor = character.armourPrimaryColor.Color;

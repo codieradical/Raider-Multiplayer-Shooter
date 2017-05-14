@@ -30,12 +30,13 @@ namespace Raider.Game.GUI.Components
         public Image mapImage;
         public Button startGameButton;
 
-        public void OpenPane(Gametypes.GametypeHelper.Gametype gametype)
+        public void OpenPane(GametypeHelper.Gametype gametype)
         {
             IsOpen = true;
+
             NetworkGameManager.instance.lobbySetup.syncData.Gametype = gametype;
 
-            NetworkGameManager.instance.lobbySetup.syncData.Network = "Offline";
+            NetworkGameManager.instance.lobbySetup.syncData.Network = "Online";
 
             if (Scenario.instance.GetSceneNamesByGametype(gametype).Count < 1)
                 NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = "No Scenes Found for " + gametype;
@@ -43,6 +44,9 @@ namespace Raider.Game.GUI.Components
                 NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = Scenario.instance.GetSceneNamesByGametype(gametype)[0];
 
             NetworkGameManager.instance.lobbySetup.syncData.gameOptions = GametypeController.GetGameOptionsByEnum(gametype);
+
+            NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+            NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Host;
 
             UpdatePaneData();
         }

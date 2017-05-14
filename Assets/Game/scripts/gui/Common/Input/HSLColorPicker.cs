@@ -156,8 +156,8 @@ namespace Raider.Game.GUI.Components
 
         public void UpdatePreviews()
         {
-            transform.FindChild("Background").FindChild("S").FindChild("STint").GetComponent<Image>().color = Color.HSVToRGB(HDec, 1, 1);
-            transform.FindChild("Background").FindChild("Preview").GetComponent<Image>().color = Color.HSVToRGB(HDec, SDec, LDec);
+            transform.Find("Background").Find("S").Find("STint").GetComponent<Image>().color = Color.HSVToRGB(HDec, 1, 1);
+            transform.Find("Background").Find("Preview").GetComponent<Image>().color = Color.HSVToRGB(HDec, SDec, LDec);
         }
 
         public void Done()

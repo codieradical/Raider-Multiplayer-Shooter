@@ -1,5 +1,4 @@
-﻿using Raider.Common.Types;
-using Raider.Game.Gametypes;
+﻿using Raider.Game.Gametypes;
 using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using System;
@@ -147,14 +146,14 @@ namespace Raider.Game.Player.HUD
 
 					myText.text = myScore.ToString();
 
-					if (GametypeController.singleton.PlayerRanking().First[0].id == PlayerData.localPlayerData.syncData.id)
+					if (GametypeController.singleton.PlayerRanking().Item1[0].id == PlayerData.localPlayerData.syncData.id)
 					{
 						MeLeading = true;
-						if (GametypeController.singleton.PlayerRanking().First.Count > 1)
+						if (GametypeController.singleton.PlayerRanking().Item1.Count > 1)
 						{
-							int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[1].score;
+							int otherPlayerScore = GametypeController.singleton.PlayerRanking().Item1[1].score;
 
-							newColor = GametypeController.singleton.PlayerRanking().First[1].color;
+							newColor = GametypeController.singleton.PlayerRanking().Item1[1].color;
 
 							previousAlpha = otherBackground.color.a;
 							otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
@@ -167,11 +166,11 @@ namespace Raider.Game.Player.HUD
 
 							otherCanvasGroup.alpha = 1;
 						}
-						else if (GametypeController.singleton.PlayerRanking().Second.Count > 0)
+						else if (GametypeController.singleton.PlayerRanking().Item2.Count > 0)
 						{
-							int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
+							int otherPlayerScore = GametypeController.singleton.PlayerRanking().Item1[0].score;
 
-							newColor = GametypeController.singleton.PlayerRanking().First[0].color;
+							newColor = GametypeController.singleton.PlayerRanking().Item1[0].color;
 
 							previousAlpha = otherBackground.color.a;
 							otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
@@ -192,9 +191,9 @@ namespace Raider.Game.Player.HUD
 					else
 					{
 						MeLeading = false;
-						int otherPlayerScore = GametypeController.singleton.PlayerRanking().First[0].score;
+						int otherPlayerScore = GametypeController.singleton.PlayerRanking().Item1[0].score;
 
-						newColor = GametypeController.singleton.PlayerRanking().First[0].color;
+						newColor = GametypeController.singleton.PlayerRanking().Item1[0].color;
 
 						previousAlpha = otherBackground.color.a;
 						otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);

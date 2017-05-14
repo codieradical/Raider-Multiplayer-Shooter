@@ -32,7 +32,7 @@ namespace Raider.Game.GUI.Components
 
         public OptionsPaneContents optionData;
 
-        void Start()
+        protected virtual void Start()
         {
             optionsPaneHandler = GetComponentInParent<OptionsPaneHandler>();
 
@@ -60,7 +60,7 @@ namespace Raider.Game.GUI.Components
             base.OnPointerExit(eventData);
         }
 
-        public void OnClick()
+        public virtual void OnClick()
         {
             optionsPaneHandler.OptionClicked(this.name);
         }

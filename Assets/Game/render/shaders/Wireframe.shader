@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Custom/Wireframe" {
 	Properties{
@@ -42,7 +44,7 @@ Shader "Custom/Wireframe" {
 			{
 				v2f OUT;
 
-				OUT.position = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.position = UnityObjectToClipPos(IN.vertex);
 
 				return OUT;
 			}
@@ -101,7 +103,7 @@ Shader "Custom/Wireframe" {
 			{
 				v2g output;
 
-				output.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				output.pos = UnityObjectToClipPos(v.vertex);
 
 				return output;
 			}
