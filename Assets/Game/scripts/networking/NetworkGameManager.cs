@@ -267,6 +267,7 @@ namespace Raider.Game.Networking
         public override void OnLobbyServerPlayersReady()
         {
             NetworkLobbyPlayerSetup.localPlayer.RpcUpdateScenarioGametype();
+            NetworkDiscovery.StopBroadcast();
             base.OnLobbyServerPlayersReady();
         }
 

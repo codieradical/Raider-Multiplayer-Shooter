@@ -97,12 +97,12 @@ namespace Raider.Game.Player
             }
         }
 
-        public void OnDestroy()
-		{
-			if (NetworkServer.active && GametypeController.singleton != null && !GametypeController.singleton.isGameEnding)
-				GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
-			base.OnNetworkDestroy();
-		}
+  //      public void OnDestroy()
+		//{
+		//	if (NetworkServer.active && GametypeController.singleton != null && !GametypeController.singleton.isGameEnding)
+		//		GametypeController.singleton.InactivateScoreboardPlayer(PlayerData.syncData.id, PlayerData.syncData.team);
+		//	base.OnNetworkDestroy();
+		//}
 
         void HealthSync(int value)
         {

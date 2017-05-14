@@ -41,10 +41,14 @@ namespace Raider.Game.Scene
 			{
 				if (NetworkGameManager.instance.CurrentNetworkState != NetworkGameManager.NetworkState.Offline)
 				{
-					if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
-						NetworkGameManager.instance.ServerReturnToLobby();
-					else
-						NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
+                    if (NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Host || NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Server)
+                    {
+                        NetworkGameManager.instance.NetworkDiscovery.Initialize();
+                        NetworkGameManager.instance.NetworkDiscovery.StartAsServer();
+                        NetworkGameManager.instance.ServerReturnToLobby();
+                    }
+                    else
+                        NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
 				}
 				LoadScene(NetworkGameManager.instance.lobbyScene, Gametypes.GametypeHelper.Gametype.Ui);
 			}

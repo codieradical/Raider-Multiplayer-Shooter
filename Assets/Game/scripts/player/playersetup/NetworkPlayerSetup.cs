@@ -33,10 +33,6 @@ namespace Raider.Game.Player
 				gameObject.name = Session.userSaveDataHandler.GetUsername();
 
                 localPlayer = this;
-
-                playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.PrimaryWeapon);
-				playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.SecondaryWeapon);
-				playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.TertiaryWeapon);
 			}
 
             playerData.appearenceController.ReplacePlayerModel(playerData);
@@ -60,7 +56,11 @@ namespace Raider.Game.Player
 
 		private void SetupLocalControl()
 		{
-			gameObject.AddComponent<MovementController>();
+            playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.PrimaryWeapon);
+            playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.SecondaryWeapon);
+            playerData.networkPlayerController.SpawnWeapon(playerData.PlayerSyncData.Character.TertiaryWeapon);
+
+            gameObject.AddComponent<MovementController>();
 			playerData.animationController = gameObject.AddComponent<AnimationParametersController>();
 			playerData.localPlayerController = gameObject.AddComponent<LocalPlayerController>();
 			CameraModeController.singleton.localPlayerGameObject = gameObject;
