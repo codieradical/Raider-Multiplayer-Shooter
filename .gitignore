@@ -32,5 +32,6 @@ sysinfo.txt
 /bin
 /Assets/Third Party Assets/Ignored
 /Assets/Third Party Assets/Ignored.meta
-/logs
+/[lL]ogs/
 keypair_*
+/logs
