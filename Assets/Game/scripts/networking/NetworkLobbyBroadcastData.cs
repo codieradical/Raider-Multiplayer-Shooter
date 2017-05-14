@@ -36,7 +36,7 @@ namespace Raider.Game.Networking
         {
             try
             {
-                return new NetworkLobbyBroadcastData(NetworkGameManager.instance.networkAddress, NetworkGameManager.instance.networkPort ,Session.userSaveDataHandler.GetUsername(), NetworkGameManager.instance.lobbySetup.syncData.gametype, NetworkGameManager.instance.lobbySetup.syncData.selectedScene, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled);
+                return new NetworkLobbyBroadcastData(Network.player.ipAddress, NetworkGameManager.instance.networkPort ,Session.userSaveDataHandler.GetUsername(), NetworkGameManager.instance.lobbySetup.syncData.gametype, NetworkGameManager.instance.lobbySetup.syncData.selectedScene, NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled);
             }
             catch(NullReferenceException)
             {
