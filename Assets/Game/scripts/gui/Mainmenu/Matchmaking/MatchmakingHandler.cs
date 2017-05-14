@@ -2,6 +2,7 @@
 using Raider.Game.Networking;
 using Raider.Game.Scene;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,17 @@ namespace Raider.Game.GUI.Screens
 {
     public class MatchmakingHandler : MonoBehaviour {
 
-        public List<NetworkLobbyBroadcastData> LastFrameLobbies;
+        public List<NetworkLobbyBroadcastData> LastFrameLobbies = new List<NetworkLobbyBroadcastData>();
 
         private void Update()
         {
             List<NetworkLobbyBroadcastData> thisFrameLobbies = NetworkGameManager.instance.NetworkDiscovery.DiscoveredLobbies;
-            if (thisFrameLobbies != LastFrameLobbies)
-                RecreateLobbyOptions(LastFrameLobbies);
-            else if (LastFrameLobbies == null)
-                LastFrameLobbies = new List<NetworkLobbyBroadcastData>();
+            if (thisFrameLobbies.Count != LastFrameLobbies.Count)
+                RecreateLobbyOptions(thisFrameLobbies);
+            else if (thisFrameLobbies.All(LastFrameLobbies.Contains))
+                RecreateLobbyOptions(thisFrameLobbies);
+
+            LastFrameLobbies = thisFrameLobbies;
         }
 
         public GameObject paneSecondary;
@@ -33,8 +36,7 @@ namespace Raider.Game.GUI.Screens
                 return;
             foreach(NetworkLobbyBroadcastData lobby in lobbies)
             {
-                //AddLobby()
-                //AddLobby(lobby);
+                AddLobby(lobby);
             }
         }
 
@@ -123,7 +125,27 @@ namespace Raider.Game.GUI.Screens
             {
                 Debug.LogWarning("User attempted to join a server while already in a server!");
             }
-            NetworkGameManager.instance.networkAddress = ipTxt;
+
+            if (ipTxt.Contains(':'))
+            {
+
+                string[] ipAndPort = ipTxt.Split(':');
+                int port;
+                if (int.TryParse(ipAndPort[1], out port))
+                {
+                    NetworkGameManager.instance.networkAddress = ipAndPort[0];
+                    NetworkGameManager.instance.networkPort = port;
+                }
+                else
+                {
+                    UserFeedback.LogError("Failed to parse port '" + ipAndPort[1] + "'.");
+                }
+            }
+            else
+            {
+                NetworkGameManager.instance.networkAddress = ipTxt;
+            }
+
             NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Client;
             //If the player sucessfully joined a game...
             if(NetworkGameManager.instance.CurrentNetworkState == NetworkGameManager.NetworkState.Client)

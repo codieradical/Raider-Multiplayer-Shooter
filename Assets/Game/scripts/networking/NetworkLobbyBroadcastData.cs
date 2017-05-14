@@ -46,7 +46,7 @@ namespace Raider.Game.Networking
 
         public string GetTitle()
         {
-            return username + " - " + host + ":" + port.ToString();
+            return host + ":" + port.ToString() + " - " + username;
         }
 
         public string GetDescription()

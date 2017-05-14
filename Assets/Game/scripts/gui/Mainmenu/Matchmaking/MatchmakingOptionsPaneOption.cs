@@ -29,5 +29,15 @@ namespace Raider.Game.GUI.Components
         {
             matchmakingHandler.OptionClicked(this.name);
         }
+
+        protected override void HoverEvent()
+        {
+            matchmakingHandler.OptionHover(optionData);
+        }
+
+        protected override void EndHoverEvent()
+        {
+            matchmakingHandler.OptionStopHover();
+        }
     }
 }

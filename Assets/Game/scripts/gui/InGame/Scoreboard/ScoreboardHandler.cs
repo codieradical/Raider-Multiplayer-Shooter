@@ -133,17 +133,17 @@ namespace Raider.Game.GUI.Scoreboard
             {
                 for (int i = 0; i < GametypeController.singleton.TeamRanking.Count; i++)
                 {
-					GametypeHelper.Team team = GametypeController.singleton.TeamRanking[i].First;
+					GametypeHelper.Team team = GametypeController.singleton.TeamRanking[i].Item1;
 
 					bool teamHasLeft = false;
-					if (GametypeController.singleton.PlayerRanking(team).First.Count < 1 && GametypeController.singleton.PlayerRanking(team).Second.Count < 1)
+					if (GametypeController.singleton.PlayerRanking(team).Item1.Count < 1 && GametypeController.singleton.PlayerRanking(team).Item2.Count < 1)
 						teamHasLeft = true;
 
                     GameObject teamPlate = Instantiate(teamPlatePrefab);
-                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), team.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Second, GametypeHelper.GetTeamColor(team), headerObject, teamHasLeft);
+                    teamPlate.GetComponent<ScoreboardTeamPlate>().SetupPlate((i + 1).ToString(), team.ToString() + " Team", GametypeController.singleton.TeamRanking[i].Item2, GametypeHelper.GetTeamColor(team), headerObject, teamHasLeft);
                     teamPlate.transform.SetParent(playerContainer.transform, false);
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).First)
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).Item1)
                     {
 						PlayerData playerData = NetworkGameManager.instance.GetPlayerDataById(player.id);
 
@@ -158,7 +158,7 @@ namespace Raider.Game.GUI.Scoreboard
                         playerPlate.transform.SetParent(playerContainer.transform, false);
                     }
 
-                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).Second)
+                    foreach (GametypeController.ScoreboardPlayer player in GametypeController.singleton.PlayerRanking(team).Item2)
                     {
                         bool isLeader = false;
                         bool isDead = false;
@@ -174,7 +174,7 @@ namespace Raider.Game.GUI.Scoreboard
 				if (GametypeController.singleton == null)
 					return;
 
-                List<GametypeController.ScoreboardPlayer> activePlayerRanking = GametypeController.singleton.PlayerRanking().First;
+                List<GametypeController.ScoreboardPlayer> activePlayerRanking = GametypeController.singleton.PlayerRanking().Item1;
 
                 for (int i = 0; i < activePlayerRanking.Count; i++)
                 {
@@ -190,7 +190,7 @@ namespace Raider.Game.GUI.Scoreboard
                     playerPlate.GetComponent<ScoreboardPlayerPlate>().SetupPlate(activePlayerRanking[i].id, activePlayerRanking[i].team, (i + 1).ToString(), activePlayerRanking[i].emblem, activePlayerRanking[i].name, activePlayerRanking[i].clan, activePlayerRanking[i].score, false, activePlayerRanking[i].color, headerObject, isLeader, isDead);
                     playerPlate.transform.SetParent(playerContainer.transform, false);
                 }
-                List<GametypeController.ScoreboardPlayer> inactivePlayerRanking = GametypeController.singleton.PlayerRanking().Second;
+                List<GametypeController.ScoreboardPlayer> inactivePlayerRanking = GametypeController.singleton.PlayerRanking().Item2;
 
                 for (int i = 0; i < inactivePlayerRanking.Count; i++)
                 {

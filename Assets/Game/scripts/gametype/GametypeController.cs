@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using Raider.Game.Saves.User;
+using Raider.Common.Types;
 
 namespace Raider.Game.Gametypes
 {
@@ -196,7 +197,7 @@ namespace Raider.Game.Gametypes
 				List<Tuple<GametypeHelper.Team, int>> teamScores = new List<Tuple<GametypeHelper.Team, int>>();
 				foreach (GametypeHelper.Team team in Enum.GetValues(typeof(GametypeHelper.Team)))
 				{
-					if (PlayerRanking(team).Item1.Concat(PlayerRanking(team).Second).Count() < 1)
+					if (PlayerRanking(team).Item1.Concat(PlayerRanking(team).Item2).Count() < 1)
 					{
 						int teamTotal;
 						if (GetTeamTotal(team, out teamTotal))
@@ -223,7 +224,7 @@ namespace Raider.Game.Gametypes
                     }
                     teamScores.Add(new Tuple<GametypeHelper.Team, int>(team, iterationScore));
 				}
-				return (teamScores.OrderBy(team => PlayerRanking(team.Item1).First.Concat(PlayerRanking(team.Item1).Item2).Count() < 1).ThenByDescending(team => team.Item2).ThenBy(team => team.Item1)).ToList();
+				return (teamScores.OrderBy(team => PlayerRanking(team.Item1).Item1.Concat(PlayerRanking(team.Item1).Item2).Count() < 1).ThenByDescending(team => team.Item2).ThenBy(team => team.Item1)).ToList();
 			}
 		}
 

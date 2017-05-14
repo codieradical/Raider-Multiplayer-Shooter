@@ -1,5 +1,6 @@
 ﻿using Raider.Game.Scene;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,6 +10,42 @@ namespace Raider.Game.Networking
     [DisallowMultipleComponent]
     public class NetworkLANDiscovery : MonoBehaviour
     {
+        string nextBroadcast;
+        public string BroadcastData
+        {
+            set
+            {
+                if(isServer && NetworkServer.active && running)
+                {
+                    nextBroadcast = value;
+
+                    if (restartServer != null)
+                        StopCoroutine(restartServer);
+
+                    restartServer =  StartCoroutine(RestartServer(value));
+                }
+            }
+        }
+
+        Coroutine restartServer;
+
+        IEnumerator RestartServer(string value)
+        {
+            if (running)
+            {
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                StopBroadcast();
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+            }
+            broadcastData = value;
+            yield return new WaitForEndOfFrame();
+            Debug.Log("Restarting discovery server.");
+            Initialize();
+            StartAsServer();
+        }
+
         public List<NetworkLobbyBroadcastData> DiscoveredLobbies
         {
             get
@@ -23,17 +60,14 @@ namespace Raider.Game.Networking
             }
         }
 
-        private void FixedUpdate()
-        {
-            UpdateBroadcastData();
-        }
-
         string lastBroadcast;
 
         void UpdateBroadcastData()
         {
-            if (Scenario.InLobby && NetworkServer.active && NetworkLobbyBroadcastData.CurrentLobbyData().JSONString != lastBroadcast)
-                broadcastData = NetworkLobbyBroadcastData.CurrentLobbyData().JSONString;
+            if (Scenario.InLobby && NetworkServer.active && NetworkLobbyBroadcastData.CurrentLobbyData().JSONString != lastBroadcast && NetworkLobbyBroadcastData.CurrentLobbyData().JSONString != nextBroadcast)
+            {
+                BroadcastData = NetworkLobbyBroadcastData.CurrentLobbyData().JSONString;
+            }
 
             lastBroadcast = broadcastData;
         }
@@ -227,6 +261,8 @@ namespace Raider.Game.Networking
 
         void Update()
         {
+            UpdateBroadcastData();
+
             if (hostId == -1)
                 return;
 

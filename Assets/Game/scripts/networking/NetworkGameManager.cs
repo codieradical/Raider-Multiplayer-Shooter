@@ -1,4 +1,5 @@
-﻿using Raider.Game.Gametypes;
+﻿using Raider.Common.Types;
+using Raider.Game.Gametypes;
 using Raider.Game.GUI.Components;
 using Raider.Game.Player;
 using Raider.Game.Scene;
@@ -34,6 +35,17 @@ namespace Raider.Game.Networking
 
         void Awake()
         {
+            //This block retrieved from
+            //https://forum.unity3d.com/threads/networktransport-init-problems-with-the-editor.381028/
+            //On 14/5/17.
+            //My derived NetworkGameManager was preventing the base NetworkManager awake function from being called.
+            //Maybe this could be simplified.
+            #region
+            Type type = typeof(NetworkManager);
+            var baseMethod = type.GetMethod("Awake", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (baseMethod != null) baseMethod.Invoke(this, null);
+            #endregion
+
             if (instance != null)
                 Debug.LogError("More than one NetworkManager are active! What are you doing!!");
             instance = this;
@@ -326,9 +338,9 @@ namespace Raider.Game.Networking
 		{
 			for (int i = 0; i < spawnPoints.Count; i++)
 			{
-				if (spawnPoints[i].First == team)
+				if (spawnPoints[i].Item1 == team)
 				{
-					spawnPoints[i].Second.Add(point);
+					spawnPoints[i].Item2.Add(point);
 					return;
 				}
 			}
@@ -340,9 +352,9 @@ namespace Raider.Game.Networking
 		{
 			for (int i = 0; i < spawnPoints.Count; i++)
 			{
-				if (spawnPoints[i].First == team)
+				if (spawnPoints[i].Item1 == team)
 				{
-					spawnPoints[i].Second.Remove(point);
+					spawnPoints[i].Item2.Remove(point);
 					return;
 				}
 			}
@@ -386,12 +398,12 @@ namespace Raider.Game.Networking
 		{
 			for (int i = 0; i < spawnPoints.Count; i++)
 			{
-				if (spawnPoints[i].First == team)
+				if (spawnPoints[i].Item1 == team)
 				{
-					if (spawnPoints[i].Second.Count > 0)
+					if (spawnPoints[i].Item2.Count > 0)
 					{
-						int element = UnityEngine.Random.Range(0, spawnPoints[i].Second.Count - 1);
-						return spawnPoints[i].Second[element];
+						int element = UnityEngine.Random.Range(0, spawnPoints[i].Item2.Count - 1);
+						return spawnPoints[i].Item2[element];
 					}
 					else break;
 				}
@@ -399,12 +411,12 @@ namespace Raider.Game.Networking
 
 			for (int i = 0; i < spawnPoints.Count; i++)
 			{
-				if (spawnPoints[i].First == GametypeHelper.Team.None)
+				if (spawnPoints[i].Item1 == GametypeHelper.Team.None)
 				{
-					if (spawnPoints[i].Second.Count > 0)
+					if (spawnPoints[i].Item2.Count > 0)
 					{
-						int element = UnityEngine.Random.Range(0, spawnPoints[i].Second.Count - 1);
-						return spawnPoints[i].Second[element];
+						int element = UnityEngine.Random.Range(0, spawnPoints[i].Item2.Count - 1);
+						return spawnPoints[i].Item2[element];
 					}
 					else break;
 				}

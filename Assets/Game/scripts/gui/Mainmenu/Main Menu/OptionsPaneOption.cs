@@ -50,13 +50,23 @@ namespace Raider.Game.GUI.Components
 
         public override void OnPointerEnter(PointerEventData eventData)
         {
-            optionsPaneHandler.OptionHover(optionData);
+            HoverEvent();
             base.OnPointerEnter(eventData);
+        }
+
+        protected virtual void HoverEvent()
+        {
+            optionsPaneHandler.OptionHover(optionData);
+        }
+
+        protected virtual void EndHoverEvent()
+        {
+            optionsPaneHandler.OptionStopHover();
         }
 
         public override void OnPointerExit(PointerEventData eventData)
         {
-            optionsPaneHandler.OptionStopHover();
+            EndHoverEvent();
             base.OnPointerExit(eventData);
         }
 

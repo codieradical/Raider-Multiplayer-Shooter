@@ -1,4 +1,5 @@
-﻿using Raider.Game.Gametypes;
+﻿using Raider.Common.Types;
+using Raider.Game.Gametypes;
 using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using System;
@@ -60,8 +61,8 @@ namespace Raider.Game.Player.HUD
 
 					foreach (Tuple<GametypeHelper.Team, int> team in GametypeController.singleton.TeamRanking)
 					{
-						if (team.First == PlayerData.localPlayerData.syncData.team)
-							myTeamScore = team.Second;
+						if (team.Item1 == PlayerData.localPlayerData.syncData.team)
+							myTeamScore = team.Item2;
 					}
 
 					Color newColor = GametypeHelper.GetTeamColor(PlayerData.localPlayerData.syncData.team);
@@ -75,16 +76,16 @@ namespace Raider.Game.Player.HUD
 
 					myText.text = myTeamScore.ToString();
 
-					if (GametypeController.singleton.TeamRanking[0].First == PlayerData.localPlayerData.syncData.team)
+					if (GametypeController.singleton.TeamRanking[0].Item1 == PlayerData.localPlayerData.syncData.team)
 					{
 
 						MeLeading = true;
 
 						if (GametypeController.singleton.TeamRanking.Count > 1)
 						{
-							int otherTeamScore = GametypeController.singleton.TeamRanking[1].Second;
+							int otherTeamScore = GametypeController.singleton.TeamRanking[1].Item2;
 
-							newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[1].First);
+							newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[1].Item1);
 
 							previousAlpha = otherBackground.color.a;
 							otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
@@ -106,9 +107,9 @@ namespace Raider.Game.Player.HUD
 					{
 						MeLeading = false;
 
-						int otherTeamScore = GametypeController.singleton.TeamRanking[0].Second;
+						int otherTeamScore = GametypeController.singleton.TeamRanking[0].Item2;
 
-						newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[0].First);
+						newColor = GametypeHelper.GetTeamColor(GametypeController.singleton.TeamRanking[0].Item1);
 
 						previousAlpha = otherBackground.color.a;
 						otherBackground.color = new Color(newColor.r, newColor.g, newColor.b, previousAlpha);
