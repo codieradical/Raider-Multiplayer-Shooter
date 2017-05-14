@@ -242,29 +242,31 @@ namespace Raider.Game.Networking
                 NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
-        public override void OnServerDisconnect(NetworkConnection conn)
-        {
-            foreach (PlayerController playerController in conn.playerControllers)
-            {
-                PlayerData playerData = playerController.gameObject.GetComponent<PlayerData>();
+		public override void OnServerDisconnect(NetworkConnection conn)
+		{
+			foreach (PlayerController playerController in conn.playerControllers)
+			{
+				PlayerData playerData = playerController.gameObject.GetComponent<PlayerData>();
 
-                if (playerData != null)
-                {
-                    if(!Scenario.InLobby)
-                    {
-                        if (activeGametype != null && activeGametype.inactiveScoreboard != null)
-                            activeGametype.InactivateScoreboardPlayer(playerData.syncData.id, playerData.syncData.team);
-                    }
+				if (playerData != null)
+				{
+					if (!Scenario.InLobby)
+					{
+						if (activeGametype != null && activeGametype.inactiveScoreboard != null)
+							activeGametype.InactivateScoreboardPlayer(playerData.syncData.id, playerData.syncData.team);
+					}
 
-                    NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.PlayerSyncData.id);
-                    break;
-                }
-            }
+					NetworkLobbyPlayerSetup.localPlayer.GetComponent<PlayerChatManager>().CmdSendNotificationMessage("left the game.", playerData.PlayerSyncData.id);
+					break;
+				}
+			}
 
-            base.OnServerDisconnect(conn);
-        }
+			UpdateLobbyNameplates();
 
-        public override void OnLobbyServerPlayersReady()
+			base.OnServerDisconnect(conn);
+		}
+
+		public override void OnLobbyServerPlayersReady()
         {
             NetworkLobbyPlayerSetup.localPlayer.RpcUpdateScenarioGametype();
             NetworkDiscovery.StopBroadcast();
