@@ -481,7 +481,7 @@ namespace Raider.Game.Gametypes
 			{
 				yield return new WaitForSeconds(10f);
                 if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.TimeLimit)
-                    gameEnds = (float)Network.time + (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes * 60);
+                    gameEnds = (float)NetworkGameManager.syncServerTime + (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.timeLimitMinutes * 60);
                 hasInitialSpawned = true;
                 foreach (PlayerData player in NetworkGameManager.instance.Players)
 				{
@@ -549,7 +549,7 @@ namespace Raider.Game.Gametypes
             if (!hasInitialSpawned || isGameEnding)
                 return;
 
-            if (Network.time > gameEnds)
+            if (NetworkGameManager.syncServerTime > gameEnds)
                 StartCoroutine(GameOver());
         }
 

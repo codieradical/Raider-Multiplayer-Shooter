@@ -222,7 +222,7 @@ namespace Raider.Game.Player.HUD
         {
             if (GametypeController.singleton != null && GametypeController.singleton.hasInitialSpawned && !GametypeController.singleton.isGameEnding)
             {
-                TimeSpan span = new TimeSpan(0, 0, (int)(GametypeController.singleton.gameEnds - Network.time));
+                TimeSpan span = new TimeSpan(0, 0, (int)(GametypeController.singleton.gameEnds - NetworkGameManager.syncServerTime));
                 timeRemaining.text = string.Format("{0}:{1:00}", (int)span.TotalMinutes, span.Seconds);
             }
             else

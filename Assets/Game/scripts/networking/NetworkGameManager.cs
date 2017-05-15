@@ -72,6 +72,9 @@ namespace Raider.Game.Networking
             {
                 actionQueue.Dequeue()();
             }
+
+            if (isSyncTimeWithServer)
+                syncServerTime += Time.deltaTime;
         }
 
         public NetworkLANDiscovery NetworkDiscovery
@@ -129,6 +132,23 @@ namespace Raider.Game.Networking
             gamePlayer.name = lobbyPlayerData.name;
             return true;
         }
+
+        public override void OnStartClient(NetworkClient lobbyClient)
+        {
+            base.OnStartClient(lobbyClient);
+            client.RegisterHandler(SyncTimeMsgType.SyncTime, OnReceiveSyncTime);
+        }
+
+        void OnReceiveSyncTime(UnityEngine.Networking.NetworkMessage msg)
+        {
+            var castMsg = msg.ReadMessage<SyncTimeMessage>();
+            isSyncTimeWithServer = true;
+            syncServerTime = castMsg.timeStamp;
+        }
+
+        public static double syncServerTime;
+
+        bool isSyncTimeWithServer = false;
 
         //public override onlobby
 
@@ -199,6 +219,9 @@ namespace Raider.Game.Networking
         {
             lobbySetup.syncData.gameOptions = new GametypeController.GameOptions();
 
+            isSyncTimeWithServer = true;
+            syncServerTime = Network.time;
+
             base.OnStartServer();
             if (onStartServer != null)
                 onStartServer();
@@ -242,7 +265,16 @@ namespace Raider.Game.Networking
                 NetworkLobbyPlayerSetup.localPlayer.GetComponent<NetworkLobbyPlayer>().SendReadyToBeginMessage();
         }
 
-		public override void OnServerDisconnect(NetworkConnection conn)
+        public override void OnServerConnect(NetworkConnection conn)
+        {
+            base.OnServerConnect(conn);
+
+            var syncTimeMessage = new SyncTimeMessage();
+            syncTimeMessage.timeStamp = Network.time;
+            NetworkServer.SendToClient(conn.connectionId, SyncTimeMsgType.SyncTime, syncTimeMessage);
+        }
+
+        public override void OnServerDisconnect(NetworkConnection conn)
 		{
 			foreach (PlayerController playerController in conn.playerControllers)
 			{
@@ -520,6 +552,17 @@ namespace Raider.Game.Networking
 
                 UpdateLobbyNameplates();
             }
+        }
+
+        public class SyncTimeMsgType
+        {
+            public const short SyncTime = MsgType.Highest + 1;
+        }
+
+
+        public class SyncTimeMessage : MessageBase
+        {
+            public double timeStamp;
         }
 
         #endregion
