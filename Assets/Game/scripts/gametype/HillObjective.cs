@@ -51,42 +51,17 @@ namespace Raider.Game.Gametypes
             }
         }
 
-        private void OnTriggerEnter(Collider collider)
+        private void Update()
         {
-            if (!NetworkServer.active)
-                return;
-
-            PlayerData playerData = null;
-            playerData = collider.gameObject.transform.root.GetComponent<PlayerData>();
-
-            if (playerData == null)
-                return;
-
-            playersOnHill.Add(playerData);
-
-            if (HillControlled && scoreTimer == null)
-            {
-                scoreTimer = StartCoroutine(ScoreTimer());
-            }
-            else if (!HillControlled && scoreTimer != null)
-            {
-                StopCoroutine(scoreTimer);
-                scoreTimer = null;
-            } 
+            if (checkHillState == null && NetworkServer.active)
+                checkHillState = StartCoroutine(CheckHillState());
         }
 
-        private void OnTriggerExit(Collider collider)
+        Coroutine checkHillState;
+
+        IEnumerator CheckHillState()
         {
-            if (!NetworkServer.active)
-                return;
-
-            PlayerData playerData = null;
-            playerData = collider.gameObject.transform.root.GetComponent<PlayerData>();
-
-            if (playerData == null)
-                return;
-
-            playersOnHill.Remove(playerData);
+            yield return new WaitForEndOfFrame();
 
             if (HillControlled && scoreTimer == null)
             {
@@ -97,6 +72,27 @@ namespace Raider.Game.Gametypes
                 StopCoroutine(scoreTimer);
                 scoreTimer = null;
             }
+
+            yield return new WaitForEndOfFrame();
+
+            playersOnHill = new List<PlayerData>();
+
+            checkHillState = null;
+        }
+
+        private void OnTriggerStay(Collider collider)
+        {
+            if (!NetworkServer.active)
+                return;
+
+            PlayerData playerData = null;
+            playerData = collider.gameObject.transform.root.GetComponent<PlayerData>();
+
+            if (playerData == null)
+                return;
+
+            if(!playersOnHill.Contains(playerData))
+                playersOnHill.Add(playerData);
         }
 
     }
