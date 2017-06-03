@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using Raider.Game.Cameras;
 using Raider.Game.Saves;
 using Raider.Game.Weapons;
+using System.Linq;
 
 namespace Raider.Game.Saves.User
 {
@@ -96,9 +97,11 @@ namespace Raider.Game.Saves.User
                 HelmetArmour = Armours.X;
                 ShoulderArmour = Armours.X;
                 ChestArmour = Armours.X;
-                guild = "";
-                //currentMission = "New Campaign";
-            }
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                guild = new string(Enumerable.Repeat(chars, 4).Select(s => s[UnityEngine.Random.Range(0, s.Length -1)]).ToArray());
+
+            //currentMission = "New Campaign";
+        }
 
             public Character(Emblem _emblem, string _guild, Color _armourPrimaryColor, Color _armourSecondaryColor, Color _armourTertiaryColor, int _level, int _exp, Races _race)
             {

@@ -45,6 +45,38 @@ namespace Raider.Game.GUI.Components
 
             NetworkGameManager.instance.lobbySetup.syncData.gameOptions = GametypeController.GetGameOptionsByEnum(gametype);
 
+            //Update teams.
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
+            {
+                for (int i = NetworkGameManager.instance.Players.Count - 1; i >= 0; i--)
+                {
+                    if (NetworkGameManager.instance.Players[i].PlayerSyncData.team == GametypeHelper.Team.None)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = GametypeHelper.Team.Red;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(GametypeHelper.Team.Red);
+                        }
+                        else
+                        {
+                            NetworkGameManager.instance.Players[i].PlayerSyncData.team = GametypeHelper.Team.Blue;
+                            NetworkGameManager.instance.Players[i].RpcChangeTeam(GametypeHelper.Team.Blue);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (PlayerData player in NetworkGameManager.instance.Players)
+                {
+                    if (player.PlayerSyncData.team != GametypeHelper.Team.None)
+                    {
+                        player.PlayerSyncData.team = GametypeHelper.Team.None;
+                        player.RpcChangeTeam(GametypeHelper.Team.None);
+                    }
+                }
+            }
+
             NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Offline;
             NetworkGameManager.instance.CurrentNetworkState = NetworkGameManager.NetworkState.Host;
 

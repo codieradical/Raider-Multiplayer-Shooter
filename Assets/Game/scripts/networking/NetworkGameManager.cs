@@ -217,7 +217,38 @@ namespace Raider.Game.Networking
         public NetworkMessage onStartServer;
         public override void OnStartServer()
         {
-            lobbySetup.syncData.gameOptions = new GametypeController.GameOptions();
+            lobbySetup.syncData.gameOptions = GametypeController.GetGameOptionsByEnum(lobbySetup.syncData.Gametype);
+
+            if (lobbySetup.syncData.gameOptions.teamsEnabled)
+            {
+                for (int i = Players.Count - 1; i >= 0; i--)
+                {
+                    if (Players[i].PlayerSyncData.team == GametypeHelper.Team.None)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            Players[i].PlayerSyncData.team = GametypeHelper.Team.Red;
+                            Players[i].RpcChangeTeam(GametypeHelper.Team.Red);
+                        }
+                        else
+                        {
+                            Players[i].PlayerSyncData.team = GametypeHelper.Team.Blue;
+                            Players[i].RpcChangeTeam(GametypeHelper.Team.Blue);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (PlayerData player in Players)
+                {
+                    if (player.PlayerSyncData.team != GametypeHelper.Team.None)
+                    {
+                        player.PlayerSyncData.team = GametypeHelper.Team.None;
+                        player.RpcChangeTeam(GametypeHelper.Team.None);
+                    }
+                }
+            }
 
             isSyncTimeWithServer = true;
             syncServerTime = Network.time;

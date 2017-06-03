@@ -15,6 +15,7 @@ namespace Raider.Game.Gametypes
         {
             public CaptureTheFlagGameOptions()
             {
+                forceTeams = true;
                 teamsEnabled = true;
                 scoreToWin = 3;
                 gametypeOptions = new CaptureTheFlagGametypeOptions();

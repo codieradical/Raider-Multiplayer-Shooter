@@ -4,6 +4,7 @@ using Raider.Game.Saves;
 using Raider.Game.Saves.User;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -151,6 +152,9 @@ namespace Raider.Game.GUI.Screens
 
             //Creates a random number between 0 and the amount of races available, parses that as a race.
             editingCharacter.Race = (UserSaveDataStructure.Character.Races)rand.Next(0, Enum.GetNames(typeof(UserSaveDataStructure.Character.Races)).Length);
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            editingCharacter.guild = new string(Enumerable.Repeat(chars, 4).Select(s => s[UnityEngine.Random.Range(0, s.Length - 1)]).ToArray());
 
             UpdateFormValues();
             UpdatePreview(); //Update the preview to make sure that the buttons are up to date.

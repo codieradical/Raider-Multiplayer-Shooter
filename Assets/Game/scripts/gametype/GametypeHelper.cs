@@ -33,9 +33,10 @@ namespace Raider.Game.Gametypes
 			//1 represents a game scene, 2 represents a lobby scene.
 			None,
 			Slayer,
+            Mayhem,
 			Capture_The_Flag,
 			King_Of_The_Hill,
-			Assault,
+			//Assault,
 			Oddball,
 			Ui,
 			Test

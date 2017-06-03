@@ -402,6 +402,11 @@ namespace Raider.Game.Gametypes
 		[Serializable]
         public class GameOptions
         {
+            //HIDDEN FIELDS
+            public bool infiniteAmmo = false;
+            public bool forceTeams = false;
+
+
             public int scoreToWin = 50;
             public bool teamsEnabled;
             public GametypeOptions gametypeOptions;
@@ -461,10 +466,21 @@ namespace Raider.Game.Gametypes
 
         public static GameOptions GetGameOptionsByEnum(GametypeHelper.Gametype gametype)
         {
-            if (gametype == GametypeHelper.Gametype.Slayer)
-                return new SlayerController.SlayerGameOptions();
+            switch (gametype)
+            {
+                case GametypeHelper.Gametype.Mayhem:
+                    return new MayhemController.MayhemGameOptions();
+                case GametypeHelper.Gametype.Capture_The_Flag:
+                    return new CaptureTheFlagController.CaptureTheFlagGameOptions();
+                case GametypeHelper.Gametype.King_Of_The_Hill:
+                    return new KingOfTheHillController.KingOfTheHillGameOptions();
+                case GametypeHelper.Gametype.Oddball:
+                    return new OddballController.OddballGameOptions();
+                case GametypeHelper.Gametype.Slayer:
+                    return new SlayerController.SlayerGameOptions();
+            }
 
-            else return null;
+            return null;
         }
 
 		#region Initial Spawn and Game Over
