@@ -101,8 +101,8 @@ namespace Raider.Game.Weapons
 			return weapons;
 		}
 
-        public const Weapons DEFAULT_PRIMARY_WEAPON = Weapons.ScoutRifle;
-        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.Shotgun;
+        public const Weapons DEFAULT_PRIMARY_WEAPON = Weapons.Pistol;
+        public const Weapons DEFAULT_SECONDARY_WEAPON = Weapons.SniperRifle;
         public const Weapons DEFAULT_TERTIARY_WEAPON = Weapons.MachineGun;
 
         [Serializable]

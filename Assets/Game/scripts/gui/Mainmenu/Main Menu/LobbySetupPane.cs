@@ -207,6 +207,9 @@ namespace Raider.Game.GUI.Components
 
             if (option.Contains("Teams Enabled"))
             {
+				if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.forceTeams)
+					return;
+
                 options.Add(new OptionsPaneOption.OptionsPaneContents("Enabled", "Allow players to fight as a team."));
                 options.Add(new OptionsPaneOption.OptionsPaneContents("Disabled", "Free for all gameplay."));
 
@@ -382,6 +385,7 @@ namespace Raider.Game.GUI.Components
             NetworkGameManager.instance.lobbySetup.syncData.SelectedScene = Scenario.GetMapNameFromTitle(title);
         }
 
+		//REMOVED FEATURE
         public void OpenNetworkOptions()
         {
             if (!NetworkGameManager.instance.IsLeader)

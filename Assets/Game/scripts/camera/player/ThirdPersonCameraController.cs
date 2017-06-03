@@ -41,11 +41,11 @@ namespace Raider.Game.Cameras
             float _yRot = Input.GetAxisRaw("Mouse X");
             float _xRot = Input.GetAxisRaw("Mouse Y");
 
-            if (walking)
-            {
+            //if (walking)
+            //{
                 RotatePlayer(_yRot);
                 _yRot = 0;
-            }
+            //}
 
             if (CameraModeController.singleton.thirdPersonCamSettings.inverted)
             {

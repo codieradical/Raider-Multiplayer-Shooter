@@ -52,17 +52,30 @@ namespace Raider.Game.Player
 			get { return activeWeaponType; }
 			set
 			{
+				primaryWeaponController.gameObject.SetActive(false);
+				secondaryWeaponController.gameObject.SetActive(false);
+				tertiaryWeaponController.gameObject.SetActive(false);
+
 				activeWeaponType = value;
 				primaryWeaponController.activeWeapon = false;
 				secondaryWeaponController.activeWeapon = false;
 				tertiaryWeaponController.activeWeapon = false;
 
 				if (value == Armory.WeaponType.Primary)
+				{
 					primaryWeaponController.activeWeapon = true;
+					primaryWeaponController.gameObject.SetActive(true);
+				}
 				else if (value == Armory.WeaponType.Secondary)
+				{
 					secondaryWeaponController.activeWeapon = true;
+					secondaryWeaponController.gameObject.SetActive(true);
+				}
 				else if (value == Armory.WeaponType.Tertiary)
+				{
 					tertiaryWeaponController.activeWeapon = true;
+					tertiaryWeaponController.gameObject.SetActive(true);
+				}
 			}
 		}
 

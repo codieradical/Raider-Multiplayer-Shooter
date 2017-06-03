@@ -18,8 +18,14 @@ namespace Raider.Game.Weapons
         public int ownerId;
 
 		//This will allow dual weilding if I ever wanted that.
-		[SyncVar]
+		[SyncVar(hook = "ActiveWeaponHook")]
 		public bool activeWeapon = false;
+
+		public void ActiveWeaponHook(bool value)
+		{
+			activeWeapon = value;
+			gameObject.SetActive(value);
+		}
 
         public LayerMask dontShoot;
 		public LayerMask playerLayer;
@@ -28,6 +34,9 @@ namespace Raider.Game.Weapons
 		{
             transform.SetParent(NetworkGameManager.instance.GetPlayerDataById(ownerId).gunPosition.transform, false);
 			transform.position = NetworkGameManager.instance.GetPlayerDataById(ownerId).gunPosition.transform.position;
+
+			if (activeWeapon)
+				gameObject.SetActive(false);
 		}
 
         protected virtual void Start()
@@ -148,6 +157,10 @@ namespace Raider.Game.Weapons
                 clipAmmo = totalAmmo;
             else
                 clipAmmo = weaponCustomization.clipSize;
+
+			if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.infiniteAmmo)
+				return;
+
             totalAmmo -= clipAmmo;
         }
 
