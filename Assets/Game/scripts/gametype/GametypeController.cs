@@ -418,7 +418,6 @@ namespace Raider.Game.Gametypes
             {
                 public GametypeOptions()
                 {
-
                 }
             }
 

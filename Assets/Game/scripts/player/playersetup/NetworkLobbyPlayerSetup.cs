@@ -26,13 +26,22 @@ namespace Raider.Game.Player
         {
             playerData = GetComponent<PlayerData>();
 
-			//Dont think this is required.
-            if (isLocalPlayer)
-                serverGotPlayerData = true;
-        }
+			if (isLocalPlayer)
+			{
+				serverGotPlayerData = true;
+			}
+		}
         public override void OnStartClient()
         {
-            playerData = GetComponent<PlayerData>();
+			//Hacky, if force teams is enabled, make sure the host is assigned a team immediately.
+			if (isServer && NetworkGameManager.instance.lobbySetup.syncData.gameOptions.forceTeams)
+			{
+				playerData.syncData.team = GametypeHelper.Team.Red;
+				NetworkGameManager.instance.UpdateLobbyNameplates();
+				playerData.RpcChangeTeam(GametypeHelper.Team.Red);
+			}
+
+			playerData = GetComponent<PlayerData>();
         }
 
 		public void OnEnable()
