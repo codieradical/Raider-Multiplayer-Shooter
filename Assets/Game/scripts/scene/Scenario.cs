@@ -84,7 +84,7 @@ namespace Raider.Game.Scene
             foreach(string scene in scenes)
             {
                 if (scene.Contains(gametype.ToString().ToLower()) || scene.Contains(COMMON_SCENES_PATH))
-                    appropriateScenes.Add(scene);
+                    appropriateScenes.Add(scene.Replace(".unity", ""));
             }
 #endif
 			return appropriateScenes;
@@ -274,19 +274,19 @@ namespace Raider.Game.Scene
             foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
             {
                 string sceneName = scene.path.Remove(0, scene.path.LastIndexOf("/") + 1).Replace(".unity", "");
-                if (sceneName.Contains(title) || sceneName == title)
-                    return sceneName;
+				if (sceneName.Contains(title) || sceneName == title)
+					return sceneName;
             }
 #else
             for(int i = SceneManager.sceneCountInBuildSettings - 1; i > -1; i--)
             {
                 string sceneName = SceneUtility.GetScenePathByBuildIndex(i).Remove(0, SceneUtility.GetScenePathByBuildIndex(i).LastIndexOf("/") + 1);
                 if (sceneName.Contains(title) || sceneName == title)
-                    return sceneName;
+                    return sceneName.Replace(".unity", "");
             }
 #endif
 
-            foreach (TextAsset sceneDescription in Resources.LoadAll<TextAsset>("maps/"))
+			foreach (TextAsset sceneDescription in Resources.LoadAll<TextAsset>("maps/"))
             {
                 if (sceneDescription == null || sceneDescription.text != null) //No title
                 {
