@@ -21,8 +21,9 @@ namespace Raider.Game.Weapons
 		[SyncVar(hook = "ActiveWeaponHook")]
 		public bool activeWeapon = false;
 
-		public void ActiveWeaponHook(bool value)
-		{
+        public void ActiveWeaponHook(bool value)
+        {
+            Debug.Log("Weapon " + this.name + " activated.");
 			activeWeapon = value;
 			gameObject.SetActive(value);
 		}
@@ -41,6 +42,8 @@ namespace Raider.Game.Weapons
 
         protected virtual void Start()
         {
+            Debug.Log("Set default ammo.");
+            //Give the weapon it's maximum ammo.
 			clipAmmo = weaponCustomization.clipSize;
 			totalAmmo = weaponCustomization.maxAmmo;
         }
@@ -55,6 +58,7 @@ namespace Raider.Game.Weapons
 
         protected virtual void Update()
         {
+            //If the weapon is active and the player can shoot it, check if they're trying to.
 			if (activeWeapon && hasAuthority)
 			{
 				if (Input.GetKeyDown(KeyCode.R))
@@ -63,7 +67,6 @@ namespace Raider.Game.Weapons
 					Shoot();
 			}
         }
-
 
         float lastFired = 0;
         public virtual void Shoot()
