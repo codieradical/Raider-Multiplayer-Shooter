@@ -54,6 +54,9 @@ namespace Raider.Game.Gametypes
             UpdateFlagColor();
         }
 
+		/// <summary>
+		/// Change the flag banner color to the team color.
+		/// </summary>
         void UpdateFlagColor()
         {
             bannerRenderer.material = new Material(bannerRenderer.material);
@@ -63,29 +66,42 @@ namespace Raider.Game.Gametypes
         List<PlayerData> alliesOnFlag = new List<PlayerData>();
         List<PlayerData> enemiesOnFlag = new List<PlayerData>();
 
+		/// <summary>
+		/// On collision, check if a player is trying to pickup or return the flag.
+		/// </summary>
+		/// <param name="collider"></param>
         protected override void OnTriggerEnter(Collider collider)
         {
             EnterPickupRadius(collider);
             EnterReturnRadius(collider);
         }
 
+		/// <summary>
+		/// If the flag is on the ground and a player is attempting to return it with no enemies nearby, this method will begin returning.
+		/// </summary>
+		/// <param name="collider"></param>
         private void EnterReturnRadius(Collider collider)
         {
+			//if someone is carrying the flag, it can't be returned.
             if (carrierId > -1) return;
 
             PlayerData playerData = null;
             playerData = collider.gameObject.transform.root.GetComponent<PlayerData>();
 
+			//If there's no player on the collision, return.
             if (playerData == null)
                 return;
 
+			//If the player is on the same team as the flag, add them to the allies array.
             if (playerData.syncData.team == team)
                 alliesOnFlag.Add(playerData);
-            else
+            else //Else, add them to the enemies array.
                 enemiesOnFlag.Add(playerData);
 
+			//If the flag is at it's base, there's no need to return.
             if (flagOnBase) return;
 
+			//If there's allies of the flag and no enemies, begin returning.
             if (alliesOnFlag.Count > 1 && enemiesOnFlag.Count < 1)
             {
                 clientReturning = true;
@@ -107,14 +123,18 @@ namespace Raider.Game.Gametypes
 
         protected override void EnterPickupRadius(Collider collider)
         {
+			//If the player is already being carried, allow pickup.
             if (carrierId > -1) return;
 
             PlayerData playerData = null;
             playerData = collider.gameObject.transform.root.GetComponent<PlayerData>();
 
-            if (playerData == null)
+			//If no player collided, return.
+			if (playerData == null)
                 return;
 
+			//If the player that collided is not the local player (if another player is colliding), return.
+			//This is a client method, so other client's shouldn't be considered.
             if (playerData != PlayerData.localPlayerData)
                 return;
 

@@ -39,6 +39,9 @@ namespace Raider.Game.Gametypes
 
 		#region Scoring
 
+		/// <summary>
+		/// Scoreboard entry structure.
+		/// </summary>
 		public struct ScoreboardPlayer
 		{
 			public ScoreboardPlayer(int id, int score, GametypeHelper.Team team, string name, string clan, Color color, UserSaveDataStructure.Emblem emblem)
@@ -62,18 +65,30 @@ namespace Raider.Game.Gametypes
 			public float created;
 		}
 
+		/// <summary>
+		/// SyncList class deriving from SyncListStruct.
+		/// </summary>
 		public class SyncListScoreboardPlayer : SyncListStruct<ScoreboardPlayer>
 		{
 
 		}
 
+		/// <summary>
+		/// Scoreboard containing active players.
+		/// </summary>
 		public SyncListScoreboardPlayer scoreboard = new SyncListScoreboardPlayer();
+		/// <summary>
+		/// Scoreboard containing players who have left, or switched teams.
+		/// </summary>
 		public SyncListScoreboardPlayer inactiveScoreboard = new SyncListScoreboardPlayer();
 
+		/// <summary>
+		/// If the scoreboard changes, log the change.
+		/// </summary>
 		public void OnScoreboardChanged(SyncListScoreboardPlayer.Operation operation, int index)
 		{
 			Debug.Log(operation.ToString() + " at " + index.ToString());
-
+			//Invalidate the scoreboard GUI.
 			ScoreboardHandler.InvalidateScoreboard();
 		}
 
