@@ -1,15 +1,15 @@
-﻿using Raider.Game.GUI.CharacterPreviews;
+﻿using Raider.Game.Cameras;
+using Raider.Game.GUI.CharacterPreviews;
 using Raider.Game.GUI.Components;
 using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Saves.User;
-using Raider.Game.Cameras;
 using UnityEngine;
 
 namespace Raider.Game.GUI.Screens
 {
 
-    [RequireComponent(typeof(MenuManager))]
+	[RequireComponent(typeof(MenuManager))]
     public class MainmenuController : MonoBehaviour
     {
 

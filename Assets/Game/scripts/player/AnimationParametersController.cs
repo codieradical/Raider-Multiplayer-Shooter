@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Raider.Game.Player
 {
 
-    public class AnimationParametersController : MonoBehaviour
+	public class AnimationParametersController : MonoBehaviour
     {
         #region Animator Property Accessors
 

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.StartMenu
 {
-    public class StartMenuGame : StartMenuPane
+	public class StartMenuGame : StartMenuPane
     {
         [Header("Option Buttons")]
         public Button leaveGameButton;

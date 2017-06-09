@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    [RequireComponent(typeof(InputField))]
+	[RequireComponent(typeof(InputField))]
     public class NumberField : MonoBehaviour
     {
 

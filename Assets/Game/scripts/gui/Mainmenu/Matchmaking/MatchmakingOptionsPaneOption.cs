@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.GUI.Screens;
+﻿using Raider.Game.GUI.Screens;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {
-    public class MatchmakingOptionsPaneOption : OptionsPaneOption
+	public class MatchmakingOptionsPaneOption : OptionsPaneOption
     {
         MatchmakingHandler matchmakingHandler;
 

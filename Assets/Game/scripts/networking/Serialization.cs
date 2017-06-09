@@ -3,7 +3,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Raider.Game.Networking
 {
-    public static class Serialization
+	public static class Serialization
     {
         public static string Serialize<T>(T _deserialized)
         {

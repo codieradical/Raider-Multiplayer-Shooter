@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Player;
-using System;
+﻿using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class KingOfTheHillController : GametypeController
+	public class KingOfTheHillController : GametypeController
     {
         private void Start()
         {

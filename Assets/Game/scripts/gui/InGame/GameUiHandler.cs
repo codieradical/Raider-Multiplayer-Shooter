@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Raider.Game.GUI
 {
 
-    public class GameUiHandler : MonoBehaviour
+	public class GameUiHandler : MonoBehaviour
     {
         #region Singleton Setup
 

@@ -1,12 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Raider.Game.Networking;
+using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.Networking;
-using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class GametypeObjectiveSpawnPoint : NetworkBehaviour
+	public class GametypeObjectiveSpawnPoint : NetworkBehaviour
     {
         public GametypeHelper.Gametype gametype;
         public GametypeHelper.Team team;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Raider.Game.Scene
 {
-    public class Environment : MonoBehaviour
+	public class Environment : MonoBehaviour
     {
 
         public static Environment instance;

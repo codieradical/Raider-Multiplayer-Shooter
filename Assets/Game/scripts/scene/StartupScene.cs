@@ -3,7 +3,7 @@
 namespace Raider.Game.Scene
 {
 
-    public class StartupScene : MonoBehaviour {
+	public class StartupScene : MonoBehaviour {
 
         public string startScene = "mainmenu";
 

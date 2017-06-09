@@ -9,6 +9,7 @@ namespace Raider.Game.Cameras
 
         public override void Setup()
         {
+			//Player camera controllers are fixed to the local player.
             parent = CameraModeController.singleton.localPlayerGameObject.transform;
             characterController = CameraModeController.singleton.localPlayerGameObject.GetComponent<CharacterController>();
 

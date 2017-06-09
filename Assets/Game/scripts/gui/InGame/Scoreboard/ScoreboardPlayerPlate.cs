@@ -1,15 +1,14 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Raider.Game.Gametypes;
 using Raider.Game.GUI.Components;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using Raider.Game.Saves.User;
 using Raider.Game.GUI.Layout;
-using Raider.Game.Gametypes;
+using Raider.Game.Saves.User;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Scoreboard
 {
-    public class ScoreboardPlayerPlate : MonoBehaviour
+	public class ScoreboardPlayerPlate : MonoBehaviour
     {
 		public int playerId;
 		public GametypeHelper.Team playerTeam;

@@ -10,9 +10,9 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    //This class could use a little refactoring.
-    //An Update Form method should be added, taking some function from randomize and update previews.
-    public class CharacterEditorHandler : MonoBehaviour
+	//This class could use a little refactoring.
+	//An Update Form method should be added, taking some function from randomize and update previews.
+	public class CharacterEditorHandler : MonoBehaviour
     {
         [Header("Objects")]
 

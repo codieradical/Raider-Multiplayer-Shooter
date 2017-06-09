@@ -4,13 +4,13 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    // Original script retrieved from the Unity Community wiki,
-    // "FPSWalkerEnhanced" by Eric Haines (Eric5h5)
-    // The script has been heavily modified for Raider.
-    // Originally retrieved over 6 months ago, http://wiki.unity3d.com/index.php?title=FPSWalkerEnhanced&redirect=no
-    // Last accessed 13/12/16.
+	// Original script retrieved from the Unity Community wiki,
+	// "FPSWalkerEnhanced" by Eric Haines (Eric5h5)
+	// The script has been heavily modified for Raider.
+	// Originally retrieved over 6 months ago, http://wiki.unity3d.com/index.php?title=FPSWalkerEnhanced&redirect=no
+	// Last accessed 13/12/16.
 
-    [RequireComponent(typeof(CharacterController))]
+	[RequireComponent(typeof(CharacterController))]
     public class MovementController : NetworkBehaviour
     {
         public MovementAndRotationSettings movSettings = new MovementAndRotationSettings();

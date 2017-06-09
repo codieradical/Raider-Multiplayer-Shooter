@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Raider.Game.Saves.System
 {
-    public class LocalJsonSystemSaveDataHandler : ISystemSaveDataHandler
+	public class LocalJsonSystemSaveDataHandler : ISystemSaveDataHandler
     {
         private SystemSaveDataStructure data;
         readonly string dataPath = BuildConfig.LOCAL_SAVE_PATH + "/systemSaveData.json";

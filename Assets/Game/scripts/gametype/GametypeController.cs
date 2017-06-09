@@ -1,18 +1,18 @@
-﻿using Raider.Game.Networking;
-using Raider.Game.Player;
+﻿using Raider.Common.Types;
 using Raider.Game.GUI.Scoreboard;
+using Raider.Game.Networking;
+using Raider.Game.Player;
+using Raider.Game.Saves.User;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.Saves.User;
-using Raider.Common.Types;
 
 namespace Raider.Game.Gametypes
 {
-    public abstract class GametypeController : NetworkBehaviour
+	public abstract class GametypeController : NetworkBehaviour
     {
 		#region singleton setup
 		public static GametypeController singleton;

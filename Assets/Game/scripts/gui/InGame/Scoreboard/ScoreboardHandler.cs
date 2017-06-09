@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using Raider.Game.Gametypes;
 using Raider.Game.Networking;
-using Raider.Game.Gametypes;
 using Raider.Game.Player;
-using UnityEngine.UI;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Scoreboard
 {

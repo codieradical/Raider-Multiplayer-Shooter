@@ -1,9 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Raider.Game.Player.HUD
 {
-    public class HUDWidget : MonoBehaviour
+	//Not implemented.
+	public class HUDWidget : MonoBehaviour
     {
 		//[Flags]
 		//public enum StateData : ushort

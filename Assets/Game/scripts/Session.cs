@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Raider
 {
-    public static class Session
+	public static class Session
     {
         static Session()
         {

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Layout
 {
 
-    [AddComponentMenu("Layout/Cell Size Override")]
+	[AddComponentMenu("Layout/Cell Size Override")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(GridLayoutGroup))]
     public class CellSizeOverride : MonoBehaviour

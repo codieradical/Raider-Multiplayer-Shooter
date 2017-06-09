@@ -2,7 +2,7 @@
 
 namespace Raider.Game.GUI.StartMenu
 {
-    [RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Animator))]
     public abstract class StartMenuPane : MonoBehaviour
     {
         public bool IsOpen

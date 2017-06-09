@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Player;
+﻿using Raider.Game.Player;
 using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class MayhemController : GametypeController
+	public class MayhemController : GametypeController
     {
 
         private void Start()

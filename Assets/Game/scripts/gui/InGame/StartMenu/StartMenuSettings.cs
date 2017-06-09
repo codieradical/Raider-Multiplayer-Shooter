@@ -1,11 +1,11 @@
 ﻿namespace Raider.Game.GUI.StartMenu
 {
-    public class StartMenuSettings : StartMenuPane
+	//Replaced with help. No scripting necessary.
+	public class StartMenuSettings : StartMenuPane
     {
         protected override void SetupPaneData()
         {
             
         }
-
     }
 }

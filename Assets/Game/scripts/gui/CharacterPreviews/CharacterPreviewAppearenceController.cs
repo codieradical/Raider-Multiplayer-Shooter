@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
-    public class CharacterPreviewAppearenceController : MonoBehaviour
+	public class CharacterPreviewAppearenceController : MonoBehaviour
     {
         //Assigned in Editor.
         public EmblemHandler emblem;

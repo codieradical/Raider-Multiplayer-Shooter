@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    public class EmblemEditorHandler : EmblemHandler
+	public class EmblemEditorHandler : EmblemHandler
     {
 
         [HideInInspector]

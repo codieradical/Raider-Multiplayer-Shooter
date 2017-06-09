@@ -1,6 +1,7 @@
 ﻿namespace Raider.Game.Player.HUD
 {
-    public class RadarHUDWidget : HUDWidget
+	//Not implemented.
+	public class RadarHUDWidget : HUDWidget
 	{
 
         int pingDelay;

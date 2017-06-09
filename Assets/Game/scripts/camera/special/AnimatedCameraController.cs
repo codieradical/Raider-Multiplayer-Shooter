@@ -20,6 +20,7 @@ namespace Raider.Game.Cameras
 			parent = null;
 		}
 
+		//This camera controller is controlled by a pre-defined animation, here the animator is setup.
 		public override void Setup()
 		{
 			animator = gameObject.AddComponent<Animator>();

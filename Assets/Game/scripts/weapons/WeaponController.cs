@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Weapons
 {
-    public class WeaponController : NetworkBehaviour
+	public class WeaponController : NetworkBehaviour
     {
 		[SyncVar]
 		public Armory.WeaponType weaponType;

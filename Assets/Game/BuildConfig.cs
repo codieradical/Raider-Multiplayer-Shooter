@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Raider.Game
 {
-    public static class BuildConfig
+	public static class BuildConfig
     {
         //Major = Big releases.
         //Minor = Small releases.

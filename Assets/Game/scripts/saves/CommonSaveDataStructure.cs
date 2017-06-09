@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Raider.Game.Saves
 {
-    [Serializable]
+	[Serializable]
     public class CommonSaveDataStructure
     {
         //Should probably add Alpha.

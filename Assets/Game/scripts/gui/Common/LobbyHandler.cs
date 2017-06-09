@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {
-    public class LobbyHandler : MonoBehaviour
+	public class LobbyHandler : MonoBehaviour
     {
         #region Singleton Setup
 

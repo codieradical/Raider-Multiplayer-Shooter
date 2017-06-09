@@ -7,11 +7,11 @@ using UnityEngine.Networking;
 namespace Raider.Game.Player
 {
 
-    /// <summary>
-    /// Anything the player needs that's assigned in inspector.
-    /// Mostly used for references required on client only instanced scripts.
-    /// </summary>
-    public class PlayerResourceReferences : MonoBehaviour
+	/// <summary>
+	/// Anything the player needs that's assigned in inspector.
+	/// Mostly used for references required on client only instanced scripts.
+	/// </summary>
+	public class PlayerResourceReferences : MonoBehaviour
     {
         #region Singleton Setup
 

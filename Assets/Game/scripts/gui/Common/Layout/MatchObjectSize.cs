@@ -3,7 +3,7 @@
 namespace Raider.Game.GUI.Layout
 {
 
-    [AddComponentMenu("Layout/Match Object Size")]
+	[AddComponentMenu("Layout/Match Object Size")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     public class MatchObjectSize : MonoBehaviour

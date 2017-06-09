@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Networking
 {
-    [DisallowMultipleComponent]
+	[DisallowMultipleComponent]
     public class NetworkLANDiscovery : MonoBehaviour
     {
         string nextBroadcast;

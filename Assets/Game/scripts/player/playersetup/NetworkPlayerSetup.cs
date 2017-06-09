@@ -3,13 +3,12 @@ using Raider.Game.Gametypes;
 using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using Raider.Game.Weapons;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    [RequireComponent(typeof(PlayerChatManager))]
+	[RequireComponent(typeof(PlayerChatManager))]
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(PlayerResourceReferences))]
     public class NetworkPlayerSetup : NetworkBehaviour

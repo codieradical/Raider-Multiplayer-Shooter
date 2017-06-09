@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Raider.Game.Saves.System
 {
-    public class LocalSerializedSystemSaveDataHandler : ISystemSaveDataHandler
+	public class LocalSerializedSystemSaveDataHandler : ISystemSaveDataHandler
     {
         private SystemSaveDataStructure data;
         private BinaryFormatter binaryFormatter = new BinaryFormatter();

@@ -1,18 +1,19 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Player;
+﻿using Raider.Game.Player;
+using UnityEngine;
 
 namespace Raider.Game.Gametypes
 {
-
-    public class FlagCaptureObjective : GametypeObjective
+	public class FlagCaptureObjective : GametypeObjective
     {
-
         protected virtual void OnTriggerStay(Collider other)
         {
             CheckFlagHeld(other);
         }
 
+		/// <summary>
+		/// Check if the collision is a player holding the flag. If so, score.
+		/// </summary>
+		/// <param name="other">The colliding object.</param>
         protected virtual void CheckFlagHeld(Collider other)
         {
             PlayerData playerData = null;

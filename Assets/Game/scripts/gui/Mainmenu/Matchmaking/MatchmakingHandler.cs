@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    public class MatchmakingHandler : MonoBehaviour {
+	public class MatchmakingHandler : MonoBehaviour {
 
         public List<NetworkLobbyBroadcastData> LastFrameLobbies = new List<NetworkLobbyBroadcastData>();
 

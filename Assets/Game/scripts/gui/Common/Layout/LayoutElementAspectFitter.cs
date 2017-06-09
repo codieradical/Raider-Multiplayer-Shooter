@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Layout
 {
 
-    [AddComponentMenu("Layout/Layout Element Aspect Ratio Fitter", 142)]
+	[AddComponentMenu("Layout/Layout Element Aspect Ratio Fitter", 142)]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(LayoutElement))]

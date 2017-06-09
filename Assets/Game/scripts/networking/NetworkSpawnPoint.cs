@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Gametypes;
+﻿using Raider.Game.Gametypes;
+using UnityEngine;
 
 namespace Raider.Game.Networking
 {

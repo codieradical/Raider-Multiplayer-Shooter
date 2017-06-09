@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
-    [RequireComponent(typeof(EventTrigger))]
+	[RequireComponent(typeof(EventTrigger))]
     public class CharacterPreviewDisplayHandler : MonoBehaviour
     {
 

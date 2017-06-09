@@ -36,12 +36,12 @@ namespace Raider.Game.Gametypes
             Mayhem,
 			Capture_The_Flag,
 			King_Of_The_Hill,
-			//Assault,
-			Oddball,
+			Oddball,//Artefact
 			Ui,
 			Test
 		}
 
+		//Unused, left from Excavator game design.
 		public enum EngineMode
 		{
 			None,

@@ -2,7 +2,9 @@
 
 namespace Raider.Game.Cameras
 {
-
+	/// <summary>
+	/// A base camera controller class all cameras derive from. Contains general values such as the camera starting position and rotation, and virtual methods for setup.
+	/// </summary>
     public abstract class CameraController : MonoBehaviour
     {
         //These values represent local positions and rotations!

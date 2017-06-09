@@ -3,7 +3,7 @@ using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class SlayerController : GametypeController
+	public class SlayerController : GametypeController
     {
         private void Start()
         {

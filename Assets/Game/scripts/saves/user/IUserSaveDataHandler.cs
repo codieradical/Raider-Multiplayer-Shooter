@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Raider.Game.Saves.User
 {
 
-    public interface IUserSaveDataHandler
+	public interface IUserSaveDataHandler
     {
         void Login(string username, string password, Action<string> successCallback, Action<string> failureCallback);
 

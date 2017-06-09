@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    public class EmblemHandler : MonoBehaviour
+	public class EmblemHandler : MonoBehaviour
     {
 
         [HideInInspector]

@@ -1,12 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using Raider.Game.Player;
+﻿using Raider.Game.Networking;
 using Raider.Game.Weapons;
-using Raider.Game.Networking;
+using UnityEngine.UI;
 
 namespace Raider.Game.Player.HUD
 {
-    public class AmmoAreaHUDWidget : HUDWidget
+	public class AmmoAreaHUDWidget : HUDWidget
 	{
         public Text loadedAmmo;
         public Text backpackAmmo;

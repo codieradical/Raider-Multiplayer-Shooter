@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Raider.Game.Player.HUD
 {
 
-    [RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Animator))]
     public class ScoreboardHUDWidget : HUDWidget
     {
         Animator animatorInstance;

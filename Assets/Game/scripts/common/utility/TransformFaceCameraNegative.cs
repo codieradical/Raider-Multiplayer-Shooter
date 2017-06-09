@@ -1,12 +1,16 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Cameras;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 
 namespace Raider.Common.Utility
 {
-    public class TransformFaceCameraNegative : TransformFaceCamera
+	/// <summary>
+	/// Makes the object look in the opposite direction of the camera.
+	/// </summary>
+	public class TransformFaceCameraNegative : TransformFaceCamera
     {
-
+		/// <summary>
+		/// Update every frame.
+		/// </summary>
         public override void Update()
         {
             LookAtCamera();

@@ -1,16 +1,15 @@
-﻿using Raider.Game.Gametypes;
+﻿using Raider.Game.Cameras;
+using Raider.Game.Gametypes;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Weapons;
-using Raider.Game.Cameras;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.GUI.Scoreboard;
 
 namespace Raider.Game.Player
 {
-    public class NetworkPlayerController : NetworkBehaviour
+	public class NetworkPlayerController : NetworkBehaviour
     {
         public delegate void OnPlayerKilledPlayer(int idKilled, int idKilledBy);
         public delegate void OnPlayerRespawned(int idRespawned);

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    public class CharacterSelectionHandler : MonoBehaviour
+	public class CharacterSelectionHandler : MonoBehaviour
     {
 
         public Object characterPlatePrefab;

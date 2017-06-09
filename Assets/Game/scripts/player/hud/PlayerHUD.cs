@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Raider.Game.Player.HUD
 {
-    //if/when different HUDs are available, inherit the basicas.
-    public class PlayerHUD : MonoBehaviour
+	//if/when different HUDs are available, inherit the basicas.
+	public class PlayerHUD : MonoBehaviour
     {
 
         public static PlayerHUD instance;

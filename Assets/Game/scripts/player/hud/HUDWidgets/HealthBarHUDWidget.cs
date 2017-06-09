@@ -1,12 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine.UI;
-using Raider.Game.Player;
-using System.Collections.Generic;
 
 namespace Raider.Game.Player.HUD
 {
-    public class HealthBarHUDWidget : HUDWidget
+	public class HealthBarHUDWidget : HUDWidget
 	{
 
         public List<Image> meters = new List<Image>();

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    [RequireComponent(typeof(RectTransform))]
+	[RequireComponent(typeof(RectTransform))]
     public class GridSelectionSlider : MonoBehaviour
     {
         //Allow callbacks.

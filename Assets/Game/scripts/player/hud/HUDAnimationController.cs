@@ -2,7 +2,7 @@
 
 namespace Raider.Game.Player.HUD
 {
-    public class HUDAnimationController : MonoBehaviour
+	public class HUDAnimationController : MonoBehaviour
     {
         Animator animatorInstance;
 

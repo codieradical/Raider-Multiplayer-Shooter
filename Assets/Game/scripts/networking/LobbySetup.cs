@@ -1,13 +1,12 @@
 ﻿using Raider.Game.Gametypes;
 using Raider.Game.GUI.Components;
 using Raider.Game.Player;
-using Raider.Game.Scene;
 using System;
 using UnityEngine;
 
 namespace Raider.Game.Networking
 {
-    public class LobbySetup : MonoBehaviour
+	public class LobbySetup : MonoBehaviour
     {
         [Serializable]
         public class SyncData

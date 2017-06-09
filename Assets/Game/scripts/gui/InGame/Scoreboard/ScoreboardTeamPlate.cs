@@ -1,12 +1,11 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+﻿using Raider.Game.GUI.Layout;
 using System.Collections.Generic;
-using Raider.Game.GUI.Layout;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Scoreboard
 {
-    public class ScoreboardTeamPlate : MonoBehaviour
+	public class ScoreboardTeamPlate : MonoBehaviour
     {
         public Text place;
         public Text teamname;

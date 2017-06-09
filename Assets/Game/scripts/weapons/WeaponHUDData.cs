@@ -2,7 +2,7 @@
 
 namespace Raider.Game.Weapons
 {
-    public class WeaponHUDData : MonoBehaviour
+	public class WeaponHUDData : MonoBehaviour
     {
         //Assigned in Editor.
         public string WeaponName;

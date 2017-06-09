@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Layout
 {
 
-    [AddComponentMenu("Layout/Preferred Size Override")]
+	[AddComponentMenu("Layout/Preferred Size Override")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(LayoutElement))]
     public class PreferredSizeOverride : MonoBehaviour

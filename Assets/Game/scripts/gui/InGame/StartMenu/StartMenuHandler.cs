@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.StartMenu
 {
-    [RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Animator))]
     public class StartMenuHandler : MonoBehaviour
     {
         #region Singleton Setup

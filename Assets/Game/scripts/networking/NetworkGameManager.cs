@@ -4,7 +4,6 @@ using Raider.Game.GUI.Components;
 using Raider.Game.Player;
 using Raider.Game.Scene;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -13,7 +12,7 @@ using UnityEngine.SceneManagement;
 namespace Raider.Game.Networking
 {
 
-    public class NetworkGameManager : NetworkLobbyManager
+	public class NetworkGameManager : NetworkLobbyManager
     {
 
         #region singleton setup

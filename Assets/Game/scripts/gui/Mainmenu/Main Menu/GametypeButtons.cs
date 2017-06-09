@@ -1,12 +1,11 @@
 ﻿using Raider.Game.GUI.Screens;
 using Raider.Game.Networking;
-using Raider.Game.Scene;
 using System;
 using UnityEngine;
 
 namespace Raider.Game.GUI.Components
 {
-    [RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Animator))]
     public class GametypeButtons : MonoBehaviour
     {
 

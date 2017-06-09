@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    public class LoginHandler : MonoBehaviour
+	public class LoginHandler : MonoBehaviour
     {
         [SerializeField]
         private InputField usernameTextBox;

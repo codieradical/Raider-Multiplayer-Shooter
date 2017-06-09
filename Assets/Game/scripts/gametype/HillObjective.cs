@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Raider.Game.Networking;
 using Raider.Game.Player;
+using System.Collections;
 using System.Collections.Generic;
-using Raider.Game.Networking;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    public class HillObjective : GametypeObjective
+	public class HillObjective : GametypeObjective
     {
 
         public static NetworkPlayerController.OnPlayerScored timerScore;

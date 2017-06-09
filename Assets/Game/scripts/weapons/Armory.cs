@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 namespace Raider.Game.Weapons
 {
 
-    public class Armory : MonoBehaviour
+	public class Armory : MonoBehaviour
     {
         #region Singleton Setup
 

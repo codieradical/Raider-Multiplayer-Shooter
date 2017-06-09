@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Raider.Game.GUI.Components
 {
-    public class CharacterSelectionPlate : MonoBehaviour
+	public class CharacterSelectionPlate : MonoBehaviour
     {
         public CharacterSelectionHandler selectionHandler;
         int Slot

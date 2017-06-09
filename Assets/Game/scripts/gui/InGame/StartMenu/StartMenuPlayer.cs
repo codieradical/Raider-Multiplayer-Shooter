@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.StartMenu
 {
-    public class StartMenuPlayer : StartMenuPane
+	public class StartMenuPlayer : StartMenuPane
     {
         public GridSelectionSlider perspectiveSelection;
 

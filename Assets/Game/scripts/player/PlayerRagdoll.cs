@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Raider.Game.Player
 {
-    public class PlayerRagdoll : CharacterPreviewAppearenceController
+	public class PlayerRagdoll : CharacterPreviewAppearenceController
     {
 
         float spawnedTime;

@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using UnityEngine.Networking;
+﻿using System;
+using UnityEngine;
 
 namespace Raider.Game.Networking
 {
-    public class NetworkLobbyBroadcastData
+	public class NetworkLobbyBroadcastData
     {
         public string JSONString
         {

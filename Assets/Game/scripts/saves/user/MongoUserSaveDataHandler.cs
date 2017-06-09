@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Raider.Game.Saves.User
 {
-    public class MongoUserSaveDataHandler : IUserSaveDataHandler
+	public class MongoUserSaveDataHandler : IUserSaveDataHandler
     {
         private string accessToken;
         private UserSaveDataStructure data;

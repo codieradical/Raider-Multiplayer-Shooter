@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    public class LobbySetupPane : MonoBehaviour
+	public class LobbySetupPane : MonoBehaviour
     {
 
         public bool IsOpen

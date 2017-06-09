@@ -1,18 +1,19 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Player;
 using System.Collections;
-using Raider.Game.Player;
-using UnityEngine.Networking;
-using Raider.Game.Networking;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    [RequireComponent(typeof(MeshCollider))]
+	/// <summary>
+	/// Handles the flag game objective.
+	/// </summary>
+	[RequireComponent(typeof(MeshCollider))]
     [RequireComponent(typeof(SphereCollider))]
     [RequireComponent(typeof(Rigidbody))]
     public class FlagObjective : PickupGametypeObjective
     {
-
         public MeshRenderer bannerRenderer;
 
         [SyncVar]
@@ -21,6 +22,9 @@ namespace Raider.Game.Gametypes
         public bool serverReturning = false;
         public bool clientReturning = false;
 
+		/// <summary>
+		/// Used to render strings.
+		/// </summary>
         protected override void OnGUI()
         {
             base.OnGUI();

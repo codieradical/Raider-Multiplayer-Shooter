@@ -1,5 +1,4 @@
 ﻿using Raider.Game.Gametypes;
-using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
@@ -10,7 +9,7 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    public class PlayerData : NetworkBehaviour
+	public class PlayerData : NetworkBehaviour
     {
         public static PlayerData localPlayerData;
 

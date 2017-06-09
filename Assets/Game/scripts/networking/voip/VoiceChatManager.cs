@@ -1,7 +1,7 @@
 ﻿//If neither 32 bit or 64 bit have been defined, default to 64.
 //This happens on very specific test environments, specifically with multiple Unity Editor instances.
 #if !UNITY_64 && !UNITY_32
-	#define UNITY_64
+#define UNITY_64
 #endif
 
 using Raider.Game.Player;

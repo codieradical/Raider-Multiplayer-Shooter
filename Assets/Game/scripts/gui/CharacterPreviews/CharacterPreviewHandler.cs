@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.CharacterPreviews
 {
-    public class CharacterPreviewHandler : MonoBehaviour
+	public class CharacterPreviewHandler : MonoBehaviour
     {
 
         #region Singleton Setup

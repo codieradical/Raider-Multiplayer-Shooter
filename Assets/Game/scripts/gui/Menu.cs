@@ -2,11 +2,11 @@
 
 namespace Raider.Game.GUI
 {
-    /// <summary>
-    /// Please refactor me!!!
-    /// Unused menus need to be disabled to reduce update calls on ui layout scripts.
-    /// </summary>
-    [RequireComponent(typeof(Animator))]
+	/// <summary>
+	/// Please refactor me!!!
+	/// Unused menus need to be disabled to reduce update calls on ui layout scripts.
+	/// </summary>
+	[RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CanvasGroup))]
     public class Menu : MonoBehaviour
     {

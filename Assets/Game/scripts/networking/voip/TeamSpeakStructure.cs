@@ -4,10 +4,10 @@ using anyID = System.UInt16;
 
 namespace Raider.Game.Networking.VoIP
 {
-    //This part containes TeamSpeak structs.
-    //Referencing another class makes things complicated with the DLL imports.
-    //And this is clean too.
-    public partial class VoiceChatManager : MonoBehaviour
+	//This part containes TeamSpeak structs.
+	//Referencing another class makes things complicated with the DLL imports.
+	//And this is clean too.
+	public partial class VoiceChatManager : MonoBehaviour
     {
 
         //This struct was taken from the TeamSpeak 3 C++ SDK and modified for C#.

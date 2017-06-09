@@ -6,7 +6,6 @@ using Raider.Game.GUI.Screens;
 using Raider.Game.GUI.StartMenu;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
-using Raider.Game.Weapons;
 using System;
 using System.Collections;
 using UnityEngine;

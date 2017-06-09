@@ -1,6 +1,6 @@
 ﻿namespace Raider.Game.Saves.System
 {
-    public interface ISystemSaveDataHandler
+	public interface ISystemSaveDataHandler
     {
         SystemSaveDataStructure GetData();
         void SaveData(SystemSaveDataStructure _data);

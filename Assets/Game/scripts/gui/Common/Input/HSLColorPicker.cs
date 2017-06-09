@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    public class HSLColorPicker : MonoBehaviour
+	public class HSLColorPicker : MonoBehaviour
     {
 
         #region Singleton Setup

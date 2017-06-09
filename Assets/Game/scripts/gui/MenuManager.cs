@@ -2,7 +2,7 @@
 
 namespace Raider.Game.GUI
 {
-    public class MenuManager : MonoBehaviour
+	public class MenuManager : MonoBehaviour
     {
 
         #region Singleton Setup

@@ -41,6 +41,8 @@ namespace Raider.Game.Cameras
             float _yRot = Input.GetAxisRaw("Mouse X");
             float _xRot = Input.GetAxisRaw("Mouse Y");
 
+			//Enabling this condition will cause the player to rotate with the camera only if the player is walking.
+			
             //if (walking)
             //{
                 RotatePlayer(_yRot);

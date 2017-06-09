@@ -3,7 +3,7 @@
 namespace Raider.Game.GUI.Layout
 {
 
-    [AddComponentMenu("Layout/Size Override")]
+	[AddComponentMenu("Layout/Size Override")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     public class SizeOverride : MonoBehaviour

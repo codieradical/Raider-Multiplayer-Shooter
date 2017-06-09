@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Raider.Game.Cameras
 {
+	//This camera controller follows a path of objects, it's used on the mainmenu to have the camera follow a circuit.
     public class FollowPathCameraController : CameraController
     {
         List<GameObject> pathObjects;
@@ -45,6 +46,8 @@ namespace Raider.Game.Cameras
             }
         }
 
+		//When the player hits a path object, it must seek the enxt.
+		//This includes finding, and rotating to face the next destination.
         void HitPoint()
         {
             if (lastPointIndex == pathObjects.Count - 1)

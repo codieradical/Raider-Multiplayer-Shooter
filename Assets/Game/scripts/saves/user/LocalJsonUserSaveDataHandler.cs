@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace Raider.Game.Saves.User
 {
 
-    class LocalJsonUserSaveDataHandler : IUserSaveDataHandler
+	class LocalJsonUserSaveDataHandler : IUserSaveDataHandler
     {
         private UserSaveDataStructure data;
 

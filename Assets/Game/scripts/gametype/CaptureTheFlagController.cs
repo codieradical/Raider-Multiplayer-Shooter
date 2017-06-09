@@ -1,13 +1,13 @@
-﻿using Raider.Game.Networking;
-using Raider.Game.Player;
+﻿using Raider.Game.Player;
 using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class CaptureTheFlagController : GametypeController
+	public class CaptureTheFlagController : GametypeController
     {
         private void Start()
         {
+			//Allow flag spawns.
             NetworkPlayerController.onServerPlayerScored += GametypeScore;
         }
 

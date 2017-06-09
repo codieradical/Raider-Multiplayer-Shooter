@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.Networking;
-using Raider.Game.Player;
+﻿using UnityEngine.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    public class GametypeObjective : NetworkBehaviour
+	public class GametypeObjective : NetworkBehaviour
     {
         public virtual void SetupObjective(GametypeHelper.Gametype gametype, GametypeHelper.Team team, Objective objective)
         {

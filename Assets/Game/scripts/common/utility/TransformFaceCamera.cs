@@ -1,12 +1,16 @@
-﻿using UnityEngine;
-using System.Collections;
-using Raider.Game.Cameras;
+﻿using Raider.Game.Cameras;
+using UnityEngine;
 
 namespace Raider.Common.Utility
 {
-    public class TransformFaceCamera : MonoBehaviour
+	/// <summary>
+	/// Simple script to make objects face the camera. Used for player names in world space.
+	/// </summary>
+	public class TransformFaceCamera : MonoBehaviour
     {
-
+		/// <summary>
+		/// Look at the camera every frame.
+		/// </summary>
         public virtual void Update()
         {
             LookAtCamera();

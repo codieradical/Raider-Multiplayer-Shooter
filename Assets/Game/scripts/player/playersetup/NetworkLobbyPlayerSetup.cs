@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    [RequireComponent(typeof(PlayerData))]
+	[RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(PlayerChatManager))]
     [Serializable]
     public class NetworkLobbyPlayerSetup : NetworkBehaviour

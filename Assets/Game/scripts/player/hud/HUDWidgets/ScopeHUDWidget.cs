@@ -1,9 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Raider.Game.Player.HUD
+﻿namespace Raider.Game.Player.HUD
 {
-    public class ScopeHUDWidget : HUDWidget
+	public class ScopeHUDWidget : HUDWidget
 	{
 
         

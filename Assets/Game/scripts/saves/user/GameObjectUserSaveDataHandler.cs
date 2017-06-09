@@ -5,13 +5,13 @@ using UnityEngine;
 namespace Raider.Game.Saves.User
 {
 
-    /// <summary>
-    /// The GameObject Save Data Handler is volatile! 
-    /// It's used for temporary storage on a script attached to a game object.
-    /// 
-    /// A plugin should be built to help with save data.
-    /// </summary>
-    public class GameObjectUserSaveDataHandler : MonoBehaviour, IUserSaveDataHandler
+	/// <summary>
+	/// The GameObject Save Data Handler is volatile! 
+	/// It's used for temporary storage on a script attached to a game object.
+	/// 
+	/// A plugin should be built to help with save data.
+	/// </summary>
+	public class GameObjectUserSaveDataHandler : MonoBehaviour, IUserSaveDataHandler
     {
         #region Singleton Setup
 

@@ -1,20 +1,17 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine.Networking;
-using Raider.Game.Cameras;
-using Raider.Game.Saves;
+﻿using Raider.Game.Cameras;
 using Raider.Game.Weapons;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Raider.Game.Saves.User
 {
-    /// <summary>
-    /// User data synced with the online database.
-    /// </summary>
-    [Serializable]
+	/// <summary>
+	/// User data synced with the online database.
+	/// </summary>
+	[Serializable]
     public class UserSaveDataStructure
     {
         public string username;

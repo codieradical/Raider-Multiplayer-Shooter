@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Player;
 using System.Collections;
-using Raider.Game.Player;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    public class OddballObjective : PickupGametypeObjective
+	public class OddballObjective : PickupGametypeObjective
     {
 
         public static NetworkPlayerController.OnPlayerScored timerScore;

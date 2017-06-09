@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Components
 {
-    [RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Animator))]
     public class OptionsPaneHandler : MonoBehaviour
     {
         public static bool IsOpen()

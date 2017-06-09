@@ -40,7 +40,7 @@ namespace Raider.Test.Weapons
                 weaponController.clipAmmo--;
                 shotCount++;
             }
-
+			
             Assert.AreEqual(weaponController.clipAmmo, shotCount);
         }
 

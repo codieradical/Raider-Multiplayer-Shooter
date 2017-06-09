@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Raider.Game.GUI.Components
 {
 
-    public class OptionsPaneOption : EventTrigger
+	public class OptionsPaneOption : EventTrigger
     {
         OptionsPaneHandler optionsPaneHandler;
 

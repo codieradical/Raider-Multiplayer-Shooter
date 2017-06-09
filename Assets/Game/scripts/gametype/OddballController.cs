@@ -1,9 +1,8 @@
-﻿using Raider.Game.Player;
-using System;
+﻿using System;
 
 namespace Raider.Game.Gametypes
 {
-    public class OddballController : GametypeController
+	public class OddballController : GametypeController
     {
         private void Start()
         {

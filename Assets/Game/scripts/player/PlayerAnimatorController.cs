@@ -2,7 +2,7 @@
 
 namespace Raider.Game.Player
 {
-    public class PlayerAnimatorController : MonoBehaviour
+	public class PlayerAnimatorController : MonoBehaviour
     {
         #region Animator Property Accessors
 

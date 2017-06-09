@@ -8,10 +8,10 @@ using UnityEngine.Networking;
 
 namespace Raider.Game.Player
 {
-    /// <summary>
-    /// Chat manager, attaches to network lobby player.
-    /// </summary>
-    public class PlayerChatManager : NetworkBehaviour
+	/// <summary>
+	/// Chat manager, attaches to network lobby player.
+	/// </summary>
+	public class PlayerChatManager : NetworkBehaviour
     {
         //Read by the ChatUIHandler.
         public static readonly int maxChatHistory = 150;

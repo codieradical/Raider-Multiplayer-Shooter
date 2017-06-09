@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Raider.Game.Weapons
 {
 
-    public class WeaponAnimatorController : MonoBehaviour
+	public class WeaponAnimatorController : MonoBehaviour
     {
         #region Animator Property Accessors
 

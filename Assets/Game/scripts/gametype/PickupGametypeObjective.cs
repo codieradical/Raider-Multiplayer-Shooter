@@ -1,12 +1,11 @@
-﻿using UnityEngine;
+﻿using Raider.Game.Player;
 using System.Collections;
-using Raider.Game.Player;
+using UnityEngine;
 using UnityEngine.Networking;
-using Raider.Game.Networking;
 
 namespace Raider.Game.Gametypes
 {
-    [RequireComponent(typeof(SphereCollider))]
+	[RequireComponent(typeof(SphereCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(NetworkTransform))]
     public abstract class PickupGametypeObjective : GametypeObjective

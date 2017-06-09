@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Raider.Game.Saves.User
 {
 
-    class LocalSerializedUserSaveDataHandler : IUserSaveDataHandler
+	class LocalSerializedUserSaveDataHandler : IUserSaveDataHandler
     {
         private UserSaveDataStructure data;
         private BinaryFormatter binaryFormatter = new BinaryFormatter();

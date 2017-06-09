@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Raider.Game.Networking
 {
-    public class HTTPClient : MonoBehaviour
+	public class HTTPClient : MonoBehaviour
     {
         #region singleton setup
 

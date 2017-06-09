@@ -2,7 +2,10 @@
 
 namespace Raider.Game.Cameras
 {
-
+	/// <summary>
+	/// This camera controller doesn't move at all.
+	/// It was used in testing and may not still work.
+	/// </summary>
     public class StaticCameraController : ThirdPersonCameraController
     {
         //Why are these here?

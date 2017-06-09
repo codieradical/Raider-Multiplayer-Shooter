@@ -1,7 +1,7 @@
 ﻿
 namespace Raider.Game.Weapons
 {
-    [System.Serializable]
+	[System.Serializable]
     public class WeaponSettings
     {
         public WeaponSettings()

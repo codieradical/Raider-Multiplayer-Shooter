@@ -2,7 +2,7 @@
 
 namespace Raider.Game.GUI.StartMenu
 {
-    public class StartMenuLobby : StartMenuPane
+	public class StartMenuLobby : StartMenuPane
     {
         protected override void SetupPaneData()
         {

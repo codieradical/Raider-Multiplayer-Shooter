@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Raider.Game.Player
 {
-    [RequireComponent(typeof(PlayerData))]
+	[RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(AnimationParametersController))]
     [RequireComponent(typeof(PlayerResourceReferences))]

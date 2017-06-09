@@ -1,9 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Raider.Game.Player.HUD
+﻿namespace Raider.Game.Player.HUD
 {
-    public class CrosshairHUDWidget : HUDWidget
+	public class CrosshairHUDWidget : HUDWidget
 	{
     }
 }

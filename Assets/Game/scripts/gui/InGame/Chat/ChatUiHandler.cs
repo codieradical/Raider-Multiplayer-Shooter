@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.GUI.Screens
 {
-    public class ChatUiHandler : MonoBehaviour
+	public class ChatUiHandler : MonoBehaviour
     {
         #region Singleton Setup
 

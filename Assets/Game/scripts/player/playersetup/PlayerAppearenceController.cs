@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Raider.Game.Player
 {
-    public class PlayerAppearenceController : CharacterPreviewAppearenceController
+	public class PlayerAppearenceController : CharacterPreviewAppearenceController
     {
         public GameObject firstPersonObject;
 		public List<SkinnedMeshRenderer> sharedRenderers;

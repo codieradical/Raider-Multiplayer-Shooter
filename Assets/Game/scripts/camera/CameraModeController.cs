@@ -9,6 +9,7 @@ namespace Raider.Game.Cameras
 
     public class CameraModeController : MonoBehaviour
     {
+		//Since there's only one camera, this class can use a singleton.
         #region Singleton Setup
 
         public static CameraModeController singleton;
@@ -32,12 +33,16 @@ namespace Raider.Game.Cameras
 
         #endregion
 
+		//The expected name of the scene overview location game objects. This could be replaced with a tag or script.
         public const string SCENE_OVERVIEW_OBJECT_NAME = "_SceneOverview";
-        public const string CAMERA_PATH_OBJECT_NAME = "_CameraPath";
+		//The expected name of the camera path parent game objects. This could be replaced with a tag or script.
+		public const string CAMERA_PATH_OBJECT_NAME = "_CameraPath";
 
         public GameObject camPoint;
         public GameObject cam;
+		//A reference to the local player game object. This was added very early on, and could probably be removed, as PlayerData.localPlayerData.gameObject could be referenced.
         public GameObject localPlayerGameObject;
+		//The index of the player being spectated.
         public int spectatingPlayerIndex;
 
         //how close the camera can be to directly overhead or underfoot.
@@ -70,6 +75,7 @@ namespace Raider.Game.Cameras
             public bool inverted = true;
         }
 
+		//This enum is used to simply switch perspective.
         public enum CameraModes
         {
             Unknown = -1,
@@ -87,6 +93,10 @@ namespace Raider.Game.Cameras
 			SpectatorThirdPerson = 11
         }
 
+		/// <summary>
+		/// This property allows the Camera Controller to be set based on a CameraMode enum value.
+		/// Or, it can be used to return a CameraMode value based on the active CameraController.
+		/// </summary>
         public CameraModes CameraMode
         {
             get
@@ -174,13 +184,15 @@ namespace Raider.Game.Cameras
 							break;
                     }
                 }
+				//Setup the new controller if it exists.
                 if (newController != null)
                     newController.Setup();
             }
         }
 
+		//The camera mode can't be switched multiple times in one framee, so this queue will process changes frame by frame.
         public Queue<CameraModes> cameraModeUpdates = new Queue<CameraModes>();
-
+		//Add a camera mode to the queue.
         public void SetCameraMode(CameraModes newMode)
         {
             cameraModeUpdates.Enqueue(newMode);

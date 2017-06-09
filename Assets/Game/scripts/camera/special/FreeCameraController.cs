@@ -4,6 +4,7 @@ namespace Raider.Game.Cameras
 {
     /// <summary>
     /// Switch between follow and fly.
+	/// Debug camera, not fully implemented.
     /// </summary>
     public class FreeCameraController : ThirdPersonCameraController
     {
