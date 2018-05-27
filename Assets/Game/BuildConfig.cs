@@ -13,17 +13,17 @@ namespace Raider.Game
         /// <summary>
         /// Used when checking the API for updates.
         /// </summary>
-        public readonly static Version VERSION_NUMBER = new Version(0, 4, 15, 2);
+        public readonly static Version VERSION_NUMBER = new Version(0, 4, 15, 3);
         /// <summary>
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.
         /// </summary>
-        public const bool ONLINE_MODE = false;
+        public const bool ONLINE_MODE = true;
         /// <summary>
         /// If set to true, serialized save data handlers will be instanced.
         /// If set to false, data will be stored in JSON.
         /// </summary>
-        public const bool SERIALIZE_SAVEDATA = true;
+        public const bool SERIALIZE_SAVEDATA = false;
         /// <summary>
         /// If set to true, TeamSpeak 3 binaries will be distributed with builds.
         /// If set to false, no binaries will be distributed, and VoIP Chat Managers will self-destruct.

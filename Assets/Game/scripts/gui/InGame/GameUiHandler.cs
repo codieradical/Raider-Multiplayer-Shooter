@@ -1,13 +1,16 @@
-﻿using Raider.Game.GUI.Screens;
+﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI.Screens;
 using Raider.Game.GUI.StartMenu;
+using Raider.Game.Networking;
 using Raider.Game.Player;
 using Raider.Game.Scene;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Raider.Game.GUI
 {
 
-	public class GameUiHandler : MonoBehaviour
+    public class GameUiHandler : MonoBehaviour
     {
         #region Singleton Setup
 
@@ -28,6 +31,14 @@ namespace Raider.Game.GUI
         #endregion
 
         public Object optionsPanePrefab;
+        public Transform waypointsCanvas;
+        public GameObject waypointPrefab;
+
+        void Start()
+        {
+            NetworkPlayerController.onClientPlayerHealthDead += OnPlayerHealthChange;
+            NetworkPlayerController.onClientPlayerRespawned += OnPlayerRespawned;
+        }
 
         // Update is called once per frame
         void Update()
@@ -56,7 +67,7 @@ namespace Raider.Game.GUI
                     return;
                 }
 
-                if(Input.GetKeyDown(KeyCode.T))
+                if (Input.GetKeyDown(KeyCode.T))
                 {
                     if (!StartMenuHandler.instance.IsOpen)
                     {
@@ -67,6 +78,66 @@ namespace Raider.Game.GUI
 
                     return;
                 }
+            }
+        }
+
+        public void OnPlayerRespawned(int idRespawned)
+        {
+            RebuildWaypoints();
+        }
+
+        public void OnPlayerHealthChange(int playerID)
+        {
+            RebuildWaypoints();
+        }
+
+        public void RebuildWaypoints()
+        {
+            foreach (Waypoint waypoint in FindObjectsOfType<Waypoint>())
+            {
+                Destroy(waypoint.gameObject);
+            }
+
+            foreach (PlayerData player in NetworkGameManager.instance.Players)
+            {
+                GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
+                Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
+
+                if (player.syncData.team != PlayerData.localPlayerData.syncData.team)
+                    waypoint.SetupWaypoint(Waypoint.WaypointIcon.None, player.transform, player.syncData.username);
+                else
+                    waypoint.SetupPlayerWaypoint(null, player.syncData.username, player.syncData.Character.emblem);
+            }
+
+            foreach (PlayerRagdoll ragdoll in FindObjectsOfType<PlayerRagdoll>())
+            {
+                GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
+                Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
+                waypoint.SetupWaypoint(Waypoint.WaypointIcon.Dead, ragdoll.transform);
+            }
+
+            foreach (GametypeObjective objective in FindObjectsOfType<GametypeObjective>())
+            {
+                Waypoint.WaypointIcon icon;
+
+                if (objective is FlagCaptureObjective)
+                    if (objective.team != PlayerData.localPlayerData.syncData.team)
+                        continue;
+                    else
+                        icon = Waypoint.WaypointIcon.Capture;
+                else if (objective is FlagObjective)
+                    icon = Waypoint.WaypointIcon.Flag;
+                else if (objective is HillObjective)
+                    icon = Waypoint.WaypointIcon.Hill;
+                else if (objective is OddballObjective)
+                    icon = Waypoint.WaypointIcon.Ball;
+                else
+                    icon = Waypoint.WaypointIcon.Generic;
+
+                GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
+                Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
+
+                waypoint.SetupWaypoint(icon, objective.transform);
             }
         }
     }

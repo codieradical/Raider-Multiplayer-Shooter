@@ -1,5 +1,6 @@
 ﻿using Raider.Game.Cameras;
 using Raider.Game.Gametypes;
+using Raider.Game.GUI;
 using Raider.Game.GUI.Scoreboard;
 using Raider.Game.Networking;
 using Raider.Game.Weapons;
@@ -45,6 +46,7 @@ namespace Raider.Game.Player
 			{
 				SetupLocalControl();
 				ScoreboardHandler.UpdateHeaderMessage(NetworkGameManager.instance.lobbySetup.syncData.GametypeString);
+                GameUiHandler.instance.RebuildWaypoints();
 			}
 
 			if (isServer && GametypeController.singleton != null)
@@ -73,7 +75,8 @@ namespace Raider.Game.Player
         {
 			SetupLocalControl();
 			ScoreboardHandler.UpdateHeaderMessage(NetworkGameManager.instance.lobbySetup.syncData.GametypeString);
-		}
+            GameUiHandler.instance.RebuildWaypoints();
+        }
 
 		[TargetRpc]
 		public void TargetSpawnedWeapon(NetworkConnection conn, GameObject weaponObject, Armory.Weapons weapon)

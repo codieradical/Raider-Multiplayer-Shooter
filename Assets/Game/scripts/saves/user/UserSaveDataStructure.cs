@@ -94,8 +94,7 @@ namespace Raider.Game.Saves.User
                 HelmetArmour = Armours.X;
                 ShoulderArmour = Armours.X;
                 ChestArmour = Armours.X;
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                guild = new string(Enumerable.Repeat(chars, 4).Select(s => s[UnityEngine.Random.Range(0, s.Length -1)]).ToArray());
+                guild = "1337";
 
             //currentMission = "New Campaign";
         }

@@ -177,6 +177,8 @@ namespace Raider.Game.GUI.StartMenu
         {
             //Components.LobbyHandler.PlayerNameplate newPlate = new Components.LobbyHandler.PlayerNameplate("Test Nameplate", false, false, false, Session.activeCharacter);
             //Components.LobbyHandler.AddPlayer(newPlate);
+
+            GameUiHandler.instance.RebuildWaypoints();
         }
 #endif
     }

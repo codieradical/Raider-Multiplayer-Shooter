@@ -10,6 +10,7 @@ namespace Raider.Game.Player
 
         float spawnedTime;
         float ragdollDuration = 30;
+        public GametypeHelper.Team team;
 
         // Use this for initialization
         void Start()
