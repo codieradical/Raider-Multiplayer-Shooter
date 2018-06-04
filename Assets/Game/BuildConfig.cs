@@ -13,12 +13,12 @@ namespace Raider.Game
         /// <summary>
         /// Used when checking the API for updates.
         /// </summary>
-        public readonly static Version VERSION_NUMBER = new Version(0, 4, 15, 3);
+        public readonly static Version VERSION_NUMBER = new Version(0, 4, 16, 1);
         /// <summary>
         /// If set to true, the Session class will attempt to communicate with the API to recieve user data.
         /// If set to false, a LocalSerialized User save data handler will be used instead.
         /// </summary>
-        public const bool ONLINE_MODE = true;
+        public const bool ONLINE_MODE = false;
         /// <summary>
         /// If set to true, serialized save data handlers will be instanced.
         /// If set to false, data will be stored in JSON.

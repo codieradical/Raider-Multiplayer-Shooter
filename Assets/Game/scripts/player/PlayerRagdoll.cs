@@ -7,26 +7,35 @@ namespace Raider.Game.Player
 {
 	public class PlayerRagdoll : CharacterPreviewAppearenceController
     {
+        public delegate void RagdollSpawned();
+        public delegate void RagdollDespawned();
+
+        public static RagdollSpawned onRagdollSpawn;
+        public static RagdollDespawned onRagdollDespawn;
 
         float spawnedTime;
         float ragdollDuration = 30;
-        public GametypeHelper.Team team;
+        public PlayerData owner;
 
         // Use this for initialization
         void Start()
         {
+            if (onRagdollSpawn != null)
+                onRagdollSpawn();
+
             spawnedTime = Time.time;
         }
 
-        public void UpdatePlayerAppearence(PlayerData.SyncData syncData)
+        public void UpdatePlayerAppearence(PlayerData owner)
         {
-            base.UpdatePlayerAppearence(syncData.Character);
+            this.owner = owner;
+            base.UpdatePlayerAppearence(owner.syncData.Character);
 
-            if (syncData.team != GametypeHelper.Team.None)
+            if (owner.syncData.team != GametypeHelper.Team.None)
             {
                 foreach (Renderer primaryRenderer in primaryRenderers)
                 {
-                    primaryRenderer.material.color = GametypeHelper.GetTeamColor(syncData.team);
+                    primaryRenderer.material.color = GametypeHelper.GetTeamColor(owner.syncData.team);
                 }
             }
         }
@@ -36,6 +45,12 @@ namespace Raider.Game.Player
         {
             if (Time.time > spawnedTime + 30 + NetworkGameManager.instance.lobbySetup.syncData.gameOptions.generalOptions.respawnTimeSeconds)
                 Destroy(this.gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (onRagdollDespawn != null)
+                onRagdollDespawn();
         }
     }
 }

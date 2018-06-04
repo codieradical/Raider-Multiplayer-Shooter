@@ -10,6 +10,9 @@ namespace Raider.Game.Gametypes
     [RequireComponent(typeof(NetworkTransform))]
     public abstract class PickupGametypeObjective : GametypeObjective
     {
+        public delegate void OnPickupObjectiveRespawned(PickupGametypeObjective objective);
+        public OnPickupObjectiveRespawned onPickupObjectiveRespawned;
+
         [SyncVar]
         public Vector3 spawnPosition;
 
@@ -175,6 +178,9 @@ namespace Raider.Game.Gametypes
             DisablePickupForSeconds(1);
             transform.position = spawnPosition;
             transform.rotation = Quaternion.identity;
+
+            if (onPickupObjectiveRespawned != null)
+                onPickupObjectiveRespawned(this);
         }
     }
 }

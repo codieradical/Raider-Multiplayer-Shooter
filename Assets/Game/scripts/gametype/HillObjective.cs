@@ -10,7 +10,7 @@ namespace Raider.Game.Gametypes
 	public class HillObjective : GametypeObjective
     {
 
-        public static NetworkPlayerController.OnPlayerScored timerScore;
+        public static NetworkPlayerController.OnPlayerAction timerScore;
 
         Coroutine scoreTimer;
 

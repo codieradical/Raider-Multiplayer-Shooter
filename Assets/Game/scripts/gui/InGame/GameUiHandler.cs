@@ -36,8 +36,13 @@ namespace Raider.Game.GUI
 
         void Start()
         {
-            NetworkPlayerController.onClientPlayerHealthDead += OnPlayerHealthChange;
-            NetworkPlayerController.onClientPlayerRespawned += OnPlayerRespawned;
+            NetworkPlayerController.onClientPlayerRespawned += OnPlayerAction;
+            NetworkPlayerController.onDroppedObjective += OnPlayerAction;
+            NetworkPlayerController.onPickedUpObjective += OnPlayerAction;
+            NetworkPlayerController.onScoredObjective += OnPlayerAction;
+
+            PlayerRagdoll.onRagdollDespawn += RebuildWaypoints;
+            PlayerRagdoll.onRagdollSpawn += RebuildWaypoints;
         }
 
         // Update is called once per frame
@@ -81,18 +86,17 @@ namespace Raider.Game.GUI
             }
         }
 
-        public void OnPlayerRespawned(int idRespawned)
-        {
-            RebuildWaypoints();
-        }
-
-        public void OnPlayerHealthChange(int playerID)
+        public void OnPlayerAction(int playerID)
         {
             RebuildWaypoints();
         }
 
         public void RebuildWaypoints()
         {
+            //Not sure why this is needed, so this probably won't be a permanent fix.
+            if (waypointPrefab == null || waypointsCanvas == null)
+                return;
+
             foreach (Waypoint waypoint in FindObjectsOfType<Waypoint>())
             {
                 Destroy(waypoint.gameObject);
@@ -100,25 +104,34 @@ namespace Raider.Game.GUI
 
             foreach (PlayerData player in NetworkGameManager.instance.Players)
             {
+                if (player == PlayerData.localPlayerData || player.networkPlayerController.Health <= 0)
+                    continue;
+
                 GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
                 Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
 
                 if (player.syncData.team != PlayerData.localPlayerData.syncData.team)
-                    waypoint.SetupWaypoint(Waypoint.WaypointIcon.None, player.transform, player.syncData.username);
+                    waypoint.SetupWaypoint(Waypoint.WaypointIcon.None, player.waypointPosition, player.syncData.username);
                 else
-                    waypoint.SetupPlayerWaypoint(null, player.syncData.username, player.syncData.Character.emblem);
+                    waypoint.SetupPlayerWaypoint(player.waypointPosition, player.syncData.username, player.syncData.Character.emblem);
             }
 
-            foreach (PlayerRagdoll ragdoll in FindObjectsOfType<PlayerRagdoll>())
+            if (NetworkGameManager.instance.lobbySetup.syncData.gameOptions.teamsEnabled)
             {
-                GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
-                Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
-                waypoint.SetupWaypoint(Waypoint.WaypointIcon.Dead, ragdoll.transform);
+                foreach (PlayerRagdoll ragdoll in FindObjectsOfType<PlayerRagdoll>())
+                {
+                    if (ragdoll.owner == null || ragdoll.owner.syncData.team != PlayerData.localPlayerData.syncData.team || ragdoll.owner == PlayerData.localPlayerData)
+                        continue;
+
+                    GameObject waypointObject = Instantiate(waypointPrefab, waypointsCanvas);
+                    Waypoint waypoint = waypointObject.GetComponent<Waypoint>();
+                    waypoint.SetupWaypoint(Waypoint.WaypointIcon.Dead, ragdoll.transform);
+                }
             }
 
             foreach (GametypeObjective objective in FindObjectsOfType<GametypeObjective>())
             {
-                Waypoint.WaypointIcon icon;
+                Waypoint.WaypointIcon icon = Waypoint.WaypointIcon.Generic;
 
                 if (objective is FlagCaptureObjective)
                     if (objective.team != PlayerData.localPlayerData.syncData.team)
@@ -126,7 +139,13 @@ namespace Raider.Game.GUI
                     else
                         icon = Waypoint.WaypointIcon.Capture;
                 else if (objective is FlagObjective)
-                    icon = Waypoint.WaypointIcon.Flag;
+                    if (objective.team == PlayerData.localPlayerData.syncData.team && (objective as FlagObjective).flagOnBase)
+                        continue;
+                    else if (PlayerData.localPlayerData.networkPlayerController.pickupObjective == objective)
+                        continue;
+                    else
+                        icon = Waypoint.WaypointIcon.Flag;
+
                 else if (objective is HillObjective)
                     icon = Waypoint.WaypointIcon.Hill;
                 else if (objective is OddballObjective)

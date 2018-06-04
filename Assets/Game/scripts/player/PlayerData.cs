@@ -1,4 +1,5 @@
 ﻿using Raider.Game.Gametypes;
+using Raider.Game.GUI;
 using Raider.Game.Networking;
 using Raider.Game.Saves.User;
 using Raider.Game.Scene;
@@ -43,6 +44,7 @@ namespace Raider.Game.Player
 
         public AnimationParametersController animationController; //Assigned in editor or on creation.
         public PlayerAppearenceController appearenceController; //Assigned In Editor to Begin
+        public Transform waypointPosition;
         public LocalPlayerController localPlayerController;
 
 		private Armory.WeaponType activeWeaponType = Armory.WeaponType.Primary;
@@ -256,6 +258,7 @@ namespace Raider.Game.Player
 					if (!Scenario.InLobby)
 					{
 						GametypeController.singleton.ChangeScoreboardPlayerTeam(PlayerSyncData.id, PlayerSyncData.team);
+                        GameUiHandler.instance.RebuildWaypoints();
 						networkPlayerController.RespawnPlayer();
 					}
 

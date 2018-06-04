@@ -192,7 +192,7 @@ namespace Raider.Game.Player
             // Move the controller, and set grounded true or false depending on whether we're standing on something
             if (cameraController != null)
             {
-                if (!cameraController.preventMovement)
+                if (!cameraController.preventMovement && characterController.enabled)
                 {
                     grounded = (characterController.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
                 }

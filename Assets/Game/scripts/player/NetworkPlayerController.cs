@@ -12,19 +12,19 @@ namespace Raider.Game.Player
 	public class NetworkPlayerController : NetworkBehaviour
     {
         public delegate void OnPlayerKilledPlayer(int idKilled, int idKilledBy);
-        public delegate void OnPlayerRespawned(int idRespawned);
-        public delegate void OnPlayerHealthChange(int playerID);
-        public delegate void OnPlayerScored(int playerID);
+        public delegate void OnPlayerAction(int playerID);
 
         public static OnPlayerKilledPlayer onServerPlayerKilledPlayer;
-        public static OnPlayerRespawned onServerPlayerRespawned;
+        public static OnPlayerAction onServerPlayerRespawned;
 		public static OnPlayerKilledPlayer onClientPlayerKilledPlayer;
-		public static OnPlayerRespawned onClientPlayerRespawned;
-        public static OnPlayerHealthChange onClientLocalPlayerHealthChange;
-        public static OnPlayerHealthChange onClientPlayerHealthChange;
-        public static OnPlayerHealthChange onClientPlayerHealthDead;
-        public static OnPlayerHealthChange onClientPlayerHealthAlive;
-        public static OnPlayerScored onServerPlayerScored;
+		public static OnPlayerAction onClientPlayerRespawned;
+        public static OnPlayerAction onClientLocalPlayerHealthChange;
+        public static OnPlayerAction onClientPlayerHealthChange;
+        public static OnPlayerAction onClientPlayerHealthDead;
+        public static OnPlayerAction onServerPlayerScored;
+        public static OnPlayerAction onPickedUpObjective;
+        public static OnPlayerAction onDroppedObjective;
+        public static OnPlayerAction onScoredObjective;
 
         private PlayerData playerData;
 		public PlayerData PlayerData
@@ -113,11 +113,8 @@ namespace Raider.Game.Player
             if(onClientPlayerHealthChange != null)
                 onClientPlayerHealthChange(PlayerData.syncData.id);
 
-            if(onClientPlayerHealthDead != null)
+            if(value <= 0 && onClientPlayerHealthDead != null)
                 onClientPlayerHealthDead(PlayerData.syncData.id);
-
-            if (onClientPlayerHealthAlive != null)
-                onClientPlayerHealthAlive(PlayerData.syncData.id);
         }
 
         [SyncVar(hook = "HealthSync")]
@@ -137,11 +134,8 @@ namespace Raider.Game.Player
                 if (onClientPlayerHealthChange != null)
                     onClientPlayerHealthChange(PlayerData.syncData.id);
 
-                if (onClientPlayerHealthDead != null)
+                if (value <= 0 && onClientPlayerHealthDead != null)
                     onClientPlayerHealthDead(PlayerData.syncData.id);
-
-                if (onClientPlayerHealthAlive != null)
-                    onClientPlayerHealthAlive(PlayerData.syncData.id);
             }
         }
 
@@ -243,7 +237,7 @@ namespace Raider.Game.Player
 
 			GameObject ragDoll = Instantiate(PlayerResourceReferences.instance.GetRagdollByRace(PlayerData.PlayerSyncData.Character.Race));
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData.PlayerSyncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData);
 			NetworkServer.Spawn(ragDoll);
 			RpcSetupRagdoll(ragDoll);
 
@@ -254,7 +248,7 @@ namespace Raider.Game.Player
 		public void RpcSetupRagdoll(GameObject ragDoll)
 		{
 			ragDoll.transform.position = this.transform.position;
-			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData.PlayerSyncData);
+			ragDoll.GetComponent<PlayerRagdoll>().UpdatePlayerAppearence(PlayerData);
 		}
 
 		[TargetRpc]
@@ -281,7 +275,6 @@ namespace Raider.Game.Player
             PlayerData.pickupTrigger.enabled = false;
             PlayerData.characterController.enabled = false;
 			PlayerData.appearenceController.HidePlayer(true);
-			PlayerData.appearenceController.usernameText.text = "";
 			ToggleWeapons(false);
 
 			if (onClientPlayerKilledPlayer != null)
@@ -326,8 +319,6 @@ namespace Raider.Game.Player
             PlayerData.pickupTrigger.enabled = true;
             PlayerData.characterController.enabled = true;
             PlayerData.appearenceController.HidePlayer(false);
-			if(PlayerData != PlayerData.localPlayerData)
-				PlayerData.appearenceController.usernameText.text = PlayerData.syncData.username;
 			ToggleWeapons(true);
 
 			if (onClientPlayerRespawned != null)
@@ -380,10 +371,13 @@ namespace Raider.Game.Player
 
             if (pickupObjective.respawnObjectTimer != null)
             {
-                Debug.LogError("Ending Respawn Object Timer;");
+                Debug.Log("Ending Respawn Object Timer.");
                 StopCoroutine(pickupObjective.respawnObjectTimer);
                 pickupObjective.respawnObjectTimer = null;
             }
+
+            if (onPickedUpObjective != null)
+                onPickedUpObjective(PlayerData.syncData.id);
 
             RpcPickupObject(objective);
         }
@@ -399,6 +393,9 @@ namespace Raider.Game.Player
             pickupObjective.transform.position = PlayerData.gunPosition.gameObject.transform.position;
             pickupObjective.transform.rotation = PlayerData.gunPosition.gameObject.transform.rotation;
             ToggleWeapons(false);
+
+            if (onPickedUpObjective != null)
+                onPickedUpObjective(PlayerData.syncData.id);
         }
 
         [Command]
@@ -407,6 +404,9 @@ namespace Raider.Game.Player
             pickupObjective.DropObjective();
             pickupObjective.TogglePickup(true);
             pickupObjective.carrierId = -1;
+
+            if (onDroppedObjective != null)
+                onDroppedObjective(PlayerData.syncData.id);
 
             RpcDropObjective();
 
@@ -427,6 +427,9 @@ namespace Raider.Game.Player
             pickupObjective.TogglePickup(true);
             pickupObjective = null;
             ToggleWeapons(true);
+
+            if (onDroppedObjective != null)
+                onDroppedObjective(PlayerData.syncData.id);
         }
 
         [Command]
@@ -445,6 +448,9 @@ namespace Raider.Game.Player
             if (onServerPlayerScored != null)
                 onServerPlayerScored(PlayerData.syncData.id);
 
+            if (onScoredObjective != null)
+                onScoredObjective(PlayerData.syncData.id);
+
             PlayerChatManager chatManager = PlayerData.localPlayerData.PlayerChatManager;
             chatManager.CmdSendNotificationMessage(PlayerChatManager.GetFormattedUsername(PlayerData.syncData.id) + " Scored!", -1);
 
@@ -461,6 +467,9 @@ namespace Raider.Game.Player
             pickupObjective.RespawnObject();
             pickupObjective.TogglePickup(true);
             pickupObjective = null;
+
+            if (onScoredObjective != null)
+                onScoredObjective(PlayerData.syncData.id);
 
             ToggleWeapons(true);
         }

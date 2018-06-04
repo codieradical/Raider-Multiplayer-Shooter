@@ -11,7 +11,6 @@ namespace Raider.Game.Player
         public GameObject firstPersonObject;
 		public List<SkinnedMeshRenderer> sharedRenderers;
         public List<SkinnedMeshRenderer> thirdPersonRenderers;
-        public Text usernameText;
 
         private void Awake()
         {
@@ -72,11 +71,6 @@ namespace Raider.Game.Player
                     primaryRenderer.material.color = Gametypes.GametypeHelper.GetTeamColor(syncData.team);
                 }
             }
-
-            if (PlayerData.localPlayerData.syncData == syncData)
-                usernameText.text = "";
-            else
-                usernameText.text = syncData.username;
         }
 
 		public void HidePlayer(bool hide)

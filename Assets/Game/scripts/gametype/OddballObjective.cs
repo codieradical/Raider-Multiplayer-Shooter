@@ -8,7 +8,7 @@ namespace Raider.Game.Gametypes
 	public class OddballObjective : PickupGametypeObjective
     {
 
-        public static NetworkPlayerController.OnPlayerScored timerScore;
+        public static NetworkPlayerController.OnPlayerAction timerScore;
 
         Coroutine scoreTimer;
 
